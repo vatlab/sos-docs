@@ -1,0 +1,1110 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Configuration_Files</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  
+             'number_sections': false,  // sections numbering
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+
+            var file=tutorialsDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            
+            var tuts=tutorials;
+            var pos=tutorials.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=tuts[a]
+                  $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/tutorials/'+file+'.html'+'"]').css("color","#126dce");
+
+            for (var a=pos+1;a<tuts.length;a++){
+                  var name=tuts[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // for (var a =0;a<tuts.length;a++){
+            //       var name =tuts[a];
+            //       if ()
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace("_"," ")+'</a></li>');
+            // }
+
+            // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            
+            // $(".number_sections-btn").hide();
+            // $(".toc_cell_sections-btn".hide();
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_sos {}.lan_bash .input_prompt { background-color:  !important }.lan_python2 .input_prompt { background-color:  !important }.lan_ir .input_prompt { background-color:  !important }.lan_python3 .input_prompt { background-color:  !important }
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Configuration-Files">Configuration Files<a class="anchor-link" href="#Configuration-Files">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS allows you to store parameters in a number of configuration files. There are three kinds of configuraiton files:</p>
+<ol>
+<li>Global user-specific configuration file <code>~/.sos/config.yml</code>.</li>
+<li>Local project-specific configuraiton file <code>./config.yml</code> (under the current working directory).</li>
+<li>Configuration file specified by option <code>-c</code>.</li>
+</ol>
+<p>The configuration files should be in the format of <a href="http://yaml.org/"><code>YAML</code></a> or its subset format <a href="http://json-schema.org/implementations.html"><code>JSON</code></a>. When a SoS script is loaded, SoS looks for and parses the global and project-specific configuration files, and a configuration file specified by option <code>-c</code>. The results are stored in a global variable <code>CONFIG</code> that is available to the script.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Use-of-configuration-file">Use of configuration file<a class="anchor-link" href="#Use-of-configuration-file">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The configuration file should be in <code>YAML</code> format, which is a superset of JSON so any configuration file in JSON format is also acceptable.</p>
+<p>Let us create a yaml file with some simple content</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">run:</span>
+    <span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="n">EOF</span> <span class="o">&gt;</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span>
+    <span class="c1"># A list of tasty fruits</span>
+    <span class="n">martin</span><span class="p">:</span>
+        <span class="kp">name</span><span class="p">:</span> <span class="n">Martin</span> <span class="n">D</span><span class="s1">&#39;vloper</span>
+        <span class="n">job</span><span class="p">:</span> <span class="n">Developer</span>
+        <span class="n">skill</span><span class="p">:</span> <span class="n">Elite</span>
+    <span class="n">manager</span><span class="p">:</span> <span class="n">martin</span>
+    <span class="n">EOF</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The configuration file looks like</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">cat</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre># A list of tasty fruits
+martin:
+    name: Martin D&#39;vloper
+    job: Developer
+    skill: Elite
+manager: martin
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Variables defined in the configuration file are available in SoS script as a dictionary <code>CONFIG</code>. You can retrieve its values as a regular dictionary although writing to this dictioary is prohibited. For convenience, an attribute syntax can also be used to access dictionary items.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span>
+<span class="k">print</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;martin&#39;</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">martin</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">manager</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{&#39;name&#39;: &#34;Martin D&#39;vloper&#34;, &#39;skill&#39;: &#39;Elite&#39;, &#39;job&#39;: &#39;Developer&#39;}
+Martin D&#39;vloper
+martin
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Configuration files are frequently used to specify system configurations. For example</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="o">.</span><span class="n">manager</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>allow you to define name of <code>manager</code> in a configuration file. If you do not want to require a configuration file, you can define <code>manager</code> as</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">manager</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;manager&#39;</span><span class="p">,</span> <span class="s1">&#39;Bob&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bob
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So the manger would be <code>Bob</code> without configuration file, and <code>Martin</code> with configuration file.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;manager&#39;</span><span class="p">,</span> <span class="s1">&#39;Bob&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>martin
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would further want to allow modification of this value from command line, you can place this definition after <code>parameter</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">parameter:</span> <span class="n">manager</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;manager&#39;</span><span class="p">,</span> <span class="s1">&#39;Bob&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bob
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this way, users have the freedom to use the default value, define a value in a configuration file, and provide another value from command line.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bob
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>martin
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">manager</span> <span class="n">Joe</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Joe
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">manager</span> <span class="n">Joe</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Joe
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Command-sos-config">Command <code>sos config</code><a class="anchor-link" href="#Command-sos-config">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although <code>yaml</code> is not a difficult format to learn. It is often easier to use command <code>sos config</code> to check and set values in configuration files, especially for complex data types.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>sos config</code> by default works on the local <code>config.yml</code> file. For example</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">--</span><span class="nb">set</span> <span class="n">cutoff</span> <span class="mf">0.5</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set cutoff to 0.5
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>creates <code>config.yml</code> with content</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">cat</span> <span class="n">config</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cutoff: 0.5
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It can also work on the global configuration file with option <code>--global</code>, or a local configuration file <code>--config file</code>. For example,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="nb">set</span> <span class="n">cutoff</span> <span class="s1">&#39;{&quot;low&quot;:1, &quot;high&quot;:10}&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set cutoff to {&#39;high&#39;: 10, &#39;low&#39;: 1}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>would add a line to existing configuration file <code>myconfig.yml</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">cat</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cutoff:
+  high: 10
+  low: 1
+manager: martin
+martin:
+  job: Developer
+  name: Martin D&#39;vloper
+  skill: Elite
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The command is clever enough to handle partial values (e.g. of a dictionary), so if you do</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="nb">set</span> <span class="n">cutoff</span><span class="o">.</span><span class="n">low</span> <span class="mi">2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set cutoff to {&#39;high&#39;: 10, &#39;low&#39;: 2}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The commands updates one of the values of dictionary <code>cutoff</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Other than <code>set</code>, you can check the content of a configuration file using option <code>get</code>. For example, the following command get all values defined in <code>config.yml</code>,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">--</span><span class="n">get</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cutoff	0.5
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the following command get the value of <code>manager</code> from <code>myconfig.yml</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">get</span> <span class="n">manager</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>manager	&#39;martin&#39;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>wildcard characters are allowed to specify a subset of keys, although the name should be quoted to avoid shell expansion.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">get</span> <span class="s1">&#39;c*&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cutoff	{&#39;low&#39;: 2, &#39;high&#39;: 10}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, if you would like to remove a key from a configuration file, you can use option <code>--unset</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">-</span><span class="n">c</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">unset</span> <span class="n">martin</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Unset martin
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">cat</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cutoff:
+  high: 10
+  low: 2
+manager: martin
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># clean up</span>
+<span class="err">!</span><span class="n">rm</span> <span class="n">config</span><span class="o">.</span><span class="n">yml</span> <span class="n">myconfig</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

@@ -1,0 +1,3303 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Notebook_Interface</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  // sections numbering
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+
+            table_of_contents(cfg,st);
+
+            var file=documentationDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+
+
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // var docs=documentation
+            // for (var a =0;a<docs.length;a++){
+            //       var name =docs[a];
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+            // }
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+            // $("#toc").attr("style","max-height:938px")
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_SoS {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_sas {}
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Jupyter-Notebook-Interface-of-SoS">Jupyter Notebook Interface of SoS<a class="anchor-link" href="#Jupyter-Notebook-Interface-of-SoS">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="http://jupyter.org/">Jupyter</a> notebook is a web application that allows you to create documents with live code and results. The underlying interpreters of the cells are called <strong>kernel</strong>. For example, you can use a <code>python</code> kernel to interpret python expressions, or a <code>ir</code> kernel to interpret <code>R</code> commands. You can use sos within a <code>python</code> kernel by loading the <a href="../tutorials/Using_SoS_with_IPython.html"><code>sos_magic</code> ipython extension</a>, or use a <code>sos</code> kernel to work in a complete SoS environment.</p>
+<p>Comparing to a regular Jupyter notebook, the SoS Jupyter notebook provides the following features:</p>
+<ul>
+<li><strong>Enhanced Python3 kernel</strong> The SoS kernel is based on Python 3 but it provides additional features such as string interpolation.</li>
+<li><strong>Full-blown workflow system</strong> SoS is a workflow system that defines many functions (actions) to execute scripts in different languages. In addition to running steps and workflows defined in single cells (magic <code>%run</code>), magics such as <code>%sosrun</code> and <code>%sossave</code> can be used to execute workflows defined in the entire notebook. </li>
+<li><strong>Multi-Kernel notebook</strong> In addition to the ability to execute SoS workflows within Jupyter, the SoS kernel allows you to start subkernels (e.g. <a href="https://github.com/IRkernel/IRkernel"><code>irkernel</code></a> for <a href="https://www.r-project.org/">the R langauage</a>) and switch between the subkernels in the same notebook. This allows for truly integrated data analysis using different langauages.</li>
+<li><strong>Data-exchange between kernels</strong> Using a data exchange mechanism, SoS allows you to exchange variables between supported languages either explicitly, or implicitly for variables with names starting with <code>sos</code>.</li>
+<li><strong>Scratch-pad</strong> You can evaluate any statement in a side panel without effecting the main notebook. This provides a scratch pad for you to test your scripts before incorporating them to the main notebook.</li>
+<li><strong>Line-by-line execution</strong> SoS provides a shortcut (Ctrl-Shift-Enter) for you to send selected text or current line to the panel cell for evaluation, allowing you to step through code cell for easy debugging.</li>
+<li><strong>Preview of variables and files</strong> A magic <code>%preview</code> is provided to preview files and variables (and expressions) in multiple kernels. The output of the preview magic is displayed in the side panel (if the panel is open) which effectively reduces the size of the main notebook.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Installing-the-SoS-kernel">Installing the SoS kernel<a class="anchor-link" href="#Installing-the-SoS-kernel">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The SoS installation process will install a SoS kernel by default. To verify if you have the sos kernel installed, use command <code>jupyter kernelspec list</code> from command line (here we use the <code>!</code> magic to run commands from Jupyter notebook):</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">jupyter</span> <span class="n">kernelspec</span> <span class="nb">list</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Available kernels:
+  bash          /Users/bpeng1/Library/Jupyter/kernels/bash
+  ir            /Users/bpeng1/Library/Jupyter/kernels/ir
+  javascript    /Users/bpeng1/Library/Jupyter/kernels/javascript
+  python2       /Users/bpeng1/Library/Jupyter/kernels/python2
+  python3       /Users/bpeng1/anaconda/share/jupyter/kernels/python3
+  sos           /Users/bpeng1/anaconda/share/jupyter/kernels/sos
+  sas           /usr/local/share/jupyter/kernels/sas
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and check if you have <code>sos</code> listed as one of the kernels. If not, try to re-install SoS using <code>pip3 install sos --upgrade</code> or clone SoS locally and run <code>python setup.py install</code>. If the kernel is installed, fire Jupyter using command</p>
+
+<pre><code>$ jupyter notebook</code></pre>
+<p>from the <code>New</code> button to the top right corner, select <code>SoS</code>, and create a SoS notebook.</p>
+<p>You can also start a qtconsole with the SoS kernel using command</p>
+
+<pre><code>$ jupyter qtconsole --kernel sos</code></pre>
+<p>or even <a href="../tutorials/Using_SoS_with_Spyder.html">use the SoS kernel in Spyder</a>. Most of the features described in this section also applies to <code>qtconsole</code> and <code>spyder</code>.</p>
+<p>Note that SoS uses <a href="http://www.imagemagick.org/script/index.php">imagemagick</a> and python package <a href="http://docs.wand-py.org/en/0.4.2/"><code>wand</code></a> to preview output files so it is recommended that you install these packages.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="User-Interface">User Interface<a class="anchor-link" href="#User-Interface">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../media/JupyterNotebook.png" alt="user_interface"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The SoS frontend is based on the Jupyter notebook frontend but adds a dropdown list and a button to the menu bar, a side panel, and dropdown lists for all code cell.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="cell-content">cell content<a class="anchor-link" href="#cell-content">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A SoS Jupyter notebook accepts the following types of cells:</p>
+<table>
+<thead><tr>
+<th>Cell type</th>
+<th>Content</th>
+<th>Interpreted by</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Markdown</strong></td>
+<td>Markdown text</td>
+<td>Jupyter</td>
+<td>can be evaluated to have title, table etc</td>
+</tr>
+<tr>
+<td><strong>Subkernel</strong></td>
+<td>Statements in other languages with optional SoS magics</td>
+<td>Subkernels</td>
+<td>SoS prepares statements and evaluate them in subkernels such as R.</td>
+</tr>
+<tr>
+<td><strong>SoS</strong></td>
+<td>SoS statements without section header</td>
+<td>SoS</td>
+<td>Evaluate the cell as a SoS step in a persistent SoS dictionary.</td>
+</tr>
+<tr>
+<td><strong>Workflow</strong></td>
+<td>SoS statements with section header</td>
+<td>SoS</td>
+<td>Can only be executed by magic <code>%run</code> (workflow in the current cell) or <code>%sosrun</code> (workflow in the entire notebook).</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <strong>markdown cells</strong> contains Markdown text and are rendered by Jupyter. These cells are used for displaying rich-format texts such as title and table. Most of the content of this documentation is written in such cells.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The kernel of each <strong>code cell</strong> is marked by the language selector at the top-right corner of each code cell, and by the color of the prompt area of the cell. For example, the following cell is a code cell with kernel <code>R</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">paste</span><span class="p">(</span><span class="s1">&#39;This&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="s1">&#39;cool&#39;</span><span class="p">,</span> <span class="s1">&#39;!&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'This is cool !'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A cell with a SoS kernel can be either a <strong>SoS cell</strong> or a <strong>Workflow cell</strong>, with the latter contains <strong>section headers</strong>. A scratch cell is executed immediately with a persistent SoS dictionary so that you can execute arbitrary SoS (Python) statements,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;This is a scratch cell&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is a scratch cell
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or a single SoS step without header</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">output:</span> <span class="s1">&#39;rand.txt&#39;</span>
+<span class="kn">R:</span>
+    <span class="n">cat</span><span class="p">(</span><span class="n">rnorm</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="nb">file</span><span class="o">=</span><span class="s1">&#39;rand.txt&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The last type of SoS cell contains formal definition of SoS steps. These cells define complete SoS workflows and can only be executed by SoS magics in Jupyter or by SoS commands from command line. These cells can only be executed with magics <code>%run</code> or <code>%sosrun</code>. For example, executing the following cell would not execute any statement.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">test_20</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is step ${step_name} of a workflow&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and you can execute the cell with a SoS magic <code>%run</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="n">wf</span>
+<span class="p">[</span><span class="n">wf_20</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is step ${step_name} of a workflow&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is step wf_20 of a workflow
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>What is even more magical about these cells is that they form <strong>notebook workflows</strong> that consist of all sections defined in the Jupyter notebook. A <code>%sosrun</code> magic would collect all workflow stepss in a notebook and execute them.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">wf</span>
+<span class="p">[</span><span class="n">wf_30</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is step ${step_name} of a workflow&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is step wf_20 of a workflow
+This is step wf_30 of a workflow
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS provides a rich environment for you to analyze data in different languages. Generally speaking, you can</p>
+<ul>
+<li>Use subkernels to analyze data interactively using different languages.</li>
+<li>Use SoS cells to execute complete (and separate) scripts to analyze data or test steps of workflows, and</li>
+<li>If needed, convert SoS cells to workflow cells to create complete workflows to analyze data in batch mode.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Switch-between-kernels">Switch between kernels<a class="anchor-link" href="#Switch-between-kernels">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also enter any statement for any other (installed) kernel after you switch to the subkernel. The switch can be down either programmatically using magics <code>%with</code> or <code>%use</code>, or interactively using the language selection drop downs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ol>
+<li><p>A dropdown list at the top right corner of each cell displays the current kernel for the cell. You can change the kernel used for the cell by selecting another kernel from the list. This will start the cell with the specified kernel, although another kernel can still be used if the cell contains kernel switching magics <code>%use</code> or <code>%with</code>.</p>
+</li>
+<li><p>A dropbown list in the notebook toolbar lists the global default kernel that would be used for new cell. Changing the kernel from the tool bar effectively executes a <code>%use KERNEL</code> command. It will also change the kernel of any new cell to that kernel.</p>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Side-panel">Side panel<a class="anchor-link" href="#Side-panel">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS provides a side panel that can be toggled by a cube icon next to the language selection dropdown. The side panel contains a special cell that is used for two purposes:</p>
+<ol>
+<li>A scratch cell using which you can evaluate any expression and check its results. </li>
+<li>A preview cell in which the <code>%preview</code> magic of any cell would be executed if the side panel is open.</li>
+</ol>
+<p>The input area of the panel cell has a dropdown button that allows you to execute a few frequently executed magics and previous executed statements.</p>
+<p>Because this cell is not part of the main notebook, its output will not be saved with the notebook. This allows you to test commands, check environment, values of variables and content of files without affecting the content of the notebook.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Keyboard-Shortcuts">Keyboard Shortcuts<a class="anchor-link" href="#Keyboard-Shortcuts">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to shortcuts defined by Jupyter (e.g. <code>Ctrl-Enter</code> to evaluate a cell and <code>Shift-Enter</code> to evaluate a cell and move next), the SoS kernel defines the following shortcuts</p>
+<ol>
+<li><code>Ctrl-Shift-Enter</code> This shortcut <strong>send selected text or current line if there is no selection to the panel cell for evaluation</strong>, using the kernel of the current cell. This effectively allows you to evaluate content of a cell line by line.</li>
+<li><code>Ctrl-Shift-Enter</code> executes magic <code>%toc</code> that <strong>displays the table of content of the current notebook</strong> in the side panel, allowing you to easily navigate within a (long) notebook.</li>
+<li><code>Ctrl-Shift-O</code> (output) toggles a code cell tag <code>show_output</code> and mark the output with a gray bar to the right of the output area, or toggle a markdown cell tag <code>hide_output</code>. The tags will be rendered accordingly in HTML reports generated using sos templates.</li>
+<li><code>Ctrl-Shift-m</code> (markdown) toggle a cell between markdown and code type, which can be easier to use than select code or markdown cell type from tool bar.</li>
+<li><code>Ctrl-B</code> toggles side-panel.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="How-to-get-help">How to get help<a class="anchor-link" href="#How-to-get-help">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is recommended that you go through this document and understand how SoS Notebook works, but it is of course not possible for you to memorize all the magics, SoS actions and their options. To get help, you can</p>
+<ol>
+<li>For a complete reference, visit the <a href="https://vatlab.github.io/SoS/#documentation">documentation page of SoS</a>.</li>
+<li>For a list of available magics, type <code>%</code> and <code>TAB</code> (completion).</li>
+<li>For help on a particular magic, execute the magic with option <code>-h</code> (e.g. <code>%run -h</code>) in the side panel. Alternatively, you can place your cursor on <code>%run</code> and press <code>CTRL-TAB</code> to get a short description of magic.</li>
+<li>For help on a SoS action (e.g. <code>python</code>), place your cursor on the action name (e.g. before <code>:</code> on <code>python:</code>), press <code>CTRL-TAB</code> to get the help message of the action. Note that <code>CTRL-TAB</code> can also be used to inspect values of variables.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Preview-of-results">Preview of results<a class="anchor-link" href="#Preview-of-results">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Instant preview of intermediate results is extrmely useful for interactive data analysis. SoS provides rich and extensible preview features to</p>
+<ul>
+<li>preview files in many different formats, </li>
+<li>preview variables and expressions in SoS and subkernels,</li>
+<li>show preview results temporarily in the side panel or permanently in the main notebook, and</li>
+<li>generate interactive tables and plots for better presentation of data both in Jupyter notebook and in converted HTML reports.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Magic-%preview">Magic <code>%preview</code><a class="anchor-link" href="#Magic-%preview">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS provides a <code>%preview</code> magic to preview files and variables (and their expressions) after the completion of a cell. By default, <code>%preview</code> displays results in the side panel if the side panel is open, and otherwise in the main notebook. You can override this behavior with options <code>-p</code> (<code>--panel</code>) or <code>-n</code> (<code>--notebook</code>) to always display results in the side panel or notebook.</p>
+<p>For example, in a subkernel R, you can do</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">a</span><span class="o">.</span><span class="n">png</span>
+<span class="o">%</span><span class="n">use</span> <span class="n">R</span>
+<span class="n">png</span><span class="p">(</span><span class="s2">&quot;a.png&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)))</span>
+<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<strong>pdf:</strong> 2
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>to preview <code>a.png</code> generated by this cell. The figure will be displayed in the side panel if the side panel is open, or otherwise in the main notebook.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%preview</code> magic also accept sos variable and expressions. For example, the following example previes variable <code>mtcars</code> in a R kernel.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">mtcars</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview mtcars</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> mtcars:</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>mpg</th><th scope=col>cyl</th><th scope=col>disp</th><th scope=col>hp</th><th scope=col>drat</th><th scope=col>wt</th><th scope=col>qsec</th><th scope=col>vs</th><th scope=col>am</th><th scope=col>gear</th><th scope=col>carb</th></tr></thead>
+<tbody>
+	<tr><th scope=row>Mazda RX4</th><td>21.0 </td><td>6    </td><td>160.0</td><td>110  </td><td>3.90 </td><td>2.620</td><td>16.46</td><td>0    </td><td>1    </td><td>4    </td><td>4    </td></tr>
+	<tr><th scope=row>Mazda RX4 Wag</th><td>21.0 </td><td>6    </td><td>160.0</td><td>110  </td><td>3.90 </td><td>2.875</td><td>17.02</td><td>0    </td><td>1    </td><td>4    </td><td>4    </td></tr>
+	<tr><th scope=row>Datsun 710</th><td>22.8 </td><td>4    </td><td>108.0</td><td> 93  </td><td>3.85 </td><td>2.320</td><td>18.61</td><td>1    </td><td>1    </td><td>4    </td><td>1    </td></tr>
+	<tr><th scope=row>Hornet 4 Drive</th><td>21.4 </td><td>6    </td><td>258.0</td><td>110  </td><td>3.08 </td><td>3.215</td><td>19.44</td><td>1    </td><td>0    </td><td>3    </td><td>1    </td></tr>
+	<tr><th scope=row>Hornet Sportabout</th><td>18.7 </td><td>8    </td><td>360.0</td><td>175  </td><td>3.15 </td><td>3.440</td><td>17.02</td><td>0    </td><td>0    </td><td>3    </td><td>2    </td></tr>
+	<tr><th scope=row>Valiant</th><td>18.1 </td><td>6    </td><td>225.0</td><td>105  </td><td>2.76 </td><td>3.460</td><td>20.22</td><td>1    </td><td>0    </td><td>3    </td><td>1    </td></tr>
+	<tr><th scope=row>Duster 360</th><td>14.3 </td><td>8    </td><td>360.0</td><td>245  </td><td>3.21 </td><td>3.570</td><td>15.84</td><td>0    </td><td>0    </td><td>3    </td><td>4    </td></tr>
+	<tr><th scope=row>Merc 240D</th><td>24.4 </td><td>4    </td><td>146.7</td><td> 62  </td><td>3.69 </td><td>3.190</td><td>20.00</td><td>1    </td><td>0    </td><td>4    </td><td>2    </td></tr>
+	<tr><th scope=row>Merc 230</th><td>22.8 </td><td>4    </td><td>140.8</td><td> 95  </td><td>3.92 </td><td>3.150</td><td>22.90</td><td>1    </td><td>0    </td><td>4    </td><td>2    </td></tr>
+	<tr><th scope=row>Merc 280</th><td>19.2 </td><td>6    </td><td>167.6</td><td>123  </td><td>3.92 </td><td>3.440</td><td>18.30</td><td>1    </td><td>0    </td><td>4    </td><td>4    </td></tr>
+	<tr><th scope=row>Merc 280C</th><td>17.8 </td><td>6    </td><td>167.6</td><td>123  </td><td>3.92 </td><td>3.440</td><td>18.90</td><td>1    </td><td>0    </td><td>4    </td><td>4    </td></tr>
+	<tr><th scope=row>Merc 450SE</th><td>16.4 </td><td>8    </td><td>275.8</td><td>180  </td><td>3.07 </td><td>4.070</td><td>17.40</td><td>0    </td><td>0    </td><td>3    </td><td>3    </td></tr>
+	<tr><th scope=row>Merc 450SL</th><td>17.3 </td><td>8    </td><td>275.8</td><td>180  </td><td>3.07 </td><td>3.730</td><td>17.60</td><td>0    </td><td>0    </td><td>3    </td><td>3    </td></tr>
+	<tr><th scope=row>Merc 450SLC</th><td>15.2 </td><td>8    </td><td>275.8</td><td>180  </td><td>3.07 </td><td>3.780</td><td>18.00</td><td>0    </td><td>0    </td><td>3    </td><td>3    </td></tr>
+	<tr><th scope=row>Cadillac Fleetwood</th><td>10.4 </td><td>8    </td><td>472.0</td><td>205  </td><td>2.93 </td><td>5.250</td><td>17.98</td><td>0    </td><td>0    </td><td>3    </td><td>4    </td></tr>
+	<tr><th scope=row>Lincoln Continental</th><td>10.4 </td><td>8    </td><td>460.0</td><td>215  </td><td>3.00 </td><td>5.424</td><td>17.82</td><td>0    </td><td>0    </td><td>3    </td><td>4    </td></tr>
+	<tr><th scope=row>Chrysler Imperial</th><td>14.7 </td><td>8    </td><td>440.0</td><td>230  </td><td>3.23 </td><td>5.345</td><td>17.42</td><td>0    </td><td>0    </td><td>3    </td><td>4    </td></tr>
+	<tr><th scope=row>Fiat 128</th><td>32.4 </td><td>4    </td><td> 78.7</td><td> 66  </td><td>4.08 </td><td>2.200</td><td>19.47</td><td>1    </td><td>1    </td><td>4    </td><td>1    </td></tr>
+	<tr><th scope=row>Honda Civic</th><td>30.4 </td><td>4    </td><td> 75.7</td><td> 52  </td><td>4.93 </td><td>1.615</td><td>18.52</td><td>1    </td><td>1    </td><td>4    </td><td>2    </td></tr>
+	<tr><th scope=row>Toyota Corolla</th><td>33.9 </td><td>4    </td><td> 71.1</td><td> 65  </td><td>4.22 </td><td>1.835</td><td>19.90</td><td>1    </td><td>1    </td><td>4    </td><td>1    </td></tr>
+	<tr><th scope=row>Toyota Corona</th><td>21.5 </td><td>4    </td><td>120.1</td><td> 97  </td><td>3.70 </td><td>2.465</td><td>20.01</td><td>1    </td><td>0    </td><td>3    </td><td>1    </td></tr>
+	<tr><th scope=row>Dodge Challenger</th><td>15.5 </td><td>8    </td><td>318.0</td><td>150  </td><td>2.76 </td><td>3.520</td><td>16.87</td><td>0    </td><td>0    </td><td>3    </td><td>2    </td></tr>
+	<tr><th scope=row>AMC Javelin</th><td>15.2 </td><td>8    </td><td>304.0</td><td>150  </td><td>3.15 </td><td>3.435</td><td>17.30</td><td>0    </td><td>0    </td><td>3    </td><td>2    </td></tr>
+	<tr><th scope=row>Camaro Z28</th><td>13.3 </td><td>8    </td><td>350.0</td><td>245  </td><td>3.73 </td><td>3.840</td><td>15.41</td><td>0    </td><td>0    </td><td>3    </td><td>4    </td></tr>
+	<tr><th scope=row>Pontiac Firebird</th><td>19.2 </td><td>8    </td><td>400.0</td><td>175  </td><td>3.08 </td><td>3.845</td><td>17.05</td><td>0    </td><td>0    </td><td>3    </td><td>2    </td></tr>
+	<tr><th scope=row>Fiat X1-9</th><td>27.3 </td><td>4    </td><td> 79.0</td><td> 66  </td><td>4.08 </td><td>1.935</td><td>18.90</td><td>1    </td><td>1    </td><td>4    </td><td>1    </td></tr>
+	<tr><th scope=row>Porsche 914-2</th><td>26.0 </td><td>4    </td><td>120.3</td><td> 91  </td><td>4.43 </td><td>2.140</td><td>16.70</td><td>0    </td><td>1    </td><td>5    </td><td>2    </td></tr>
+	<tr><th scope=row>Lotus Europa</th><td>30.4 </td><td>4    </td><td> 95.1</td><td>113  </td><td>3.77 </td><td>1.513</td><td>16.90</td><td>1    </td><td>1    </td><td>5    </td><td>2    </td></tr>
+	<tr><th scope=row>Ford Pantera L</th><td>15.8 </td><td>8    </td><td>351.0</td><td>264  </td><td>4.22 </td><td>3.170</td><td>14.50</td><td>0    </td><td>1    </td><td>5    </td><td>4    </td></tr>
+	<tr><th scope=row>Ferrari Dino</th><td>19.7 </td><td>6    </td><td>145.0</td><td>175  </td><td>3.62 </td><td>2.770</td><td>15.50</td><td>0    </td><td>1    </td><td>5    </td><td>6    </td></tr>
+	<tr><th scope=row>Maserati Bora</th><td>15.0 </td><td>8    </td><td>301.0</td><td>335  </td><td>3.54 </td><td>3.570</td><td>14.60</td><td>0    </td><td>1    </td><td>5    </td><td>8    </td></tr>
+	<tr><th scope=row>Volvo 142E</th><td>21.4 </td><td>4    </td><td>121.0</td><td>109  </td><td>4.11 </td><td>2.780</td><td>18.60</td><td>1    </td><td>1    </td><td>4    </td><td>2    </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also specify expressions to be reviewed, but similar to command line arguments, you will need to quote the expression if it contains spaces. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">rownames</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span> <span class="n">mtcars</span><span class="p">[</span><span class="s1">&#39;gear&#39;</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview rownames(mtcars) mtcars['gear']</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> rownames(mtcars):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'Mazda RX4'</li>
+	<li>'Mazda RX4 Wag'</li>
+	<li>'Datsun 710'</li>
+	<li>'Hornet 4 Drive'</li>
+	<li>'Hornet Sportabout'</li>
+	<li>'Valiant'</li>
+	<li>'Duster 360'</li>
+	<li>'Merc 240D'</li>
+	<li>'Merc 230'</li>
+	<li>'Merc 280'</li>
+	<li>'Merc 280C'</li>
+	<li>'Merc 450SE'</li>
+	<li>'Merc 450SL'</li>
+	<li>'Merc 450SLC'</li>
+	<li>'Cadillac Fleetwood'</li>
+	<li>'Lincoln Continental'</li>
+	<li>'Chrysler Imperial'</li>
+	<li>'Fiat 128'</li>
+	<li>'Honda Civic'</li>
+	<li>'Toyota Corolla'</li>
+	<li>'Toyota Corona'</li>
+	<li>'Dodge Challenger'</li>
+	<li>'AMC Javelin'</li>
+	<li>'Camaro Z28'</li>
+	<li>'Pontiac Firebird'</li>
+	<li>'Fiat X1-9'</li>
+	<li>'Porsche 914-2'</li>
+	<li>'Lotus Europa'</li>
+	<li>'Ford Pantera L'</li>
+	<li>'Ferrari Dino'</li>
+	<li>'Maserati Bora'</li>
+	<li>'Volvo 142E'</li>
+</ol>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> mtcars['gear']:</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>gear</th></tr></thead>
+<tbody>
+	<tr><th scope=row>Mazda RX4</th><td>4</td></tr>
+	<tr><th scope=row>Mazda RX4 Wag</th><td>4</td></tr>
+	<tr><th scope=row>Datsun 710</th><td>4</td></tr>
+	<tr><th scope=row>Hornet 4 Drive</th><td>3</td></tr>
+	<tr><th scope=row>Hornet Sportabout</th><td>3</td></tr>
+	<tr><th scope=row>Valiant</th><td>3</td></tr>
+	<tr><th scope=row>Duster 360</th><td>3</td></tr>
+	<tr><th scope=row>Merc 240D</th><td>4</td></tr>
+	<tr><th scope=row>Merc 230</th><td>4</td></tr>
+	<tr><th scope=row>Merc 280</th><td>4</td></tr>
+	<tr><th scope=row>Merc 280C</th><td>4</td></tr>
+	<tr><th scope=row>Merc 450SE</th><td>3</td></tr>
+	<tr><th scope=row>Merc 450SL</th><td>3</td></tr>
+	<tr><th scope=row>Merc 450SLC</th><td>3</td></tr>
+	<tr><th scope=row>Cadillac Fleetwood</th><td>3</td></tr>
+	<tr><th scope=row>Lincoln Continental</th><td>3</td></tr>
+	<tr><th scope=row>Chrysler Imperial</th><td>3</td></tr>
+	<tr><th scope=row>Fiat 128</th><td>4</td></tr>
+	<tr><th scope=row>Honda Civic</th><td>4</td></tr>
+	<tr><th scope=row>Toyota Corolla</th><td>4</td></tr>
+	<tr><th scope=row>Toyota Corona</th><td>3</td></tr>
+	<tr><th scope=row>Dodge Challenger</th><td>3</td></tr>
+	<tr><th scope=row>AMC Javelin</th><td>3</td></tr>
+	<tr><th scope=row>Camaro Z28</th><td>3</td></tr>
+	<tr><th scope=row>Pontiac Firebird</th><td>3</td></tr>
+	<tr><th scope=row>Fiat X1-9</th><td>4</td></tr>
+	<tr><th scope=row>Porsche 914-2</th><td>5</td></tr>
+	<tr><th scope=row>Lotus Europa</th><td>5</td></tr>
+	<tr><th scope=row>Ford Pantera L</th><td>5</td></tr>
+	<tr><th scope=row>Ferrari Dino</th><td>5</td></tr>
+	<tr><th scope=row>Maserati Bora</th><td>5</td></tr>
+	<tr><th scope=row>Volvo 142E</th><td>4</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If option <code>-w</code> (<code>--workflow</code>) is specified, sos collects workflow steps from the current notebook and preview it. This would give you a better sense of what would be saved with magic <code>%sossave</code> or executed with magic <code>%sosrun</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">--</span><span class="n">workflow</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%preview</code> also accepts an option <code>--off</code>, in which case it turns off the preview of output files from the SoS workflow.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preview-variables-from-another-kernel">Preview variables from another kernel<a class="anchor-link" href="#Preview-variables-from-another-kernel">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%preview</code> magic previews the variables with the kernel using which the cell is evaluated. For example, even if you have <code>var</code> defined in both SoS and <code>R</code> kernel,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">val</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">val</span> <span class="o">=</span> <span class="n">rep</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">val</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview val</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> val:</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>1</li>
+	<li>2</li>
+	<li>1</li>
+	<li>2</li>
+	<li>1</li>
+	<li>2</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">val</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview val</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> val: list of length 4</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>[2, 3, 2, 3]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that SoS also displays type information of variables in the SoS kernel, including row and columns for data frames, but not in subkernels.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like to preview variable in another kernel, you can specify it using option <code>--kernel</code>, for example, the following cell previews a variable <code>r.val</code> in a SoS kernel.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">val</span> <span class="o">--</span><span class="n">kernel</span> <span class="n">R</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview val</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> val:</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>1</li>
+	<li>2</li>
+	<li>1</li>
+	<li>2</li>
+	<li>1</li>
+	<li>2</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preview-of-files">Preview of files<a class="anchor-link" href="#Preview-of-files">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%preview</code> magic can be used to preview files in a variety of formats. For example, the following cell download a bam file and use <code>%preview</code> magic to preview the content of the file to make sure the file has been downloaded correctly.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">issue225</span><span class="o">.</span><span class="n">bam</span>
+<span class="kn">download:</span>
+  <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lomereiter</span><span class="o">/</span><span class="n">sambamba</span><span class="o">/</span><span class="n">raw</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">issue225</span><span class="o">.</span><span class="n">bam</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>issue225.bam: <span class="ansi-green-fg"> use existing</span>: </pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[37]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview issue225.bam</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> issue225.bam (4.2 KiB):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>RG:
+  ID: &#39;16-3584&#39;    SM: &#39;16-3584&#39;    PU: &#39;16-3584&#39;    PL: &#39;illumina&#39;    
+SQ:
+  SN: &#39;chrM&#39;    LN: 16571    
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similarly, you can preview files produced by another kernel</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">test</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">n</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span>
+<span class="o">%</span><span class="n">use</span> <span class="n">R</span>
+<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;test.pdf&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">attach</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">wt</span><span class="p">,</span> <span class="n">mpg</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="s2">&quot;Scatterplot Example&quot;</span><span class="p">,</span> 
+  <span class="n">xlab</span><span class="o">=</span><span class="s2">&quot;Car Weight &quot;</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s2">&quot;Miles Per Gallon &quot;</span><span class="p">,</span> <span class="n">pch</span><span class="o">=</span><span class="mi">19</span><span class="p">)</span>
+<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<strong>pdf:</strong> 2
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview test.pdf</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> test.pdf (4.8 KiB):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAGwCAQAAADr6RI5AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAAAEgAAABIAEbJaz4AAAAHdElNRQfhBwMMDxlbsFwSAAAefklEQVR42u3dbYxk2X3X8e8/yezszpjVVmyEjYSy3LFjNoKYzd1YSogIJrcjEceIrFUjCA7adaIaFgJaxyzdSoSyBMdUxyKYONG4m6CNUUKiqSxvshZEXUZrKQQTTcksIEcRTGEkSzGJM7UZ7dPsOjm86NvVVTUzPf1Q1acevp96Mae7q279bz/85txz7z0nEpKUx9fkLkDS6jKAJGVjAEnKxgCSlI0BJCkbA0hSNgaQpGwMIEnZGECSsjGAJGVjAEnKxgCSlI0BJCkbA0hSNgaQpGwMIEnZGECSsjGAJGVjAEnKxgCSlI0BJCkbA0hSNgaQpGy+LncBmpUoKCnp0Uv9U3i3ClL3sM8c0Z9mdYevQvMhXJhwOUWLreEHm2njUK8o2E790dYR3i9BioO3u//MEYeq7eRVaD4ZQEspCq4xYIM+Jes0WLt7vyB2qHaft986wjveOYAmthYJ2GZQf9idZo/FAFo0HoItpwLopW2gG1BRAESLigbdtAkQBS1KBvTYToNoUQDN6NfPbkafAS0qBnRSByDa9OmxziYDWvQZ0GRAZzxC6nfpjfSmoBnjh1ojr4mKikHajAbrwHbqT1RWjLzXNtCioJO2xz4/WUNjvHLNreRjCR9UJK7Tohj53NawuZOgwfXhx1sJ2lwncZVypHWVxFWuk2gnEiSuco1ERUXi2vD1VYJEmniX65Sj2x3WkUisU+0+hpVUtO9Q2e6+7G1zr9W8tYaRKiYq9zGvj+wF+JjRD3YkbmglKElco5HgGomSFol2ggap/qPdYe/PeIdERYvdANgNhKL+ZWlT0aAikWglWGc3NhKpfpfrFAnaJK6Mb/d2v3KJBE0SO1yvXzlRWf1eJQ2u1V9p13VM1DCs4pbKfczrw0OwJZUuxTZNCkoqqigA6KQBsEZBP/WiQxVtyjtuogSINjCgQUEfGOwOGQdAP21D2ow2++e1mlAPOG+yTnXHbe+PAQGpEx2awEbqQ9q+TWXd1IPoUzA+YnS7Gm5fueaSAbS0Uo8eQKzTpslwLCT16UMUXKVBj+4dY6IASgZAf/gn3Bv5+oF/1mkQ0LjjlyfGbOptdeFQld2thttVrrnkhYhLKdqRYu80fA8YMKAOhFiPnShp0WAjPcLmHTfSAzbTWlpjg82x6NlVRgOigJHeTH/4LiUc9o8/StYZQH3hwN0rO7iGu1euuWEPaDlts04roEdBBXTp0KYVPQassxcNZVS0xl5XRi/t/imXfA5YjwENtoALt7xHg63osA77vav6XQb0Jj6/v91d7dj7qJc2aAMblLSiXV8VdGtlt3e7GqDL+oGVa37kHoTyMZsHzZFzSbvnsFr1Z67TSlDUH21xnVSfr0rsntGqW/W/9fmsBPVQbz0wfJWrJBJXaYycfyqH77tVP3e43frj8UJ3WCdxLUFBIlFOVka19757w9kjg9BjNYxUMVG5j3l9eCHiEqtvehj2PaJBuf9xNCgZpN7E83tpsN+KguJ2NzdExQ5dLlLe4atjt1jsb/eQdd9S2R327qAa7lC55osBpGPY/eNPa6teg07KQWhJ2dgDkpSNPSBJ2RhAkrIxgCRlYwBJysYAkpSNASQpGwNIUjYGkKRsDCBJ2RhAkrIxgCRlYwBJysYAkpSNASQpGwNIUjYGkKRsDCBJ2RhAkrIxgCRlk2Vhwnp5GEnL4AhLLk3KszJqyboL5kpLoWSTY6+/lmtp5l69BK+khRbtk7zaMSBJ2RhAkrIxgCRlYwBJysYAkpSNASQpm6UPoLgcr8Zr8ZtR5K5E0qQlD6C4zA9yL2f5Nj6buxZJk5Y8gHiMM3Xr/qhyFyNp3LIH0Gu5C5B0Z8seQP952Ppj7z6T5s2yB9AP8N+5wQ1e4/Hj37EraTZy3Yx6StKAd0VJ4yQTBkialSUPIIDkoZc0p5b9EEzSHDOAJGVjAEnKxgCSlI0BJCkbA0hSNgaQpGwMIEnZGECSslmBK6Fnwds7pGmwB3Rk0YgX+CzP8cV4Mnct0mIzgI7u5/hmznOW+/mnTvQqnYQBdHTvGbbuxwCSTsAAOrqvDls3aOQuRlpkBtDR/ZthBL1BN3cx0iIzgI4sPc1P8iLwX3i358GkkzCAjiE9nRop0renfu5KpMVmAEnKxgCSlI0BJCkbA0hSNgaQpGwMIEnZGECSsjGAJGVjAEnKxgCSlI0BJCkbA0hSNgaQpGwMIEnZGECSsjGAJGUzpwEUVTwXz9+67E08Gc/Hc1Hlrk/SNMzlwoTxJB/hPPCt8c70xMjnn+V9nAHeE4+lTu4qJZ3UVHpAUcWVSJEixfXYmsJaWf+c8wCc4wMxXHciSr6bM/XnfzrLd0vSVE0hgKLgCl0upEjBGgOuxkkXq3l92HqZcthujPTX3nLa3yhJ0zeNQ7AW22l7t5l69KJBecLlat4Ytu6jN2z3R1bk+n+n+l2SNBPTOATrUY4cKDWoOOlqEU/UfaCb/Pj+wjepzy/yMgA3+KHT/1ZJmrYp9IBSJyquRY8eUFKyedLlalInejwFPJvGelLpiXiWv82LfMIFcaRlEGk6mympaAA9ercLhyjGVlF/mD+b/l7uXZd0ctGmm4495DKl0/CpNzJWczsFo9fuvNtBZElTCqBo0mLABltU9Nm49Rqd1B0dlo6neDT3jkvKbxqn4Uu26NBjh34KLtE+8Wl4SSthGmfBmmyn7bTJgE1IXfoj1+5I0h1NI4D67PZ4LtXDz/Z/JB3KNAKoQxk7UaTe7k0ZcPwxcUmrZAoBlAassT/s3GMt905JWgxTOQuWBuzditE94U0YklbInM4HJGkVGECSsjGAJGVjAEnKxgCSlI0BJCkbA0hSNgaQpGwMIEnZGECSsjGAJGVjAEnKxgCSlI0BJCkbA0hSNgaQpGwMIEnZGECSsjGAJGVjAEnKxgCSlM2KBlBU8ZX4w3gtLueuRFplKxlAUdDhzdzPWT4YT+euRlpdKxlANHmgbt3DxdzFSKtrNQNI0lxYzQDqcKNuvc6v5y5GWl0rGUCpzw/xGn/AS/y79KHc1Uirayprwy+e1KETBYM0yF2JtMpWNIAAUj93BdKqW8lDMEnzwQCSlI0BJCkbA0hSNgaQpGwMIEnZGECSsjGADiXKeD6+EJejkbsSaZms8IWIhxclv8k9wEP8NR7MXY20POwBHcYnuKduvS1auYuRlocBdBhvGbbuochdjLQ8DKDD+B/D1k06uYuRlocBdBg/xO8DcJNPp17uYqTl4SD0IaRBvJMmD/Hp1M1di7RMJgIo2pR77bSWu7j5kQZs565BWj5jARRNKjZylyRpVYz3gAq6Rz/IiBakbYg260Cfi46TSDqM8UHobcpjXOtbUEC0qLiQgktc8XphSYcx2QMquB51H+iIY0AF26kPqRt9ShyslXRX4wHU59Kxt9QfXqLXwKneJR3CWAClwbF6Ln2akehTRCf1YoeBY0CSDmPyNHyTNgVHGkpO22xDNCjpA93bnbCOYuwWhrfztbl3XFJ+46fhC7a4mLoQLXbiwlFWzdrrPaXN2365oBr56B3cm3vHJeU33gNqsr17Gj5tR/PwQ8n1CfjNtAEQKcXkM1J3dFvxFI/m3nFJ+Y2fhu+PHCgVhx1KjpImF/h6qmjn3h1Ji2QsgFKHInaiHe24RvfQQ8lNOqmfBlyk6RVAkg5v4m749Eg93cRGOvwJ+brflPp0sA+0JKIZX4zfjefD+Y80Q7fcDZ+OfNNl2o5WXGU7baeN2Imd3Lukk4uKZzgPvJXfincc5WSEdBTDABq9D37X4a+ETo9EtfeaaOFVQIvvX3C+br2ZpjMBaFb2e0Cdk9w+sX8L69F7UJpD9420PQjTzOwHUHOyB+T9XCvsM7yjbjkJrWZoSj0gLZkf5bt5K+d4hX/rjTWanWEATf6aRRVF6ucuT3mkAReiCfSNH83S5L1gLSp2r+UpuYgBtMKSh16aubHrgKJknS4Fm/SOMzeiJB3F+IWITTppmy6kDRpegiZptsYDqEcDGNQTchhAkmZqPIC6lLFOh3a0qbygUNJsjd+MOkiP0Ek9LgIXvQBf0mxNDkJDEW0qoJm7NEnLbiSAYocdoKKkYN2J5SXN2jCAYh24AEAvXeTS2BSqkjQD+z2gis39UZ+07Wl4SbN2y3xAw6kXBhReCS1plvYDaDCc15CRRXYkaWb2D8G2aUc9IUc0aNPzVtSji0Y8E6/Gq/HcYs6OHWV8If4wXo2nc1ei1bB/N3w3NtiJPgOgZPdaIB3VT/MYAO/led6Vu5ijiga/Ua/YthEvpo/nrkfLb+Q0fNrmwu5tqKylNS9DPJa/NWw9uICD+NVwwciztHIXo1UwuTZ8x/nvTuQmZ+vWqyzeQdhoxV937K1Ih/Y1J9+ERnxx2Dq7gFN5dXm9bt3kM7mL0SowgKbr+/gSLzPgxUW8kDP1WecGL3GDz/GjuavRKrCjPVWpz5+JanSVkMWSPh6fomSwgL03LaSxAIoWRdrIXdKiW9TwqasfuDiBTs/kfEDVAp67kbSgxg/BGsC1qP8HPPzKqJJ0HOMB1McDMEmnZmJGRAqusANsLeBVLJIWzK3L8jzCJnCJ9mLezSRpcYwPQld0dm9BTV36t6wVL0lTNR5Ao6FTOCmrpNkaHwPqMIirlDTjGl0vRpuNeDJ+OZ4N+5fS5JXQ6WI0KYFLi3053fyKZ3kfZ4D3xvee7HscBU0abM9y3qZo0KSg439Gmo2RAIoGJSTvh5+hKHkvZwA4y8/wTSfYUkWHB4AfiX88q5l7oqznB3oy2unp0/1OaTXsr4pRco02V2Ind0lLrTGcrgPedqIt/QoPAHCGH59ZtZ+o5wc6y4e9Ql6zsD8G1GQ7PcIFiljA+7gXxoBXhu1rJ9rS/k/u5sx+Yg8PW2/CANIM7P8al3QhDZyKfpZSj/9YR9ANLp1oU/cNW+dn9jP7yrD18sy/NVpJzgd0ytL7+RC/wid5+M4Du9GIy/GFeO7AM2Wb3ATgdX51dBg6HosX4oV4cirF/pM6eG7yO56U0CyMngUrA6BR/7vg00rMr7Q9XHvttqLB5/kG4CGq+Et3iqn0dHyRD3GGX08fGnntZR7nLPCT8c70xIkr/YX4Ej/BA3zW6ck0G5H2GjuTc/ilmNmbPsWj6dty7/q8ihY/Mxyq7h5tToJ4bfjKm7zNhQU0e9Gme/zOyvAQLK2lGH/k3rGV9dDImbJvOOJrXxppOWysuecY0Pz59MiZsqtHfO3I0LQXD2r+GUBzJ3XrM2U3+X3+/hFf/FjdB3qdE48ASbPnpPRzKL0/mnw7v03nqKM4qRM9/gHwCRfW1iK4JYCiSP2oKNl2CDOf498Qk/p86HivlE7f+IRkjbhOMwqu0Djy6IMkHdH4GFCTTtqkxXbaoH/4C/yjiiv1qbPrseVdQ5IOZzyAGgyA6mgrQ0XBFbpcSJGCNQZcdTJXSYcxPgbUYScaNFI31ik57GncFtupvrY39ehFY/e+Mkk62PiMiH3WGLAGDFg79CB0j3K/zxMNKm9olXQYkzMi1iuDpe3DbyJ1ouJa9OgBJSWbngKWdBgTARQt2jRYY4uNdOgTwelSbFPRALbp3S5+ohi7MeDtfG3uHZeU31gA1euCtYBLbEX38FcCpd5dRoyKsVtd31HPtKdji4KKAUf4GUnzZ7wHVNFJ/QBSN/qHH0qONuvAZtoAiHTrjaypO7qteIpHc+/4YovH+FfcD7wW3+E9X1pcU1gXLEqaXODrqaKde3dWxr/kfgDu5dncpUjHN411wZp0Uj8NuEjTK4BOQ1T1bIgAb85djXR8E3fDp4ts0mPApXT4GYv7uwPMqU8H+0Cnoc/5YdvbibXAbpmOI3XSRto4ygxnaZsirkYL0gaFy/rMXurzuboP9FU+mbsa6fiG/39Gm4kp0A8/GWh6ZO++sbQWrUNfQa1jS2txme/iq1yZvwUDo6DJg/z8bAbHo+L9fNG5GpbFfge+c5LbJ/Z7TEe5hFHHd/Ip52djuGLr34kfm/6KrXGZH+A88LRn/5bDfgA16dMbG8Pxfi4d3d6Kredox6em20+Jkg/Uo1/38gm+Pfeu6uRGe0ADBmzmLkgL7k3D1itTvym5MbL1h0+wHc2NYQDVHVp7PTqZl4ZrepyZ+k3JA14env/7yom2pDkxPAsWOxOr8qSTbFYr6yP1aqoTK7ZOQ+rxO7wOwCv8SO4d1TTsH4J1KRjQoeO97Dq+9PE4yz/kHDvp8RlsvYzLfCe/x0dct3c57C9MuJkucIkGO7ETLa9o1vFEk3/Gn+YB/npcnsX20xPpm9JfMX6WxfitGL20kS6wQcHVuJK7NC2ky5wB4CwfcHZw3c2dFyb0l0fHcWak7e+Q7mJyPqAmTQZ0WHMkSMfyxkjb3yHdxf6tGOu0jB6d2BP8AueAm/yiv0m6m/0eUEUBlLT3ZhO7dVox6W5SJ/r8MH+STx1+Sl+trv2zYGsTlwEZPzqW1EuPp++lEc9EK3ctmnfOJqOpiwaf562c5fvjUipPvj0tr685+SakCR/lGzgL3MOftxekgxhAmr53D1v38J7cxWieGUCasrjMu0Y+/G+569E8M4A0VXGZx0eWnfx9nKBOBzCANF2PDafj+CN+lXc6daoOYgBpVm6wZfzoYAaQpuu/Dlv3ec+67sYA0nR9kD4v8xKv8R25S9H8M4A0VamfLvCdfF+67/irVsRj8XJ8JV6NJ3PvjWbNK6E1dSdbMCcqfo5znAM+Ev/Tw7jlZg9I8+b9nKtb5/nB3MVotgwgzZt7R9p/Incxmi0DSPPml3ilbr3Mp3IXo9kygDRnUpcf4wZ/wE3+tXMKLTsHoTV30sf5eBQMvIxx+RlAmktO57oaPASTlI0BJCkbD8G09KKkSZ+OY0rzxwDSkotnaHIe+Gi825GleeMhmJZalFzkPABv5mO5q9EkA0jLrRre2AHfkrsYTTKAtNz6vD5s38hdjCYZQFpqqcOX6uYbfDh3NZpkAGnZPcIn+V98lu9xao/541kw3SIaVEBvOc4ZpQFP5K5Bd2IAaUKU/Ab3Ai9GdbKpxaS78RBMk369npHnATxk0YwZQBoTjZEP/mjsI2nqDCBNetOwdWY6G4wqXoj/EztR5N41zRsDSGPSgGfqK2de599P4+6pqPgPfDMPUvFb9qg0zkFoTUhPxGu8F/hMms7Zo58Y/pa9maZrxWvUFHpA0YoWQLQjRYprUebeKZ1M+lD6xvSNx42fKKIa+x14y0j7GAdhUUblwduymsYhWEEB0aLiQgouccWO9uqKy7zAr/F8PDv81GeGrZc54hzP0Yge/4lf4wsuUricpjcGVLCd+pC69LEPtKKiyeO8iXt5E+8bRsaP0ucl4BU6R76u6KN8C/dzL2f5KXtBy2h6AdQfdq8bOPHTqvoeztatM/yN3UYapAt8kEv85fQ4xOUYxCCePWQv+buGrTM0c++cpm8ag9B9mpHoU0Qn9WKHgdfPrqzXRtov7Tf3lteJy3yQe4BHefBQ/eSvjrT9b20JTSGA0jbbEA1K+kD3duc5ohgbfnw7X5t7xzUTH+P7uR+AV/jx23z97w5bb4/yEP9R/RQ/W08n9uJRx4+0CKZ2Gj4Ndi/cT5u3/XJBNfLRO8aW39XSSP14Pz/Pn+IrPH7beLlRxxO8yiEOwtIvxIP8MOf5PB9wRufZipKSwWkvBRkpx64+xaPp2zK8sTKLF/jmuvlaui93NdoXz3CRc7zCl3nkaFEfbbrHn+hkCj2gicMrwHlXdAffx29xlj/mHt6XuxTti4om54BzFHz0NKcvmcYhWEl7IoLi9HZAiyT1eUvszjXkAdU8eW890gbwnaf5xtMYhO5El+vJ0NGh2D+eQ7890v6903zjqVwHlAZsnnwrWgVRxXPxvNc1z5kOf1C33uAjp/nGUzoLljZOs2gtqniSNmeBb413TulWV01BGsS72eLt3ODDp9tD9W54naafrK+UPscH4mPLMef0ckh91nK8r/MB6TT98bD18nHujNeyMYB0mm4OWw/gDTsygHSq/mY92+LLtD0RL8eAdKpSNx7iKe7llzwZLzCAdMpS32UCtc9DMEnZGECSsjGAJGVjAEnKxgDSAonH4ovxu4eeUVpzz7NgWhjxNP+I88Cj/EUu5K5G02APSIvjh4ez1rw1qhNtSXPCANLieGPYOpe7FE2HAaTFsX/32E28k34pGEBaHD/A/+UGcJMNp/JYDg5Ca2GkAQ9GE+gZP8vCANJCOe11qzRbHoJJysYAkpSNASQpGwNIUjYGkKRsDCBJ2RhAkrIxgCRlYwBJysYAkpSNASQpGwNIUjYGkKRsDCBJ2RhAkrIxgCRlYwBJysYAkpSNASQpGwNIUjYGkKRsDCBJ2RhAkrIxgCRlYwBJysYAkpSNASStmHg6notnojjE8345no1ylrW4Nry0UuIF/hz3AI/GX029A573OR7mHqA6+HknM5UeUFRxJVKkSHE9tu6erJLyiGYdP3A/7QOeV/EXhs/7xOzqmUIARcEVulxIkYI1BlyNxuwKlnQCZR0rAG8/4HkF54bth2ZXzjQOwVpsp+3dZurRiwYl3dmVLOnYerwyjJb/feDzbnK2br8wu3KmcQjWo9zv80SDiv7sCpZ0fKnDb/IGAK9x6YDn9fg0rwDwIh+eXT1T6AGlTlRcix49oKRkMxlA0pxKa9HiPXyZn0iDA5/3/mjxHl7kY7P8e440nc2UVDSAHr3blRsFo0PTTR5O757dTkk6LdGmm4495DKl0/Bpt/9zZwXVyEdv4+XT+NZImm+ndB1Q6o4OS0c1FkeSVtQUAmji8Ao4fodM0iqZRg+opD0RQZF7tyQtgimchk8dHoEU+4/cOyVpMUzlVow0YDP3jkhaPNM6C7ZxpKc3aM72HttjaPAQr+Yu4hScX4kzkKuxl/fR58u5i6Cgc/wXT+k6oMUXFdURY3QhxU5ay12DezmlvTzRFTjzwfmAJGVjAEnKxgCSlI0BJCkbA0hSNgaQpGw8DT8UjYPnR1kO7uXyWIa9NIAkZeMhmKRsDCBJ2RhAkrIxgCRlYwBJysYAkpSNASQpm1NaFWP+RYuCTuqdfEvzKxo0l38v631tL/vsTtGqZ2Lv7y2MvojsAQEQV6mAK9HOXckM97HBDiWwE83ctcx8X9us565h5pbip+iV0EBUtNMjEAXXlndK/WjRTGv7/y6vqFinWt6fZL2XaRn20EOwXbud2IW/s+ZAe4tDNpZ7P6NBm4tcy13HzPeyHy2KxT4AM4CAvYUUo+DKMq/ukfoQJVs0WOr+D1tspv4SdA4OVlJQ0KcVxSKPdnkIVos2TTqL/KM85H4WrFMs7yFYrFOkS8tygHLAfjYoUm/xhw0MIABihz4biz+5wYH7WA37ekv8xxk7VMMP1hZ9zYhD7fFC/zQ9BAOiBelS7ipmrqSkC1HRz13K7Oz17Rb7z/LuYp0qrS3+T9MAAiio9rqCS/xru81OXGVAwdIfaK6Abar6p3kxdykn4SHYSokK6C33oebqiJLGov80DSBJ2XgltKRsDCBJ2RhAkrIxgCRlYwBJysYAkpSNASQpGwNIUjYGkKRsDCBJ2RhAkrIxgCRlYwBJysYAkpSNASQpGwNIUjYGkKRsDCBJ2RhAuotoxpXYiUOsKB/tqFdkj52oAKKMnbFnlNG+5VW3+ZxWhQGkA0WLNh026bB11wga7K7JFRUVu8+tbnnGrYvINChH3s9JyleKy/LoANGgzVrqAQS06EA0qCjppF40KBhQDVcn77Lbl6no1NFTsvvaJgXd1GNQf9ygCWk7ynrbBU36qRMlRLUKywlqlz0gHaSkvxsRkLbrRf921x69Ei1KtrhCsffk1GMQFVCxCVFAvRTiFVo06le0IRrsUFLETh1YBVs0WI82Jbf2mrTMkg8fd3zQZmfiMwXriQQtrlCRKMa+eoU2Da4n2GKdgpSgydX6ldep2Emwztb+1qlINBL111LuffZxmg8PwXSQ/tj4TJW6qR/daNNgd0ngbhof0+lR0qQLdGnSpwuUDOph5kb9rILdxfS69da7i724no7PQzAdpEcZdWxExRWIih36dLh02+d3qHYPu+jS3BsBok+XLl3Wcu+O5o0BpAOkHj32TpK36AAV22k7dW8/UpP6DHZ7QGlAl/U6iqrUTV1gq35ar+75ONqz8jwE08EuciWu0aegzyWgw5X67FfBw7d5fpeyPizrUaUupG506y1s7D4lbUczrjKgwa2HXoNop43cO63T4mUXuqsoaTDYOxsWDUr6qR8V/dQ/whZ6eyM9UbA7HlTQShOHZVFQeBp+dRhAOnVRscUGsM5m6uSuRjkZQMogKiqga19n1RlAkrLxLJikbAwgSdkYQJKyMYAkZWMAScrGAJKUjQEkKRsDSFI2BpCkbAwgSdkYQJKyMYAkZWMAScrGAJKUjQEkKZv/D/gxTh0EeYPDAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE3LTA3LTAzVDEyOjE1OjI1LTA1OjAwVzglegAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNy0wNy0wM1QxMjoxNToyNS0wNTowMCZlncYAAAAgdEVYdHBkZjpIaVJlc0JvdW5kaW5nQm94ADU3Nng0MzIrMCswxv4D5gAAABR0RVh0cGRmOlZlcnNpb24AUERGLTEuNCAcRzp4AAAAAElFTkSuQmCC"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that SoS by default preview PDF files as an embeded object (iframe), but you can use option <code>-s png</code> to convert PDF to png to preview it as a image, if you have imagematick and Python package <code>wand</code> installed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preview-options">Preview options<a class="anchor-link" href="#Preview-options">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%magic</code> accepts options that are format dependent. This table lists options that are available to specific file types. Options for previewing dataframes will be described later.</p>
+<table>
+<thead><tr>
+<th>file type</th>
+<th>Option</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pdf</td>
+<td><code>--style png</code> (<code>-s png</code>)</td>
+<td>Convert PDF to png before preview. All pages are combined to produce a sngle PNG figure if the pdf file contains multiple pages. This option requires Python module <code>wand</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>--pages 2 3</code></td>
+<td>With <code>--style png</code>, preview specified pages (page numbers starting from 1) from a multi-page PDF file.</td>
+</tr>
+<tr>
+<td>txt</td>
+<td><code>--limit lines</code> (<code>-l</code>)</td>
+<td>Preview number of lines to preview for text files (not limited to files with extension <code>.txt</code>), default to <code>5</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Automatic-preview">Automatic preview<a class="anchor-link" href="#Automatic-preview">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS will automatically preview results of Python assignments when you send statements to the sidepanel for execution. For example, if you do execute the following cell with <code>Ctrl-Shift-Enter</code>,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span><span class="o">=</span><span class="s1">&#39;12345&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The cell would be executed in the side panel as</p>
+
+<pre><code>%preview s
+s='12345'</code></pre>
+<p>which allows instant feedback when you step through your code.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS would also automatic preview results from SoS workflows that are specified with statement <code>output:</code>. For example, the following SoS cell executes a scratch step (step without section head) and generates output <code>a.png</code>. The figure would be automatically displayed in the side panel after the step is executed.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">output:</span> <span class="s1">&#39;a.png&#39;</span>
+<span class="kn">R:</span>
+<span class="n">png</span><span class="p">(</span><span class="s2">&quot;${output}&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)))</span>
+<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preview-of-remote-files">Preview of remote files<a class="anchor-link" href="#Preview-of-remote-files">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When a workflow or a task is executed remotely (see <a href="Remote_Execution.html">Remote Execution</a> for details, result files might be on a remote host that is unavailable for local preview. In this case, you can specify the host with option <code>-r HOST</code> and preview files remotely. This essentially executes a command <code>sos preview -r HOST FILE</code> on the remote host and allows you to preview content of (large) files without copying them locally.</p>
+<p>For example, you can execute a workflow on a remote host <code>dev</code> to generate a file (<code>mygraphic.png</code>) and use <code>%preview -r dev</code> to preview it.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">r</span> <span class="n">dev</span>
+<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">test</span><span class="o">.</span><span class="n">png</span> <span class="o">-</span><span class="n">r</span> <span class="n">dev</span>
+<span class="kn">R:</span>
+  <span class="n">png</span><span class="p">(</span><span class="nb">file</span><span class="o">=</span><span class="s2">&quot;mygraphic.png&quot;</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
+  <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rnorm</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="n">y</span><span class="o">=</span><span class="n">rnorm</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="n">main</span><span class="o">=</span><span class="s2">&quot;example&quot;</span><span class="p">)</span>
+  <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> test.png (11.2 KiB):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preview-of-tables">Preview of tables<a class="anchor-link" href="#Preview-of-tables">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If a data to be previewed is a Pandas DataFrame (or a csv or excel file which would be previewed as a DataFrame), SoS will preview it as a sortable and searchable table. For example, the following cell get a data.frame <code>mtcar</code> from the R kernel (as a pandas DataFrame) and preview it in the main notebook:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">mtcars</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
+<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">mtcars</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview mtcars</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> mtcars: DataFrame of shape (32, 11)</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+    <div class='dataframe_container' style="max-height:400px">
+    <input type="text" class='dataframe_input' id="search_1" onkeyup="filterDataFrame('1')" placeholder="Search for names..">
+    <table border="1" id="dataframe_1" class="sos_dataframe dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th> &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 0, 'alphabetic')"></th>
+      <th>mpg &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 1, 'numeric')"></th>
+      <th>cyl &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 2, 'numeric')"></th>
+      <th>disp &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 3, 'numeric')"></th>
+      <th>hp &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 4, 'numeric')"></th>
+      <th>drat &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 5, 'numeric')"></th>
+      <th>wt &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 6, 'numeric')"></th>
+      <th>qsec &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 7, 'numeric')"></th>
+      <th>vs &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 8, 'numeric')"></th>
+      <th>am &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 9, 'numeric')"></th>
+      <th>gear &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 10, 'numeric')"></th>
+      <th>carb &nbsp; <i class="fa fa-sort" style="color:lightgray" onclick="sortDataFrame('1', 11, 'numeric')"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Mazda RX4</th>
+      <td>21.0</td>
+      <td>6.0</td>
+      <td>160.0</td>
+      <td>110.0</td>
+      <td>3.90</td>
+      <td>2.620</td>
+      <td>16.46</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Mazda RX4 Wag</th>
+      <td>21.0</td>
+      <td>6.0</td>
+      <td>160.0</td>
+      <td>110.0</td>
+      <td>3.90</td>
+      <td>2.875</td>
+      <td>17.02</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Datsun 710</th>
+      <td>22.8</td>
+      <td>4.0</td>
+      <td>108.0</td>
+      <td>93.0</td>
+      <td>3.85</td>
+      <td>2.320</td>
+      <td>18.61</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Hornet 4 Drive</th>
+      <td>21.4</td>
+      <td>6.0</td>
+      <td>258.0</td>
+      <td>110.0</td>
+      <td>3.08</td>
+      <td>3.215</td>
+      <td>19.44</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Hornet Sportabout</th>
+      <td>18.7</td>
+      <td>8.0</td>
+      <td>360.0</td>
+      <td>175.0</td>
+      <td>3.15</td>
+      <td>3.440</td>
+      <td>17.02</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Valiant</th>
+      <td>18.1</td>
+      <td>6.0</td>
+      <td>225.0</td>
+      <td>105.0</td>
+      <td>2.76</td>
+      <td>3.460</td>
+      <td>20.22</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Duster 360</th>
+      <td>14.3</td>
+      <td>8.0</td>
+      <td>360.0</td>
+      <td>245.0</td>
+      <td>3.21</td>
+      <td>3.570</td>
+      <td>15.84</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Merc 240D</th>
+      <td>24.4</td>
+      <td>4.0</td>
+      <td>146.7</td>
+      <td>62.0</td>
+      <td>3.69</td>
+      <td>3.190</td>
+      <td>20.00</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Merc 230</th>
+      <td>22.8</td>
+      <td>4.0</td>
+      <td>140.8</td>
+      <td>95.0</td>
+      <td>3.92</td>
+      <td>3.150</td>
+      <td>22.90</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Merc 280</th>
+      <td>19.2</td>
+      <td>6.0</td>
+      <td>167.6</td>
+      <td>123.0</td>
+      <td>3.92</td>
+      <td>3.440</td>
+      <td>18.30</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Merc 280C</th>
+      <td>17.8</td>
+      <td>6.0</td>
+      <td>167.6</td>
+      <td>123.0</td>
+      <td>3.92</td>
+      <td>3.440</td>
+      <td>18.90</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Merc 450SE</th>
+      <td>16.4</td>
+      <td>8.0</td>
+      <td>275.8</td>
+      <td>180.0</td>
+      <td>3.07</td>
+      <td>4.070</td>
+      <td>17.40</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>Merc 450SL</th>
+      <td>17.3</td>
+      <td>8.0</td>
+      <td>275.8</td>
+      <td>180.0</td>
+      <td>3.07</td>
+      <td>3.730</td>
+      <td>17.60</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>Merc 450SLC</th>
+      <td>15.2</td>
+      <td>8.0</td>
+      <td>275.8</td>
+      <td>180.0</td>
+      <td>3.07</td>
+      <td>3.780</td>
+      <td>18.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>Cadillac Fleetwood</th>
+      <td>10.4</td>
+      <td>8.0</td>
+      <td>472.0</td>
+      <td>205.0</td>
+      <td>2.93</td>
+      <td>5.250</td>
+      <td>17.98</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Lincoln Continental</th>
+      <td>10.4</td>
+      <td>8.0</td>
+      <td>460.0</td>
+      <td>215.0</td>
+      <td>3.00</td>
+      <td>5.424</td>
+      <td>17.82</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Chrysler Imperial</th>
+      <td>14.7</td>
+      <td>8.0</td>
+      <td>440.0</td>
+      <td>230.0</td>
+      <td>3.23</td>
+      <td>5.345</td>
+      <td>17.42</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Fiat 128</th>
+      <td>32.4</td>
+      <td>4.0</td>
+      <td>78.7</td>
+      <td>66.0</td>
+      <td>4.08</td>
+      <td>2.200</td>
+      <td>19.47</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Honda Civic</th>
+      <td>30.4</td>
+      <td>4.0</td>
+      <td>75.7</td>
+      <td>52.0</td>
+      <td>4.93</td>
+      <td>1.615</td>
+      <td>18.52</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Toyota Corolla</th>
+      <td>33.9</td>
+      <td>4.0</td>
+      <td>71.1</td>
+      <td>65.0</td>
+      <td>4.22</td>
+      <td>1.835</td>
+      <td>19.90</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Toyota Corona</th>
+      <td>21.5</td>
+      <td>4.0</td>
+      <td>120.1</td>
+      <td>97.0</td>
+      <td>3.70</td>
+      <td>2.465</td>
+      <td>20.01</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Dodge Challenger</th>
+      <td>15.5</td>
+      <td>8.0</td>
+      <td>318.0</td>
+      <td>150.0</td>
+      <td>2.76</td>
+      <td>3.520</td>
+      <td>16.87</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>AMC Javelin</th>
+      <td>15.2</td>
+      <td>8.0</td>
+      <td>304.0</td>
+      <td>150.0</td>
+      <td>3.15</td>
+      <td>3.435</td>
+      <td>17.30</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Camaro Z28</th>
+      <td>13.3</td>
+      <td>8.0</td>
+      <td>350.0</td>
+      <td>245.0</td>
+      <td>3.73</td>
+      <td>3.840</td>
+      <td>15.41</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Pontiac Firebird</th>
+      <td>19.2</td>
+      <td>8.0</td>
+      <td>400.0</td>
+      <td>175.0</td>
+      <td>3.08</td>
+      <td>3.845</td>
+      <td>17.05</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Fiat X1-9</th>
+      <td>27.3</td>
+      <td>4.0</td>
+      <td>79.0</td>
+      <td>66.0</td>
+      <td>4.08</td>
+      <td>1.935</td>
+      <td>18.90</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Porsche 914-2</th>
+      <td>26.0</td>
+      <td>4.0</td>
+      <td>120.3</td>
+      <td>91.0</td>
+      <td>4.43</td>
+      <td>2.140</td>
+      <td>16.70</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Lotus Europa</th>
+      <td>30.4</td>
+      <td>4.0</td>
+      <td>95.1</td>
+      <td>113.0</td>
+      <td>3.77</td>
+      <td>1.513</td>
+      <td>16.90</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Ford Pantera L</th>
+      <td>15.8</td>
+      <td>8.0</td>
+      <td>351.0</td>
+      <td>264.0</td>
+      <td>4.22</td>
+      <td>3.170</td>
+      <td>14.50</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Ferrari Dino</th>
+      <td>19.7</td>
+      <td>6.0</td>
+      <td>145.0</td>
+      <td>175.0</td>
+      <td>3.62</td>
+      <td>2.770</td>
+      <td>15.50</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>Maserati Bora</th>
+      <td>15.0</td>
+      <td>8.0</td>
+      <td>301.0</td>
+      <td>335.0</td>
+      <td>3.54</td>
+      <td>3.570</td>
+      <td>14.60</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <th>Volvo 142E</th>
+      <td>21.4</td>
+      <td>4.0</td>
+      <td>121.0</td>
+      <td>109.0</td>
+      <td>4.11</td>
+      <td>2.780</td>
+      <td>18.60</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+    </tr>
+  </tbody>
+</table></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Compared to previewing the same variable in R, you have the addition features of</p>
+<ol>
+<li>sorting table by clicking the sort icon at the header of each column</li>
+<li>displaying a subset of rows that matches specified text in the input text</li>
+</ol>
+<p>Note that SoS by default outputs the first 200 rows of the table. You can use option <code>-l</code> (<code>--limit</code>) to change this threshold.</p>
+<p>What makes this feature particularly interesting is that the table will be sortable and searchable when you save the jupyter notebook in HTML format (through command <code>sos convert analysis.ipynb analysis.html --template sos-report</code> or magic <code>%sossave --to html</code>).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Scatter-Plot">Scatter Plot<a class="anchor-link" href="#Scatter-Plot">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The tablular preview of Pandas DataFrame is actually using the default <code>table</code> style of <code>%preview</code>. If you have one or more numeric columns, you can use the <code>scatterplot</code> style of <code>%preview</code> to view the data. For example, the following command plots <code>mpg</code> vs <code>disp</code> of the <code>mtcars</code> dataset, stratified by <code>cyl</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mtcars</span> <span class="o">-</span><span class="n">n</span> <span class="o">-</span><span class="n">s</span> <span class="n">scatterplot</span> <span class="n">mpg</span> <span class="n">disp</span> <span class="o">--</span><span class="n">by</span> <span class="n">cyl</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview mtcars</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> mtcars: DataFrame of shape (32, 11)</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<div class='scatterplot_container'>
+<div class='scatterplot' id='dataframe_scatterplot_1' width='50vw' height='38vw'></div>
+<script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+<script>
+    var options = {"xaxis": {}, "series": {"lines": {"show": false}, "points": {"show": true}}, "yaxis": {}, "grid": {"hoverable": true, "clickable": true}};
+    function plotScatterPlot1() {
+        plot = $.plot('#dataframe_scatterplot_1', [{"data": [[22.8, 108.0, "index: Datsun&nbsp;710<br>mpg: 22.8"], [24.4, 146.7, "index: Merc&nbsp;240D<br>mpg: 24.4"], [22.8, 140.8, "index: Merc&nbsp;230<br>mpg: 22.8"], [32.4, 78.7, "index: Fiat&nbsp;128<br>mpg: 32.4"], [30.4, 75.7, "index: Honda&nbsp;Civic<br>mpg: 30.4"], [33.9, 71.1, "index: Toyota&nbsp;Corolla<br>mpg: 33.9"], [21.5, 120.1, "index: Toyota&nbsp;Corona<br>mpg: 21.5"], [27.3, 79.0, "index: Fiat&nbsp;X1&#8209;9<br>mpg: 27.3"], [26.0, 120.3, "index: Porsche&nbsp;914&#8209;2<br>mpg: 26.0"], [30.4, 95.1, "index: Lotus&nbsp;Europa<br>mpg: 30.4"], [21.4, 121.0, "index: Volvo&nbsp;142E<br>mpg: 21.4"]], "label": "disp (cyl=4.0)"}, {"data": [[21.0, 160.0, "index: Mazda&nbsp;RX4<br>mpg: 21.0"], [21.0, 160.0, "index: Mazda&nbsp;RX4&nbsp;Wag<br>mpg: 21.0"], [21.4, 258.0, "index: Hornet&nbsp;4&nbsp;Drive<br>mpg: 21.4"], [18.1, 225.0, "index: Valiant<br>mpg: 18.1"], [19.2, 167.6, "index: Merc&nbsp;280<br>mpg: 19.2"], [17.8, 167.6, "index: Merc&nbsp;280C<br>mpg: 17.8"], [19.7, 145.0, "index: Ferrari&nbsp;Dino<br>mpg: 19.7"]], "label": "disp (cyl=6.0)"}, {"data": [[18.7, 360.0, "index: Hornet&nbsp;Sportabout<br>mpg: 18.7"], [14.3, 360.0, "index: Duster&nbsp;360<br>mpg: 14.3"], [16.4, 275.8, "index: Merc&nbsp;450SE<br>mpg: 16.4"], [17.3, 275.8, "index: Merc&nbsp;450SL<br>mpg: 17.3"], [15.2, 275.8, "index: Merc&nbsp;450SLC<br>mpg: 15.2"], [10.4, 472.0, "index: Cadillac&nbsp;Fleetwood<br>mpg: 10.4"], [10.4, 460.0, "index: Lincoln&nbsp;Continental<br>mpg: 10.4"], [14.7, 440.0, "index: Chrysler&nbsp;Imperial<br>mpg: 14.7"], [15.5, 318.0, "index: Dodge&nbsp;Challenger<br>mpg: 15.5"], [15.2, 304.0, "index: AMC&nbsp;Javelin<br>mpg: 15.2"], [13.3, 350.0, "index: Camaro&nbsp;Z28<br>mpg: 13.3"], [19.2, 400.0, "index: Pontiac&nbsp;Firebird<br>mpg: 19.2"], [15.8, 351.0, "index: Ford&nbsp;Pantera&nbsp;L<br>mpg: 15.8"], [15.0, 301.0, "index: Maserati&nbsp;Bora<br>mpg: 15.0"]], "label": "disp (cyl=8.0)"}], options)
+
+    if ($('#dftooltip').length == 0) {
+        $("<div id='dftooltip'></div>").css({
+            position: "absolute",
+            display: "none",
+            border: "1px solid #fdd",
+            padding: "2px",
+            "background-color": "#fee",
+            "z-index": 1000,
+            opacity: 0.80
+            }).appendTo("body");
+    }
+    $('#dataframe_scatterplot_1').bind("plothover", function (event, pos, item) {
+            if (item) {
+                $("#dftooltip").html((item.series.label + ": " +
+                    item.series.data[item.dataIndex][1].toString() + "<br>" +
+                    item.series.data[item.dataIndex][2]).trim()).css({top: item.pageY+5, left: item.pageX+5})
+                    .fadeIn(200);
+            } else {
+                $("#dftooltip").hide();
+            }
+    });
+    }
+
+// we will wait for the div to be displayed on the HTML/Jupyter side before we plot
+// the figure. This might not be necessary but at least this is a chance for us
+// to resize the div and avoid some flot error
+
+var dt = 100;
+// the frontend might be notified before the table is inserted as results.
+function showFigure1() {
+    if ( $('#dataframe_scatterplot_1').length === 0 || $.plot === undefined ) {
+          dt = dt * 1.5; // slow-down checks for datatable as time goes on;
+          setTimeout(showFigure1, dt);
+          return;
+   } else {
+        $('#dataframe_scatterplot_1').css('width', '50vw').css('height', '38vw');
+        plotScatterPlot1();
+    }
+}
+showFigure1()
+</script>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The advantage of this scatterplot is that you can see a description of data when you hover over the data points, which can be more informative than static figures produced by, for example, R.</p>
+<p>The <code>scatterplot</code> style provides a number of options and you can use option <code>-h</code> with <code>-s</code> to display them:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mtcars</span> <span class="o">-</span><span class="n">s</span> <span class="n">scatterplot</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %preview -s scatterplot [-h] [--ylim YLIM YLIM] [--xlim XLIM XLIM]
+                               [--log {x,y,xy,yx}] [--width WIDTH]
+                               [--height HEIGHT] [-b BY [BY ...]]
+                               [--show SHOW [SHOW ...]]
+                               [-t [TOOLTIP [TOOLTIP ...]]] [-l LIMIT]
+                               [cols [cols ...]]
+
+positional arguments:
+  cols                  Columns to plot, which should all be numeric. If one
+                        column is specified, it is assumed to be a x-y plot
+                        with x being 0, 1, 2, 3, .... If two or more columns
+                        (n) are specified, n-1 series will be plotted with the
+                        first column being the x axis, in which case an
+                        &#34;_index&#34; name can be used to specify 0, 1, 2, 3, ....
+                        This option can be igured if the dataframe has only
+                        one or two columns.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --ylim YLIM YLIM      Range of y-axis
+  --xlim XLIM XLIM      Range of x-axis
+  --log {x,y,xy,yx}     Make x-axis, y-axis, or both to logarithmic
+  --width WIDTH         Width of the plot.
+  --height HEIGHT       Height of the plot.
+  -b BY [BY ...], --by BY [BY ...]
+                        columns by which the data points are stratified.
+  --show SHOW [SHOW ...]
+                        What to show in the plot, can be &#39;lines&#39;, &#39;points&#39; or
+                        both. Default to points, and lines if x-axis is
+                        sorted.
+  -t [TOOLTIP [TOOLTIP ...]], --tooltip [TOOLTIP [TOOLTIP ...]]
+                        Fields to be shown in tooltip, in addition to the row
+                        index and point values that would be shown by default.
+  -l LIMIT, --limit LIMIT
+                        Maximum number of records to plot.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, you can show more tooltips and multiple columns as follows:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mtcars</span> <span class="o">-</span><span class="n">n</span> <span class="o">-</span><span class="n">s</span> <span class="n">scatterplot</span> <span class="n">_index</span> <span class="n">disp</span> <span class="n">hp</span> <span class="n">mpg</span> <span class="o">--</span><span class="n">tooltip</span> <span class="n">wt</span> <span class="n">qsec</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview mtcars</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> mtcars: DataFrame of shape (32, 11)</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<div class='scatterplot_container'>
+<div class='scatterplot_by_rowname' id='dataframe_scatterplot_2' width='50vw' height='38vw'></div>
+<script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+<script>
+    var options = {"xaxis": {"ticks": [[0, "Mazda&nbsp;RX4"], [1, "Mazda&nbsp;RX4&nbsp;Wag"], [2, "Datsun&nbsp;710"], [3, "Hornet&nbsp;4&nbsp;Drive"], [4, "Hornet&nbsp;Sportabout"], [5, "Valiant"], [6, "Duster&nbsp;360"], [7, "Merc&nbsp;240D"], [8, "Merc&nbsp;230"], [9, "Merc&nbsp;280"], [10, "Merc&nbsp;280C"], [11, "Merc&nbsp;450SE"], [12, "Merc&nbsp;450SL"], [13, "Merc&nbsp;450SLC"], [14, "Cadillac&nbsp;Fleetwood"], [15, "Lincoln&nbsp;Continental"], [16, "Chrysler&nbsp;Imperial"], [17, "Fiat&nbsp;128"], [18, "Honda&nbsp;Civic"], [19, "Toyota&nbsp;Corolla"], [20, "Toyota&nbsp;Corona"], [21, "Dodge&nbsp;Challenger"], [22, "AMC&nbsp;Javelin"], [23, "Camaro&nbsp;Z28"], [24, "Pontiac&nbsp;Firebird"], [25, "Fiat&nbsp;X1&#8209;9"], [26, "Porsche&nbsp;914&#8209;2"], [27, "Lotus&nbsp;Europa"], [28, "Ford&nbsp;Pantera&nbsp;L"], [29, "Ferrari&nbsp;Dino"], [30, "Maserati&nbsp;Bora"], [31, "Volvo&nbsp;142E"]]}, "series": {"lines": {"show": true}, "points": {"show": true}}, "yaxis": {}, "grid": {"hoverable": true, "clickable": true}};
+    function plotScatterPlot2() {
+        plot = $.plot('#dataframe_scatterplot_2', [{"clickable": true, "data": [[0, 160.0, "index: Mazda&nbsp;RX4<br>wt: 2.62<br>qsec: 16.46"], [1, 160.0, "index: Mazda&nbsp;RX4&nbsp;Wag<br>wt: 2.875<br>qsec: 17.02"], [2, 108.0, "index: Datsun&nbsp;710<br>wt: 2.32<br>qsec: 18.61"], [3, 258.0, "index: Hornet&nbsp;4&nbsp;Drive<br>wt: 3.215<br>qsec: 19.44"], [4, 360.0, "index: Hornet&nbsp;Sportabout<br>wt: 3.44<br>qsec: 17.02"], [5, 225.0, "index: Valiant<br>wt: 3.46<br>qsec: 20.22"], [6, 360.0, "index: Duster&nbsp;360<br>wt: 3.57<br>qsec: 15.84"], [7, 146.7, "index: Merc&nbsp;240D<br>wt: 3.19<br>qsec: 20.0"], [8, 140.8, "index: Merc&nbsp;230<br>wt: 3.15<br>qsec: 22.9"], [9, 167.6, "index: Merc&nbsp;280<br>wt: 3.44<br>qsec: 18.3"], [10, 167.6, "index: Merc&nbsp;280C<br>wt: 3.44<br>qsec: 18.9"], [11, 275.8, "index: Merc&nbsp;450SE<br>wt: 4.07<br>qsec: 17.4"], [12, 275.8, "index: Merc&nbsp;450SL<br>wt: 3.73<br>qsec: 17.6"], [13, 275.8, "index: Merc&nbsp;450SLC<br>wt: 3.78<br>qsec: 18.0"], [14, 472.0, "index: Cadillac&nbsp;Fleetwood<br>wt: 5.25<br>qsec: 17.98"], [15, 460.0, "index: Lincoln&nbsp;Continental<br>wt: 5.424<br>qsec: 17.82"], [16, 440.0, "index: Chrysler&nbsp;Imperial<br>wt: 5.345<br>qsec: 17.42"], [17, 78.7, "index: Fiat&nbsp;128<br>wt: 2.2<br>qsec: 19.47"], [18, 75.7, "index: Honda&nbsp;Civic<br>wt: 1.615<br>qsec: 18.52"], [19, 71.1, "index: Toyota&nbsp;Corolla<br>wt: 1.835<br>qsec: 19.9"], [20, 120.1, "index: Toyota&nbsp;Corona<br>wt: 2.465<br>qsec: 20.01"], [21, 318.0, "index: Dodge&nbsp;Challenger<br>wt: 3.52<br>qsec: 16.87"], [22, 304.0, "index: AMC&nbsp;Javelin<br>wt: 3.435<br>qsec: 17.3"], [23, 350.0, "index: Camaro&nbsp;Z28<br>wt: 3.84<br>qsec: 15.41"], [24, 400.0, "index: Pontiac&nbsp;Firebird<br>wt: 3.845<br>qsec: 17.05"], [25, 79.0, "index: Fiat&nbsp;X1&#8209;9<br>wt: 1.935<br>qsec: 18.9"], [26, 120.3, "index: Porsche&nbsp;914&#8209;2<br>wt: 2.14<br>qsec: 16.7"], [27, 95.1, "index: Lotus&nbsp;Europa<br>wt: 1.513<br>qsec: 16.9"], [28, 351.0, "index: Ford&nbsp;Pantera&nbsp;L<br>wt: 3.17<br>qsec: 14.5"], [29, 145.0, "index: Ferrari&nbsp;Dino<br>wt: 2.77<br>qsec: 15.5"], [30, 301.0, "index: Maserati&nbsp;Bora<br>wt: 3.57<br>qsec: 14.6"], [31, 121.0, "index: Volvo&nbsp;142E<br>wt: 2.78<br>qsec: 18.6"]], "hoverable": true, "label": "disp"}, {"clickable": true, "data": [[0, 110.0, "index: Mazda&nbsp;RX4<br>wt: 2.62<br>qsec: 16.46"], [1, 110.0, "index: Mazda&nbsp;RX4&nbsp;Wag<br>wt: 2.875<br>qsec: 17.02"], [2, 93.0, "index: Datsun&nbsp;710<br>wt: 2.32<br>qsec: 18.61"], [3, 110.0, "index: Hornet&nbsp;4&nbsp;Drive<br>wt: 3.215<br>qsec: 19.44"], [4, 175.0, "index: Hornet&nbsp;Sportabout<br>wt: 3.44<br>qsec: 17.02"], [5, 105.0, "index: Valiant<br>wt: 3.46<br>qsec: 20.22"], [6, 245.0, "index: Duster&nbsp;360<br>wt: 3.57<br>qsec: 15.84"], [7, 62.0, "index: Merc&nbsp;240D<br>wt: 3.19<br>qsec: 20.0"], [8, 95.0, "index: Merc&nbsp;230<br>wt: 3.15<br>qsec: 22.9"], [9, 123.0, "index: Merc&nbsp;280<br>wt: 3.44<br>qsec: 18.3"], [10, 123.0, "index: Merc&nbsp;280C<br>wt: 3.44<br>qsec: 18.9"], [11, 180.0, "index: Merc&nbsp;450SE<br>wt: 4.07<br>qsec: 17.4"], [12, 180.0, "index: Merc&nbsp;450SL<br>wt: 3.73<br>qsec: 17.6"], [13, 180.0, "index: Merc&nbsp;450SLC<br>wt: 3.78<br>qsec: 18.0"], [14, 205.0, "index: Cadillac&nbsp;Fleetwood<br>wt: 5.25<br>qsec: 17.98"], [15, 215.0, "index: Lincoln&nbsp;Continental<br>wt: 5.424<br>qsec: 17.82"], [16, 230.0, "index: Chrysler&nbsp;Imperial<br>wt: 5.345<br>qsec: 17.42"], [17, 66.0, "index: Fiat&nbsp;128<br>wt: 2.2<br>qsec: 19.47"], [18, 52.0, "index: Honda&nbsp;Civic<br>wt: 1.615<br>qsec: 18.52"], [19, 65.0, "index: Toyota&nbsp;Corolla<br>wt: 1.835<br>qsec: 19.9"], [20, 97.0, "index: Toyota&nbsp;Corona<br>wt: 2.465<br>qsec: 20.01"], [21, 150.0, "index: Dodge&nbsp;Challenger<br>wt: 3.52<br>qsec: 16.87"], [22, 150.0, "index: AMC&nbsp;Javelin<br>wt: 3.435<br>qsec: 17.3"], [23, 245.0, "index: Camaro&nbsp;Z28<br>wt: 3.84<br>qsec: 15.41"], [24, 175.0, "index: Pontiac&nbsp;Firebird<br>wt: 3.845<br>qsec: 17.05"], [25, 66.0, "index: Fiat&nbsp;X1&#8209;9<br>wt: 1.935<br>qsec: 18.9"], [26, 91.0, "index: Porsche&nbsp;914&#8209;2<br>wt: 2.14<br>qsec: 16.7"], [27, 113.0, "index: Lotus&nbsp;Europa<br>wt: 1.513<br>qsec: 16.9"], [28, 264.0, "index: Ford&nbsp;Pantera&nbsp;L<br>wt: 3.17<br>qsec: 14.5"], [29, 175.0, "index: Ferrari&nbsp;Dino<br>wt: 2.77<br>qsec: 15.5"], [30, 335.0, "index: Maserati&nbsp;Bora<br>wt: 3.57<br>qsec: 14.6"], [31, 109.0, "index: Volvo&nbsp;142E<br>wt: 2.78<br>qsec: 18.6"]], "hoverable": true, "label": "hp"}, {"clickable": true, "data": [[0, 21.0, "index: Mazda&nbsp;RX4<br>wt: 2.62<br>qsec: 16.46"], [1, 21.0, "index: Mazda&nbsp;RX4&nbsp;Wag<br>wt: 2.875<br>qsec: 17.02"], [2, 22.8, "index: Datsun&nbsp;710<br>wt: 2.32<br>qsec: 18.61"], [3, 21.4, "index: Hornet&nbsp;4&nbsp;Drive<br>wt: 3.215<br>qsec: 19.44"], [4, 18.7, "index: Hornet&nbsp;Sportabout<br>wt: 3.44<br>qsec: 17.02"], [5, 18.1, "index: Valiant<br>wt: 3.46<br>qsec: 20.22"], [6, 14.3, "index: Duster&nbsp;360<br>wt: 3.57<br>qsec: 15.84"], [7, 24.4, "index: Merc&nbsp;240D<br>wt: 3.19<br>qsec: 20.0"], [8, 22.8, "index: Merc&nbsp;230<br>wt: 3.15<br>qsec: 22.9"], [9, 19.2, "index: Merc&nbsp;280<br>wt: 3.44<br>qsec: 18.3"], [10, 17.8, "index: Merc&nbsp;280C<br>wt: 3.44<br>qsec: 18.9"], [11, 16.4, "index: Merc&nbsp;450SE<br>wt: 4.07<br>qsec: 17.4"], [12, 17.3, "index: Merc&nbsp;450SL<br>wt: 3.73<br>qsec: 17.6"], [13, 15.2, "index: Merc&nbsp;450SLC<br>wt: 3.78<br>qsec: 18.0"], [14, 10.4, "index: Cadillac&nbsp;Fleetwood<br>wt: 5.25<br>qsec: 17.98"], [15, 10.4, "index: Lincoln&nbsp;Continental<br>wt: 5.424<br>qsec: 17.82"], [16, 14.7, "index: Chrysler&nbsp;Imperial<br>wt: 5.345<br>qsec: 17.42"], [17, 32.4, "index: Fiat&nbsp;128<br>wt: 2.2<br>qsec: 19.47"], [18, 30.4, "index: Honda&nbsp;Civic<br>wt: 1.615<br>qsec: 18.52"], [19, 33.9, "index: Toyota&nbsp;Corolla<br>wt: 1.835<br>qsec: 19.9"], [20, 21.5, "index: Toyota&nbsp;Corona<br>wt: 2.465<br>qsec: 20.01"], [21, 15.5, "index: Dodge&nbsp;Challenger<br>wt: 3.52<br>qsec: 16.87"], [22, 15.2, "index: AMC&nbsp;Javelin<br>wt: 3.435<br>qsec: 17.3"], [23, 13.3, "index: Camaro&nbsp;Z28<br>wt: 3.84<br>qsec: 15.41"], [24, 19.2, "index: Pontiac&nbsp;Firebird<br>wt: 3.845<br>qsec: 17.05"], [25, 27.3, "index: Fiat&nbsp;X1&#8209;9<br>wt: 1.935<br>qsec: 18.9"], [26, 26.0, "index: Porsche&nbsp;914&#8209;2<br>wt: 2.14<br>qsec: 16.7"], [27, 30.4, "index: Lotus&nbsp;Europa<br>wt: 1.513<br>qsec: 16.9"], [28, 15.8, "index: Ford&nbsp;Pantera&nbsp;L<br>wt: 3.17<br>qsec: 14.5"], [29, 19.7, "index: Ferrari&nbsp;Dino<br>wt: 2.77<br>qsec: 15.5"], [30, 15.0, "index: Maserati&nbsp;Bora<br>wt: 3.57<br>qsec: 14.6"], [31, 21.4, "index: Volvo&nbsp;142E<br>wt: 2.78<br>qsec: 18.6"]], "hoverable": true, "label": "mpg"}], options)
+
+    if ($('#dftooltip').length == 0) {
+        $("<div id='dftooltip'></div>").css({
+            position: "absolute",
+            display: "none",
+            border: "1px solid #fdd",
+            padding: "2px",
+            "background-color": "#fee",
+            "z-index": 1000,
+            opacity: 0.80
+            }).appendTo("body");
+    }
+    $('#dataframe_scatterplot_2').bind("plothover", function (event, pos, item) {
+            if (item) {
+                $("#dftooltip").html((item.series.label + ": " +
+                    item.series.data[item.dataIndex][1].toString() + "<br>" +
+                    item.series.data[item.dataIndex][2]).trim()).css({top: item.pageY+5, left: item.pageX+5})
+                    .fadeIn(200);
+            } else {
+                $("#dftooltip").hide();
+            }
+    });
+    }
+
+// we will wait for the div to be displayed on the HTML/Jupyter side before we plot
+// the figure. This might not be necessary but at least this is a chance for us
+// to resize the div and avoid some flot error
+
+var dt = 100;
+// the frontend might be notified before the table is inserted as results.
+function showFigure2() {
+    if ( $('#dataframe_scatterplot_2').length === 0 || $.plot === undefined ) {
+          dt = dt * 1.5; // slow-down checks for datatable as time goes on;
+          setTimeout(showFigure2, dt);
+          return;
+   } else {
+        $('#dataframe_scatterplot_2').css('width', '50vw').css('height', '38vw');
+        plotScatterPlot2();
+    }
+}
+showFigure2()
+</script>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Command-sos-preview">Command <code>sos preview</code><a class="anchor-link" href="#Command-sos-preview">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%preview</code> magic has a command line counterpart <code>sos preview</code>. This command cannot display any figure but can be convenient to preview content of compressed files and files that are not previewed by the operating system (e.g. <code>bam</code> files). The <code>-r</code> option is especially useful in previewing files on a remote host without logging to the remote host or copying the files to local host.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Execution-of-Workflows">Execution of Workflows<a class="anchor-link" href="#Execution-of-Workflows">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We have discussed markdown cells, subkernel cells, and SoS cells, which can be considered as a subkernel cell with SoS (Python) kernel. SoS notebook supports another type of cell, namely <strong>workflow cell</strong>.</p>
+<p>A workflow cell is a SoS cell with one or more formal <strong>SoS steps</strong>, which are marked by a <strong>section header</strong>. In summary,</p>
+<ul>
+<li>A workflow cell can contain a complete workflow and be executed by magic <code>%run</code>.</li>
+<li>Sections defined in all workflow cells in a notebook form <strong>notebook workflows</strong>, which can be executed by magic <code>%sosrun</code> or by command <code>sos run</code> (or <code>sos-runner</code>) from command line.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Magic-%run">Magic <code>%run</code><a class="anchor-link" href="#Magic-%run">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%sos</code> executes the content of a cell, prepended with all <code>[global]</code> sections defined in the notebook, as a complete SoS workflow in a separate namespace.</p>
+<p>For example, the following workflow cell defines a SoS step, but SoS Notebook will ignore it when you execute it with <code>Ctrl-Enter</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">example_step</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can only execute such a cell with magic <code>%run</code>:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="n">example_step_1</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is example_step_1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%run</code> magic treats the content of the cell as a SoS workflow so you can put multiple sections in the cell</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="n">example_step_10</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name}&quot;</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">example_step_20</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is example_step_10
+This is example_step_20
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can have global section, define parameter, and execute the workflow multiple times with multiple <code>%run</code> magics:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">var</span> <span class="mi">200</span>
+
+<span class="kn">parameter:</span> <span class="n">var</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="p">[</span><span class="n">example_step_15</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name} with option ${var}&quot;</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">example_step_25</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is example_step_15 with option 100
+This is example_step_25
+This is example_step_15 with option 200
+This is example_step_25
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is important to remember that the workflow is executed in its own namespace so it needs to be self-contained. That is to say, if you define a variable in the SoS namespace,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">var</span> <span class="o">=</span> <span class="mi">500</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The variable is not available to the workflow</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to process statement &#39;print(var)&#39; (NameError): name &#39;var&#39; is not defined
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>so you will have to pass it to the workflow as command line options</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">var</span> <span class="err">$</span><span class="p">{</span><span class="n">var</span><span class="p">}</span>
+<span class="kn">parameter:</span> <span class="n">var</span> <span class="o">=</span> <span class="nb">int</span>
+<span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> %run --var 200<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>200
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you have multiple such definitions or if you have function definitions, you can define them in a <code>[global]</code> section, which will be executed before the cell workflow.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">var</span> <span class="o">=</span> <span class="s1">&#39;this is global&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>this is global
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to command line tool <code>sos run</code>, magic <code>%run</code> accepts a large number of parameters. Please refer to the output of <code>%run -h</code> for details.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Magic-%sosrun">Magic <code>%sosrun</code><a class="anchor-link" href="#Magic-%sosrun">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%sosrun</code> is similar to <code>%sos</code> in its ability to execute workflows with many options, with the major difference in that it execute <strong>notebook workflows</strong>, which are defined by all sections defined in the notebook. The notebook workflow can be displayed with magic <code>%preview --workflow</code> and is the workflow that will be executed if the notebook is executed from the command line with command <code>sos run</code> or <code>sos-runner</code>.</p>
+<p>It is worth noting that magics <code>%sosrun</code> and <code>%run</code> can be used together, so that you can run single workflows with <code>%run</code> and multiple workflows with <code>%sosrun</code>. For example, you can debug and execute single workflows with magic %run`</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="n">stepA</span> <span class="o">--</span><span class="n">var</span> <span class="mi">10</span>
+
+<span class="p">[</span><span class="n">stepA</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">var</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${step_name} with parameter ${var}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>stepA_0 with parameter 10
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and execute many such workflows in batch mode with magic <code>%sosrun</code>:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">master</span>
+
+<span class="p">[</span><span class="n">master</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;stepA&#39;</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>stepA_0 with parameter 30
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Code-completion-and-variable-inspection">Code completion and variable inspection<a class="anchor-link" href="#Code-completion-and-variable-inspection">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Code completion are very useful for you to work with a SoS environment. For example, you can enter <code>&lt;tab&gt;</code> in</p>
+
+<pre><code>%&lt;tab&gt;</code></pre>
+<p>to get a list of available magics, in</p>
+
+<pre><code>%get &lt;tab&gt;</code></pre>
+<p>to get a list of available variables, in</p>
+
+<pre><code>%get dat&lt;tab&gt;</code></pre>
+<p>to get a list of all variables starting with name <code>dat</code>, in</p>
+
+<pre><code>%cd ~/&lt;tab&gt;</code></pre>
+<p>to get a list of all files under the home directory, and in</p>
+
+<pre><code>prin&lt;tab&gt;</code></pre>
+<p>to complete the function call to <code>print</code> if <code>prin</code> matches only <code>print</code> in the SoS namespace.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Variable inspection is an often-forgotten feature that can be really useful when you work with the SoS kernel. Basically, if you land your cursor on any sos variable or keyword, enter <code>&lt;Shift-Tab&gt;</code> to get some information about the variable or keyword. It is often more convenient to use than the <code>%preview</code> magic especially if you do not want to keep the output in the notebook.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conversion-between-.ipynb-and-.sos-files">Conversion between <code>.ipynb</code> and <code>.sos</code> files<a class="anchor-link" href="#Conversion-between-.ipynb-and-.sos-files">&#182;</a></h2><p>You can save a Jupyter notebook with SoS kernel to a SoS script using <code>File -&gt; Download As -&gt; SoS</code> from the browser, or using command</p>
+
+<pre><code>$ sos convert myscript.ipynb myscript.sos</code></pre>
+<p>By default, <strong>only workflow cells will be saved to a <code>.sos</code> file to create a SoS script in correct syntax</strong>. You can also save all cells, including cells in other kernels in a '.sos' file using option <code>--all</code>, although the resulting <code>.sos</code> file might not be executable in bath mode.</p>
+<p>You can convert an <code>.sos</code> script to <code>.ipynb</code> format using command</p>
+
+<pre><code>$ sos convert myscript.sos myscript.ipynb</code></pre>
+<p>or even to an executed notebook with option <code>--execute</code></p>
+
+<pre><code>$ sos convert myscript.sos myscript.ipynb --execute</code></pre>
+<p>and SoS will either assign each SoS step to a cell, or split the workflow according to some cell magic if the <code>.sos</code> was exported with the <code>--all</code> option.</p>
+<p>Please refer to the tutorial on <a href="../tutorials/File_Conversion.html">File Conversion</a> for details of these commands.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Convert-.ipynb-to-HTML-format">Convert <code>.ipynb</code> to HTML format<a class="anchor-link" href="#Convert-.ipynb-to-HTML-format">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because it is not particularly easy to open an <code>.ipynb</code> file (a live Jupyter server is required) and because of risk of changing the content of an <code>.ipynb</code> file, it is often desired to save an <code>.ipynb</code> file in HTML format.</p>
+<p>Jupyter makes use of a template system to control the content and style of exported HTML file. For example, you can use the default Jupyter template (<code>File</code> -&gt; <code>Save As</code> -&gt; <code>HTML</code>) to save all input and output cells, or you can use the <a href="https://github.com/kirbs-/hide_code">hide code Jupyter extension</a> to manually hide input or output of each cell and produce a customized .HTML file.</p>
+<p>SoS provides its own <code>template</code> called <code>sos-report</code>, which can be used from command line using command</p>
+
+<pre><code>sos convert analysis.ipynb analysis.html --template sos-report</code></pre>
+<p>or from within Jupyter with magic <code>%sossave</code> with specified filename</p>
+
+<pre><code>%sossave analysis.html -f</code></pre>
+<p>or using the same name as the notebook with option <code>--to html</code></p>
+
+<pre><code>%sossave --to html -f</code></pre>
+<p>Option <code>-f</code> overrides existing file if an output file already exists. You could also use other <code>sos</code> based templates such as <code>sos-full</code>, which displays all cells.</p>
+<p>The generated HTML file has the following properties</p>
+<ol>
+<li><p>It by default only displays markdown cells, input and output cells with tag <code>report_cell</code>, and output cells with tag <code>report_output</code>.  This is the <strong>report view</strong> that only displays the results of interest.</p>
+</li>
+<li><p>If you point your mose to the left top corner of the window, a display control panel will be displayed for you to select additional items to display, including all input and output cells, input and output prompts, and various messages. This is the <strong>notebook view</strong> that displays all the details of the analysis.</p>
+</li>
+</ol>
+<p>The <code>report_output</code> tag can be toggled using keyboard shortcut <code>Ctrl-Shift-O</code> and cells with this tag will be marked by a gray bar to the right of the output area. The <code>report_cell</code> and <code>scratch</code> tag has to be manually added through the <code>tag</code> toolbar (<code>View</code> -&gt; <code>Cell Toolbar</code> -&gt; <code>Tags</code>). Whereas <code>report_output</code> only works for output of code cells, the <code>scratch</code> tag applies to both markdown and code cells.</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

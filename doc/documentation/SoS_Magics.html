@@ -1,0 +1,3891 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>SoS_Magics</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  // sections numbering
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+
+            table_of_contents(cfg,st);
+
+            var file=documentationDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+
+
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // var docs=documentation
+            // for (var a =0;a<docs.length;a++){
+            //       var name =docs[a];
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+            // }
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+            // $("#toc").attr("style","max-height:938px")
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="SoS-Magics">SoS Magics<a class="anchor-link" href="#SoS-Magics">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to SoS statements, you can use a few SoS magics in Jupyter notebook.</p>
+<ol>
+<li>SoS magics have to be specified at the beginning of a cell, although they can be specified after empty lines and comments.</li>
+<li>Lines ending with <code>"\"</code> will be joined so you can break long magics into multiple lines</li>
+<li>Multiple magics can be used in a single cell.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This section lists all magics that SoS supports. To get a list of magics, you can enter <code>%</code> at the beginning of a line and press tab. You can also get the detailed usage of a magic by executing a magic with <code>-h</code> option, for example:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %use [-h] [-k KERNEL] [-l LANGUAGE] [-c COLOR] [-r]
+            [-i [IN_VARS [IN_VARS ...]]] [-o [OUT_VARS [OUT_VARS ...]]]
+            [name]
+
+Switch to a specified subkernel.
+
+positional arguments:
+  name                  Displayed name of kernel to start (if no kernel with
+                        name is specified) or switch to (if a kernel with this
+                        name is already started). The name is usually a kernel
+                        name (e.g. %use ir) or a language name (e.g. %use R)
+                        in which case the language name will be used. One or
+                        more parameters --language or --kernel will need to be
+                        specified if a new name is used to start a separate
+                        instance of a kernel.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -k KERNEL, --kernel KERNEL
+                        kernel name as displayed in the output of jupyter
+                        kernelspec list. Default to the default kernel of
+                        selected language (e.g. ir for language R.
+  -l LANGUAGE, --language LANGUAGE
+                        Language extension that enables magics such as %get
+                        and %put for the kernel, which should be in the name
+                        of a registered language (e.g. R), or a specific
+                        language module in the format of package.module:class.
+                        SoS maitains a list of languages and kernels so this
+                        option is only needed for starting a new instance of a
+                        kernel.
+  -c COLOR, --color COLOR
+                        Background color of new or existing kernel, which
+                        overrides the default color of the language. A special
+                        value &#34;default&#34; can be used to reset color to default.
+  -r, --restart         Restart the kernel if it is running.
+  -i [IN_VARS [IN_VARS ...]], --in [IN_VARS [IN_VARS ...]]
+                        Input variables (variables to get from SoS kernel)
+  -o [OUT_VARS [OUT_VARS ...]], --out [OUT_VARS [OUT_VARS ...]]
+                        Output variables (variables to put back to SoS kernel
+                        before switching back to the SoS kernel
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that subkernels can have their own magics, and SoS basically processes all blank lines and known magics and send rest of the cell content to the subkernel. That is to say, because SoS does not define a <code>pwd</code> magic, the following magic would be process by the Python 3 subkernel.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">pwd</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[46]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;/Users/bpeng1/sos/docs/src/documentation&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%cd"><code>%cd</code><a class="anchor-link" href="#%cd">&#182;</a></h3><p>Change the current working directory of the SoS kernel to <code>dir</code>. The working directory of started subkernels is not affected.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%dict"><code>%dict</code><a class="anchor-link" href="#%dict">&#182;</a></h3><p>The <code>%dict</code> magic lists or rests the content of SoS dict, using syntax</p>
+
+<pre><code>%dict [-a|-all] [-k|--keys] [-r|--reset] [var1] [var2] ...</code></pre>
+<p>where</p>
+<ul>
+<li><code>var1</code>, <code>var2</code> etc are name of variables. All variables will be displayed if no variable is specified.</li>
+<li><code>-a|-all</code>: list all dictionary keys, including SoS functions and variables.</li>
+<li><code>-k|--keys</code>: list only keys, not their values</li>
+<li><code>-r|--reset</code>: reset the dictionary to its original content (with only SoS internal values)</li>
+</ul>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="n">reset</span>
+<span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="n">keys</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[47]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>set()</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and reset the dictionary with the <code>--reset</code> option</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="n">keys</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[48]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;sos_var&#39;}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, you can see all keys in the SoS dictionary using</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="n">reset</span>
+<span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="n">keys</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[49]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>set()</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and reset the dictionary with the <code>--reset</code> option</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="n">keys</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[50]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;sos_var&#39;}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, you can see all keys in the SoS dictionary using</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%get"><code>%get</code><a class="anchor-link" href="#%get">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magics <code>%get</code> retrieve variables from SoS or another subkernel to the current subkernel started by magic <code>%use</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">sos</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">R</span>
+<span class="o">%</span><span class="n">get</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span>
+<span class="n">a</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>1</li>
+	<li>2</li>
+	<li>3</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[53]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">b</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol>
+	<li>1</li>
+	<li>2</li>
+	<li>'3'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[54]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">c</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+TRUE
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%preview</code> magic cannot be used to preview variables in the subkernel so we have to list them one by one. As you can see, a Python list can be converted to <code>R</code> array or list depending on its content.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to the <code>%put</code> magic, SoS automatically translate variables with invalid Python names. For example</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">sos</span>
+<span class="n">_var</span> <span class="o">=</span> <span class="s1">&#39;Hi, Bob&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">R</span>
+<span class="o">%</span><span class="n">get</span> <span class="n">_var</span>
+<span class="o">.</span><span class="n">var</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Variable _var is passed from SoS to kernel ir as .var
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'Hi, Bob'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">sos</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Also similar to the <code>--to</code> option of magic <code>%put</code>, magic <code>%get</code> accept a parameter <code>--from</code> to get variables from SoS (default) any kernel. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">R_var</span> <span class="o">&lt;-</span> <span class="s1">&#39;R variable&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span> <span class="nn">R_var</span>
+<span class="n">R_var</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[59]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;R variable&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Depending on how the language module is defined, such cross-subkernel variable exchange can be achived directly, or by way of SoS, so after the <code>%get --from R R_var</code> statement, the <code>R_var</code> variable might or might not exist in the SoS kernel.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%matplotlib"><code>%matplotlib</code><a class="anchor-link" href="#%matplotlib">&#182;</a></h3><p>Similar to ipython's <code>matplotlib</code> magic, the <code>%matplotlib inline</code> magic allows the display of matplotlib figures inline in Jupyter notebook or qtconsole.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[61]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAX8AAAEACAYAAABbMHZzAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAALEgAACxIB0t1+/AAAIABJREFUeJzt3Xl8FdX5x/HPExYVFHADBERwAREXBLUIKnEriD8WUVGp
+G+7WVn9aW7EuYK0L2upLtC5Qyg8FquLGohSKCi6goAiooEKVVaBSRHYD5Pz+OImhkBCSu5yZO9/3
+65XXndxM5jxcbp47c+ac55hzDhERSZa80AGIiEj2KfmLiCSQkr+ISAIp+YuIJJCSv4hIAin5i4gk
+UFqSv5kNNrMVZjZ7J/sMMLN5ZjbTzFqlo10REamcdJ35DwE6lvVDMzsLOMQ5dxhwLfB0mtoVEZFK
+SEvyd869B3y/k126Ac8W7fshUNvM6qWjbRERqbhs9fk3BBZv8/3SoudERCQA3fAVEUmgqllqZylw
+4DbfNyp6bgdmpmJDIiIV5JyziuyfzjN/K/oqzWjgUgAzawusds6tKOtAzrlYffXr5wDHQQc5rr/e
+8fDDjpdfdixatOO+c+c6qlRx1K7teOABx4YNZR+3b9++wf9tUfjS65D7r8WaNY5rr/V/R+A4/XRH
+YeGO+331leOdd/zPoS/guOQSR0FB+H9DyK/KSMuZv5mNAPKBfc1sUdH/SnWfx91A59wbZtbZzOYD
+64He6Wg3Ku68EwoL4aabYJ99dr6vGZx+OkyYALffDk88AQ89BL16ZSdWkaiZOBGuvBIWLYJq1eDu
+u+G22/zfyvYOO8x/TZgAZ58NkyfDli3+96Ri0pL8nXPlpi7n3K/S0VYUVakC99yza/s2bw7jx/s3
+/O9+B598Ar/4hX+jX3RRZuMUiZqtW+GWW3zib9MGhgyBo44q//fy8uBnP4PHHoP99st8nLlIN3wr
+qJJXWDs44wz46CPo399/IBx33I775Ofnp6exmNPrUCLXXosqVeBvf4P77oMPPti1xF8sPz+fZs3K
+v9qW0lll+4syxcxc1GIqNmcOXHYZjBkD9eun77gbNkCNGuk7nkjSbdkCVbM1nCUCzAwX8IZvTvvx
+R98tU3y2nk5K/CLp89VXvgvphRdCRxJtSv67qG9fmD0bDjkE7r03dDQi8bRxY+bbeOst/7d69dUw
+b17m24srJf9d8O67fkROXh48+yzsuWdm23MO3nkns22IZNvmzX6k2zXXwKZNmWvn2muhZ09YuxbO
+Pz87HzhxpORfjrVrfT+/c35oZrt2mW/zuuugQwf/QSOSK267DaZOhXHjYN26zLVjBoMG+av0WbPg
+5psz11acKfmXo0YN+OUv4cQT/fjjbDj2WP949dUwZUp22hTJpFdegUcf9TdhX3wx88Mza9WCkSOh
+enV45hl/9S7/TaN9dtHWrX5YWrbceCM8/jg0bAhffgk1a2avbZF0mj/f34BdswYeeSS7Z+KDBvkJ
+mNdcU/qksVxRmdE+Sv4RtWULtG0LH38Mf/gD3HVX6IhEKqdnT38W3qMHvPRSbifhUDTUM4dUrQp/
++pPffvllf/YiEkeDB8P//q+fzKXEHx068y9FlCaIvPYadO7s+y5FREqjM/80WLzYF4566aXQkXjd
+uyvxi6SThn56Sv7beeABWLAAhg8PHYmIpFv//n4QxZw5oSMJT8l/G0uW+P5JM7j//tDRiMRXxHqT
+f7JwIXz/ffaGbUeZkv82HnwQCgr86IQWLUJHU7oNG/ywU5Go+vJLX6X2jTdCR7KjO++E3Xf3gyhm
+zAgdTVhK/kWWLvVjgs2iO6zylVegWTMYNix0JCJlu/tun1hHjQodyY4aNIAbbvDbd94ZNpbQNNqn
+yMyZcMUVcOihfgZiFA0bBpdc4vssv/pK1UAlej75BFq3ht1285O7GjUKHdGOVq6Epk19iYn33oP2
+7UNHlDqN9klBq1Z+QtVf/xo6krL16uX/sJYu9TMlRaLmjjv84w03RDPxgy8tccst0LEj1K4dOppw
+dOYfM2+/Daed5ss9zJ+f3kVlRFLx7rtwyim+6u0330R7ecVsl2vJNJ35J8Cpp0KXLrB+vS/7IBIV
+69ZB48bwm99EO/FDbiX+yorIPFapiAcf9MPVzjwzdCQiJc46y9+L0mi0eEh0t8/q1X6Bllq1stKc
+iEhGqNungu6/H5o08RUHRSS5Fi+GDz8MHUV2JTb5f/cd/OUvvvukadPQ0YhIKFOm+CHev/516Eiy
+K7HJ/5FH/GzZzp39bEQRqbh16+Lfx9+qlZ8zM326H+6dFIlM/qtXwxNP+O1cqPGxdi2sWBE6Ckmi
+fv3g4IPh9ddDR1J5NWpA795++6mnwsaSTYlM/sOH+zOWU0+Fn/0sdDSpefllP+M36VPVJfs2boQh
+Q2DRIqhbN3Q0qbnuOv84YoQ/OUyCRCb/o46Crl39wuxxd+SR/sx/2DD4z39CRyNJ8uKLsGqV7zY9
+/vjQ0aSmWTM4/XT/gfbss6GjyY5EJv9TTvFFp847L3QkqWveHDp1gk2bol2aQnLPk0/6x1w4iQK/
+1OR118EZZ4SOJDsSPc4/V4wb529cN24M//pXdJaglNz10Uf+bH/vvf06GCoyGJbG+SdUx45+6clF
+i2D06NDRSBIUFEDbtv5GqRJ/POkcMQfk5flL1okT4aCDQkcjSdCuHUydCps3h45EKisx3T7O+bv4
+e++d9kOLiASlbp+d+PhjX/74V78KHYmIxMHcubBlS+goMicxyX/gQN9PWb166EhEJOquvBKOOALG
+jg0dSeYkIvmvXQt//7vfvvrqsLGIxFlS+vhbtvSPuTzjNxHJ//nn/Yzek0+GFi1CR5Mdq1b5+xwi
+6bJ4sV8AvU+f3H9vXX457L47TJjgV8zLRYlI/gMH+sdrrgkbR7ZcdZW/v/HJJ6EjkVwycKBf/Hzh
+QrAK3VqMn332gQsv9NtPPx02lkzJ+eT/44++nEOjRnDuuaGjyY499vCX5889FzoSyRUFBTBokN++
+/vqwsWRL8b9zyBBf9iHXJGao5+bNUK1a2g8bSdOm+YJ19er52Zea8SupGjvWrx3dogV8/nnun/mD
+79rq0gVat4Zbb432in+VGeqZmLSQlMQPftp9s2Z+PdWJE33tH5FUjBjhHy+5JBmJH/y/U6N9JFbM
+4OKL/fawYWFjkfhzznefVq0KF10UOhpJFyX/HHXxxVC7Nuy7b+hIJO7M/LoR//63X/NackNi+vyT
+SJPaRJJB5R220b+/7+t+553QkYSjxC+SXrlU7iFnk/+wYTB+vJ/cJSKSitGj/ZDxP/0pdCTpk5PJ
+/7PP/Nc++yRnVR4RyRwzn1OKRz3lgrQkfzPrZGZfmNlXZnZbKT/vYGarzWxG0VdGlxt//nn/eO65
+6voQqawFC3yZg7ffDh1JeB07+nLwn37qv3JBysnfzPKAJ4COQEvgIjM7vJRd33HOtS76+mOq7ZbF
+uZLkXzw9O+lGjvRXQLnyppXsGDEChg4tmdmbZNWrw/nn++3iIpFxl44z/xOAec65hc65zcDzQLdS
+9svK1JAlS/yiLfXrQ4cO2Wgx+t58039pzL/sKudg+HC/3atX2Fiiovh1GDEiNwrbpSP5NwQWb/P9
+kqLntneimc00s9fN7Ig0tFuqAw+EZcv8pWqVKplqJV4uucQ/Dh8OW7eGjUXiYfZsmDPHzxPp2DF0
+NNFw8sm+RljNmrB8eehoUpet8g4fA42dcxvM7CzgNaBZWTv369fvp+38/Hzy8/Mr1Fi1anB4aR1P
+CdWuHTRtCt98A5Mnw2mnhY5Ioq74xub55yerNMrO5OX5FQH33z98iYtJkyYxadKklI6R8iQvM2sL
+9HPOdSr6vg/gnHP9d/I73wBtnHOrSvmZJnllwN13w733+ht4Q4aEjkaizDlfG2r+fHj3XTjppNAR
+SXlCTfKaDhxqZgeZWXXgQmD0doHV22b7BPyHzg6JXzKnuNbPe+9BYWHYWCTazGD6dHj2WX/VKLkp
+LeUdzKwT8Bj+w2Swc+5BM7sWfwUw0MxuAK4HNgMbgZudcx+WcSyd+WfIu+/CiSeqxLNIrqnMmX/O
+1PaZPt33x513Huy3XwYCExGJqETX9nn6ab/yzoABoSMRkVw3bx7cdReMGxc6ksrLieT/44/wyit+
+W/XGRSTTxo2DP/4x3uv75kTyHz/eT+w65hi/zJyIVNyGDX7lqk2bQkcSfT17+qGf48bBqpgOXcmJ
+5K9yDhWzfDk884y/YhIpNn68X7P2rLNCRxJ99ev7+TKbN/uKn3EU++S/fj2MGuW3L7ggbCxx0bkz
+XHedX99XpFhx16mS/67p0cM/Fr9ucRP75L/77v5S9b77/CxWKd855/jHl18OG4dER0EBjBnjt4vf
+H7Jz3bv7ORETJviT0LjJmaGesuvmzIGWLf16B8uXa/q++C6fTp38giWzZ4eOJj6GDPFzZ0KXk0n0
+UE/ZdUcc4d+sq1b5Wj8ir77qH3XWXzG9e4dP/JWl5J9Q557rH9X1I+Ard3bvXvK+kNynbp+E+vRT
+P+KnVy/VbxGJu0SVd9iyBf7zH6hXr9xdRURyWqL6/CdPhgMO8CWKRURCcg5mzvQnpXER2+T/6qv+
+BW/QIHQkIpJ0P/85HHssvP9+6Eh2XSyTv3Pw2mt+W6MTRCovYr2+sdW6tX+M04SvWCb/jz6CpUuh
+YUNo0yZ0NLlh48bQEUgIbdv6sijffRc6kngrnu1b3CMRB7FM/sVjkrt398WVpPKWLfPL9B19dHze
+tJIec+fCtGl+hmqdOqGjibfjj/dd0IsX+3VF4iCWqXOvvfwL3b176Ejir25dX5t8/nyYNSt0NJJN
+xSdRXbtqlneq8vJKuqDj0vUTy+R/++3+E/a000JHEn9VqqjWT1IVJ//iLgtJTY8ecNxxcMghoSPZ
+NbEd5y/pM2GCn+HZooWv+yO5b9EiOOggqFnT9/fvsUfoiCQViRrnL+lz6qmw996+D3ju3NDRSDbM
+nOkr4p51lhJ/UlUNHYCEV62aX8Rj4kR/RqjV0HJf166wciV8/33oSCQUdfsIAGvW+BvpVqELRxGJ
+gpzv9vntb+GRR/x6vZJetWop8YskSWzO/L//3g9LdA5WrIB99w0QnIhIOb77Dvr39wslDRuWnTZz
++sz/jTd80aRTTlHiF5Ho2m03ePxxGDEC/v3v0NGULTbJXysNiaRu2jR48UX44YfQkeSuWrX8HCTn
+/ElrVMUi+W/cCOPG+e1u3cLGkusWLIBHH4UpU0JHIpnw5JNwwQXw1FOhI8ltXbr4x9Gjw8axM7FI
+/m+9BRs2+CJujRuHjia3Pfcc3HKLX5hacsvWrTB2rN/WSVRmFSf/CRNg06awsZQlFsn/rLNg6lR4
+6KHQkeS+rl3945gxUFgYNhZJr6lT/ep3hx4a30XH4+LAA6FVK1i/Hj78MHQ0pYvFJK+8PF96VjLv
+6KP9tP+FC33/sF733FHcBdG1q4b1ZsMzz0D9+tHtrYjFmb9kj1nJ2X+U+yul4or/P4u7JCSzTjgh
+uokflPylFEr+ucc5+OMf4aqroH370NFIFMRmkpdkT0EB/OEPcPbZvttHXQQi0VaZSV6RTv6rVsHa
+tb4PWkRESpdzM3yHD4cmTeDWW0NHIiJSOVu3+pFWUVsnOdLJv7jP+ZhjwsYhIlJZvXtDu3bw0kuh
+I/lvkU3+a9bA5Ml+mGfnzqGjEYmvzZtDR5Bsp57qH8eMCRvH9iKb/MeP92/a9u1VyC00LfgRXwUF
+0KiRv3kf1Zmmue7ss/2giTffhHXrQkdTIrLJX2OSw1u3zs9SbNLEJxGJn8mTfWXJxYv9so2SfXXr
++lFzBQW+3ENURDb5N28OzZop+Ye0556+xMOaNTBpUuhopDK2ndUr4WxbNiUqIpv877wTvvxSNUhC
+04Sv+HJOV9BR0bWr7/s/6aTQkZSI9Dh/CW/6dD9N/cADfb0fTfiKj9mz/Ui5evXg22/94AnJTTk3
+zl/Ca9MGDjjA9xnPmhU6GqmI+fP9wiJduijxy45iUdVTwsnL86MVJk+O3iQV2bkePeB//sfPkhfZ
+nrp9pFybNmmkiEiU5Uy3z733+ro+Eg1K/CK5J5Jn/lWrOlauhNq1Q0cjIpI+337rK+b+8AP8/e/p
+O26wM38z62RmX5jZV2Z2Wxn7DDCzeWY208xa7ex4HToo8YtI7qlRAwYPhpEjw8+cTzn5m1ke8ATQ
+EWgJXGRmh2+3z1nAIc65w4Brgad3dkyNSRapvGnT4G9/8zN7JVrq1IGTT/aVPseNCxtLOs78TwDm
+OecWOuc2A88D3bbbpxvwLIBz7kOgtpnVK+uASv7R9MUXfjWo998PHYnszKBBcOWVfg1ZiZ6ozPZN
+R/JvCCze5vslRc/tbJ+lpezzk4MPTkNUknbPPw933QXPPRc6EilLYSGMHeu3dRIVTcX/L+PGha24
+Gslx/v369ftpOz8/n/z8/GCxSIkuXeCee3xycU6zfaPo449h+XI/I1vrYETTIYdAixb+SnrmTDj+
++IofY9KkSUxKseBWyqN9zKwt0M8516no+z6Ac87132afp4G3nXMvFH3/BdDBObeilONpnH9EOefL
+A3/7LcyYAcceGzoi2d7dd/uh0tdfD08+GToaKcuMGf4Dev/903O8UKN9pgOHmtlBZlYduBDYvgzY
+aODSoiDbAqtLS/wSbWZ+xiiE76+U0hX/v6jLJ9pat05f4q+slJO/c24r8CtgAvA58Lxzbq6ZXWtm
+1xTt8wbwjZnNB54BfplquxJGcVJR8o+m+++HG24oWT1KpCyRnOQVtZikxMaN8Mgj/kPg6KNDRyMi
+ULluHyV/EZGYy5naPiIiSVBQAP/8Z5jZvkr+IiKBnHce/PznYe6hKfmL5IAffwwdgVTGGWf4RyV/
+iRXntMBLFBQW+lnx+fmwenXoaKQiikfPjR/vu4CySclfKmXZMmjWDFq18h8CEs60aX7i3YIFqoYb
+N02bQsuWfrW1yZOz27aSv1RK/fp+2GfxbF8JZ9uJXSq5ET+h5s4o+UulaLZvdBS//sXVIiVezjnH
+/y2dfHJ229U4f6m011/3b9rWrX1BMcm+hQuhSRPYay9YuRKqVw8dkYSgcf6SVaed5lcmmjEDliwJ
+HU0yzZ8PdetCx45K/FIxkSzpLPGwxx7QqRN8/bW/AdyoUeiIkuf00/1rr1E+UlHq9pGUFBTojFMk
+NHX7SNYp8YvEk5K/iEgEzJ8Pl1wCV12VnfbU7SMiEgGLF0PjxlCzpp85v8ceu/676vYRSYgZM+Dx
+x33CkNxw4IHQpg2sXw9vvpn59pT8JS1mzoQ+fWDq1NCRJMPQoXDjjfCXv4SORNKpe3f/+NprmW9L
+yV/SYuRI6N8fRowIHUnucw5GjfLbxclCckO3bv5x9GjYujWzbSn5S1oUlxYYNUqF3jJt1iw/s7d+
+fTjhhNDRSDodeaSv0PrDDzB3bmbbUvKXtDj+eDjgAN8HPWtW6GhyW3GXQNeukKe/4JxiBq+84m/4
+HnlkZtvSW0fSIi+vpDphcZeEZIa6fHLbMcdArVqZb0fJX9KmuL9SyT+zBgyA3/7W11YSqSyN85e0
+2bQJnn7ad0ccfHDoaESSozLj/JX8RURiTpO8RERyxPr18OqrsGJFZo6v5C8iEkG9e0OPHvDyy5k5
+vpK/SEyoZn+yFC+TmqnZvkr+khGFhX6RF0mPjRv9YjknnOC3JfedfTZUqQJvv52ZD34lf0m71at9
+kapjj/WLvUjqJk70fcCFhRWr9ijxte++flH3LVvgjTfSf3wlf0m7OnVgn31gzRqYNCl0NLlBE7uS
+KZOF3pT8JSOKJ3xlozphrtu61Rf6gpLXVZKhWzfo2RMuvDD9x9Y4f8mIjz4qqfezZIlq0KTivff8
+5f/BB/vVnqxCo7klCTTOXyKjTRto0gSWLYP33w8dTbytWuVfy+7dlfglfaqGDkBykxmcfz5MmZL5
+uuS5rmtXXzTvxx9DRyK5RN0+kjGFheruEckGdftIpCjxi6RXOq+i9ecpIhJxq1bBuefCUUelb6U8
+JX8RkYirUwc++MAv7Th9enqOqeQvElGDBsGDD8LSpaEjkdDy8vwACoAXXkjPMXXDVzLuq6/g8ceh
+QQO4/fbQ0cSDc9CiBXz5JUyYAGeeGToiCW3qVGjXzpdOWbDgv++paTEXiaQpU6B9e2jc2L9pNVa9
+fLNmQatWsN9+fq5EVQ3KTrzCQj/fY/FiP3emXbuSn2m0j0RS27bQsCEsWpS+/spc9+KL/vHcc5X4
+xSvu+qlZ08/0Tvl4qR9CZOfy8nwSAxg5MmwsceBcSfLv2TNsLBItv/89fPcdXHpp6sdSt49kRXF9
+miZNfJ1/df2UbfZsOOYYqFvX3+zVmb+UR33+ElmFhX4xkuXLYc4cOPzw0BFFl3O+z3/BApVwll2j
+5C+R9u67cNhhUL9+6EhEcouSv4hIAlUm+afUm2hmewMvAAcBC4CezrkfStlvAfADUAhsds6dkEq7
+IiJJtm6dXyhp3Tq47rrKHSOlM38z6w/8xzn3kJndBuztnOtTyn5fA22cc9/vwjF15i8ishPF80D2
+3x++/RaqVcv+OP9uwNCi7aFAWbenLA1tieS0RYvgiy9CRyFxcPTR0KyZH/ZZ2XWyU03IdZ1zKwCc
+c8uBumXs54B/mtl0M7s6xTYl5rZsgbfegm++CR1JtAwY4Es63Hdf6Egk6szgggv8dvGckIoqt8/f
+zP4J1Nv2KXwyv7OU3cvqr2nvnFtmZvvjPwTmOufeK6vNfv36/bSdn59Pfn5+eWFKjPzud/Doo9Cn
+DzzwQOhoomHbiV16u0t5Jk2axMqVkwB47rnKHSPVPv+5QL5zboWZ1Qfeds61KOd3+gJrnXOPlPFz
+9fnnuHfegQ4d/Lj/BQugSpXQEYX3wQdw4oklZTC0EI6Uxzlo2dKXeYbs9/mPBi4v2r4MGLX9DmZW
+w8z2LNquCfwc+CzFdiXGTjoJmjaFJUvg7bdDRxMN25ZzUOKXXWEG998Po0dX7vdTfZv1B840sy+B
+04EHfVB2gJmNLdqnHvCemX0CfACMcc5NSLFdibG8PLjsMr89dOjO902CwsKSmkeq5SMV0b07dOlS
+ud/VJC8J4ptv4OCDYY89fMmHWrVCRxTOpk3w8MPw5pv+Skh1j6SiNMNXYuWmm/yQtV69/IeAiFSO
+kr+ISAJpMRcREdklSv4iIgmk5C8SyMaNfqy2SAhK/hIJmzb5OiVJcscd0Lw5jB8fOhJJIiV/CW7M
+GGjQwJd9SIqCAj8tf9482Hff0NFIEin5S3DNm8P33/uJTuvWhY4mO8aOhZUr4aijoE2b0NFIEin5
+S3DNmkG7drB+PbzySuhosmPwYP94xRWa1CVhKPlLJCSp3MPSpfCPf0C1anDxxaGjkaRS8pdI6NkT
+dt/d1/lfuDB0NJm1bJnv7unWDfbbL3Q0klQpreErki516sB55/m+/1zv9z/uOJg5EzZsCB2JJJnK
+O0hkFBaqnLFIZai8g8SaEr9I9ujPTUQkgZT8RUQSSMlfIivXboiecw7cdpu/qS0SmpK/RM7mzXD5
+5XDggbB6deho0mPKFHjtNRg4EKpXDx2NiJK/RFC1an5x91WrfLLMBf37+8cbboCaNcPGIgIa6ikR
+NW4cdO4MDRvC11/H+2z588/hyCP9JLaFC6Fu3dARSa7RUE/JGZ06wRFH+FIIL74YOprUPPSQf7zy
+SiV+iQ4lf4kkM7jlFr/95z/Hd9GTwkJYuxaqVoXf/CZ0NCIl1O0jkbVpExx+OJx5Jjz2GNSoETqi
+yluyBBo1Ch2F5KrKdPso+UukFRTEu79fJBvU5y85R4lfJDOU/EVEEkjJXyQDCgpCRyCyc0r+Eitx
+KI1QUAAtWvihnbm+NoHEl5K/xMKaNX7sf/Pm0a/5M3y4n5g2bZpm80p0KflLLOy1ly/38N138PDD
+oaMpW2FhSSmHPn20OLtEl4Z6Smy88w506ODLJMyZA02bho5oR6++Cj16QJMmMG+en9wlkmka6ik5
+7ZRToFcvP/nr5ptDR7OjzZuhb1+/feutSvwSbUr+EisPPwx77gmjRsGECaGj+W+bN/sPqEMPhSuu
+CB2NyM6p20di5/HHYeVKvzBKFEs+rF+vG72SXSrvICKSQOrzFxGRXaLkLyKSQEr+Iim44w6/Pq9I
+3Cj5S6w5B6NHw9lnZ7+ezuuvw/33Q8eOubPQvCSHkr/E2pYtfkz9G2/AgAHZa3ftWrj+er99zz1Q
+p0722hZJByV/ibVq1UqSft++vp5ONtx5JyxeDG3awI03ZqdNkXTSUE/JCb17w//9H+y9ty8DceSR
+mWtr6lRo3x7y8uCjj6BVq8y1JbIrNNRTEmvgQOja1Zd8Pucc3x2UKTVrQu3afkF2JX6JK535S87Y
+tAkuvtjfA2jbNrNtff65L+Ow226ZbUdkV2iGr4hIAqnbR0REdklKyd/MzjOzz8xsq5m13sl+nczs
+CzP7ysxuS6VNkcqo7MXk4MHwxBPpjUUkClI98/8UOAeYXNYOZpYHPAF0BFoCF5nZ4Sm2mwiTJk0K
+HUIkpPo6PPecvzH7179WbE3dRx+Fq66CX/8aPv00pRDSRu+JEnotUpNS8nfOfemcmwfsrK/pBGCe
+c26hc24z8DzQLZV2k0Jvbi+V12HtWl+CYfZsuPpqaNDAT86aObP0/adNg1/+Eg45BG65xT83YAAc
+dVSlQ0grvSdK6LVITTb6/BsCi7f5fknRcyIZt9de8MUXMHQotGvnPwyefhqOPdYvs7i9mTPhqaf8
+Auz77APPPuvP/EVyTbkLzZnZP4F62z4FOOAO59yYTAUmki41asCll/qvzz6DQYPgX/+Cww7bcd/O
+nX25ho4d4bjjoEqV7Mcrkg1pGeppZm8Dv3HOzSjlZ22Bfs65TkXf9wGcc65/GcfSOE8RkQqq6FDP
+dC4xXVbD04FDzewgYBlwIXBRWQep6D9AREQqLtWhnt3NbDHQFhhrZuOKnj/AzMYCOOe2Ar8CJgCf
+A8875+amFraIiKQicjN8RUQk8yIzw1cTwTwza2Rmb5nZ52b2qZklvmCwmeWZ2QwzGx06lpDMrLaZ
+jTSzuUUdc9mYAAACmUlEQVTvj5+FjikUM7u5aILpbDMbbmbVQ8eULWY22MxWmNnsbZ7b28wmmNmX
+ZjbezGqXd5xIJH9NBPsvW4BbnHMtgROBGxL8WhS7CZgTOogIeAx4wznXAjgGSGT3qZk1AH4NtHbO
+HY2/d3lh2Kiyagg+V26rDzDROdcceAu4vbyDRCL5o4lgP3HOLXfOzSzaXof/A0/svAgzawR0Bv4a
+OpaQzKwWcLJzbgiAc26Lc25N4LBCqgLUNLOqQA3g28DxZI1z7j3g++2e7gYMLdoeCnQv7zhRSf6a
+CFYKM2sCtAI+DBtJUI8Cv8XPLUmypsBKMxtS1AU20Mz2CB1UCM65b4E/A4uApcBq59zEsFEFV9c5
+twL8CSRQt7xfiEryl+2Y2Z7AS8BNRVcAiWNmZwMriq6EjJ2XEcl1VYHWwF+cc62BDfhL/cQxszr4
+M92DgAbAnmbWK2xUkVPuyVJUkv9SoPE23zcqei6Rii5lXwKec86NCh1PQO2Brmb2NfB34FQzezZw
+TKEsARY75z4q+v4l/IdBEp0BfO2cW1U0lPwVoF3gmEJbYWb1AMysPvDv8n4hKsn/p4lgRXftLwSS
+PLLjb8Ac59xjoQMJyTn3e+dcY+fcwfj3xFvOuUtDxxVC0SX9YjNrVvTU6ST3JvgioK2Z7W5mhn8t
+knbze/sr4dHA5UXblwHlnjSmc4ZvpTnntppZ8USwPGBwUieCmVl74BfAp2b2Cf7y7ffOuX+EjUwi
+4EZguJlVA74GegeOJwjn3DQzewn4BNhc9DgwbFTZY2YjgHxgXzNbBPQFHgRGmtkVwEKgZ7nH0SQv
+EZHkiUq3j4iIZJGSv4hIAin5i4gkkJK/iEgCKfmLiCSQkr+ISAIp+YuIJJCSv4hIAv0/y0oetCpz
+sCQAAAAASUVORK5CYII=
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%paste"><code>%paste</code><a class="anchor-link" href="#%paste">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This magic pastes content of clipboard to the cell and execute the cell. It is similar but sometimes more convenient than pasting the content using system shortcuts such as <code>Cmd-V</code> (mac). The additional options allow you to execute the pasted workflow with these options (see magic <code>%run</code> for details).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%put"><code>%put</code><a class="anchor-link" href="#%put">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magics <code>%put</code> are used to put variables from subkernel to SoS or another subkernel.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[62]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">R</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">)</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[63]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">put</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="n">d</span> <span class="n">e</span>
+<span class="o">%</span><span class="n">preview</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="n">d</span> <span class="n">e</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see, although <code>a</code> is technically an array with length 1 in <code>R</code>, it is convertered to an integer in SoS. Variables <code>b</code> and <code>c</code> are converted to the same type (<code>list</code>) although they are of different types in <code>R</code>. Variable <code>e</code> are converted from <code>R</code> matrix to <code>numpy</code> array.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Sometimes a valid variale name in a subkernel is not a valid name in SoS/Python. SoS would automatically convert such names with a warning message. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[64]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="mi">5</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[65]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">put</span> <span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">b</span>
+<span class="o">%</span><span class="n">preview</span> <span class="n">_a_b</span> <span class="o">--</span><span class="n">kernel</span> <span class="n">sos</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Variable .a.b is put to SoS as _a_b
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to putting variables from subkernel to SoS, you can also put variables from SoS to subkernel, or from any subkernel to another, using parameter <code>--to</code>. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[66]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">R_var</span> <span class="o">&lt;-</span> <span class="s1">&#39;R variable&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[67]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">put</span> <span class="o">--</span><span class="n">to</span> <span class="n">Python3</span> <span class="n">R_var</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[68]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">R_var</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[68]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;R variable&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Depending on the language module, such cross-subkernel variable exchange can be performed directly, or by way of SoS. The former is generally faster and, in case of data exchange between instances of the same language, can usually be done witout loss of information.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%preview"><code>%preview</code><a class="anchor-link" href="#%preview">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%preview</code> magic has been discussed above. Here is a complete list of options:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %preview [-h] [-k KERNEL] [-w] [-s {table,scatterplot,png}] [-r [HOST]]
+                [--off] [-p | -n]
+                [items [items ...]]
+
+Preview files, sos variables, or expressions in the side panel, or notebook if
+side panel is not opened, unless options --panel or --notebook is specified.
+
+positional arguments:
+  items                 Filename, variable name, or expression. Wildcard
+                        characters such as &#39;*&#39; and &#39;?&#39; are allowed for
+                        filenames.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -k KERNEL, --kernel KERNEL
+                        kernel in which variables will be previewed. By
+                        default the variable will be previewed in the current
+                        kernel of the cell.
+  -w, --workflow        Preview notebook workflow
+  -s {table,scatterplot,png}, --style {table,scatterplot,png}
+                        Option for preview file or variable, which by default
+                        is &#34;table&#34; for Pandas DataFrame. The %preview magic
+                        also accepts arbitrary additional keyword arguments,
+                        which would be interpreted by individual style.
+                        Passing &#39;-h&#39; with &#39;--style&#39; would display the usage
+                        information of particular style.
+  -r [HOST], --host [HOST]
+                        Preview files on specified remote host, which should
+                        be defined under key host of sos configuration files
+                        (preferrably in ~/.sos/hosts.yml). If this option is
+                        specified without value, SoS will use value specified
+                        by configuration key `default_host`, or list all
+                        configured queues if no such key is defined
+  --off                 Turn off file preview
+  -p, --panel           Preview in side panel even if the panel is currently
+                        closed
+  -n, --notebook        Preview in the main notebook.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%render"><code>%render</code><a class="anchor-link" href="#%render">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%render</code> magic converts the output of a cell to certain format before displaying it in the notebook. The format can be any format supported by the <a href="https://ipython.org/ipython-doc/3/api/generated/IPython.display.html"><code>IPython.display</code> module</a> and is default to <code>Markdown</code>. For example, the following code displays all supported options of <code>%render</code> by checking the subclasses of <code>IPython.display</code>. The cell returns a string in markdown format and is rendered in <code>Markdown</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[70]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">render</span>
+<span class="kn">import</span> <span class="nn">IPython.display</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">Options of magic </span><span class="si">%r</span><span class="s1">ender</span>
+
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">DisplayObject</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s1">&#39;* {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="c1"># this is the output of this cell and will be rendered in Markdown format</span>
+<span class="n">res</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[70]:</div>
+
+
+
+<div class="output_markdown rendered_html output_subarea output_execute_result">
+<p>Options of magic %render</p>
+<ul>
+<li>Audio</li>
+<li>TextDisplayObject</li>
+<li>SVG</li>
+<li>JSON</li>
+<li>GeoJSON</li>
+<li>Image</li>
+<li>Math</li>
+<li>Latex</li>
+<li>Markdown</li>
+<li>DisplayObject</li>
+<li>Video</li>
+<li>Pretty</li>
+<li>HTML</li>
+<li>Javascript</li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similarly, you can use magic <code>%render</code> to render output in other formats:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[71]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">render</span> <span class="n">HTML</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This is a table in HTML format &lt;br&gt;</span>
+<span class="sd">&lt;table style=&quot;width:100%&quot;&gt;</span>
+<span class="sd">  &lt;tr&gt;</span>
+<span class="sd">    &lt;th&gt;Firstname&lt;/th&gt;</span>
+<span class="sd">    &lt;th&gt;Lastname&lt;/th&gt; </span>
+<span class="sd">    &lt;th&gt;Age&lt;/th&gt;</span>
+<span class="sd">  &lt;/tr&gt;</span>
+<span class="sd">  &lt;tr&gt;</span>
+<span class="sd">    &lt;td&gt;Jill&lt;/td&gt;</span>
+<span class="sd">    &lt;td&gt;Smith&lt;/td&gt; </span>
+<span class="sd">    &lt;td&gt;50&lt;/td&gt;</span>
+<span class="sd">  &lt;/tr&gt;</span>
+<span class="sd">  &lt;tr&gt;</span>
+<span class="sd">    &lt;td&gt;Eve&lt;/td&gt;</span>
+<span class="sd">    &lt;td&gt;Jackson&lt;/td&gt; </span>
+<span class="sd">    &lt;td&gt;94&lt;/td&gt;</span>
+<span class="sd">  &lt;/tr&gt;</span>
+<span class="sd">&lt;/table&gt;</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[71]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+This is a table in HTML format <br>
+<table style="width:100%">
+  <tr>
+    <th>Firstname</th>
+    <th>Lastname</th> 
+    <th>Age</th>
+  </tr>
+  <tr>
+    <td>Jill</td>
+    <td>Smith</td> 
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td> 
+    <td>94</td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%render</code> magic captures not only the return value of SoS cell, but also standard output of SoS and other cells. For example, a subprocess of the following cell (a Python script) prints the content of a SVG file to standard output, which is captured and displayed by magic <code>%render</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[72]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">render</span> <span class="n">SVG</span>
+<span class="kn">python:</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1"> &lt;svg height=&quot;140&quot; width=&quot;140&quot;&gt;</span>
+<span class="s1">  &lt;defs&gt;</span>
+<span class="s1">    &lt;filter id=&quot;f1&quot; x=&quot;0&quot; y=&quot;0&quot; width=&quot;200%&quot; height=&quot;200%&quot;&gt;</span>
+<span class="s1">      &lt;feOffset result=&quot;offOut&quot; in=&quot;SourceAlpha&quot; dx=&quot;20&quot; dy=&quot;20&quot; /&gt;</span>
+<span class="s1">      &lt;feGaussianBlur result=&quot;blurOut&quot; in=&quot;offOut&quot; stdDeviation=&quot;10&quot; /&gt;</span>
+<span class="s1">      &lt;feBlend in=&quot;SourceGraphic&quot; in2=&quot;blurOut&quot; mode=&quot;normal&quot; /&gt;</span>
+<span class="s1">    &lt;/filter&gt;</span>
+<span class="s1">  &lt;/defs&gt;</span>
+<span class="s1">  &lt;rect width=&quot;90&quot; height=&quot;90&quot; stroke=&quot;green&quot; stroke-width=&quot;3&quot; fill=&quot;yellow&quot; filter=&quot;url(#f1)&quot; /&gt;</span>
+<span class="s1">  Sorry, your browser does not support inline SVG.</span>
+<span class="s1"> &lt;/svg&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_svg output_subarea ">
+<svg height="140" width="140">
+  <defs>
+    <filter height="200%" id="f1" width="200%" x="0" y="0">
+      <feOffset dx="20" dy="20" in="SourceAlpha" result="offOut"/>
+      <feGaussianBlur in="offOut" result="blurOut" stdDeviation="10"/>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"/>
+    </filter>
+  </defs>
+  <rect fill="yellow" filter="url(#f1)" height="90" stroke="green" stroke-width="3" width="90"/>
+  Sorry, your browser does not support inline SVG.
+ </svg>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%render</code> magic also works for other kernels although it can be tricky to determine what is printed to standard output. For kernel R, the function to print to standard output is <code>cat</code> so you can use <code>cat</code> to print something to the standard output for <code>%render</code> to process. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[73]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">render</span>
+<span class="n">a</span> <span class="o">&lt;-</span> <span class="n">rnorm</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">cat</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="s2">&quot;random numbers&quot;</span><span class="p">))</span>
+<span class="n">cat</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">collapse</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<p>5 random numbers</p>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<ul>
+<li>-0.226255000473571</li>
+<li>-0.178617752969736</li>
+<li>0.759527153766551</li>
+<li>-1.16793202212282</li>
+<li>0.500273824348608</li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%rerun"><code>%rerun</code><a class="anchor-link" href="#%rerun">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%rerun</code> magic re-executed the last script, which is basically content of the last cell without the magics. This allows you to re-run the last cell with or without a new set of parameters. Note that cells without a script (e.g. a cell with only magics) does not change the last executed script.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="kn">parameter:</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;a is set to ${a}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a is set to 10
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">a</span> <span class="mi">20</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a is set to 20
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%run"><code>%run</code><a class="anchor-link" href="#%run">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%run</code> magic allows you to run the content of a cell as a SoS workflow with specify SoS options such as <code>-v</code> (verbosity), <code>-j</code> (max number of jobs), and workflow options as defined by <code>parameter:</code> keyword.</p>
+<p><strong>The content of the cell is extracted and executed as an independent SoS script prepended with [global] sections defined in the notebook</strong>. The script does not use any existing variable so all parameters must be passed from command line (options of <code>%run</code>). The resulting dictionary will merged to the SoS dictionary to make it easy to check the result of the workflow, unless the workflow is executed remotely on another server (option <code>-r HOST</code>).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, if we define a variable in the SoS kernel,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">var</span> <span class="o">=</span> <span class="mi">100</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>it is can be used in other scratch cells,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">var</span> <span class="o">+=</span> <span class="mi">100</span>
+<span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>200
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>But not in the workflow executed by magic %run`</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to process statement &#39;print(var)&#39; (NameError): name &#39;var&#39; is not defined
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So you will have to pass the value as a parameter</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">var</span> <span class="mi">40</span>
+<span class="kn">parameter:</span> <span class="n">var</span> <span class="o">=</span> <span class="nb">int</span>
+<span class="n">var</span> <span class="o">+=</span> <span class="mi">400</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, when the workflow is executed, the workflow dictionary is merged to the SoS kernel so that you can examine the resulting variables,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>440
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%run</code> magics also provides you a way to execute the same cell multiple times with different parameters, for example</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">var</span> <span class="mi">1</span>
+<span class="kn">parameter:</span> <span class="n">var</span><span class="o">=</span><span class="mi">0</span>
+<span class="kn">sh:</span>
+  <span class="n">echo</span> <span class="err">$</span><span class="p">{</span><span class="n">var</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0
+1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>%run</code> magic executes <code>global</code> sections defined in the notebook which allows you to define commonly used definitions in a <code>global</code> section and used them in every cell executed by <code>%run</code>. For example, although we define a variable <code>VAR</code> to be <code>this is local</code> in the notebook,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">VAR</span><span class="o">=</span><span class="s1">&#39;this is global&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">VAR</span><span class="o">=</span><span class="s1">&#39;this is local&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The global section is executed by the <code>%run</code> magic</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="k">print</span><span class="p">(</span><span class="n">VAR</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>this is global
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Also, recall that statements defined before any section is considered as a global section without header, so if you redefine <code>VAR</code> in a cell as follows, it effectively appends <code>VAR = "this is local global"</code> to the <code>global</code> section, which changes the definition of <code>VAR</code>:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="n">VAR</span> <span class="o">=</span> <span class="s2">&quot;this is local global&quot;</span>
+
+<span class="p">[</span><span class="n">step</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">VAR</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>this is local global
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A complete list of arguments can be shown using the <code>-h</code> option.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">sos</span>
+<span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: run [-h] [-J EXTERNAL_JOBS] [-c CONFIG_FILE] [-t FILE [FILE ...]]
+           [-b [BIN_DIR [BIN_DIR ...]]] [-q [QUEUE]] [-w] [-W] [-r [HOST]]
+           [-n] [-s SIGMODE] [-d [DAG]] [-v {0,1,2,3,4}]
+           [WORKFLOW]
+
+Execute default or specified workflow defined in script
+
+positional arguments:
+  WORKFLOW              Name of the workflow to execute. This option can be
+                        ignored if the script defines a default workflow (with
+                        no name or with name `default`) or defines only a
+                        single workflow. A subworkflow or a combined workflow
+                        can also be specified, where a subworkflow executes a
+                        subset of workflow (`name_steps` where `steps` can be
+                        `n` (a step `n`), `:n` (up to step `n`), `n:m` (from
+                        step `n` to `m`), and `n:` (from step `n`)), and a
+                        combined workflow executes to multiple (sub)workflows
+                        combined by `+` (e.g. `A_0+B+C`).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -J EXTERNAL_JOBS      Maximum number of externally running tasks. This
+                        option overrides option &#34;max_running_jobs&#34; of a task
+                        queue (option -q) so that you can, for example, submit
+                        one job at a time (with -J 1) to test the task queue.
+  -c CONFIG_FILE        A configuration file in the format of YAML/JSON. The
+                        content of the configuration file will be available as
+                        a dictionary CONF in the SoS script being executed.
+  -t FILE [FILE ...]    One of more files or alias of other targets that will
+                        be the target of execution. If specified, SoS will
+                        execute only part of a workflow or multiple workflows
+                        or auxiliary steps to generate specified targets.
+  -b [BIN_DIR [BIN_DIR ...]]
+                        Extra directories in which SoS will look for
+                        executables before standard $PATH. This option
+                        essentially prefix $PATH with these directories. Note
+                        that the default value &#39;~/.sos/bin&#39; is by convention a
+                        default directory for commands that are installed by
+                        SoS. You can use option &#39;-b&#39; without value to disallow
+                        commands under ~/.sos/bin.
+  -q [QUEUE]            host (server) or job queues to execute all tasks in
+                        the workflow. The queue can be defined in global or
+                        local sos configuration file, or a file specified by
+                        option --config. A host is assumed to be a remote
+                        machine with process type if no configuration is
+                        found. If this option is specified without value, SoS
+                        will list all configured queues and exit.
+  -w                    Wait for the completion of external tasks regardless
+                        of the setting of individual task queue.
+  -W                    Do not wait for the completion of external tasks and
+                        quit SoS if all tasks are being executed by external
+                        task queues. This option overrides the default wait
+                        setting of task queues.
+  -r [HOST]             Execute the workflow in specified remote host, which
+                        should be defined under key host of sos configuration
+                        files (preferrably in ~/.sos/hosts.yml). This option
+                        basically copy the workflow to remote host and invoke
+                        sos command there. No path translation and
+                        input/output file synchronization will be performed
+                        before or after the execution of the workflow. If this
+                        option is specified without value, SoS will list all
+                        configured queues and exit.
+
+Run mode options:
+  Control how sos scirpt is executed.
+
+  -n                    Execute a workflow in dryrun mode. Please check
+                        command sos dryrun for details of the dryrun mode.
+  -s SIGMODE            How runtime signature would be handled, which can be
+                        &#34;default&#34; (save and use signature, default mode in
+                        batch mode), &#34;ignore&#34; (ignore runtime signature,
+                        default mode in interactive mode), &#34;force&#34; (ignore
+                        existing signature and overwrite them while executing
+                        the workflow), &#34;build&#34; (build new or overwrite
+                        existing signature from existing environment and
+                        output files), and &#34;assert&#34; for validating existing
+                        files against their signatures. Please refer to online
+                        documentation for details about the use of runtime
+                        signatures.
+
+Output options:
+  Output of workflow
+
+  -d [DAG]              Output Direct Acyclic Graph (DAGs) in graphiviz .dot
+                        format. An exntesion of &#34;.dot&#34; would be added
+                        automatically. Because DAG could change during the
+                        execution of workflow, multiple DAGs could be outputed
+                        with names $FILE_1.dot, $FILE_2.dot. If this option is
+                        specified without a name, the DAG would be wrritten to
+                        the standard output.
+  -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+
+Arbitrary parameters defined by the [parameters] step of the script, and
+[parameters] steps of other scripts if nested workflows are defined in other
+SoS files (option `source`). The name, default and type of the parameters are
+specified in the script. Single value parameters should be passed using option
+`--name value` and multi-value parameters should be passed using option
+`--name value1 value2`.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%save"><code>%save</code><a class="anchor-link" href="#%save">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%save</code> saves the content of the current cell (after the magic itself) to specified file. It accepts the following options:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[77]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">save</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%sosrun"><code>%sosrun</code><a class="anchor-link" href="#%sosrun">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%sosrun</code> option is a very special magic in that it <strong>executes SoS steps defined in the entire notebook</strong>. Essentially speaking, this magic</p>
+<ul>
+<li>Collect the content of all SoS cells in the notebook (including the present cell) and extract all sections from it. Comments, magics, and statements before section header is ignored.</li>
+<li>Execute the entire workflow with options specified by magic <code>%sosrun</code> as a <strong>separate workflow</strong>. Default options specified by magic <code>%set</code> is honored. Similar to magic <code>%run</code>, the script does not use any existing variable but the workflow dictionary will be merged to the notebook dictionary after the completion of workflow (see magic <code>%run</code> for details). </li>
+</ul>
+<p>For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[78]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="c1"># this is the global section of a workflow</span>
+<span class="kn">parameter:</span> <span class="n">gvar</span> <span class="o">=</span> <span class="mi">20</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[79]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">workflow_10</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is step ${step_name}, with ${gvar}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[80]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">workflow_20</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is step ${step_name}, with ${gvar}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">workflow</span> <span class="o">--</span><span class="n">gvar</span> <span class="mi">40</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is step workflow_10, with 40
+This is step workflow_20, with 40
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The content of the workflow is displayed at the side panel (if opened) so that you know what has been collected. Using the workflow feature of SoS, you can execute cells of a notebook conditionally, repeatedly, with different parameters...</p>
+<p>The following example demonstrates how to execute a step repeated as a nested workflow of another workflow.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[82]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># this is a worker step</span>
+<span class="p">[</span><span class="n">worker</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">val</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="kn">sh:</span>
+    <span class="n">echo</span> <span class="n">process</span> <span class="err">$</span><span class="p">{</span><span class="n">val</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[83]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># this step will execute the previous cell multiple times</span>
+<span class="o">%</span><span class="n">sosrun</span> <span class="n">batch</span>
+<span class="p">[</span><span class="n">batch</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)}</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;worker&#39;</span><span class="p">,</span><span class="n">val</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>process 0
+process 1
+process 2
+process 3
+process 4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is worth mentioning that "global definitions" in a cell without <code>[global]</code> header is excluded from the notebook workflow. For example, if we have a global definition</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">VAR</span> <span class="o">=</span> <span class="s2">&quot;this is global&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A <code>%run</code> magic can override definitions in a global section with global definitions without <code>[global]</code> header:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="n">VAR</span> <span class="o">=</span> <span class="s2">&quot;this is local global&quot;</span>
+<span class="p">[</span><span class="n">local_global</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">VAR</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>this is local global
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, because <code>VAR = "this is local global"</code> is not included in a section and is execlued from the notebook workflow, the following <code>%sosrun</code> magic will have see the statements in the named <code>[global]</code> section:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">local_global</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>this is global
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is why we sometimes call global statements without <code>[global]</code> header <strong>local global section</strong> because they are only executed by magic <code>%run</code>, not <code>%sosrun</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%sossave"><code>%sossave</code><a class="anchor-link" href="#%sossave">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%sossave</code> saves the <strong>report</strong> or <strong>workflow</strong> defined in the notebook to specified file, according to specified template.</p>
+<ol>
+<li><p>Save workflow in <code>.sos</code> format</p>
+<ul>
+<li>By default a workflow will be saved, which consists of cells that start with section header (ignoring leading comments and magics). The content of the file would be identical to the output of magic <code>%preview --workflow</code>.</li>
+<li>If option <code>--all</code> (<code>-a</code>) is specified, all cells will be saved to a .sos file that might or might not be executable in batch mode.</li>
+</ul>
+</li>
+<li><p>Save report in <code>HTML</code> format</p>
+<ul>
+<li>By default a template <code>sos-report</code> will be used to generate a HTML report, which includes all cells except for those with a <code>scratch</code> tag, and will display by default markdown cells without a <code>hide_output</code> tag, and output of code cells with a <code>report_output</code> tag. In another word, all mark down cells are displayed and output from all code cells are hidden unless you tag them otherwise with keyboard shortcut <code>Ctrl-Shift-O</code>. All contents could be displayed with a hidden control panel to the top left corner of the screen.</li>
+<li>Other templates could be specified with option <code>--template</code>. For example, a <code>sos-full</code> report will generate a HTML file with all content.</li>
+</ul>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This magic determines file format with file extension (e.g. <code>output.html</code> or option <code>--to</code> (e.g. <code>-t html</code>), an option <code>--force</code> to override existing file, and an option <code>-x</code> to add executable permission to the saved .sos file.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%sossave</code> can also help you track revisions of your analysis by committing files to git repository. If your notebook is under a git repository, you can use</p>
+<ul>
+<li>Option <code>-c</code> (<code>--commit</code>) to run command <code>git commit SAVEDFILE</code> with optional message specified by option <code>-m</code> (<code>--message</code>).</li>
+<li>Option <code>-p</code> (<code>--push</code>) to run command <code>git push</code>.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[84]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sossave</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %sossave [-h] [-t {sos,html}] [-c] [-a] [-m MESSAGE] [-p] [-f] [-x]
+                [--template TEMPLATE]
+                [filename]
+
+Save the jupyter notebook as workflow (consisting of all sos steps defined in
+cells starting with section header) or a HTML report to specified file.
+
+positional arguments:
+  filename              Filename of saved report or script. Default to
+                        notebookname with file extension determined by option
+                        --to.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t {sos,html}, --to {sos,html}
+                        Destination format, default to sos.
+  -c, --commit          Commit the saved file to git directory using command
+                        git commit FILE
+  -a, --all             The --all option for sos convert script.ipynb
+                        script.sos, which saves all cells and their metadata
+                        to a .sos file, that contains all input information of
+                        the notebook but might not be executable in batch
+                        mode.
+  -m MESSAGE, --message MESSAGE
+                        Message for git commit. Default to &#34;save FILENAME&#34;
+  -p, --push            Push the commit with command &#34;git push&#34;
+  -f, --force           If destination file already exists, overwrite it.
+  -x, --set-executable  Set `executable` permission to saved script.
+  --template TEMPLATE   Template to generate HTML output, default to sos-
+                        report, which uses a control panel to control the
+                        display of contents.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%set"><code>%set</code><a class="anchor-link" href="#%set">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%set</code> magic sets a persistent sos options so you do not have to enter them each time after <code>%run</code> or <code>%paste</code>. For example, if you set <code>%set -v3</code>, you can execute all cells in the notebook at verbosity level 3 (<code>DEBUG</code>).</p>
+<p>Note that this magic only accepts keyword arguments (with leading <code>-</code> or <code>--</code>) so you cannot use it to specify a default workflow to execute.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[85]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="nb">set</span> <span class="o">-</span><span class="n">v2</span>
+<span class="p">[</span><span class="n">cat_10</span><span class="p">]</span>
+<span class="p">[</span><span class="n">cat_20</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set sos options to &#34;-v2&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[86]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="nb">set</span> <span class="o">-</span><span class="n">v1</span>
+<span class="p">[</span><span class="n">mouse_10</span><span class="p">]</span>
+<span class="p">[</span><span class="n">mouse_20</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set sos options to &#34;-v1&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%sandbox"><code>%sandbox</code><a class="anchor-link" href="#%sandbox">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%sandbox</code> magic executes the current cell in the temporary directory with a separate dictionary so that it would change SoS dictionary and files in the current directory.</p>
+<p>This magic accepts three parameters:</p>
+<ol>
+<li>If <code>-d</code> or <code>--dir</code> is specified, sandbox will use the specified directory. It will create the directory if it is does not exist, and will not clean or remove the directory after the completion of execution.</li>
+<li>If <code>-k</code> or <code>--keep-dict</code> is specified, the cell would use the existing SoS dictionary instead of creating a new one.</li>
+<li>If <code>-e</code> or <code>--expect-error</code> is specified, the cell expects an error and would return <code>ok</code> only if an <code>error</code> occurs. In practice, this option would prevent Jupyter from stopping at a cell that expects an error when you execute the whole notebook with "execute all".</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, this <code>ls</code> commands happens at the current directory</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[87]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">ls</span> <span class="n">Auxil</span><span class="o">*</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>ls: Auxil*: No such file or directory
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>but the notebook is not available in the sandbox</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[88]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">ls</span> <span class="n">Auxil</span><span class="o">*</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>ls: Auxil*: No such file or directory
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the sandbox dictionary is empty</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[89]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="n">keys</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[89]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>set()</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the working directory of subkernels is not affected by the <code>%sandbox</code> magic.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%sessioninfo"><code>%sessioninfo</code><a class="anchor-link" href="#%sessioninfo">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%sessioninfo</code> returns the session information of SoS and all the subkernels, which for example include version of the python interpreter and name and version of all imported modules for Python kernels, and the output of function <code>sessionInfo()</code> for language R.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This magic also outputs values of a variable <code>sessioninfo</code> in the SoS namespace, which can be a dictionary of section header and items in the format of string, list of strings or <code>(key, value)</code> pairs, or dictionaries.  This mechanism is designed to output arbitrary additional session information, such as revision of documents and versions of commands. The latter has to be collected manually because there is no standard way to get the version information of commands.</p>
+<p>For example, let us find the revision of this document and versions of two commands <code>rsync</code>,  and <code>awk</code> and put them in <code>sessioninfo</code>:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[90]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">sessioninfo</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="n">sessioninfo</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">sessioninfo</span><span class="p">[</span><span class="s1">&#39;Programs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;rsync&#39;</span><span class="p">,</span> <span class="n">get_output</span><span class="p">(</span><span class="s1">&#39;rsync --version | head -1&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="s1">&#39;awk&#39;</span><span class="p">,</span> <span class="n">get_output</span><span class="p">(</span><span class="s1">&#39;awk -version&#39;</span><span class="p">)]</span>
+    <span class="p">]</span>
+<span class="n">sessioninfo</span><span class="p">[</span><span class="s1">&#39;Extra&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="s1">&#39;Revision&#39;</span><span class="p">,</span> <span class="n">get_output</span><span class="p">(</span><span class="s1">&#39;git rev-list --count HEAD&#39;</span><span class="p">)],</span>
+        <span class="p">[</span><span class="s1">&#39;HASH&#39;</span><span class="p">,</span> <span class="n">get_output</span><span class="p">(</span><span class="s1">&#39;git rev-parse HEAD&#39;</span><span class="p">)]</span>
+    <span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview sessioninfo</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> sessioninfo: OrderedDict of length 2</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>OrderedDict([(&#39;Programs&#39;,
+              [[&#39;rsync&#39;, &#39;rsync  version 2.6.9  protocol version 29\n&#39;],
+               [&#39;awk&#39;, &#39;awk version 20070501\n&#39;]]),
+             (&#39;Extra&#39;,
+              [[&#39;Date&#39;, &#39;03/07/2017&#39;],
+               [&#39;Revision&#39;, &#39;4010\n&#39;],
+               [&#39;HASH&#39;, &#39;1899a56c03aa4f29033a704e2c1fe718c4f598bd\n&#39;]])])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, after we load Python3 and R,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[91]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[92]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">library</span><span class="p">(</span><span class="s1">&#39;ggplot2&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+Attaching package: ‘ggplot2’
+The following object is masked from ‘mtcars’:
+
+    mpg
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can run <code>%sessioninfo</code> to display all session information:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[93]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sessioninfo</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<p class="session_section">SoS</p>
+<table class="session_info">
+<tr>
+<th>SoS Version</th><td><pre>0.9.8.5</pre></td>
+</tr>
+<tr>
+<th>numpy</th><td><pre>1.11.1</pre></td>
+</tr>
+<tr>
+<th>IPython</th><td><pre>6.1.0</pre></td>
+</tr>
+</table>
+<p class="session_section">Python3</p>
+<table class="session_info">
+<tr>
+<th>Kernel</th><td><pre>python3</pre></td>
+</tr>
+<tr>
+<th>Language</th><td><pre>Python3</pre></td>
+</tr>
+<tr>
+<th>Version</th><td><pre>3.5.2 |Anaconda custom (x86_64)| (default, Jul  2 2016, 17:52:12) 
+[GCC 4.2.1 Compatible Apple LLVM 4.2 (clang-425.0.28)]</pre></td>
+</tr>
+<tr>
+<th>pandas</th><td><pre>0.20.2</pre></td>
+</tr>
+<tr>
+<th>numpy</th><td><pre>1.11.1</pre></td>
+</tr>
+</table>
+<p class="session_section">R</p>
+<table class="session_info">
+<tr>
+<th>Kernel</th><td><pre>ir</pre></td>
+</tr>
+<tr>
+<th>Language</th><td><pre>R</pre></td>
+</tr>
+<tr>
+<td colspan="2"><pre>R version 3.4.0 (2017-04-21)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: OS X El Capitan 10.11.5
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ggplot2_2.2.1 feather_0.3.1
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.10        magrittr_1.5        hms_0.3            
+ [4] munsell_0.4.3       uuid_0.1-2          colorspace_1.3-2   
+ [7] R6_2.2.1            stringr_1.2.0       plyr_1.8.4         
+[10] tools_3.4.0         grid_3.4.0          gtable_0.2.0       
+[13] lazyeval_0.2.0      digest_0.6.12       tibble_1.3.0       
+[16] crayon_1.3.2        IRdisplay_0.4.4     repr_0.12.0        
+[19] IRkernel_0.8.6.9000 evaluate_0.10       pbdZMQ_0.2-5       
+[22] stringi_1.1.5       compiler_3.4.0      scales_0.4.1       
+[25] jsonlite_1.4       </pre></td>
+</tr>
+</table>
+<p class="session_section">JavaScript</p>
+<table class="session_info">
+<tr>
+<th>Kernel</th><td><pre>javascript</pre></td>
+</tr>
+<tr>
+<th>Language</th><td><pre>JavaScript</pre></td>
+</tr>
+</table>
+<p class="session_section">Programs</p>
+<table class="session_info">
+<tr>
+<th>rsync</th><td><pre>rsync  version 2.6.9  protocol version 29
+</pre></td>
+</tr>
+<tr>
+<th>awk</th><td><pre>awk version 20070501
+</pre></td>
+</tr>
+</table>
+<p class="session_section">Extra</p>
+<table class="session_info">
+<tr>
+<th>Date</th><td><pre>03/07/2017</pre></td>
+</tr>
+<tr>
+<th>Revision</th><td><pre>4010
+</pre></td>
+</tr>
+<tr>
+<th>HASH</th><td><pre>1899a56c03aa4f29033a704e2c1fe718c4f598bd
+</pre></td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%shutdown"><code>%shutdown</code><a class="anchor-link" href="#%shutdown">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%shutdown</code> shuts down a specified kernel, or the current running kernel, with an option to restart it (<code>--restart</code>, <code>-r</code>). SoS will switch to kernel <code>SoS</code> if the current kernel is shutdown. In summary</p>
+<table>
+<thead><tr>
+<th>current kernel</th>
+<th>command</th>
+<th>kernel after magic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>R</code> (for example)</td>
+<td><code>%shutdown</code></td>
+<td><code>SoS</code></td>
+</tr>
+<tr>
+<td><code>R</code></td>
+<td><code>%shutdown -r</code></td>
+<td><code>R</code> (new)</td>
+</tr>
+<tr>
+<td><code>SoS</code></td>
+<td><code>%shutdown R</code></td>
+<td><code>SoS</code> (<code>R</code> is shutdown)</td>
+</tr>
+<tr>
+<td><code>SoS</code></td>
+<td><code>%shutdown -r R</code></td>
+<td><code>SoS</code> (<code>R</code> is restarted)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%taskinfo"><code>%taskinfo</code><a class="anchor-link" href="#%taskinfo">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When you execute a SoS workflow with external task, one or more tasks would be displayed in the notebook.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../media/tasks.png" alt="tasks"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When you click on the task ID, a <code>%taskinfo</code> magic would be executed at the side panel, displaying the detailed information of the task, including a plot of the CPU and memory usage of the task during its execution.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../media/resource_history.png" alt="resource_history"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also execute the magic directly by running it in the side panel or a regular cell, with command</p>
+
+<pre><code>%taskinfo 6dbe51a2c129f02e34e454be5f0cbcd9 -q queue</code></pre>
+<p>Note that the <code>-q</code> (<code>--queue</code>) option specifies the task queue in which the task is being executed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%tasks"><code>%tasks</code><a class="anchor-link" href="#%tasks">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%tasks</code> magic lists all or selected tasks in local or remote task queue so that you can monitor them using the notebook interface. The tasks would be listed as shown above and you can</p>
+<ol>
+<li>select the icon to stop a running or pending task, or resume failed or aborted tasks.</li>
+<li>select the task ID to retrieve the details of the task.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This magic accepts parameters <code>-q</code> (<code>--queue</code>), and option <code>-s</code> (<code>--status</code>) to limit tasks in certain status and <code>--age</code>) to limit tasks older or newer than specified age. Option <code>age</code> accepts a number with unit <code>s</code> (second), <code>m</code> (minute), <code>h</code> (hour), or <code>d</code> (day, default), or hours, minutes and seconds in the <code>HH:MM:SS</code> format, with an optional prefix <code>+</code> for older than specified time. For example, you can use magic</p>
+
+<pre><code>%tasks -q host -s running</code></pre>
+<p>to list all running tasks on a remote task queue named <code>host</code>, or</p>
+
+<pre><code>%tasks -s running -t +2d</code></pre>
+<p>to list all tasks that has been running for more than 2 days.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%toc"><code>%toc</code><a class="anchor-link" href="#%toc">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%toc</code> magic displays the table of content of the current notebook in the side panel which makes it easy for you to navigate within a long notebook. SoS defines a keyboard shortcut <code>Ctrl-Shift-t</code> for this magic so there is rarely a need to type it in.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%use"><code>%use</code><a class="anchor-link" href="#%use">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As shown above, the <code>%use name</code> magic starts or switch to a subkernel named <code>name</code>. The kernel will be used for the current cell and any new cell, but not for existing cells created with another kernel. The kernel can be any locally installed Jupyter kenel, or name of a <strong>language</strong> (e.g. <code>R</code> for kernel <code>ir</code>). A <code>language</code> is usually built upon the corresponding subkernel, with added support for data exchange between SoS and the subkernel.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>%use</code> magic accepts parameters <code>--in (-i)</code> and <code>--out (-o)</code>, followed by variables that will be transferred to the subkernel after starting (or switching to) the subkernel, and variables that will be transferred back to SoS before magic <code>%use sos</code>. It also accepts an option <code>--restart</code> (<code>-r</code>) to restart the kernel if it is already running.</p>
+<p>For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[94]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[95]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">ir</span> <span class="o">-</span><span class="n">i</span> <span class="n">n</span> <span class="o">-</span><span class="n">o</span> <span class="n">ran</span>
+<span class="n">ran</span> <span class="o">&lt;-</span> <span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[96]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span> <span class="n">sos</span>
+<span class="n">ran</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[96]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[0.76870759267579,
+ 0.794863177735507,
+ 0.486977053553574,
+ -2.21945411191291,
+ 1.07582883302393]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Data exchange is actually performed by magics <code>%get</code> and <code>%put</code> so please refer to these magics for details.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>More sophisticated methods to start a new subkernel can be achieved with options <code>-k</code> (<code>--kernel</code>), <code>-l</code> (<code>--language</code>) and <code>-c</code> (<code>--color</code>), more specifically</p>
+<table>
+<thead><tr>
+<th>usage</th>
+<th>sample command</th>
+<th>Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Customize the background color of a subkernel</td>
+<td><code>%use R -c red</code></td>
+<td>Can be applied to existing and new subkernels to change background. A special <code>default</code> name can reset color back to language default.</td>
+</tr>
+<tr>
+<td>Start a separate instance of a known subkernel, with a different name</td>
+<td><code>%use R2 -k ir -c '#bfff00'</code></td>
+<td>Use kernel <code>ir</code> and its default langauge interface</td>
+</tr>
+<tr>
+<td></td>
+<td><code>%use R2 -l R -c #CCCCCC</code></td>
+<td>Use default kernel (<code>ir</code>) or language <code>R</code></td>
+</tr>
+<tr>
+<td>Start a subkernel with a customized language module</td>
+<td><code>%use R2 -l mymodule.sos_R</code></td>
+<td><code>mymodule.sos_R</code> should be derived from <code>sos.R.sos_R</code></td>
+</tr>
+<tr>
+<td>Start an existing kernel without langauge definition with a known language module</td>
+<td><code>%use R_remote -l R</code></td>
+<td><code>R_remote</code> could be a kernel defined by <a href="https://pypi.python.org/pypi/remote_ikernel">remote_ikernel</a></td>
+</tr>
+<tr>
+<td>Start another subkernel with a customized language module</td>
+<td><code>%use R2 -k R_remote -l mymodule.sos_R</code></td>
+</tr>
+</tbody>
+</table>
+<p>Note that <a href="https://pypi.python.org/pypi/remote_ikernel">remote_ikernel</a> provides an interesting way of using SoS because the kernel is actually started on a remote host, possibly on a cluster managed by PBS/Torch, Sun Grid etc. Using a remote kernel along with a local kernel allows you to exchange data between local and remote kernels (although exchanging of large datasets might not work if the data exchange is performed through local files).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%with"><code>%with</code><a class="anchor-link" href="#%with">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>%with kernel</code> also starts (or switches to) a subkernel, but kernel specified by <code>%with kernel</code> will be reset as soon as the cell is executed. This magic is therefore suitable for a quick errand to another kernel. This magic also accepts options <code>--in</code> (or <code>-i</code>) and <code>--out</code> (or <code>-o</code>), so you could use</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[97]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="k">with</span> <span class="n">R</span> <span class="o">-</span><span class="n">i</span> <span class="n">n</span> <span class="o">-</span><span class="n">o</span> <span class="n">ran</span>
+<span class="n">ran</span> <span class="o">&lt;-</span> <span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>to get a list of normally distributed numbers using R's <code>rnorm</code> function. The current kernel is still <code>sos</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[98]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">use</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Current subkernel: SoS (kernel=sos, language=undefined, color=&#34;&#34;)
+Active subkernels: Python3, R, JavaScript
+Available subkernels:
+    sas (sas)
+    Bash (bash)
+    R (ir)
+    Python3 (python3)
+    Python2 (python2)
+    JavaScript (javascript)
+    SoS (sos)</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[99]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">ran</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[99]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[-0.876309501799067,
+ 0.0036161394718091,
+ 0.373553580692889,
+ 1.16854106506412,
+ 2.45787075965926]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="!shell-command"><code>!shell-command</code><a class="anchor-link" href="#!shell-command">&#182;</a></h3><p>If any other command is entered after <code>!</code>, sos will treat the rest of the line as a shell command and execute it. Only single-line commands are supported. String interpolation is supported. Note that <code>!cd</code> does not change the current working directory because the command is executed in a separate process. Use magic <code>%cd</code> for that purpose.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The command line would accept string interpolation so you can for example do</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[100]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+  <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;something</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[101]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">cat</span> <span class="err">$</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">cat /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpegi48ws8<br>## -- End interpolated command --<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>something
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[102]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># clean up</span>
+<span class="err">!</span><span class="n">rm</span> <span class="err">$</span><span class="p">{</span><span class="n">filename</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">rm /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpegi48ws8<br>## -- End interpolated command --<br></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

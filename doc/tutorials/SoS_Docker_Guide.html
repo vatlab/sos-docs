@@ -1,0 +1,461 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>SoS_Docker_Guide</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             // 'number_sections': false,  
+             'number_sections': false,  // sections numbering
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':false,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+
+            var file=tutorialsDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            
+            var tuts=tutorials;
+            var pos=tutorials.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=tuts[a]
+                  $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/tutorials/'+file+'.html'+'"]').css("color","#126dce");
+
+            for (var a=pos+1;a<tuts.length;a++){
+                  var name=tuts[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // for (var a =0;a<tuts.length;a++){
+            //       var name =tuts[a];
+            //       if ()
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace("_"," ")+'</a></li>');
+            // }
+
+            // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            
+            // $(".number_sections-btn").hide();
+            // $(".toc_cell_sections-btn".hide();
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #F6FAEA !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_SoS {}
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="SoS-Docker-Guide">SoS Docker Guide<a class="anchor-link" href="#SoS-Docker-Guide">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="What-is-docker-and-why-it-is-helpful">What is docker and why it is helpful<a class="anchor-link" href="#What-is-docker-and-why-it-is-helpful">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is a big question to answer but in essence you can think docker containers as virtual machines with applications but without the bulky OS part, or applications with stripped down OSes. Docker containers are much more lightweight than virtual machines because all docker containers share the same core OS and related containers (e.g. different applications derived from the same CentOS or Ubuntu OS) share the same base container. Please refer to the <a href="https://www.docker.com/">docker website</a> for details about docker. I have found it helpful to watch a few youtube videos on docker.</p>
+<p>The reason why docker is very helpful in building (bioinformatics) workflows are that</p>
+<ol>
+<li><p>Applications are encapsulated in docker containers so that they do not interfere with the underlying OS, and with other applications. For example, we can run a workflow with applications that based on different versions of Python2 and Python 3 without having to install them locally and calling the correct version of Python, because all applications use the specific version of Python and required libraries and tools inside their own containers.</p>
+</li>
+<li><p>Workflows will be more stable and reproducible because unlike, for example, a local installation of Python that can be affected by other software and upgrades of python, Docker containers are stable and will not change.</p>
+</li>
+<li><p>The same docker containers can be executed on different OS (e.g. various version of Linux, MacOSX etc) so your workflow built on a Mac OS workstation can be executed on a cluster environment.</p>
+</li>
+</ol>
+<p>There are of course some complexity in the use of docker but SoS has made it extremely easy to use docker in your workflows.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Installing-and-configuring-docker">Installing and configuring docker<a class="anchor-link" href="#Installing-and-configuring-docker">&#182;</a></h2><p>Docker is relatively new and is evolving very fast. It is crucial for you to install the latest version from <a href="https://www.docker.com/">docker website</a>. This website provides very detailed step by step instruction and you should have no problem installing docker on your machine.</p>
+<p>After installation, you should be able to start a docker terminal and run command</p>
+<div class="highlight"><pre><span></span>$ docker run hello-world
+</pre></div>
+<p>as suggested by the documentation. Depending on the different versions of docker (e.g. docker under windows), docker might be run under a virtual machine. It is very important to understand that <strong>the configuration (e.g. RAM, CPU) of docker machines are different from the host machines</strong> so your docker machine might be restricuted to, for example, 1 CPU, 1G of RAM, which is insufficient for any serious work. You will most likely need to re-configure your docker virtual machine (e.g. from VirtualBox app locate a machine named <code>default</code>).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Running-a-workflow-with-docker">Running a workflow with docker<a class="anchor-link" href="#Running-a-workflow-with-docker">&#182;</a></h2><p>Running a docker-based workflow is easy because SoS will automatically download docker images and execute scripts inside docker container. Anyway, before you start any workflow running docker, it is a good idea to check if your docker daemon is running by</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">docker</span> <span class="n">ps</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, suppose you do not have ruby installed locally and would like to run a ruby script, you can execute it inside a <code>ruby</code> container. Here we set option to <code>-v2</code> to demonstrate the actual command executed by SoS.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">v2</span>
+<span class="kn">ruby:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ruby&#39;</span>
+    <span class="n">line1</span> <span class="o">=</span> <span class="s2">&quot;Cats are smarter than dogs&quot;</span><span class="p">;</span>
+    <span class="n">line2</span> <span class="o">=</span> <span class="s2">&quot;Dogs also like meat&quot;</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span> <span class="n">line1</span> <span class="o">=~</span> <span class="o">/</span><span class="n">Cats</span><span class="p">(</span><span class="o">.*</span><span class="p">)</span><span class="o">/</span> <span class="p">)</span>
+      <span class="n">puts</span> <span class="s2">&quot;Line1 contains Cats&quot;</span>
+    <span class="n">end</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">line2</span> <span class="o">=~</span> <span class="o">/</span><span class="n">Cats</span><span class="p">(</span><span class="o">.*</span><span class="p">)</span><span class="o">/</span> <span class="p">)</span>
+      <span class="n">puts</span> <span class="s2">&quot;Line2 contains  Dogs&quot;</span>
+    <span class="n">end</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Running <span class="ansi-green-fg">interactive_0</span>: 
+INFO: docker run --rm   -v /Users:/Users -v /tmp:/tmp -v /Users/bpeng1/SOS/doc/pending/tmp8k4kemrk/docker_run_19836.rb:/var/lib/sos/docker_run_19836.rb    -t -P -w=/Users/bpeng1/SOS/doc/pending     ruby ruby /var/lib/sos/docker_run_19836.rb
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-a-docker-image">Building a docker image<a class="anchor-link" href="#Building-a-docker-image">&#182;</a></h2><p>Building a docker image is usually done outside of SoS if you are maintaining a collection of docker containers to be shared by your workflows, your groups, or everyone. However, if you need to create a docker image on-the-fly or would like to embed the Dockerfile inside a SoS script, you can use the <code>docker_build</code> action to build a docker container.</p>
+<p>For example, you can build a container for MISO as follows:</p>
+
+<pre><code>[miso_build]
+# building miso from a Dockerfile
+docker_build: tag='mdabioinfo/miso:latest'
+
+    ############################################################
+    # Dockerfile to build MISO container images
+    # Based on Anaconda python
+    ############################################################
+
+    # Set the base image to anaconda Python 2.7 (miso does not support python 3)
+    FROM continuumio/anaconda
+
+    # File Author / Maintainer
+    MAINTAINER Bo Peng &lt;bpeng@mdanderson.org&gt;
+
+    # Update the repository sources list
+    RUN apt-get update
+
+    # Install compiler and python stuff, samtools and git
+    RUN apt-get install --yes \
+     build-essential \
+     gcc-multilib \
+     gfortran \ 
+     apt-utils \
+     libblas3 \ 
+     liblapack3 \
+     libc6 \
+     cython \ 
+     samtools \
+     libbam-dev \
+     bedtools \
+     wget \
+     zlib1g-dev \ 
+     tar \
+     gzip
+
+    WORKDIR /usr/local
+    RUN pip install misopy</code></pre>
+<p>Command</p>
+
+<pre><code>sos run script miso_build</code></pre>
+<p>would build a docker image <code>mdabioinfo/miso:latest</code> that can be used by other SoS steps.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Writing-a-workflow-with-docker-support">Writing a workflow with docker support<a class="anchor-link" href="#Writing-a-workflow-with-docker-support">&#182;</a></h2><p>Writing a workflow with docker support is a bit more complicated because you will need to understand a few concepts of docker, so reading through the <a href="https://docs.docker.com/engine/reference/run/">docker run manual</a> should be helpful. The most important concept is <strong>Volumes</strong>, whch is how the host directories are mounted to a docker container so that the command executed inside the container can access (and change) files on the host machine. SoS helps the use of docker by</p>
+<ul>
+<li>Automatically mounts <code>/tmp</code> to <code>/tmp</code> </li>
+<li>Automatically mounts <code>/Users</code> to <code>/Users</code> under MacOS X</li>
+<li>Automatically mounts user script inside docker and execute it as <code>/var/lib/sos/xxxxx</code></li>
+</ul>
+<p>so that step <code>input</code> and <code>output</code> are almost always identical inside and outside of docker.</p>
+<p>To use existing public docker container, you will need to specify its tag using option <code>docker_image</code>. For example, to use <code>compbio/ngseasy-fastqc</code> container to run <code>fastqc</code>, instead of installing <code>fastqc</code> locally, you can do</p>
+
+<pre><code>[MISO_1]
+run:     docker_image='compbio/ngseasy-fastqc:1.0-r001'
+    fastqc ${input} -o /tmp</code></pre>
+<p>(More to follow)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Limitations">Limitations<a class="anchor-link" href="#Limitations">&#182;</a></h2><ul>
+<li>Virtual Box virtual machine does not support symbolic link so running <code>ln -s</code> inside a docker machine under Mac will cause a strange error message <code>Read-only file system</code>.</li>
+</ul>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

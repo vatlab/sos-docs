@@ -1,0 +1,2091 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>SoS_Step</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  // sections numbering
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+
+            table_of_contents(cfg,st);
+
+            var file=documentationDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+
+
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // var docs=documentation
+            // for (var a =0;a<docs.length;a++){
+            //       var name =docs[a];
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+            // }
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+            // $("#toc").attr("style","max-height:938px")
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #EAFAF1 !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_SoS {}
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Step-definition">Step definition<a class="anchor-link" href="#Step-definition">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS steps are building blocks of SoS workflows. Although the input and output can be more general, each step typically has its <strong>input</strong>, <strong>output</strong>, and <strong>dependents</strong> files, it executes a <strong>step process</strong> that consists of one or more Python statements and SoS actions (special python functions). Part or all the step process, called <strong>tasks</strong>, can be executed and monitored externally.</p>
+<p><img src="../media/sos_step.png" alt="sos_step"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-options">Step options<a class="anchor-link" href="#Step-options">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Step options</strong> are specified after step name that assists the specification of workflows. SoS provides the following options</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-skip">Option <code>skip</code><a class="anchor-link" href="#Option-skip">&#182;</a></h3><p>Option <code>skip</code> takes two formats, the first format has no value</p>
+
+<pre><code>[10: skip]</code></pre>
+<p>and is equivalent to</p>
+
+<pre><code>[10: skip=True]</code></pre>
+<p>The whole step will be skipped as if it is not defined at all in the script. This option provides a quick method to disable a step.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The second format takes a value, which is usually an expression that will be evaluated when the step is executed. For example, step 10 is by default executed by default</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="kn">parameter:</span> <span class="n">qc</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="p">[</span><span class="mi">10</span> <span class="p">(</span><span class="n">quality</span> <span class="n">check</span><span class="p">):</span> <span class="kp">skip</span><span class="o">=</span><span class="ow">not</span> <span class="n">qc</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${step_name} is executed&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>default_10 is executed
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>but will not be executed if the workflow is executed with option <code>--no-qc</code> (for <code>qc=False</code>)</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">qc</span>
+<span class="kn">parameter:</span> <span class="n">qc</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="p">[</span><span class="mi">10</span> <span class="p">(</span><span class="n">quality</span> <span class="n">check</span><span class="p">):</span> <span class="kp">skip</span><span class="o">=</span><span class="ow">not</span> <span class="n">qc</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${step_name} is executed&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-sigil">Option <code>sigil</code><a class="anchor-link" href="#Option-sigil">&#182;</a></h3><p>Option <code>sigil</code> accepts a string for an alternative sigil, or <code>None</code> to disable string interpolation in the step. The sigil must be two strings separated by a space, such as <code>%( )</code>, <code>&lt; &gt;</code>, and <code>#{ }</code>. Sigils with equal left and right symbol such as <code># #</code> can be used although they do not support features such as nested interpolation. Please refer to section <a href="SoS_Syntax.html">SoS Syntax</a> for details of this option.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-shared">Option <code>shared</code><a class="anchor-link" href="#Option-shared">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS executes each step in a separate process and by default does not return any result to the master SoS process. Option <code>shared</code> is used to share variables between steps. This option accepts:</p>
+<ul>
+<li>A string (variable name), or</li>
+<li>A map between variable names and expressions (strings) that will be evaluated upon the completion of the step.</li>
+<li>A sequence of strings (variables) or maps.</li>
+</ul>
+<p>For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;myvar&#39;</span><span class="p">]</span>
+<span class="n">myvar</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">myvar</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>100
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A map syntax is recommended to share <code>output</code> of one step with others, because the variable assignment will be evaluated only after the step is complete:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">:</span> <span class="kp">shared</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;test_output&#39;</span><span class="p">:</span> <span class="s1">&#39;output&#39;</span><span class="p">}]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="kn">sh:</span>
+    <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Input file ${test_output}&quot;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="n">test_output</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input file a.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The map syntax is evaluated as expressions; therefore it is possible to finer control what specific output, or variations of output, to share with others. For example:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;test_output_1&#39;</span><span class="p">:</span><span class="s1">&#39;output[0]&#39;</span><span class="p">,</span> <span class="s1">&#39;test_output_2&#39;</span><span class="p">:</span> <span class="s1">&#39;output[1]&#39;</span><span class="p">}]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b.txt&#39;</span>
+<span class="kn">sh:</span>
+    <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span> <span class="n">b</span><span class="o">.</span><span class="n">txt</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;output 1: ${test_output_1}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;output 2: ${test_output_2}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>output 1: a.txt
+output 2: b.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>to shared the first file in <code>output</code> (filename <code>output[0]</code>) instead of the entire output file list.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>shared</code> option also provides a <code>sos_variable</code> target.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-provides">Option <code>provides</code><a class="anchor-link" href="#Option-provides">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This option lists files or targets a step generates so that it can be called if the target is required but does not exist. Steps with option <code>procides</code> are called <strong>auxiliary steps</strong> and are building blocks of makefile style workflows.</p>
+<p>Option <code>provides</code> accepts</p>
+<ul>
+<li>A filename or file pattern such as <code>"{sample}.bam.idx"</code></li>
+<li>Other types of targets such as <code>executable("ms")</code></li>
+<li>A list (sequence) of one or more file patterns and targets.</li>
+</ul>
+<p>A file pattern is a filename with optional patterns with variable names enbraced in <code>{ }</code>. SoS matches filenames with the patterns and, if successful, assign variables with matched parts of the names. For example,</p>
+
+<pre><code>[compress: provides = '{filename}.bam']</code></pre>
+<p>would be triggered with target <code>sample_A.bam</code> and <code>sample_B.bam</code>. When the step is triggered by <code>sample_A.bam</code>, it defines variable <code>filename</code> as <code>sample_A</code> and sets the output of the step as <code>sample_A.bam</code>. Please check tutorial <a href="../tutorials/Auxiliary_Steps.ipynb"><code>Auxiliary Steps</code></a> for details.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-Input">Step Input<a class="anchor-link" href="#Step-Input">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Input-files">Input files<a class="anchor-link" href="#Input-files">&#182;</a></h3><p>The input of SoS step follows the following rules:</p>
+<ul>
+<li><strong>the input of a SoS step is by default the output of the previous step</strong>, which is <code>None</code> for the first step.</li>
+<li><strong><code>input</code> option</strong>, which could be <strong>a list</strong> of filenames (string literal, variables, or expressions that return filenames).  Wildcard characters (<code>*</code>, which matches everything and <code>?</code>, which matches any single character) are acceptable. Nested lists are flattened.</li>
+</ul>
+<p>Examples of input specification are as follows:</p>
+
+<pre><code>input: []
+
+input: 'file1.fasta', 'file2.fasta'
+
+input: 'file*.fasta', 'filename with space.fasta'
+
+input:
+    'file*.txt',
+    'directory/file2.txt'
+
+input: aligned_reads
+
+input: aligned_reads, reference_genome
+
+input: aligned_reads[2:]
+
+input: 'data/*.fastq'
+
+input: '*/GXT*.fastq'
+
+input: func(parameter)</code></pre>
+<p>It is worth noting that</p>
+<ul>
+<li>The first examples shows that the step does not need any input file (so it does not depend on any other step).</li>
+<li>It does not matter if <code>aligned_reads</code> and <code>reference_genome</code> are strings or lists of strings because SoS will flatten nested lists to a single list of filenames.</li>
+<li>The <code>input</code> option tries to expand filenames with wildcard characters (<code>*</code> and <code>?</code>). This can be very useful for workflows that, for example, regularly scan a directory and process unprocessed files. However, because the value of this step depends on availability of files, the output of <code>sos show script</code> and the execution path will be unpredictable, and even wrong if there is no available file during the execution of <code>sos show script</code>.</li>
+</ul>
+<p>The input files will be evaluated and form a list of input files. They are by default sent to the step process all at once as varible <code>_input</code>, but can also be sent in groups, each time
+with different <code>_input</code>. Here <code>_input</code> is a temporary variable that is available only within the step.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-filetype">Option <code>filetype</code><a class="anchor-link" href="#Option-filetype">&#182;</a></h3><p>SoS allows the specification of input options, which are appended to input file list as comma separated <code>name=value</code> pairs.</p>
+<p>Option <code>filetype</code> accepts one or more filetypes or a lambda function. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">fastq</span> <span class="n">b</span><span class="o">.</span><span class="n">fastq</span> <span class="n">README</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="n">step</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="kp">filetype</span><span class="o">=</span><span class="s1">&#39;*.fastq&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${input}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a.fastq b.fastq
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This step passes three files to <code>step</code> with wildcard filename <code>*</code>. The filetype filter removes the text file from <code>input</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Under the hood SoS treats the pattern as Unix shell-stype wildcard pattern (with <code>*</code>, <code>?</code>, <code>[seq]</code> and <code>[!seq]</code>, see <a href="https://docs.python.org/2/library/fnmatch.html#module-fnmatch">doc</a> for details) so</p>
+<ul>
+<li><strong><code>filetype='.txt'</code> does not match <code>file.txt</code></strong></li>
+<li><code>filetype='*.fastq*'</code> matches <code>a.fastq</code>, <code>a.fastq.gz</code> and <code>a.fastq.zip</code></li>
+<li><code>filetype='[!_]*.txt'</code> matches <code>file1.txt</code> but not <code>_file1.txt</code></li>
+</ul>
+<p>If you need more refined control over the selection of files, you can use lambda functions (a bit python knowledge is required). For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">echo</span> <span class="s1">&#39;##fileformat=VCF4.1&#39;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">vcf</span>
+<span class="err">!</span><span class="n">echo</span> <span class="s1">&#39;#!/usr/bin/env python&#39;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">py</span>
+<span class="o">%</span><span class="kp">run</span>
+
+<span class="p">[</span><span class="n">step</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="kp">filetype</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">open</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;##fileformat=VCF4.1&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${input}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a.vcf
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The lambda function passes only files with the first line starting with string `##fileformat=VCF4.1``.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-group_by">Option <code>group_by</code><a class="anchor-link" href="#Option-group_by">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS by default passes all input files to step process as a single list. Option <code>group_by</code> pass input files in groups, each time with a subset of input files named <code>_input</code>. SoS allows you to group input by <code>single</code> (individual file), <code>pairs</code> (match first half of files with the second half),  <code>combinations</code> (all unordered combinations of 2-sets), <code>pairwise</code> (all adjacent 2-sets), or chunks of size <code>N</code> (integer <code>group_by=3</code> or string <code>group_by='4'</code>, the last group might have few files if the number of input files is not a multiple of <code>group_by</code>). For example, with the following sos script</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span> <span class="n">file3</span> <span class="n">file4</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="n">group</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="s1">&#39;file3&#39;</span><span class="p">,</span> <span class="s1">&#39;file4&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;pairwise&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_input}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>file1 file2
+file2 file3
+file3 file4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is very important to understand that the <code>group_by</code> option does not change <code>${input}</code>. It creates a looping variable <code>${_input}</code> that changes with each input group. To demonstrate more acceptable values, the following example uses <code>sos_run</code> action to execute this a step with different grouping method.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span> <span class="n">file3</span> <span class="n">file4</span>
+<span class="o">%</span><span class="kp">run</span>
+
+<span class="p">[</span><span class="n">group</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">group</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;group_by=${group}&quot;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="s1">&#39;file3&#39;</span><span class="p">,</span> <span class="s1">&#39;file4&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="n">group</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: ${_input}&quot;</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">default</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">)</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;pairs&#39;</span><span class="p">)</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;pairwise&#39;</span><span class="p">)</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;combinations&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>group_by=1
+0: file1
+1: file2
+2: file3
+3: file4
+group_by=2
+0: file1 file2
+1: file3 file4
+group_by=single
+0: file1
+1: file2
+2: file3
+3: file4
+group_by=pairs
+0: file1 file3
+1: file2 file4
+group_by=pairwise
+0: file1 file2
+1: file2 file3
+2: file3 file4
+group_by=combinations
+0: file1 file2
+1: file1 file3
+2: file1 file4
+3: file2 file3
+4: file2 file4
+5: file3 file4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Obviously, the output of the <code>pairs</code> cases depends on the order of files. If you need to pair files in any particular order, you can control it in input. For example</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">A_R1_0</span><span class="o">.</span><span class="n">fastq</span> <span class="n">A_R2_0</span><span class="o">.</span><span class="n">fastq</span> <span class="n">B_R1_0</span><span class="o">.</span><span class="n">fastq</span> <span class="n">B_R2_0</span><span class="o">.</span><span class="n">fastq</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">A_R1_1</span><span class="o">.</span><span class="n">fastq</span> <span class="n">A_R2_1</span><span class="o">.</span><span class="n">fastq</span> <span class="n">B_R1_1</span><span class="o">.</span><span class="n">fastq</span> <span class="n">B_R2_1</span><span class="o">.</span><span class="n">fastq</span>
+
+<span class="n">fastq_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">step</span><span class="p">]</span>
+<span class="kn">input:</span>
+	<span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fastq_files</span> <span class="k">if</span> <span class="s1">&#39;_R1_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]),</span>
+	<span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fastq_files</span> <span class="k">if</span> <span class="s1">&#39;_R2_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]),</span>
+	<span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;pairs&#39;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">_input</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;A_R1_0.fastq&#39;, &#39;A_R2_0.fastq&#39;]
+[&#39;A_R1_1.fastq&#39;, &#39;A_R2_1.fastq&#39;]
+[&#39;B_R1_0.fastq&#39;, &#39;B_R2_0.fastq&#39;]
+[&#39;B_R1_1.fastq&#39;, &#39;B_R2_1.fastq&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>will take all input files and sort them by <code>_R1_</code> and <code>_R2_</code> and by filename, and pair them.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-for_each">Option <code>for_each</code><a class="anchor-link" href="#Option-for_each">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>for_each</code> allows you to repeat step process for each value of a variable. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
+<span class="o">%</span><span class="kp">run</span>
+
+<span class="n">method</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="s1">&#39;method&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: ${_input} ${_method}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: file1 file2 m1
+1: file1 file2 m2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>will repeat the step with each item of variable <code>method</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS automatically creates a loop variable <code>_method</code> for variable <code>method</code>, which assumes a slice of the variable at each iteration.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nested loops are also allowed. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">method</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]</span>
+<span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;pars&#39;</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: _input=${_input} _method=${_method}, _pars=${_pars}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: _input=file1 file2 _method=m1, _pars=1
+1: _input=file1 file2 _method=m2, _pars=1
+2: _input=file1 file2 _method=m1, _pars=2
+3: _input=file1 file2 _method=m2, _pars=2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like to loop the process with several parameters, you can put them into the same level by 'var1,var2'. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
+
+<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">method</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]</span>
+<span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;method,pars&#39;</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: _input=${_input} _method=${_method}, _pars=${_pars}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: _input=file1 file2 _method=m1, _pars=1
+1: _input=file1 file2 _method=m2, _pars=2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The variable passed to option <code>for_each</code> can a sequence (<code>list</code>, <code>tuple</code>, <code>set</code>, etc), a Pandas <code>Series</code>, <code>Index</code>, or <code>DataFrame</code>. In the last case, each <code>_loop</code> variable presents a line in the dataframe and you can access single values using format <code>_loop["header"]</code>. For example</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="n">preview</span> <span class="n">data</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Hello&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;World&#39;</span><span class="p">)],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">])</span>
+<span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="s1">&#39;data&#39;</span>
+<span class="kn">output:</span> <span class="s2">&quot;${_data[&#39;A&#39;]}_${_data[&#39;B&#39;]}_${_data[&#39;C&#39;]}.txt&quot;</span>
+<span class="kn">sh:</span>
+    <span class="n">touch</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like define your own loop variable, or if the default loop variable does not work (e.g. loop through <code>obj.sequence</code> where <code>_obj.sequence</code> is not a valid variable name), you can use a dictionary syntax in the format of <code>{'varname': sequence}</code>. Mult-variable and nested loops can be specified in the format of <code>{'var1': seq1, 'var2': seq2}</code> (same level) and <code>[{'var1': seq1}, {'var2': seq2}]</code>.</p>
+<p>For example, the first example for this parameter can be written as</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
+
+<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]}</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: ${_input} ${method}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: file1 file2 m1
+1: file1 file2 m2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and a latter example can be written as</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span><span class="s1">&#39;m2&#39;</span><span class="p">],</span>
+                                   <span class="s1">&#39;pars&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]}</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: _input=${_input} method=${method}, pars=${pars}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: _input=file1 file2 method=m1, pars=1
+1: _input=file1 file2 method=m2, pars=2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The dictionary syntax also supports multiple keys. This helps customizing groups of variables. For example in the script below we only care for situations where <code>n</code> is greater than <code>p</code>,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">parameter:</span> <span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">outfile</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;4.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;5.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;6.txt&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_n,_p&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="n">_n</span><span class="p">,</span><span class="n">_p</span><span class="p">)</span> <span class="k">for</span> <span class="n">_n</span> <span class="ow">in</span> <span class="n">n</span> <span class="k">for</span> <span class="n">_p</span> <span class="ow">in</span> <span class="n">p</span> <span class="k">if</span> <span class="n">_n</span> <span class="o">&gt;</span> <span class="n">_p</span><span class="p">]}</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index} ${outfile[_index]} ${_n} ${_p}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0 1.txt 100 50
+1 2.txt 300 50
+2 3.txt 300 100
+3 4.txt 300 200
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-paired_with">Option <code>paired_with</code><a class="anchor-link" href="#Option-paired_with">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Input files might might come with additional information such as sample type, and sample name, and you can pair these information to input files using the <code>paired_with</code> option. For example, <code>bam_files</code> in the following example have matched <code>mutated</code> and <code>sample_name</code>, you can atteched these information to groups of input files <code>_input</code> with looped paired with variables.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+
+<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
+<span class="n">mutated</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">]</span>
+<span class="n">sample_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">,</span> <span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">]</span>
+
+<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mutated&#39;</span><span class="p">,</span> <span class="s1">&#39;sample_name&#39;</span><span class="p">],</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: _input=${_input} _mutated=${_mutated}, _sample_name=${_sample_name}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: _input=case/A1.bam _mutated=case, _sample_name=A1
+1: _input=case/A2.bam _mutated=case, _sample_name=A2
+2: _input=ctrl/A1.bam _mutated=ctrl, _sample_name=A1
+3: _input=ctrl/A2.bam _mutated=ctrl, _sample_name=A2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The paired varaibles stay with the input files, so we get different paired variables with different grouping method</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+
+<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
+<span class="n">mutated</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">]</span>
+<span class="n">sample_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">,</span> <span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">]</span>
+
+<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mutated&#39;</span><span class="p">,</span> <span class="s1">&#39;sample_name&#39;</span><span class="p">],</span> <span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;pairs&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: _input=${_input} _mutated=${_mutated}, _sample_name=${_sample_name}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: _input=case/A1.bam ctrl/A1.bam _mutated=case ctrl, _sample_name=A1 A1
+1: _input=case/A2.bam ctrl/A2.bam _mutated=case ctrl, _sample_name=A2 A2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In case that the variable you would like to pair has a name with <code>.</code> (e.g. <code>align.output</code> for which name of looping variable <code>_align.outpu</code> is invalid) or if you would like to control the name of the looping variable, you can use the full format of this parameter <code>{var_name: var_value}</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+
+<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;mutated&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;sample_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">,</span> <span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">]</span>
+    <span class="p">},</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: _input=${_input} mutated=${mutated}, sample_name=${sample_name}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: _input=case/A1.bam mutated=case, sample_name=A1
+1: _input=case/A2.bam mutated=case, sample_name=A2
+2: _input=ctrl/A1.bam mutated=ctrl, sample_name=A1
+3: _input=ctrl/A2.bam mutated=ctrl, sample_name=A2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-group_with">Option <code>group_with</code><a class="anchor-link" href="#Option-group_with">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to option <code>paired_with</code> that associate variables to input files, you could associate items of a sequence with each input group. This option is applied after <code>group_by</code> and before <code>for_each</code>, which means the length of the sequence should equal to the number of input groups. and the variables will be the same for each <code>for_each</code> loop. Also similar to option <code>paired_with</code>, option <code>group_with</code> can take a string (name of variable) or a dictionary.</p>
+<p>Using the above example, you can assign a label for each group by passing name of a sequence variable</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+
+<span class="n">mutated</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">]</span>
+<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="kp">group_with</span><span class="o">=</span><span class="s1">&#39;mutated&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: _input=${_input} _mutated=${_mutated}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: _input=case/A1.bam case/A2.bam _mutated=case
+1: _input=ctrl/A1.bam ctrl/A2.bam _mutated=ctrl
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or a dictionary with variable name and values:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+
+<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="kp">group_with</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mutated&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">]}</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${_index}: _input=${_input} mutated=${mutated}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: _input=case/A1.bam case/A2.bam mutated=case
+1: _input=ctrl/A1.bam ctrl/A2.bam mutated=ctrl
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-pattern">Option <code>pattern</code><a class="anchor-link" href="#Option-pattern">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This option does the reverse of function <code>expand_pattern</code>. It uses named wildcards to match pattern to all input files, and creates step variables for these wildcard objects. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">-</span><span class="mf">20.</span><span class="n">txt</span> <span class="n">b</span><span class="o">-</span><span class="mf">10.</span><span class="n">txt</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="n">step</span><span class="p">]</span>
+<span class="kn">input:</span>  <span class="s1">&#39;a-20.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b-10.txt&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}-{par}.txt&#39;</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{name}-processed-{par}.txt&quot;</span><span class="p">)</span>
+<span class="kn">sh:</span>
+    <span class="n">echo</span> <span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">}</span>
+    <span class="n">touch</span> <span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a-processed-20.txt b-processed-10.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>will take all input files and extract <code>name</code> and <code>par</code> from each file name as variables <code>name</code> and <code>par</code>. It is then used to create output file names adding the word <code>processed</code> in between these wildcard objects. The outcome of the SoS script above is creation of files <code>a-processed-10.txt</code> and <code>b-processed-20.txt</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When wildcard objects are accessed as step variables, both variable names with and without <code>_</code> prefix is available, e.g. in this example, both <code>_name</code> and <code>name</code>, <code>_par</code> and <code>par</code> are avaiable and are the same. The two conventions will only differ when <code>group_by</code> or <code>for_each</code> is also used. In which case the generated pattern variables <code>name</code> and <code>par</code> are automatically paired with <code>input</code> as if they have been paired using option <code>paired_with=['name', 'par']</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">-</span><span class="mf">20.</span><span class="n">txt</span> <span class="n">b</span><span class="o">-</span><span class="mf">10.</span><span class="n">txt</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="n">step</span><span class="p">]</span>
+<span class="kn">input:</span>  <span class="s1">&#39;a-20.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b-10.txt&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}-{par}.txt&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{_name}-processed-{_par}.txt&quot;</span><span class="p">)</span>
+<span class="kn">sh:</span>
+    <span class="n">echo</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+    <span class="n">touch</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a-processed-20.txt
+b-processed-10.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="dynamic-input-files"><code>dynamic</code> input files<a class="anchor-link" href="#dynamic-input-files">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In order to determine the best execution strategy, SoS evaluates all expressions for all steps before the execution of a workflow to figure
+out input and output of steps. This works most of the time but sometimes the input of a step can only be determined at runtime. For example,
+if you would like your workflow to automatically scan an input directory and process all fasta files under it, or if a previous step produces
+files that cannot be determined beforehand, you can specify input files as follows,</p>
+<div class="highlight"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;input/*.fasta&#39;</span>
+</pre></div>
+<p>The problem is that no file or a wrong set files might exist during the planing stage so SoS might skip this step or start the step
+with a wrong set of files. To address this problem, you can declare the input files as <strong>dynamic</strong> by passing a <code>dynamic</code> object</p>
+<div class="highlight"><pre><span></span><span class="kn">input:</span> <span class="n">dynamic</span><span class="p">(</span><span class="s1">&#39;input/*.fasta&#39;</span><span class="p">)</span>
+</pre></div>
+<p>This tells SoS that the input of this step can only be determined at runtime and will execute the step only after all its previous
+steps have been completed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h3><p>Options of step <code>input</code> are evaluated in the following orders:</p>
+<ol>
+<li>A list of input files, if specified, would replace <code>input</code>, which is by default output from the previous step.</li>
+<li>Option <code>filetype</code> filters input files. <strong>The output becomes <code>input</code></strong>.</li>
+<li>Option <code>group_by</code> groups the files into several groups, named <code>_input</code></li>
+<li>Option <code>for_each</code> repeat <code>_input</code> for each loop var, named <code>_loopvar</code> if <code>for_each='loopvar'</code>.</li>
+<li>Option <code>paired_with</code> pairs one or more variables with <code>input</code>, variable <code>paired</code> is paired with <code>input</code>
+ and variable <code>_paired</code> is paired with <code>_input</code> in each loop if <code>paired_with='paired'</code></li>
+<li>Option <code>pattern</code> extract variables from filenames in <code>input</code>. Variable <code>extracted</code> is paired with <code>input</code>
+ and variable <code>_extracted</code> is paired with <code>_input</code> in each loop if <code>extract='{extracted}_other_part'</code>.</li>
+<li>Option <code>skip</code> optionally skip all or part of the input groups.</li>
+</ol>
+<p>The differences between looped and non-loop steps are sumarized in the following figure</p>
+<p><img src="../media/step_loop.jpg" alt="step_loop"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-output">Step output<a class="anchor-link" href="#Step-output">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Output-files">Output files<a class="anchor-link" href="#Output-files">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Output files of a step can be specified by step <code>output</code>. Similar to <code>input</code>, step output accepts strings, variables, expressions, and allows wildcard characters. For example, the following are acceptable output files</p>
+<div class="highlight"><pre><span></span><span class="kn">output:</span>  <span class="p">[]</span>
+
+<span class="kn">output:</span>  <span class="s1">&#39;accepted_hits.bam&#39;</span>
+
+<span class="kn">output:</span>  <span class="n">aligned_reads</span><span class="p">,</span> <span class="n">bam_stats</span>
+
+<span class="kn">output:</span>  <span class="s1">&#39;aligned/*.bam&#39;</span>
+
+<span class="kn">output:</span>  <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;aligned_{samples}.bam&#39;</span><span class="p">)</span>
+</pre></div>
+<p>In the last example, function <code>expand_pattern</code> is used to contruct list of files from items of a sequence <code>samples</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Step process could be repeated multiple times with <strong>input groups</strong> defined by options <code>for_each</code> or <code>group_by</code>. Whereas <code>input</code> represents the complete set of input files, each input group has its own input files stored in variable <code>_input</code>.</p>
+<p>When there is no input group, <code>output</code> and <code>_output</code> are the same. Otherwise, the <code>output:</code> statement produces <code>_output</code> for each input group, and <code>_output</code> for all input groups form <code>output</code> after the completion of all input groups.</p>
+<p>For example, the following step accepts one or more bam files and index them using command <code>samtools index</code>. The input files are passed one by one and output from each input group is determined by <code>_input</code>.</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">input:</span>
+    <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span>
+
+<span class="kn">output:</span>
+    <span class="s1">&#39;${_input}.bai&#39;</span>
+
+<span class="n">run</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;samtools index ${_input} &#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+<p>The use of variable <code>output</code> in this scenario is discouraged because <code>output</code>, as the collection of all <code>_output</code> increases with each input group.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Specifying output of the entire step when there are multiple input groups can lead to error. For example,</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">input:</span>
+    <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="kn">output:</span>
+    <span class="n">output</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;.bai&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bamfiles</span><span class="p">]</span>
+
+<span class="kn">task:</span>
+<span class="n">run</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;samtools index ${_input} &#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+<p>will fail because tasks in this step produce the same set of output files (equal <code>_output</code> for all input groups), and none of the task produces all specified output files.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-group_by">Option <code>group_by</code><a class="anchor-link" href="#Option-group_by">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we have explained above, <code>_output</code> of an input group should be determined from <code>_input</code>. However, there are cases that <code>input</code> and <code>output</code> are pre-determined and it is not easy to derive <code>_output</code> from <code>_input</code>. In this case, option <code>group_by</code> could be used to divide specified outputs for each input group.</p>
+<p>For example, the above example would work with a <code>group_by</code> output option</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">input:</span>
+    <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="kn">output:</span>
+    <span class="n">output</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;.bai&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bamfiles</span><span class="p">],</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="kn">task:</span>
+<span class="n">run</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;samtools index ${_input} &#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="dynamic-output-files"><code>dynamic</code> output files<a class="anchor-link" href="#dynamic-output-files">&#182;</a></h3><p>Similar to the cases with <a href="#dynamically-determined-input-files-function-dynamic">dynamic input files</a>, the output of some steps could also not be determined beforehand. For example, with the following script that generates <code>html</code> files that cannot be determined during dry run,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;*.html&#39;</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="kp">run</span><span class="p">(</span><span class="s2">&quot;touch result_${random.randint(1, 20)}.html&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>touch result_12.html
+touch result_16.html
+Output target *.html does not exist after the completion of step default_10 (curdir=/private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpc76m8_vv)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this case, you will need to define the output as <code>dynamic</code> using a <code>dynamic</code> function.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="s1">&#39;*.html&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="kp">run</span><span class="p">(</span><span class="s2">&quot;touch result_${random.randint(1, 20)}.html&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>touch result_15.html
+touch result_20.html
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this case, SoS knows that the output can only be determined after the completion of the step.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-depends">Step depends<a class="anchor-link" href="#Step-depends">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This item specifies files that are required for the step. Although not required, it is a good practice to list resource files and other dependency files for a particular step. For example</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">fasta_files</span>
+<span class="kn">depends:</span> <span class="n">reference_seq</span><span class="p">,</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;fastqc&#39;</span><span class="p">)</span>
+</pre></div>
+<p>Similar to <code>output</code> options, dependent files can also be defined after <code>input</code> options and consist of dependent files determined from loop variables.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following figure summarizes the effect of <code>input</code> and <code>output</code> options and input options <code>group_by</code> and <code>for_each</code> on the flow
+of input and output files and related variables.</p>
+<p><img src="../media/step_options.jpg" alt="Step options"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-process">Step process<a class="anchor-link" href="#Step-process">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A step process is the Python statements that perform certain tasks and produce step output from step input. A step process can contain arbitrary Python statements. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dest</span><span class="p">:</span>
+   <span class="n">dest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;some text&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="kn">sh:</span>
+    <span class="n">echo</span> <span class="s2">&quot;some text&quot;</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">q</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>use inline (interpreted and executed by SoS) python code or shell script to generate <code>a.txt</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Step processes are executed within SoS and are executed sequentially. However, part or all of the step process can be executed externally and potentially in parallel as step <code>task</code>. This will be covered in detail in section <a href="External_task.html">External task</a>.</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

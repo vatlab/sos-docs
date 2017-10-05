@@ -1,0 +1,653 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>File_Conversion</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  
+             'number_sections': false,  // sections numbering
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+
+            var file=tutorialsDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            
+            var tuts=tutorials;
+            var pos=tutorials.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=tuts[a]
+                  $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/tutorials/'+file+'.html'+'"]').css("color","#126dce");
+
+            for (var a=pos+1;a<tuts.length;a++){
+                  var name=tuts[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // for (var a =0;a<tuts.length;a++){
+            //       var name =tuts[a];
+            //       if ()
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace("_"," ")+'</a></li>');
+            // }
+
+            // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            
+            // $(".number_sections-btn").hide();
+            // $(".toc_cell_sections-btn".hide();
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Conversion-of-SoS-files">Conversion of SoS files<a class="anchor-link" href="#Conversion-of-SoS-files">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>sos convert</code> command allows you to convert from <code>.sos</code> to some other formats including <code>ipynb</code> (Jupyter notebook), <code>HTML</code> and <code>MD</code> (markdown), and from <code>.ipynb</code> to <code>.sos</code>. You can get a list of converters using command</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos convert [-h] [-v {0,1,2,3,4}]
+                   {sos-html,sos-term,sos-md,sos-ipynb,ipynb-sos,ipynb-html,ipynb-pdf,ipynb-md,ipynb-ipynb}
+                   ...
+
+Converts .sos to various formats including .html for web display, to jupyter
+notebook (.ipynb), and to terminal for syntax highlighted viewing on terminal.
+It also allows converting from jupyter notebook (.ipynb) to sos script (.sos).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+
+converters (name of converter is not needed from command line):
+  {sos-html,sos-term,sos-md,sos-ipynb,ipynb-sos,ipynb-html,ipynb-pdf,ipynb-md,ipynb-ipynb}
+    sos-html            Convert sos file to html format with syntax
+                        highlighting, and save the output either to a HTML
+                        file or view it in a broaser.
+    sos-term            Write script to terminal with syntax highlighting.
+    sos-md              Convert SOS scriot to a markdown format with scripts
+                        quoted in markdown syntax.
+    sos-ipynb           Convert a sos script to Jupyter notebook (.ipynb) so
+                        that it can be opened by Jupyter notebook.
+    ipynb-sos           Export Jupyter notebook with a SoS kernel to a .sos
+                        file. The cells are presented in the .sos file as cell
+                        structure lines, which will be ignored if executed in
+                        batch mode
+    ipynb-html          Export Jupyter notebook with a SoS kernel to a .html
+                        file. Additional command line arguments are passed
+                        directly to command &#34;jupyter nbconvert --to html&#34; so
+                        please refer to nbconvert manual for available
+                        options.
+    ipynb-pdf           Export Jupyter notebook with a SoS kernel to a .pdf
+                        file. Additional command line arguments are passed
+                        directly to command &#34;jupyter nbconvert --to pdf&#34; so
+                        please refer to nbconvert manual for available
+                        options.
+    ipynb-md            Export Jupyter notebook with a SoS kernel to a
+                        markdown file. Additional command line arguments are
+                        passed directly to command &#34;jupyter nbconvert --to
+                        markdown&#34; so please refer to nbconvert manual for
+                        available options.
+    ipynb-ipynb         Export a Jupyter notebook with a non-SoS kernel to a
+                        SoS notebook with SoS kernel. A SoS notebook will
+                        simply be copied to the destination file.
+
+Extra command line argument could be specified to customize the style of html,
+markdown, and terminal output.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Command-line-interface">Command line interface<a class="anchor-link" href="#Command-line-interface">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>convert</code> command uses file extension and an option <code>--to</code> to determine the converter to use, and allows you to convert to a file or print the output to standard output. For example, you can use command</p>
+
+<pre><code>% sos convert myscript.sos myscript.html</code></pre>
+<p>to convert a sos script to a HTML file, or</p>
+
+<pre><code>% sos convert myscript.sos --to html</code></pre>
+<p>to write the HTML file to standard output.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like to know available parameters for a particular converter, you can use option <code>-h</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="n">myscript</span><span class="o">.</span><span class="n">sos</span> <span class="o">--</span><span class="n">to</span> <span class="n">html</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos convert FILE.sos FILE.html (or --to html) [-h] [--raw RAW]
+                                                     [--style {colorful,bw,tango,algol_nu,igor,algol,manni,vs,perldoc,borland,paraiso-light,default,paraiso-dark,trac,native,emacs,murphy,rrt,monokai,xcode,fruity,autumn,lovelace,pastie,vim,friendly}]
+                                                     [--linenos] [-v]
+
+Convert sos file to html format with syntax highlighting, and save the output
+either to a HTML file or view it in a broaser.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --raw RAW             URL to the raw sos file, which will be linked to
+                        filenames in the HTML output
+  --style {colorful,bw,tango,algol_nu,igor,algol,manni,vs,perldoc,borland,paraiso-light,default,paraiso-dark,trac,native,emacs,murphy,rrt,monokai,xcode,fruity,autumn,lovelace,pastie,vim,friendly}
+                        Pygments style for the HTML output.
+  --linenos             Display lineno to the left of the source code
+  -v, --view            Open the output file in a broswer. In case no html
+                        file is specified, this option will display the HTML
+                        file in a browser, instead of writing its content to
+                        standard output.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="SoS--&gt;-HTML">SoS -&gt; HTML<a class="anchor-link" href="#SoS--&gt;-HTML">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>sos</code> to <code>html</code> converter converts <code>.sos</code> script to HTML format. It can be either written to a HTML file, or to standard output if option <code>--to html</code> is specified without a destination filename.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="o">../</span><span class="n">examples</span><span class="o">/</span><span class="n">update_toc</span><span class="o">.</span><span class="n">sos</span> <span class="n">update_toc</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: SoS script saved to update_toc.html
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The converter also accepts a number of parameters (as shown above). The <code>raw</code> parameter adds a URL to filename in the HTML file so that you can link to the raw <code>.sos</code> file from the <code>.html</code> output. The <code>linenos</code> adds line numbers, and <code>style</code> allows you to choose from a number of pre-specified styles. Finally, the <code>view</code> option would open the resulting HTML file in a browser.</p>
+<p>For example,</p>
+
+<pre><code>sos convert ../examples/update_toc.sos --to html --view --style xcode</code></pre>
+<p>would show a HTML file as</p>
+<p><img src="../media/convert_html.png" alt="HTML output of update_toc.sos"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="SoS--&gt;-ipynb">SoS -&gt; ipynb<a class="anchor-link" href="#SoS--&gt;-ipynb">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can convert an existing SoS script to the <code>.ipynb</code> format using command</p>
+
+<pre><code>$ sos convert myscript.sos myscript.ipynb</code></pre>
+<p>and open the resulting notebook from the web interface.</p>
+<p>Depending on how the sos file was written (or converted from <code>.ipynb</code> file), sos takes different approach in splitting content of the script into cells of ipython notebook. More specifically,</p>
+<ol>
+<li>If the script contains cell spliting magic <code>%cell</code>, sos would split the sos script according to <code>%cell</code>, and restore proper metadata (e.g. kernel used for each cell) and execution index. Such a <code>.sos</code> file is usually exported from command <code>sos convert ipynb sos --all</code>.</li>
+<li>If the script does not contain cell spliting magic, sos will split each step into a separate cell.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The resulting <code>.ipynb</code> files have only input code and markdown cells. However, you can execute the notebook from command line if you add an <code>-e</code> (or <code>--execute</code>) option to the converter. That is to say, if you execute</p>
+
+<pre><code>$ sos convert myscript.sos myscript.ipynb --execute</code></pre>
+<p>You would get a notebook with both input and output cells, as if you have opened the non-executed <code>ipynb</code> file and selected <code>Cell -&gt; Run all</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="SoS--&gt;-term">SoS -&gt; term<a class="anchor-link" href="#SoS--&gt;-term">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can print out a <code>.sos</code> script on to the terminal with syntax highlighting. For example, command</p>
+
+<pre><code>% sos convert ../examples/update_toc.sos --to term</code></pre>
+<p>would produce
+<img src="../media/convert_term.png" alt="Terminal output of script update_toc.sos"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="SoS--&gt;-Markdown">SoS -&gt; Markdown<a class="anchor-link" href="#SoS--&gt;-Markdown">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This converter is still in experimental stage and you are welcome to improve the style of output MD files.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ipynb--&gt;-SoS">ipynb -&gt; SoS<a class="anchor-link" href="#ipynb--&gt;-SoS">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A Jupyter notebook can contain markdown cell and code cell with different kernels, and a sos cell might or might not contain a real sos step (with section header).</p>
+<p>You can save a Jupyter notebook with SoS kernel to a SoS script using <code>File -&gt; Download As -&gt; SoS</code> from the browser, or using command</p>
+
+<pre><code>$ sos convert myscript.ipynb myscript.sos</code></pre>
+<p>The conversion process will export the workflow defined in the jupyter notebook in the resulting <code>.sos</code> file, ignoring all cell magics, non-sos cells, and sos cells that do not start with section headers. The resulting <code>.sos</code> file is a proper SoS workflow and can be executed by the <code>sos</code> command in batch mode.</p>
+<p>If you would like to keep most of the information of the Jupyter notebook, you can convert the notebook using option <code>--all</code> (or <code>-a</code>),</p>
+
+<pre><code>$ sos convert myscript.ipynb myscript.sos --all</code></pre>
+<p>This option will export each cell with a <code>%cell</code> magic and record meta data in the <code>.sos</code> file. The resulting file can be converted back to <code>ipynb</code> format with minimal lose of information (without result), but might not be able to be executed in batch mode.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ipynb--&gt;-HTML">ipynb -&gt; HTML<a class="anchor-link" href="#ipynb--&gt;-HTML">&#182;</a></h2><p>This command essentially calls command <code>jupyter nbconvert --to html</code> to convert notebook to HTML format. In addition to standard and third-party (e.g. template from <a href="https://github.com/kirbs-/hide_code">hide code Jupyter extension</a>) Jupyter templates, you can use a SoS provided template called <code>sos-report</code> to convert the Jupyter notebook to <strong>a static HTML file with only markdown and selected ouptput cells</strong> (cells with <code>report_cell</code> tag, output of cells with <code>report_output</code> tag, suitable as a report, and a button to unhide all details input and output cells except for those marked by a <code>scratch</code> tag.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ipynb--&gt;-pdf">ipynb -&gt; pdf<a class="anchor-link" href="#ipynb--&gt;-pdf">&#182;</a></h2><p>This command essentially calls command <code>jupyter nbconvert --to pdf</code> to convert notebook to PDF format.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ipynb--&gt;-md">ipynb -&gt; md<a class="anchor-link" href="#ipynb--&gt;-md">&#182;</a></h2><p>This command essentially calls command <code>jupyter nbconvert --to markdown</code> to convert notebook to Markdown format.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ipynb--&gt;-ipynb">ipynb -&gt; ipynb<a class="anchor-link" href="#ipynb--&gt;-ipynb">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This command converts a Jupyter notebook in another kernel to a SoS notebook, with the original kernel language as the language of each code cell.</p>
+<p>If the original notebook has kernel <code>python3</code>, an option <code>--python3-to-sos</code> can be used to convert code cells to <code>SoS</code>.</p>
+<p>This converter will copy the input notebook to output if the notebook is already a SoS notebook. However, if an option <code>--inplace</code> is specified, it will overwrite the original notebook with the converted one.</p>
+<p>Note that if you already have a non-SoS notebook opened in Jupyter, you can simply use</p>
+<p><code>Kernel</code> -&gt; <code>Change kernel</code> -&gt; <code>sos</code></p>
+<p>to convert the kernel to SoS. You can then use the global language selector to select the appropriate default langauge for the notebook and re-execute the notebook to set the language to each cell.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Rmd--&gt;-ipynb">Rmd -&gt; ipynb<a class="anchor-link" href="#Rmd--&gt;-ipynb">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>RMarkdown is a Markdown format with inline and block code executed by RStudio. SoS can convert RMarkdown files to a SoS notebook but the conversion is limited. In particular, SoS converts the block code to SoS code cells and the rest into Markdown cells, and leave inline expressions untouched. It also ignores all code options.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that SoS does not support string interpolation in markdown cells so inline expressions in RMarkdown are not converted. If you need to insert R expression in markdown, you can convert the paragraph into a code cell and use R to print the evaluated string to standard output (use <code>cat</code> function). Then you can add a <code>%render</code> magic to the beginning of the cell so to render the outputed markdown text.</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

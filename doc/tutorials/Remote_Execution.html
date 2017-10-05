@@ -1,0 +1,812 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Remote_Execution</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  
+             'number_sections': false,  // sections numbering
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+
+            var file=tutorialsDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            
+            var tuts=tutorials;
+            var pos=tutorials.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=tuts[a]
+                  $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/tutorials/'+file+'.html'+'"]').css("color","#126dce");
+
+            for (var a=pos+1;a<tuts.length;a++){
+                  var name=tuts[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // for (var a =0;a<tuts.length;a++){
+            //       var name =tuts[a];
+            //       if ()
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace("_"," ")+'</a></li>');
+            // }
+
+            // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            
+            // $(".number_sections-btn").hide();
+            // $(".toc_cell_sections-btn".hide();
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #F6FAEA !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_SoS {}
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Execution-of-tasks-on-remote-hosts">Execution of tasks on remote hosts<a class="anchor-link" href="#Execution-of-tasks-on-remote-hosts">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS allows you to execute tasks on remote hosts or task queues with or without their own file systems. For example, you can execute a complex workflow mostly locally, but execute a few tasks on a remote host if it provides more computing power, or if it has some software that cannot be installed locally. The remote host could have its own file system (separate systems), share its file system with the local machine (e.g. nodes on the cluster), or share some storage with the local machine (e.g. have the same shared storage), so file synchronization will be needed in some cases.</p>
+<p>With help from a few runtime options (options to <code>task</code>), SoS can</p>
+<ul>
+<li>Copy specified local files to the remote host, possibly to different directories</li>
+<li>Start a SoS task on the remote machine or submit the tak to a task queue (e.g. PBS or Celery) and wait for the completion of the task</li>
+<li>Copy results back from the remote host if the execution is successful</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="System-setup">System setup<a class="anchor-link" href="#System-setup">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Public-key-access">Public-key access<a class="anchor-link" href="#Public-key-access">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Following any online tutorial, set up public-key access from your local machine to the remote host. If your public key does not work, check file permissions of <code>~/.ssh</code>, files under <code>.ssh</code>, and <code>$HOME</code> in some cases. After setting up the server, make sure you can login without password using command</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span>% ssh remote-host
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Software-installation">Software installation<a class="anchor-link" href="#Software-installation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You will need to install the latest version of sos (preferrably identical version between local and remote hosts), and the software you will need to run. Test it by logging to the remote machine with commands</p>
+<div class="highlight"><pre><span></span>% sos -h
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Check-$PATH">Check <code>$PATH</code><a class="anchor-link" href="#Check-$PATH">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Commands that are available in login shell are not necessarily available during remote execution. Basically, remote execution through <code>ssh</code> invokes a non-interactive and non-login shell with basic <code>$PATH</code>. SoS tries to address this problem by executing commands through a login shell</p>
+<div class="highlight"><pre><span></span>% ssh remote-host <span class="s2">&quot;bash --login -c &#39;sos execute task_id&#39;&quot;</span>
+</pre></div>
+<p>However, default <code>.bashrc</code> on the remote server might contain a line like</p>
+<div class="highlight"><pre><span></span><span class="o">[</span> -z <span class="s2">&quot;</span><span class="nv">$PS1</span><span class="s2">&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return</span>
+</pre></div>
+<p>that makes it exit when <code>bash</code> is not running interactively. This line has to be removed in order to have complete <code>$PATH</code> during remote execution.</p>
+<p>Now, fire command</p>
+<div class="highlight"><pre><span></span>% ssh remote-host <span class="s2">&quot;bash --login -c &#39;sos -h&#39;&quot;</span>
+</pre></div>
+<p>from your local machine and see if <code>sos</code> can be invoked. Similarly, verify if the command you would like to execute remotely can be executed in this manner.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Configure-local-and-remote-hosts">Configure local and remote hosts<a class="anchor-link" href="#Configure-local-and-remote-hosts">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now you need to configure your local and remote hosts so that SoS knows how to communicate between them. The hosts configurations should be defined in <code>~/.sos/hosts.yml</code>, and should look similar to</p>
+
+<pre><code>hosts:
+    desktop:
+        paths:
+            home: /Users/myuser
+    monster:
+        address: dcdr1ue8ee.yourdomain.com
+        paths:
+            home: /home/myuser</code></pre>
+<p>The format is easy enough to edit directly, but you can also use commands such as</p>
+
+<pre><code>% sos config --hosts --set hosts.monster.address dcdrlue8ee.yourdomain.com</code></pre>
+<p>to add or change key <code>hosts['monster']['address']</code> to <code>dcdrlue8ee.yourdomain.com</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Configure-address">Configure <code>address</code><a class="anchor-link" href="#Configure-address">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You should specify in the <code>hosts</code> section the address of remote host, similar to</p>
+
+<pre><code>hosts:
+  monster:
+    address: dcdrlue8ee.yourdomain.com</code></pre>
+<p>If your account name differs between the local and remote servers, the complete address should be <code>username@address</code>. In this example <code>john@dcdrlue8ee.yourdomain.com</code> if the remote server account is <code>john</code>.</p>
+<p>You can also specify <code>address</code> for your localhost if you plan to remotely login to the localhost.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Configure-paths">Configure <code>paths</code><a class="anchor-link" href="#Configure-paths">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>paths</code> is a list of directories that will be translated between hosts. For example, if you work locally on a Mac machine with home directory <code>/Users/myuser</code>, and the remote server is a Linux machine with home directory <code>/home/myuser</code>, you should define a <code>paths</code> with definitions of <code>home</code> as follows:</p>
+
+<pre><code>hosts:
+    desktop:
+        paths:
+            home: /Users/myuser
+    monster:
+        address: dcdr1ue8ee.yourdomain.com
+        paths:
+            home: /home/myuser</code></pre>
+<p>In this way, if the local data is <code>/User/myuser/projects/input.fastq</code>, the path will be translated to <code>/home/myuser/projects/input.fastq</code> during remote execution.</p>
+<p>In more complicated cases where there are different directories, more than one <code>paths</code> can be specified. For example, if you have directories under different volumes, you can map them differently using</p>
+<div class="highlight"><pre><span></span>hosts:
+    desktop:
+        paths:
+            home: /Users/myuser
+            project: /Users/myuser/projects
+            resource: /Volumes/Resource
+    monster:
+        address: dcdr1ue8ee.yourdomain.com
+        paths:
+            home: /home/myuser
+            project: /home/myuser/scratch/projects
+            resource: /home/myuser/resource
+</pre></div>
+<p>Note that</p>
+<ol>
+<li>You can define multiple <code>paths</code> such as <code>home</code>, <code>scratch</code>, <code>working</code>, <code>resource</code>, but <strong>paths should be defined for all hosts</strong>.</li>
+<li>All <code>paths</code> should be absolute (starts with <code>/</code> for Linux-like systems).</li>
+<li>SoS expands local directories to absolute path before matching to a <code>paths</code>.</li>
+<li>If there are multiple matches, SoS choose the longest-matching path. For example, path <code>/Users/myuser/projects/input.txt</code> would be identified as <code>project</code> (not <code>home</code>) and be mapped to <code>/home/myuser/scratch/projects/input.txt</code>.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Configure-shared">Configure <code>shared</code><a class="anchor-link" href="#Configure-shared">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>shared</code> tells SoS which file systems are shared between local and remote hosts so that it does not have to synchronize files under these directories between the hosts.</p>
+<ul>
+<li><p>SoS assumes independent file systems so you do not have to specify option <code>shared</code> if the local and remote hosts does not share any file system.</p>
+</li>
+<li><p>If your local and remote host share all file systems, you should list <code>/</code> as shared.</p>
+
+<pre><code>  hosts:
+      desktop:
+          shared:
+              ALL: /
+      monster:
+          shared:
+              ALL: /</code></pre>
+<p>The name <code>ALL</code> does not matter as long as they match between hosts.</p>
+</li>
+</ul>
+<ul>
+<li><p>If your local and remote host share one or more shared volumes, you can specify them with</p>
+
+<pre><code>  hosts:
+      desktop:
+          shared:
+              project: /project
+      monster:
+          shared:
+              project: /scratch/project</code></pre>
+<p>to indicate that local files under <code>/project</code> shared to <code>monster</code>.</p>
+</li>
+</ul>
+<p>Items under <code>shared</code> are treated as special <code>paths</code>. Files under these directories are mapped, but not synchronized.</p>
+<p>Note that it is a bad idea to use dropbox or google drive as shared drives because files under these directories are not actually shared so a file created locally will not be available instantly on the remote host.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Specify-localhost">Specify <code>localhost</code><a class="anchor-link" href="#Specify-localhost">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After you configure both local and remote host, you will need to tell sos what your <code>localhost</code> is in the <code>hosts</code> list using command</p>
+
+<pre><code>% sos config --global --set localhost desktop</code></pre>
+<p>which actually writes <code>localhost: desktop</code> in the system configuration file.</p>
+<p>If you have defined multiple hosts in the <code>hosts.yml</code> file, you should distribute this file to all hosts and set <code>localhost</code> accordingly, so that all machines know how to communicate with each other.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sample-configurations">Sample configurations<a class="anchor-link" href="#Sample-configurations">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The server settings are critically important for the successful execution of commands on remote servers. As an example, I am working on a Mac mini (with limited CPU/RAM) and have access to a Mac Pro workstation and a Linux server. The hosts configurations for these machines are</p>
+
+<pre><code>hosts:
+  mini:
+    paths:
+      home: /Users/bpeng1
+      resource: /Users/bpeng1/.sos/resource
+  macpro:
+    address: mp-bpeng.mdanderson.edu
+    paths:
+      home: /Users/bpeng1
+      resource: /Volumes/HOME/resource
+  linux:
+    address: dcdrlpmcfd.mdanderson.edu
+    paths:
+      home: /home/bpeng1
+      resource: /home/bpeng1/.sos/resource</code></pre>
+<p>I defined two <code>paths</code> named <code>home</code> and <code>resource</code> because although <code>resource</code> is at the same location <code>~/.sos/resource</code>, it is in a dedicated volume <code>/Volumes/HOME/</code> on the macpro.</p>
+<p>With this <code>hosts.yml</code> and proper definition of <code>localhost</code> on each machine, it is possible to submit jobs from <code>mini</code> to <code>macpro</code> and <code>linux</code>, from <code>macpro</code> to <code>linux</code> and from <code>linux</code> to <code>macpro</code>. It is not possible to submit jobs remotely to <code>mini</code> because no <code>address</code> is defined for this host.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Running-tasks-remotely">Running tasks remotely<a class="anchor-link" href="#Running-tasks-remotely">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-queue">Option <code>queue</code><a class="anchor-link" href="#Option-queue">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you have set up a host in SoS configuration file propertly, you can use option <code>queue</code> to specify the host on which the task will be executed.</p>
+
+<pre><code>task:   queue='monster'</code></pre>
+<p>Here <code>monster</code> is the alias of the host.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Command-line-option--q">Command line option <code>-q</code><a class="anchor-link" href="#Command-line-option--q">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Command line option <code>-q</code> specify a default task queue (or remote host) to which all tasks would be submitted. This option does not override <code>queue</code> options defined in the script so you can submit most jobs to a queue while submitting some jobs to particular servers (e.g. the one with specific software) using task options.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Options-to_host-and-from_host">Options <code>to_host</code> and <code>from_host</code><a class="anchor-link" href="#Options-to_host-and-from_host">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that you have your machine configured, you should try to copy some files and see if they work correctly. File copy is specified with options <code>to_host</code> and <code>from_host</code>, which accepts a single file or directory name (string) or list (or nested lists) of filenames relative to local file system. You can test these options using simple SoS steps such as (replace filenames with files you have, of course),</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="kn">task:</span> 
+    <span class="kp">queue</span><span class="p">:</span> <span class="s1">&#39;monster&#39;</span><span class="p">,</span>
+    <span class="kp">to_host</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;~/projects/data/test1&#39;</span><span class="p">,</span> <span class="s1">&#39;/Volumes/Resources/hg19.fasta&#39;</span><span class="p">],</span>
+    <span class="kp">from_host</span><span class="p">:</span> <span class="s1">&#39;~/projects/data/test1.res&#39;</span>
+<span class="kn">run:</span>
+    <span class="n">echo</span> <span class="s2">&quot;Hello, World&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Input, dependent, and output files are automatically transferred</strong> so <code>to_host</code> and <code>from_host</code> are only needed to transfer files or directories in addition to step input and outputs. If there is any problem with file transfer, use option <code>-v3</code> to check if filenames are mapped correctly.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Variable-translation">Variable translation<a class="anchor-link" href="#Variable-translation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Each task has a <strong>context dictionary</strong> that contains variables that will be used to, for example, compose scripts to be executed. When the script is executed on the remote host, targets specified in variables <code>input</code> (<code>_input</code>), <code>output</code> (<code>_output</code>), <code>depends</code> (<code>_depends</code>) will be <strong>translated synchronized from local to remote file system</strong> (unless they are of type <code>remote</code>). The values of these variables will be translated on remote host.</p>
+<p>If there are additional files that you would like to synchronize, you should put them in <code>input:</code> or <code>depends:</code> statement. If for any reason you would like to translate a variable from local to remote host but do not want to synchronize the file, you can add it to option <code>map_vars</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running-task">Running task<a class="anchor-link" href="#Running-task">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With all the pieces put together, you can now execute the task on the remote host using <code>task</code> options</p>
+<div class="highlight"><pre><span></span><span class="kn">depends:</span>  <span class="n">hg19_fasta</span><span class="p">,</span> <span class="n">hg19_genes_gtf</span>
+<span class="kn">output:</span>   <span class="s2">&quot;${hg19_star_index}/chrName.txt&quot;</span>
+<span class="kn">task:</span>     <span class="kp">queue</span><span class="o">=</span><span class="s1">&#39;monster&#39;</span><span class="p">,</span> <span class="kp">from_host</span><span class="o">=</span><span class="n">hg19_star_index</span>
+<span class="kn">run:</span>
+    <span class="n">STAR</span> \
+        <span class="o">--</span><span class="n">runThreadN</span> <span class="mi">8</span> \
+        <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
+        <span class="o">--</span><span class="n">genomeDir</span> <span class="err">$</span><span class="p">{</span><span class="n">hg19_star_index</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="err">$</span><span class="p">{</span><span class="n">hg19_fasta</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">sjdbGTFfile</span> <span class="err">$</span><span class="p">{</span><span class="n">hg19_genes_gtf</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">sjdbOverhang</span> <span class="mi">100</span>
+</pre></div>
+<p>For this example,</p>
+<ol>
+<li>SoS automatically transfers all input (None in this example) and dependent files (<code>hg19_fasta1 and</code>hg19_genes_gtf<code>in this example) so no</code>to_host` is needed.</li>
+<li>Option <code>from_host</code> is needed because we need to transfer not only the reprsenting output file (<code>hg19_star_index}/chrName.txt</code>), but also the whole directory containing the whole indexes (<code>hg19_star_index</code>).</li>
+</ol>
+<p>SoS tries its best to automate the process while allowing you to tweak the details with runtime options. Just to recap the use of these  options:</p>
+<ul>
+<li><code>to_host</code> is needed to transfer <strong>additional input</strong> files or directories to remote host.</li>
+<li><code>from_host</code> is needed to tranfer <strong>additional output</strong> files or directories from remote host.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Monitor-the-status-of-the-remote-task">Monitor the status of the remote task<a class="anchor-link" href="#Monitor-the-status-of-the-remote-task">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tasks executed on remote servers are external in the sense that they could be monitored and killed externally. When you submit the task, you will be given a task ID, using which you can query the status of the task or cancel the tak. For example,</p>
+
+<pre><code>sos status task_id -q shark</code></pre>
+<p>can be used to check the status of <code>task_id</code> on a remote server <code>shark</code>, and command</p>
+
+<pre><code>sos kill task_id -q shark</code></pre>
+<p>can be used to kill a running task with ID <code>task_id</code>. You can also use command</p>
+
+<pre><code>sos status task_id -q shark -v 3</code></pre>
+<p>to display the details of task, including the SoS (Python) statements that will be executed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Submit-tasks-to-a-task-queue">Submit tasks to a task queue<a class="anchor-link" href="#Submit-tasks-to-a-task-queue">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Instead of executing the task directly on a remote server, you can submit the task to a task queue (e.g. PBS/Torch of a cluster sytem) where the task could be distributed to working nodes of a cluster system. A little more configuration would be needed, basically, you will need to configure</p>
+<ul>
+<li><code>queue_type</code>: type of the task queue</li>
+</ul>
+<p>and for <code>queue_type = pbs</code>, configurations such as</p>
+<ul>
+<li><code>job_template</code>: A template to generate jobs to be submitted,</li>
+<li><code>submit_cmd</code>: command to submit PBS jobs,</li>
+<li><code>status_cmd</code>: command to check status of jobs, and</li>
+<li><code>kill_cmd</code>: command to cancel/delete pending or running jobs.</li>
+</ul>
+<p>You will also need to specify the resources needed to execute your task, using task options such</p>
+<ul>
+<li><code>walltime</code>: estimated time</li>
+<li><code>mem</code>: estimated memory usage</li>
+<li><code>procs</code>: number of process needed for the task</li>
+</ul>
+<p>With these configurations and options properly set up, you will be able to execute the task using the same syntax, e.g.</p>
+
+<pre><code>sos run myscript -q pbs
+sos status -q pbs
+sos kill tasks -q pbs</code></pre>
+<p>where <code>pbs</code> is the alias of the cluster system.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="An-example-using-docker">An example using docker<a class="anchor-link" href="#An-example-using-docker">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here is real-world example of running a bioinformatics tool (<code>tophat2</code>) on a remote server using docker. The remote server is a Linux server with docker installed. The local machine has all the reference data and annotation files (<code>hg19_fasta</code>, <code>hg19_genes_gtf</code>), and the Bowtie2 index (<code>hg19_Bowtie2_index</code>) but do not have tophat installed (lacking a Python 2 environment).</p>
+<p>The following step runs tophat2 on the input fastq files using a remote host (with alias <code>linux</code>) and docker image <code>genomicpariscentre/tophat2</code>.</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">tophat</span><span class="o">-</span><span class="n">align</span><span class="p">]</span>
+<span class="c1"># align reads using the TOPHAT aligner</span>
+<span class="kn">depends:</span>  <span class="n">hg19_genes_gtf</span><span class="p">,</span> <span class="n">hg19_fasta</span><span class="p">,</span> <span class="s2">&quot;${hg19_Bowtie2_index}/genome.1.bt2&quot;</span>
+<span class="kn">input:</span>    <span class="n">fastq_files</span>
+<span class="kn">output:</span>   <span class="s2">&quot;${output_dir}/tophat_main/alignments.bam&quot;</span>
+
+<span class="kn">task:</span>   <span class="kp">queue</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span> <span class="kp">to_host</span><span class="o">=</span><span class="n">hg19_Bowtie2_index</span><span class="p">,</span>
+        <span class="kp">from_host</span><span class="o">=</span><span class="s2">&quot;${output_dir}/tophat_main&quot;</span>
+
+<span class="n">R1</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">input</span> <span class="k">if</span> <span class="s1">&#39;_R1_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+<span class="n">R2</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">input</span> <span class="k">if</span> <span class="s1">&#39;_R2_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+<span class="kp">stop_if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">R2</span><span class="p">),</span> <span class="s2">&quot;Unequal number of R1 and R2 files from input ${fastq_files}&quot;</span><span class="p">)</span>
+
+<span class="c1"># genomicpariscentre only has tophat2 (bowtie2) so it does not support option --bortie1</span>
+<span class="kn">run:</span>    <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;genomicpariscentre/tophat2&#39;</span>
+
+    <span class="p">[</span> <span class="o">-</span><span class="n">d</span> <span class="err">$</span><span class="p">{</span><span class="n">output_dir</span><span class="p">}</span> <span class="p">]</span> <span class="o">||</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="err">$</span><span class="p">{</span><span class="n">output_dir</span><span class="p">}</span>
+    <span class="n">tophat2</span>  \
+        <span class="o">--</span><span class="n">read</span><span class="o">-</span><span class="n">realign</span><span class="o">-</span><span class="n">edit</span><span class="o">-</span><span class="n">dist</span> <span class="mi">1</span> \
+        <span class="o">--</span><span class="n">segment</span><span class="o">-</span><span class="n">length</span> <span class="mi">24</span> \
+        <span class="o">-</span><span class="n">o</span> <span class="s1">&#39;${output_dir}/tophat_main&#39;</span> \
+        <span class="o">-</span><span class="n">p</span> <span class="mi">7</span> \
+        <span class="o">--</span><span class="n">GTF</span> <span class="s1">&#39;${hg19_genes_gtf}&#39;</span> \
+        <span class="o">--</span><span class="n">rg</span><span class="o">-</span><span class="nb">id</span> <span class="mi">0</span> \
+        <span class="o">--</span><span class="n">rg</span><span class="o">-</span><span class="n">sample</span> <span class="s1">&#39;${sample_name}&#39;</span> \
+        <span class="o">--</span><span class="n">library</span><span class="o">-</span><span class="nb">type</span> <span class="n">fr</span><span class="o">-</span><span class="n">firststrand</span> \
+        <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">coverage</span><span class="o">-</span><span class="n">search</span> \
+        <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">fasta</span><span class="o">-</span><span class="n">order</span>  \
+        <span class="o">--</span><span class="n">fusion</span><span class="o">-</span><span class="n">search</span> <span class="o">--</span><span class="n">fusion</span><span class="o">-</span><span class="n">anchor</span><span class="o">-</span><span class="n">length</span> <span class="mi">13</span> \
+        <span class="o">--</span><span class="n">fusion</span><span class="o">-</span><span class="n">ignore</span><span class="o">-</span><span class="n">chromosomes</span> <span class="n">chrM</span><span class="p">,</span><span class="n">M</span> <span class="s1">&#39;${hg19_Bowtie2_index}/genome&#39;</span> \
+        <span class="s1">&#39;${R1!ae,}&#39;</span> <span class="s1">&#39;${R2!ae,}&#39;</span>
+</pre></div>
+<p>When the step is executed, SoS will</p>
+<ol>
+<li>Transfer <code>hg19_genes_gtf</code>, <code>hg19_fasta</code>, <code>${hg19_Bowtie2_index}/genome.1.bt2</code> (specified by <code>depends</code>), <code>fastq_files</code> (specified by <code>input</code>) and <code>hg19_Bowtie2_index</code> (specified by <code>to_host</code>) to remote server.</li>
+<li>Translate all variables (<code>input</code>, <code>output</code>, etc).</li>
+<li>On server <code>linux</code>, before starting the script, download docker image <code>genomicpariscentre/tophat2</code> if not already available.</li>
+<li>Start the bash script in the docker container.</li>
+</ol>
+<p>With this setup, everything is provided and specified by the local host. The server does not have to have any data and software installed so you are free to make use of any server with docker installed.</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

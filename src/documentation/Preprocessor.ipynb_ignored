@@ -1,0 +1,191 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Precessors"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## This feature is temporarily removed due to its incompatibility with the jupyter notebook interface. #556  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "###  `%include`"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "SoS allows you to include variables and steps of another script into the current script using preprocessor `%include`. The `%include` statement should be used before any other SoS statements and follows the same syntax as the python `import` keyword. For example, the following statements are allowed\n",
+    "\n",
+    "```sos\n",
+    "%include alignment\n",
+    "%include alignment as ag\n",
+    "%include alignment, calling\n",
+    "%include alignment as ag, calling as ca\n",
+    "\n",
+    "%from alignment include *\n",
+    "%from alignment include var1, workflow1\n",
+    "%from alignment include workflow1 as wf\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Similar to python `import` statement, variables and workflows included using the `%include ... as ...` syntax can be accessed using `module.name` (e.g. `alignment.var1`, `ag.var1` (for `include alignment as ag`)), whereas variables and workflows included using the `from ... include ...` syntax are available directly (e.g. `var1`, `workflow1`, and `wf` (for `workflow1 as wf`).\n",
+    "\n",
+    "For example"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "```sos\n",
+    "#!/usr/bin/env sos-runner\n",
+    "#fileformat=SOS1.0\n",
+    "\n",
+    "%include alignment\n",
+    "%include call\n",
+    "[10]\n",
+    "sos_run('alignment.default + call.default')\n",
+    "```\n",
+    "\n",
+    "would execute two workflows defined in `alignment.sos` and `call.sos`. The files should be in SoS search path to be included."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "###  `%if`, `%elif`, `%else`, and `%endif`"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "SoS allows you to conditionally include part of the script using macos `%if`, `%elif`, `%else`, and `%endif`. The condition in `%if cond` and `elif cond` should be valid python expression. Because the conditions are evaluated at parsing time, they cannot use any SoS variables and can only use functions from basic modules such as `sys`, `os`, and `glob` (automatically imported). The condition should not expand multiple lines and should not have trailing `:`. For example,"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "This is Mac OS X\n"
+     ]
+    }
+   ],
+   "source": [
+    "%if sys.platform == 'darwin'\n",
+    "[step]\n",
+    "print('This is Mac OS X')\n",
+    "%elif sys.platform == 'posix'\n",
+    "[step]\n",
+    "print('This is Linux')\n",
+    "%else\n",
+    "[step]\n",
+    "print('This is windows')\n",
+    "%endif"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "###  `%set_options`"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You can set global SoS options using preprocessor `%set_options`. Currently SoS only support option `sigil`, which sets global default sigil. You can either set it to a valid sigil (e.g. `'{ }'`, `'[ ]'`), or `None` if you would like to disable string interpolation. Please refer to section [string interpolation](String_Interpolation.html) for details of this option."
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "SoS",
+   "language": "sos",
+   "name": "sos"
+  },
+  "language_info": {
+   "codemirror_mode": "sos",
+   "file_extension": ".sos",
+   "mimetype": "text/x-sos",
+   "name": "sos",
+   "nbconvert_exporter": "sos.jupyter.converter.SoS_Exporter",
+   "pygments_lexer": "sos"
+  },
+  "sos": {
+   "celltoolbar": true,
+   "kernels": [
+    [
+     "sos",
+     "SoS",
+     ""
+    ],
+    [
+     "bash",
+     "Bash",
+     "#E6EEFF"
+    ],
+    [
+     "python2",
+     "Python2",
+     "#F6FAEA"
+    ],
+    [
+     "ir",
+     "R",
+     "#FDEDEC"
+    ],
+    [
+     "python3",
+     "Python3",
+     "#EAFAF1"
+    ]
+   ],
+   "panel": {
+    "displayed": true,
+    "height": 0,
+    "style": "side"
+   }
+  },
+  "toc": {
+   "nav_menu": {
+    "height": "386px",
+    "width": "254px"
+   },
+   "navigate_menu": true,
+   "number_sections": true,
+   "sideBar": true,
+   "threshold": 4,
+   "toc_cell": false,
+   "toc_section_display": "block",
+   "toc_window_display": true
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}

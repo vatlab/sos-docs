@@ -1,0 +1,2449 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Remote_Execution</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  // sections numbering
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+
+            table_of_contents(cfg,st);
+
+            var file=documentationDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+
+
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // var docs=documentation
+            // for (var a =0;a<docs.length;a++){
+            //       var name =docs[a];
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+            // }
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+            // $("#toc").attr("style","max-height:938px")
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_sas {}
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Remote-Execution-of-workflows-and-external-tasks">Remote Execution of workflows and external tasks<a class="anchor-link" href="#Remote-Execution-of-workflows-and-external-tasks">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Two-methods-for-remote-execution">Two methods for remote execution<a class="anchor-link" href="#Two-methods-for-remote-execution">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Based on a host configuration system that defines ways to communicate with remote hosts, SoS allows you to execute complete or part of workflows on remote servers or task queues. Here we define</p>
+<ul>
+<li>A <strong>host</strong> as a local or remote machine that can be accessed with commands such as <code>scp</code>, <code>ssh</code>, and <code>rsync</code>.</li>
+<li>A <strong>queue</strong> as a task queue such as <a href="http://www.pbspro.org/">PBS</a>, <a href="http://www.adaptivecomputing.com/products/open-source/torque/">Torque</a>, <a href="https://www.ibm.com/support/knowledgecenter/en/SSETD4/product_welcome_platform_lsf.html">IBM LSF</a>, and <a href="http://python-rq.org/">RQ</a> on a local or remote host that can queue and execute tasks. Direct execution of tasks on remote hosts is also considered a queue so any host can be used as a task queue.</li>
+</ul>
+<p>There are two ways to execute workflows on a remote host,</p>
+<ul>
+<li>Use <code>sos run -r HOST</code> (or <code>%run -r</code> or <code>%sosrun -r</code> in Jupyter) to copy a script to remote host and execute the entire workflow remotely. All input and dependent files should be on remote host, and result files are not sychronized to local host.</li>
+<li>Use <code>sos run -q QUEUE</code> (or <code>%run -q</code> or <code>%sosrun -q</code> in Jupyter) to submit individual <strong>tasks</strong> of workflows to remote task queues. The workflow is still executed locally. Input, output, and dependent files of tasks will be synchronized to the remote host if necessary.</li>
+</ul>
+<p>These two methods could be used in combination if the remote host is configured to be able to submit tasks to a local task queue or to a third host.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Host-configuration">Host configuration<a class="anchor-link" href="#Host-configuration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To execute a sos workflow or task on a remote host, you will need to prepare the host as follows:</p>
+<ol>
+<li>Set up public key authentication between local and remote host so that you can log in to remote host without being prompted for password.</li>
+<li>Install SoS on both local and remote hosts.</li>
+<li>Make sure you have <code>ssh</code>, <code>scp</code>, and <code>rsync</code> installed on local host. For windows, you might want to install these tools with <a href="http://www.msys2.org/">msys2</a> or enable Ubuntu Linux Shell (windows 10 only, need to turn on developer mode).</li>
+<li>Set up <code>$PATH</code> on the remote host to make sure sos (and other commands that you would like to execute) could be executed remotely with commands like
+<pre><code>% ssh remote-host "bash --login -c 'sos status'"</code></pre>
+sos uses <code>bash --login</code> to execute commands on remote host to make sure <code>$PATH</code> etc are properly set up. This requires <code>bash</code> command on remote host so it is not yet possible to execute workflows on a windows host.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You then need to add the host to a SoS configuration file. SoS automatically loads global configuration files <code>~/.sos/hosts.yml</code>, <code>~/.sos/config.yml</code>, and a local configuration file <code>./config.yml</code>. You can also put your settings in any configuration file and specify it with option <code>-c</code>. <code>~/.sos/hosts.yml</code> is designed to record all host-related configurations and should be used for this purpose.</p>
+<p>The configuration file could be edited manually if you are familiar with the YAML format. Otherwise you can use the <code>sos config</code> command to add or modify settings. For example, command</p>
+<div class="highlight"><pre><span></span>sos config --hosts --set hosts.shark.address username@shark.com
+</pre></div>
+<p>would write to <code>~/.sos/hosts.yml</code> the following content</p>
+
+<pre><code>hosts:
+    shark:
+        address: username@shark.com</code></pre>
+<p>This effectively defines a host with alias <code>shark</code>. Other than <code>address</code>, you will need to define <code>port</code> if the server accepts a different port than <code>22</code>, <code>shared</code> and <code>paths</code> to let SoS know how to synchronize files between local and remote hosts, and other items for remote task queues.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You will need to configure both localhost and server to be able to send local jobs to remote servers or task queues. A <code>localhost</code> should be defined to point to an existing host definition. For example, if a <code>OfficeDesktop</code> is defined in <code>~/.sos/hosts.yml</code> as</p>
+
+<pre><code>hosts:
+    OfficeDesktop:
+        paths:
+            home: c:\Users\myuser
+    cluster:
+        address: url@cluster
+        paths:
+            home: /home/myuser</code></pre>
+<p>You should use command</p>
+
+<pre><code>sos config --global --set localhost OfficeDesktop</code></pre>
+<p>to define <code>localhost</code> as <code>OfficeDesktop</code> on your office desktop, and define <code>localhost</code> as <code>cluster</code> on the cluster if you would like to submit jobs also from the cluster.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Remote-execution-of-workflows">Remote execution of workflows<a class="anchor-link" href="#Remote-execution-of-workflows">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With proper host configurations, you can execute a workflow on a remote host using option <code>-r HOST</code>. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">test</span><span class="o">.</span><span class="n">png</span>
+<span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">r</span> <span class="n">dev</span>
+<span class="kn">R:</span>
+  <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">x</span> <span class="o">&lt;-</span> <span class="mi">1</span><span class="p">:</span><span class="mi">100</span>
+  <span class="n">y</span> <span class="o">&lt;-</span> <span class="mf">0.029</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">rnorm</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+  <span class="n">png</span><span class="p">(</span><span class="s2">&quot;test.png&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+  <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pch</span><span class="o">=</span><span class="mi">19</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">rgb</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">cex</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+  <span class="n">abline</span><span class="p">(</span><span class="n">lm</span><span class="p">(</span><span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">))</span>
+  <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview test.png</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>&gt; Failed to preview file or expression test.png</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>executes a small R script (a SoS script with a single R action) on a remote host named <code>dev</code> (defined in <code>hosts.yml</code>). The script executes correctly (with output from <code>dev.off()</code> function) but because the workflow is executed remotely, <code>test.png</code> will be generated on <code>dev</code> and is unavailable for local preview. You can however preview the file with <code>-r</code> option of magic <code>%preview</code>:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">test</span><span class="o">.</span><span class="n">png</span> <span class="o">-</span><span class="n">r</span> <span class="n">dev</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">%preview test.png -r dev</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> test.png (11.2 KiB):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The command line eqivalence of the commands, if the script is saved as <code>test.sos</code>, would be</p>
+
+<pre><code>sos run test.sos -r dev
+sos preview test.png -r dev</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Execution-of-external-tasks">Execution of external tasks<a class="anchor-link" href="#Execution-of-external-tasks">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If a workflow is large, you can define parts of a workflow as <strong>tasks</strong> and execute them on remote servers, clusters, or task queues. The tasks are</p>
+<ul>
+<li><strong>self-contained</strong> in that they contain all the required information to be executed anywhere.</li>
+<li><strong>generated and executed dynamically</strong> in that a task would only be generated when all its dependencies have been met.</li>
+<li><strong>independent of workflows and other tasks</strong>. Tasks are defined by the jobs they are performing and can be shared by different workflows if they happen to perform exactly the same function.</li>
+<li><strong>can be executed on remote hosts or task queues</strong>. Tasks can be executed directly on a local or remote host, to task queues such as RQ, or be submitted to batch systems such as PBS/Torch, Slurm, and IBM LSF.</li>
+<li><strong>independent of file systems</strong>. SoS automatically synchronize input, output files and specified files between local and remote systems so you can easily switch from one remote host to another.</li>
+<li><strong>support remote targets</strong>. If input, depends, or output files are large, you also have the option to process remote targets directly without synchronizing them to local host.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Conceptually speaking, a <strong>step process</strong> consists of everything after the <code>input</code> statement. It can be repeated with different <strong>input groups</strong> defined by input options <code>group_by</code> or <code>for_each</code>. For example, if <code>bam_files</code> is a list of bam files,</p>
+
+<pre><code>[10]
+input: bam_files, group_by=1
+output: "${_input}.bai"
+
+run:
+    samtools index ${_input}</code></pre>
+<p>execute a shell script to process each bam file. This is done sequentially for each input file, and is performed by SoS.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can easily specify part or all of a step process as <strong>tasks</strong>, by prepending the statements with a <code>task</code> keyword:</p>
+
+<pre><code>[10]
+input: bam_files, group_by=1
+output: "${_input}.bai"
+
+task:
+run:
+    samtools index ${_input}</code></pre>
+<p>This statement declares the rest of the step process as a <code>task</code>. For each input file, a task will be created with an ID determined from task content and context (input and output files, variables etc). The task will be by default executed by a local <code>process</code> task queue where tasks are started as background processes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The benefit of executing tasks externally is that the tasks are executed concurrently, on the local machine or a remote server, or be submitted to a task queue. For example, in the previous example, multiple tasks could be executed in parallel (but on the same machine) unless you specify it otherwise as follows</p>
+
+<pre><code>[10]
+input: bam_files, group_by=1
+output: "${_input}.bai"
+
+task: concurrent=False
+run:
+    samtools index ${_input}</code></pre>
+<p>You can also use command</p>
+
+<pre><code>sos run myscript -q cluster</code></pre>
+<p>or use option <code>queue</code></p>
+
+<pre><code>[10]
+input: bam_files, group_by=1
+output: "${_input}.bai"
+
+task: queue='cluster'
+run:
+    samtools index ${_input}</code></pre>
+<p>to submit the commands to a cluster system to be executed on different computing nodes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following figure illustrates the task model of SoS</p>
+<p><img src="../media/job_queue.svg" alt="job queue"></p>
+<p>Basically,</p>
+<ol>
+<li>Tasks are part of step processes.</li>
+<li>Tasks are managed by task engines, multiple task engines can be used for a single workflow.</li>
+<li>Task engines generate task files, submit tasks, monitor task status, and return results to SoS workflow.</li>
+<li>Remote task engines synchronize input files, translate and copy tasks to server, and start the tasks on the remote server.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Common-host-configuration">Common host configuration<a class="anchor-link" href="#Common-host-configuration">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS needs to know how to connect to a remote host, how to synchronize files between local and remote hosts, and how to execute commands on the remote host. These should be defined with the following keys:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="address"><code>address</code><a class="anchor-link" href="#address">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>IP address or URL of the host. Note that</p>
+<ul>
+<li><code>address</code> should be ignored for hosts, for example your desktop, that do not accept remote execution.</li>
+<li>If you have a different user name on the the remote host, specify the <code>address</code> in the format of <code>username@hostaddress</code>.</li>
+<li>SoS does not support username/password authentication so <strong>public key authentication between local and remote hosts is reuired for communication between local and remote host</strong>.</li>
+<li>SoS currently does not support remote execution on windows hosts so no <code>address</code> is needed for windows hosts.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="port"><code>port</code><a class="anchor-link" href="#port">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>ssh port of the remote host, which is <code>22</code> by default.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="shared"><code>shared</code><a class="anchor-link" href="#shared">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>shared</code> tells SoS which file systems are shared between localhost and some remote hosts so that it does not have to synchronize files under these directories between the hosts.</p>
+<p>The <code>shared</code> entry should be defined with <code>name</code> and <code>path</code> pairs in the format of</p>
+
+<pre><code>hosts:
+    desktop:
+    server:
+        shared:
+            project: /myprojects
+            HTFS: /
+    worker:
+        shared:
+            HTFS: /
+    server1:
+        shared:
+            project: /scratch/myprojects
+            data: /scratch/data
+`</code></pre>
+<p>The above cooked configuration says:</p>
+<ol>
+<li><code>desktop</code> does not share any volume with any other machine so all files need to be transferred.</li>
+<li><code>server</code> and <code>worker</code> shares <code>HTFS</code> with directory <code>/</code>, so all files are shared.</li>
+<li><code>server</code> and <code>server1</code> share a <code>project</code> volume but the volume is mounted at different locations. So files under <code>myprojects</code> are not synchronized if you are submitting jobs from <code>server</code> to <code>server1</code>, and files under <code>/scratch/myprojects</code> are not synchronized if you are submitting jobs from <code>server1</code> to <code>server</code>.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="paths"><code>paths</code><a class="anchor-link" href="#paths">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>paths</code> defines paths that will be translated when a task is executed remotely. For example, your input file on a mac might be <code>/Users/myuser/project/KS28.fa</code>, but it should be named <code>/home/myuser/project/KS28.fa</code> if it is processed on a remote server. In this case, you should define directories <code>/Users/myuser</code> and <code>/home/myuser</code> as equivalent directories on the two hosts, using</p>
+
+<pre><code>hosts:
+    desktop:
+        paths:
+            home: /Users/myuser
+    server:
+        paths:
+            home: /home/myuser</code></pre>
+<p>Multiple entried could be defined and the files would be mapped by the longest mapping path. For example, if you have on the server a shared location for all resources, you could define</p>
+
+<pre><code>hosts:
+    desktop:
+        paths:            
+            home: /Users/myuser
+            resource: /Users/myuser/resources
+    server:
+        paths:
+            home: /home/myuser
+            resource: /shared/resources</code></pre>
+<p>so that <code>/Users/myuser/resources/hg19.fa</code> could be mapped to <code>/shared/resources/hg19.fa</code> on the server. Note that <code>/Users/myuser/resource/hg19.fa</code> would be mapped to <code>resource</code> instead of <code>home</code> because <code>resource</code> matches longer piece of the input path.</p>
+<p>A remote host can be accessible from a local host only if the remote host defines all paths defined by the local host. More specifically, if host A defines path <code>home</code> and host B defines paths <code>home</code> and <code>resource</code>, it is possible to connect from host A to host B using <code>home</code>, but not from host B to A because SoS does not know how to map paths under <code>resource</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="path_map-(derived)"><code>path_map</code> (derived)<a class="anchor-link" href="#path_map-(derived)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With definitions of <code>shared</code> and <code>paths</code> on both hosts, SoS would derive a set of <code>path_maps</code> between all hosts using common keys in <code>shared</code> and <code>path</code> between the hosts. Actually, when you run</p>
+
+<pre><code>sos status -q</code></pre>
+<p>to list all host configurations, SoS would list all hosts accessible from <code>localhost</code>, with host-specific <code>path_map</code>, which is a list of directory mappings between local and remote directories. For example, the <code>path_map</code> from <code>desktop</code> to <code>server</code> using the above example would be</p>
+
+<pre><code>/Users/myuser -&gt; /home/myuser
+/Users/myuser/resoruces -&gt; /shared/resources</code></pre>
+<p>Note that if a directory shows in both <code>shared</code> and <code>paths</code> (e.g. <code>/scratch</code> in <code>shared</code> and <code>/scratch/user</code> in <code>paths</code>), files can still be synchronized following <code>path_map</code> to a different directory even if they are shared and are already on the remote server.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Common-queue-configuration">Common queue configuration<a class="anchor-link" href="#Common-queue-configuration">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The above configurations specify on to access, synchronize files and execute commands on a remote host and are enough for it to become a remote host to execute workflows (with option <code>-r</code>). More information is needed for the host to execute external tasks, the common task-related configurations include.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="queue_type"><code>queue_type</code><a class="anchor-link" href="#queue_type">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>query_type</code> determines the type of remote server or job queue. SoS currently supports the following types of job queues:</p>
+<ol>
+<li><strong><code>process</code></strong>: this is the default queue type. Tasks are executed directly, either on local host or on a server.</li>
+<li><strong><code>pbs</code></strong>: A PBS/MOAB/LFS/Slurm cluster system where tasks are submitted using commands such as <code>qsub</code>.</li>
+<li><strong><code>rq</code></strong>: A redis queue where tasks are submitted to the rq server and monitored through rq-dashboard.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="wait_for_task"><code>wait_for_task</code><a class="anchor-link" href="#wait_for_task">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Whether or not SoS should wait for the completion of tasks (<code>true/false</code>). By default SoS will wait for the completion of tasks submitted in a queue and complete the workflow in one run. Alternatively, SoS would quit after all tasks have been submitted to a queue with <code>wait_for_task</code> set to <code>false</code>. The workflow can be resumed after tasks have been completed.</p>
+<p>This option is set to <code>True</code> by default and can be overridden by command line option <code>-w</code> (wait) or <code>-W</code> (no wait).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="status_check_interval"><code>status_check_interval</code><a class="anchor-link" href="#status_check_interval">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>status_check_interval</code> determines frequency at which SoS checks status of jobs. This is set by default to 2 seconds for <code>process</code> queue type, and <code>10</code> seconds for all other types. This number should be set to at least <code>60</code> for remote servers and longer jobs because it can be a burden to query the status of jobs very frequently.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="max_running_jobs"><code>max_running_jobs</code><a class="anchor-link" href="#max_running_jobs">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Maximum number of running jobs. This setting controls how SoS releases tasks to job queues and is independent of possible maximum running job settings of individual task queues.</p>
+<p>This option is set to half of the number of CPU cores by default and can be overriden by command line option <code>-J</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="max_cores"><code>max_cores</code><a class="anchor-link" href="#max_cores">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Maximum number of processes (an integer) allowed for the queue. A task would fail immediately if it specifies more <code>cores</code> than this option. For queues that do not require a <code>cores</code> option (e.g. a <code>process</code> queue), tasks that use more processes than <code>max_cores</code> will be automatically killed.</p>
+<p>This option, along with <code>max_walltime</code> and <code>max_mem</code> that are described below, help prevent the submission of erraneous tasks to the queue. It also helps prevent the execution large jobs on wrong servers, such as the headnode of a cluster system on which only job preparation and submission steps are allowed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="max_walltime"><code>max_walltime</code><a class="anchor-link" href="#max_walltime">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Maximum walltime allowed for the queue. <code>max_walltime</code> could be specified as a string in the format of <code>HH:MM:SS</code>, or an integer with units <code>s</code> (second), <code>m</code> (minute), <code>h</code> (hour), or <code>d</code> (day). A task would fail immediately if it specifies more <code>walltime</code> than this option. For queues that do not require a <code>walltime</code> option (e.g. a <code>process</code> queue), tasks that has exceeded <code>max_walltime</code> will be automatically killed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="max_mem"><code>max_mem</code><a class="anchor-link" href="#max_mem">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Maximum memory comsumption allowed for the queue. <code>max_mem</code> could be specified as an integer (bytes) or a string with units such as <code>M</code>, <code>G</code>, <code>MB</code> etc. A task would fail immediately if it specifies more <code>mem</code> than this option. For queues that do not require a <code>mem</code> option (e.g. a <code>process</code> queue), tasks that use more RAM than <code>max_mem</code> will be automatically killed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="description"><code>description</code><a class="anchor-link" href="#description">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An optional short description for the queue that will be displayed with commands such as <code>sos status -q</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Hints-for-hosts.yml">Hints for <code>hosts.yml</code><a class="anchor-link" href="#Hints-for-hosts.yml">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As described in section <a href="SoS_Syntax.html"><code>SoS Syntax</code></a>, SoS provides a few features to help maintain and use of host configurations.</p>
+<p>First, dictionary <code>CONFIG</code> is merged from several configuration files. This allows you to use, for example, use a general host configuration file for all hosts, and make local modifications in host-specific <code>~/.sos/config.yml</code> even project-specific <code>./config.yml</code>. Also, a system admin could also choose to define all hosts in a network in the site configuration file.</p>
+<p>Second, SoS allows you to use string interpolation for keys defined in <code>CONFIG</code>. For example, you can define arbitrary key value pairs for the interpolation of commands and templates. For example, if you could define <code>queue</code> in <code>hosts.cluster</code> as follows</p>
+
+<pre><code>hosts:
+   cluster:
+      queue: long
+      job_template: |
+#PBS -q ${queue}
+...</code></pre>
+<p>and <code>queue</code> will be used in <code>job_template</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the name of a variable matches a runtime variable (e.g. <code>mem</code>, <code>walltime</code>), its value would be overriden by corresponding runtime variable. This feature can be used to define default values for runtime variables. For example,</p>
+
+<pre><code>hosts:
+    cluster:
+        walltime: '10:00:00'
+        job_template: |
+    #PBS -l walltime=${walltime}</code></pre>
+<p>would set a default <code>walltime</code> of 10 hours for tasks without specified <code>walltime</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Formally speaking, strings in SoS configuration file, if interpolated, would be interpolated with a local namespace that is the dictionary in which the key exists, and a global namespace that is the complete <code>CONFIG</code> dictionary. That is to say, if you have a configuration file</p>
+
+<pre><code>  user_name: bpeng
+  hosts:
+    cluster:
+      address: ${user_name}@domain.com:${port}
+      port: 123</code></pre>
+<p><code>hosts['cluster']['address']</code> would be interpolated with <code>port</code> from the <code>hosts['cluster']</code> and <code>user_name</code> from the top level configuration.</p>
+<p>To make it easy to share the <code>hosts.yml</code> file among users in the same group, SoS automatically defines <code>user_name</code> to local user ID if it is not explicitly defined so a typical <code>hosts.yml</code> would contain definitions such as</p>
+
+<pre><code>  hosts:
+    cluster:
+      address: ${user_name}@domain.com
+      paths:
+        home: /home/${user_name}
+    desktop:
+      paths:
+        home: c:\Users\${user_name}</code></pre>
+<p>with <code>${user_name}</code> automatically determined for each user.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, a special <code>based_on</code> key could be used to create configuration based on one or more other dictionaries. For example, you could define two queues <code>short</code> and <code>long</code> with <code>long</code> based on definitions of <code>short</code>.</p>
+
+<pre><code>hosts:
+  short:
+    queue: short
+    job_template: |
+        ${queue}
+  long:
+    based_on: hosts.short
+    queue: long</code></pre>
+<p>This also allows you to create an alias to a host. For example, command</p>
+
+<pre><code>sos config --global --set hosts.A.based_on hosts.short</code></pre>
+<p>would adds</p>
+
+<pre><code>hosts:
+    A:
+       based_on: hosts.short</code></pre>
+<p>to <code>~/.sos/config.yml</code> and effectively creates an alias <code>A</code> for host <code>short</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sample-remote-server-configuration">Sample remote server configuration<a class="anchor-link" href="#Sample-remote-server-configuration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Using the default <code>queue_type: process</code>, the following configuration allows you to execute tasks on a remote server. You can change <code>wait_on_task</code> to <code>true</code> if you would like to wait for the completion of tasks and be able to kill runing tasks easily.</p>
+
+<pre><code>    computing_server:
+        address: username@host.url
+        max_mem: 20G
+        max_procs: 12
+        max_walltime: 10h
+        wait_on_task: false
+        paths:
+            home: /home/username</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="PBS/Torch-configuration">PBS/Torch configuration<a class="anchor-link" href="#PBS/Torch-configuration">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="job_template"><code>job_template</code><a class="anchor-link" href="#job_template">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>job_template</code> is a template of a shell script that will be submitted to the PBS system. A typical template would be specified as (using a multi-line string literal of YAML format)</p>
+<div class="highlight"><pre><span></span>hosts:
+  server:
+    job_template: <span class="p">|</span>
+      <span class="c1">#!/bin/bash</span>
+      <span class="c1">#PBS -N ${job_name}</span>
+      <span class="c1">#PBS -l nodes=1:ppn=${cores}</span>
+      <span class="c1">#PBS -l walltime=${walltime}</span>
+      <span class="c1">#PBS -l mem=${mem//10**6}MB</span>
+      <span class="c1">#PBS -o ${cur_dir}/${task}.out</span>
+      <span class="c1">#PBS -e ${cur_dir}/${task}.err</span>
+      <span class="c1">#PBS -q long</span>
+      <span class="c1">#PBS -m ae</span>
+      <span class="c1">#PBS -M your@email.address</span>
+      <span class="c1">#PBS -v ${cur_dir}</span>
+
+      <span class="nb">cd</span> <span class="si">${</span><span class="nv">cur_dir</span><span class="si">}</span>
+
+      sos execute <span class="si">${</span><span class="nv">task</span><span class="si">}</span> -v <span class="si">${</span><span class="nv">verbosity</span><span class="si">}</span> -s <span class="si">${</span><span class="nv">sig_mode</span><span class="si">}</span> <span class="se">\</span>
+        <span class="si">${</span><span class="s1">&#39;--dryrun&#39;</span><span class="p"> if run_mode == </span><span class="s1">&#39;dryrun&#39;</span><span class="p"> else </span><span class="s1">&#39;&#39;</span><span class="si">}</span>
+</pre></div>
+<p>The template will be interpolated with the following information</p>
+<ul>
+<li><code>task</code>: task id</li>
+<li><code>job_name</code>: Interpolated value of runtime option <code>name</code>, or task id if <code>name</code> is not provided. For example, <code>name='${step_name}_${_index}'</code> would assign names with step name and index to submitted jobs.</li>
+<li><code>nodes</code>, <code>cores</code>, <code>walltime</code>, <code>mem</code>: resource task options</li>
+<li><code>cur_dir</code>:  current project directory, which will be translated to path in remote host if the task is executed remotely</li>
+<li><code>verbosity</code> and <code>sig_mode</code>: sos run mode.</li>
+<li><code>run_mode</code> to allow the script to be executed in dryrun mode, in which mode scripts would be printed instead of executed. It is very important to set this option because the job script would be executed directly (on head node) instead of sent to the PBS queue if sos is running in dryrun mode (<code>sos run -q pbs -n</code>).</li>
+<li>Other key/value pairs you defined for the server</li>
+</ul>
+<p>Note that</p>
+<ol>
+<li>You will need to specify resource options (<code>nodes</code>, <code>cores</code>, <code>walltime</code>, and <code>mem</code>) as task options if they are used in the job template without default values.</li>
+<li>If you need to specify more options (e.g. queue name), you can define multiple host entries with different options, for example, a <code>cluster-short</code> and a <code>cluster-long</code> on the same cluster.</li>
+<li><p>Alternatively, it is possible to derive the options from existing runtime options. For example, you could put a task to long queue if it runs more than 24 hours</p>
+
+<pre><code> #PBS -q ${'long' if int(walltime.split(':')[0]) &gt; 24 else 'short'}</code></pre>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="submit_cmd"><code>submit_cmd</code><a class="anchor-link" href="#submit_cmd">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A <code>submit_cmd</code> template is the command that will be executed to submit the job. It accepts the same set of variables as <code>job_template</code>, with an additional variable <code>job_file</code> pointing to the location of the job file on the remote host. The <code>submit_cmd</code> is usually as simple as</p>
+<div class="highlight"><pre><span></span>qsub <span class="si">${</span><span class="nv">job_file</span><span class="si">}</span>
+</pre></div>
+<p>but you could specify some options from command line instead of the job file and define <code>submit_cmd</code> as</p>
+<div class="highlight"><pre><span></span>msub -l <span class="si">${</span><span class="nv">walltime</span><span class="si">}</span> &lt; <span class="si">${</span><span class="nv">job_file</span><span class="si">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="submit_cmd_output"><code>submit_cmd_output</code><a class="anchor-link" href="#submit_cmd_output">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This option specifies the output of the <code>submit_cmd</code> command and let SoS know how to extract <code>job_id</code> and other information from it. For example, for a regular PBS system, the output is simply the <code>job_id</code> (stripping spaces and newlines).</p>
+
+<pre><code>submit_cmd_output='{job_id}'</code></pre>
+<p>On a LSF system, the output should be similar to</p>
+
+<pre><code>submit_cmd_output='Job &lt;{job_id}&gt; is submitted to queue &lt;{queue}&gt;'</code></pre>
+<p>The information extracted (namely variables defined) from <code>submit_cmd</code> can be used for other commands such as <code>status_cmd</code>. Note that this parameter uses pattern matching <code>{ }</code> to extract variable, instead of <code>${ }</code> to use variables.</p>
+<p>This option is defult to <code>{job_id}</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="status_cmd"><code>status_cmd</code><a class="anchor-link" href="#status_cmd">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An command to query the status of a submitted task. For a standard PBS system, this option could be</p>
+
+<pre><code>qstat ${job_id}</code></pre>
+<p>where <code>job_id</code> is the output of command <code>submit_cmd</code>. The <code>status_cmd</code> is interpolated with variables <code>job_id</code> (PBS job ID), <code>task</code> (SoS task id), and <code>verbosity</code> (command line verbosity level) so you would adjust options for different verbosity level (e.g. <code>${'-f' if verbosity &gt; 2 else ''}</code>).</p>
+<p>Note that the <code>status_cmd</code> is only called with <code>-v 2</code> or higher.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="kill_cmd"><code>kill_cmd</code><a class="anchor-link" href="#kill_cmd">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A command to kill a submitted job on the cluster. For a standard PBS system, this option could be</p>
+
+<pre><code>qdel ${job_id}</code></pre>
+<p>where <code>job_id</code> is the output of command <code>submit_cmd</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sample-PBS/Torch-configuration">Sample PBS/Torch configuration<a class="anchor-link" href="#Sample-PBS/Torch-configuration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>    cluster:
+        address: host.url
+        description: cluster with PBS
+        paths:
+            home: /scratch/${user_name}
+        queue_type: pbs
+        status_check_interval: 30
+        wait_for_task: false
+        job_template: |
+            #!/bin/bash
+            #PBS -N ${task}
+            #PBS -l nodes=${nodes}:ppn=${ppn}
+            #PBS -l walltime=${walltime}
+            #PBS -l mem=${mem//10**9}GB
+            #PBS -o ${home_dir}/.sos/tasks/${task}.out
+            #PBS -e ${home_dir}/.sos/tasks/${task}.err
+            #PBS -m ae
+            #PBS -M email@address
+            #PBS -v ${cur_dir}
+            cd ${cur_dir}
+            sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}        max_running_jobs: 100
+        submit_cmd: qsub ${job_file}
+        status_cmd: qstat ${job_id}
+        kill_cmd: qdel ${job_id}</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sample-MOAB-configuration">Sample MOAB configuration<a class="anchor-link" href="#Sample-MOAB-configuration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>    cluster:
+        address: host.url
+        description: cluster with MOAB
+        paths:
+            home: /scratch/${user_name}
+        queue_type: pbs
+        status_check_interval: 30
+        wait_for_task: false
+        job_template: |
+            #!/bin/bash
+            #PBS -N ${task}
+            #PBS -l nodes=${nodes}:ppn=${ppn}
+            #PBS -l walltime=${walltime}
+            #PBS -l mem=${mem//10**9}GB
+            #PBS -o ${home_dir}/.sos/tasks/${task}.out
+            #PBS -e ${home_dir}/.sos/tasks/${task}.err
+            #PBS -m ae
+            #PBS -M email@address
+            #PBS -v ${cur_dir}
+            cd ${cur_dir}
+            sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}        max_running_jobs: 100
+        submit_cmd: msub ${job_file}
+        status_cmd: qstat ${job_id}
+        kill_cmd: qdel ${job_id}</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sample-LFS-configuration">Sample LFS configuration<a class="anchor-link" href="#Sample-LFS-configuration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>    lfs:
+        address: host.url
+        description: cluster with LSF
+        paths:
+            home: /rsrch2/bcb/${user_name}            
+        queue_type: pbs
+        status_check_interval: 30
+        wait_for_task: false
+        job_template: |
+            #!/bin/bash
+            #BSUB -J ${job_name}
+            #BSUB -q ${'short' if int(walltime.split(':')[0]) &lt; 24 else 'long'}
+            #BSUB -n ${cores}
+            #BSUB -M ${mem//10**9}G
+            #BSUB -W 1:0
+            #BSUB -o ${home_dir}/.sos/tasks/${task}.out
+            #BSUB -e ${home_dir}/.sos/tasks/${task}.err
+            #BSUB -N
+            #BSUB -u email@address
+            cd ${cur_dir}
+            sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}
+        max_running_jobs: 100
+        submit_cmd: bsub &lt; ${job_file}
+        submit_cmd_output: 'Job &lt;{job_id}&gt; is submitted to queue &lt;{queue}&gt;'
+        status_cmd: bjobs ${job_id}
+        kill_cmd: bkill ${job_id}</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sample-SLURM-configuration">Sample SLURM configuration<a class="anchor-link" href="#Sample-SLURM-configuration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This configuration defines default <code>walltime</code> and <code>cores</code>.</p>
+
+<pre><code>mstephens:
+    description: cluster with SLURM
+    address: host.url
+    paths:
+      home: /home/${user_name}
+    queue_type: pbs
+    status_check_interval: 120
+    max_running_jobs: 15
+    max_cores: 28 
+    max_walltime: "36:00:00"
+    max_mem: 256G
+    job_template: |
+      #!/bin/bash
+      #SBATCH --time=${walltime}
+      #SBATCH --partition=mstephens
+      #SBATCH --account=pi-mstephens
+      #SBATCH --nodes=1
+      #SBATCH --ntasks-per-node=${cores}
+      #SBATCH --mem-per-cpu=${mem_per_cpu}
+      #SBATCH --job-name=${job_name}
+      #SBATCH --output=${cur_dir}/.sos/${job_name}.out
+      #SBATCH --error=${cur_dir}/.sos/${job_name}.err
+      cd ${cur_dir}
+      mkdir -p .sos
+      sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}
+    walltime: "06:00:00"
+    cores: 20
+    mem_per_cpu: 1000
+    submit_cmd: sbatch ${job_file}
+    submit_cmd_output: "Submitted batch job {job_id}"
+    status_cmd: squeue --job ${job_id}
+    kill_cmd: scancel ${job_id}</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sample-Task-Spooler-configuration">Sample Task Spooler configuration<a class="anchor-link" href="#Sample-Task-Spooler-configuration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="http://vicerveza.homeunix.net/~viric/soft/ts/">Task Spooler</a> is a light-weight task spooler for single machines.</p>
+
+<pre><code>    taskspooler:
+        description: task spooler on a single machine
+        address: ${user_name}@host.url
+        port: 32771
+        paths:
+            home: /home/${user_name}
+        queue_type: pbs
+        status_check_interval: 5
+        job_template: |
+            #!/bin/bash
+            cd ${cur_dir}
+            sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}
+        max_running_jobs: 100
+        submit_cmd: tsp -L ${task} sh ${job_file}
+        status_cmd: tsp -s ${job_id}
+        kill_cmd: tsp -r ${job_id}</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="RQ-configuration">RQ configuration<a class="anchor-link" href="#RQ-configuration">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="redis_host"><code>redis_host</code><a class="anchor-link" href="#redis_host">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Address of the redis server, default to server <code>address</code>, or <code>localhost</code> if no <code>address</code> is defined. A redis host can be on a different host than the local host, but has to be on the same host as the redis worker.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="redis_port"><code>redis_port</code><a class="anchor-link" href="#redis_port">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Port of the redis server, default to <code>6379</code>. Note that this is not the same as option <code>port</code>, which is the port for ssh communication.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="queue"><code>queue</code><a class="anchor-link" href="#queue">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Name of the redis queue for the rq worker, if the worker is started with one or more queue names.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sample-RQ-configuration">Sample RQ configuration<a class="anchor-link" href="#Sample-RQ-configuration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>    rq:
+        description: rq server with worker
+        address: server_url
+        queue_type: rq
+        redis_host: server_url
+        redis_port: 6379
+        queue: high
+        paths:
+            home: /Users/${user_name}</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Task-options">Task options<a class="anchor-link" href="#Task-options">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following options are options to keyword <code>task:</code> and specify how tasks should be executed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><p>The resource options such as <code>walltime</code> and <code>cores</code> will be sent to individual task queues in appropriate format. You do not have to specify all options because task queues can support a subset of these options and some task queues provide default values (and some do not). It is however generally a good idea to specify them all so that your tasks could be executed on all types of task queues.</p>
+</li>
+<li><p>The execution options such as <code>workdir</code>, <code>env</code>, <code>concurrent</code> specify environments in which tasks will be submitted and executed.</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-walltime">Option <code>walltime</code><a class="anchor-link" href="#Option-walltime">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Estimated maximum running time of the task. This parameter will be sent to different task queues and it is up to the task queue to decide if the task would be killed if the task could not be completed within specified <code>walltime</code>. <code>walltime</code> could be specified as a string in the format of <code>HH:MM:SS</code> where <code>HH</code>, <code>MM</code> and <code>SS</code> are hours, minutes, and seconds, or an integer with units <code>s</code> (second), <code>m</code> (minute), <code>h</code> (hour), or <code>d</code> (day), although the internal format of <code>walltime</code> (when you use <code>walltime</code> in <code>job_template</code> etc) is always <code>HH:MM:SS</code>. For example, you could use <code>walltime='240:00:00'</code> or <code>walltime='10d'</code> for a job that would run 10 days.</p>
+<p>It is worth noting that, if some tasks fail because of insufficient <code>walltime</code> (or <code>cores</code> or <code>mem</code>), it is safe to change these options and re-run the jobs. These will only restart the failed jobs because completed or running jobs are not affected by the change of these options.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-cores">Option <code>cores</code><a class="anchor-link" href="#Option-cores">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Number of cores on each computing node, which corrsponds to the <code>ppn</code> option of a PBS system.</p>
+<p>PBS task queue also accepts a parameer <code>nodes</code> (corresponds to PBS resource option <code>nodes</code>, default to 1) but it is currently unused because SoS does not yet support multi-node tasks.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-mem">Option <code>mem</code><a class="anchor-link" href="#Option-mem">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The total amount of memory needed across all nodes. Default units are bytes; can also be expressed in megabytes (<code>mem=4000MB</code>). gigabytes (<code>mem=4GB</code>) or gibibytes (<code>mem=4GiB</code>), although all inputs are converted to bytes internally. To use this option in a <code>job_template</code>, you generally need to use expressions such as <code>${mem//1e9}GB</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-name">Option <code>name</code><a class="anchor-link" href="#Option-name">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Name of the task, which can be a string such as <code>'task'</code> (for task ID) that would be interpolated when a task is generated. The value of this parameter has to be single quoted because otherwise the string would be interpolated before it is passed to task engine.</p>
+<p>This option has default <code>'${step_name}_${_index}'</code> and is currently only used to produce variable <code>job_name</code> for job template.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-queue">Option <code>queue</code><a class="anchor-link" href="#Option-queue">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>queue</code> specifies a task queue to which the current task will be submitted. This option overrides system default (command line option <code>-q</code>) so it is generally a good idea to use command line option <code>-q</code> so that the task could be submitted to different task queues, unless the task has to be executed in a particular server (e.g. with a software that is unavailable elsewhere).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-to_host">Option <code>to_host</code><a class="anchor-link" href="#Option-to_host">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>to_host</code> specifies additional files or directories that would be synchronized to the remote host before tasks are executed. It can be specified as</p>
+<ul>
+<li>A single file or directory (with respect to local file system), or</li>
+<li>A list of files or directories, or</li>
+<li>A dictinary of <code>{local: remote}</code> file maps that specify how local files are synchronized to the remote host.</li>
+</ul>
+<p>In the first two cases, the files or directories will be translated using the host-specific path maps. In the last case, the <code>remote</code> path (that should be relative to the remote file system) will be used without translating <code>local</code> file.</p>
+<p>Note that</p>
+<ol>
+<li>If a symbolic link is specified in <code>to_host</code>, both the symbolic link and the path it refers to would be synchronized to the remote host.</li>
+<li>If the task is executed on the local host (remote host coincide with local host), <code>to_host</code> is usually ignored unless it is specified in the third dictionary format, which copies files to another location before task execution. </li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-from_host">Option <code>from_host</code><a class="anchor-link" href="#Option-from_host">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>from_host</code> specifies additional files or directories that would be synchronized from the remote host after tasks are executed. It can be specified as</p>
+<ul>
+<li>A single file or directory (with respect to local file system), or</li>
+<li>A list of files or directories, or</li>
+<li>A dictinary of <code>{local: remote}</code> file maps that specify how local files are synchronized from the remote host.</li>
+</ul>
+<p>In the first two cases, the files or directories will be translated using the host-specific path maps to determine what remote files to retrieve. In the last case, the <code>remote</code> path (that should be relative to the remote file system) will be used without path translation. If the task is executed on the local host (remote host coincide with local host), this option is usually ignored unless it is specified in the third dictionary format, which copies files to another location after the task is executed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-map_vars">Option <code>map_vars</code><a class="anchor-link" href="#Option-map_vars">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to <code>input</code> (<code>_input</code>), <code>output</code> (<code>_output</code>), <code>depends</code> (<code>_depends</code>) that are defined implicitly by <code>input:</code>, <code>output:</code> and <code>depends:</code> statements, you can specify additional variables that will be translated from local to remote host. This option accepts paths int he format of <code>str</code> or sequence (<code>list</code>, <code>tuple</code>, <code>set</code> etc) of <code>str</code> and will be mapped to variable of the same type (with paths replaced by remote paths on remote host).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-trunk_size">Option <code>trunk_size</code><a class="anchor-link" href="#Option-trunk_size">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Options <code>trunk_size</code> and <code>trunk_workers</code> are useful for dividing a large number of small tasks into several larger tasks so that they can be executed efficiently on a cluster system.</p>
+<p>Option <code>trunk_size</code> groups concurrent tasks into trunks of specified size. For example, if you need to run 10000 simulations that each lasts about 1 minute, you can group the tasks into <code>10</code>  umbrella tasks, each running <code>1000</code> simulations.</p>
+
+<pre><code>[10]
+import random
+input: for_each={'seed': [random.randint(1, 10000000) for x in range(10000)]}
+task: mem=`1G`, walltime='1m', cores=2, trunk_size=1000
+sh:
+    run_simulation --seed $(seed) &gt;&gt; res_${seed}.res</code></pre>
+<p>The unbrella tasks have the following properties:</p>
+<ol>
+<li>Tasks embedded by an umbrella task are executed normally in the sense that they have their own input, output, task ID, signatures etc, although only the umbrella tasks are visible to task engines.</li>
+<li>Umbrella task IDs are prefixed by <code>M#_</code> where <code>#</code> is the number of embedded tasks.</li>
+<li>Umbrella tasks adjust resource options such as <code>walltime</code> automatically so in the above example, each umbrella task will have <code>walltime='16:40:00'</code> (1000 minutes). </li>
+<li>Option <code>name</code> (job name on PBS systems) will be adjusted to <code>${name)_##</code> (e.g. <code>default_10_6000_1000</code> if default <code>name='${step_name}_${_index}'</code> is used) where <code>##</code> is the number of subtasks.</li>
+<li>The entire umbrella will fail if any of the subtasks fails. However, since each subtask has its own signature, completed tasks will be ignored when you rerun the umbrella task (unless <code>-s force</code> is specified to forcefully re-execute all tasks).</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-trunk_workers">Option <code>trunk_workers</code><a class="anchor-link" href="#Option-trunk_workers">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>trunk_workers</code> specifies number of workers for umbrella tasks. If this option is specified, an umbrella task will be executed by a master process that dispatches embedded tasks to <code>trunk_workers</code> workers. Using the same simulation example with <code>trunk_workers=5</code>,</p>
+
+<pre><code>import random
+input: for_each={'seed': [random.randint(1, 10000000) for x in range(10000)]}
+task: mem=`1G`, walltime='1m', cores=2, trunk_size=1000, trunk_workers=5
+sh:
+    run_simulation --seed $(seed) &gt;&gt; res_${seed}.res</code></pre>
+<ul>
+<li>There would be <code>10000 / 1000 = 10</code> umbrealla tasks each with <code>1000</code> (<code>trunk_size</code>) subtasks.</li>
+<li>Each umbrella task would use <code>2 * 5 + 1 = 11</code> cores where the extra core is used by the master process.</li>
+<li>Each umbrella task would use 5G of RAM (<code>5 * 1G</code>).</li>
+<li>Each umbrella task would have a <code>walltime</code> of <code>1000 / 5 * 1 = 200</code> minutes (<code>walltime='03:20:00'</code>).</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-workdir">Option <code>workdir</code><a class="anchor-link" href="#Option-workdir">&#182;</a></h3><p>Default to current working directory.</p>
+<p>Option <code>workdir</code> controls the working directory of the task. For example, the following step downloads a file to the <code>resource_dir</code> using command <code>wget</code>.</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="kn">task:</span> <span class="n">workdir</span><span class="o">=</span><span class="n">resource_dir</span>
+
+<span class="kn">run:</span>
+  <span class="n">wget</span> <span class="n">a_url</span> <span class="o">-</span><span class="n">O</span> <span class="n">filename</span>
+</pre></div>
+<p>Runtime option <code>workdir</code> will be translated to remote host if the task is executed remotely.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-concurrent">Option <code>concurrent</code><a class="anchor-link" href="#Option-concurrent">&#182;</a></h3><p>Default to <code>True</code>.</p>
+<p>If the step process is repeated for multiple input groups (using input options <code>group_by</code> or <code>for_each</code>), all loop processes will by default be sent to the task engine to be executed in parallel (subject to <code>max_running_jobs</code> of individual task queue). If your tasks are sequential in nature (e.g. the next input group depends on the result of the current input group), you can set <code>concurrent=False</code>, in which case the next task will be generated and sent to the task queue only after the current one has been completed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-shared">Option <code>shared</code><a class="anchor-link" href="#Option-shared">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS tasks are executed externally and by default does not return any value. Similar to the <code>shared</code> step option (that passes step variables to the workflow), you can use <code>shared</code> option to pass task variables to the step in which the task is defined.</p>
+<p>For example, the following script perform some simulations in 10 tasks and return the result by variable <code>rng</code>, which is then shared to the workflow by step option <code>shared</code> so that it can be available to the next step.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="mi">10</span> <span class="p">(</span><span class="n">simulate</span><span class="p">):</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;rng&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)}</span>
+<span class="kn">task:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;rng&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${i}&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>10 tasks completed.
+{0: 857, 1: 904, 2: 404, 3: 862, 4: 269, 5: 87, 6: 699, 7: 240, 8: 119, 9: 245}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is important to note that, however, because there can be multiple tasks in one step, the variables returned by tasks are dictionaries with loop index <code>_index</code> as keys.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Also similar to step option <code>shared</code>, task option <code>shared</code> accepts a single variable (e.g. <code>rng</code>), a sequence of variables  (e.g. <code>('rng', 'sum')</code>), a dictionary of variable derived from an expression (e.g. <code>{'result': 'float(open(output).read())'}</code>, or sequences of names and variables. In the dictionary case, the values of the dictionary should be an expression (string), that will be evaluated upon the completion of the task, and assign to the specified variable.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-env">Option <code>env</code><a class="anchor-link" href="#Option-env">&#182;</a></h3><p>The <code>env</code> option allow you to modify runtime environment, similar to the <code>env</code> parameter of the <code>subprocess.Popen</code> function. For example, you can execute your command with in a specific directory using</p>
+<div class="highlight"><pre><span></span><span class="kn">task:</span>  <span class="kp">env</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PATH&#39;</span><span class="p">:</span> <span class="s1">&#39;/path/to/mycommand&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]}</span>
+<span class="kn">run:</span>
+   <span class="n">mycommand</span>
+</pre></div>
+<p>Option <code>env</code> is NOT translated to remote host because it is of type directionay. The job template is usually a good place to set host-specific environment.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-prepend_path">Option <code>prepend_path</code><a class="anchor-link" href="#Option-prepend_path">&#182;</a></h3><p>Option <code>prepend_path</code> is a shortcut to option <code>env</code> to prepend one (a string) or more (a list of strings) paths to system path. For example, the above example can be shortened to</p>
+<div class="highlight"><pre><span></span><span class="kn">task:</span>  <span class="kp">prepend_path</span><span class="o">=</span><span class="s1">&#39;/path/to/mycommand&#39;</span>
+<span class="kn">run:</span>
+   <span class="n">mycommand</span>
+</pre></div>
+<p>Option <code>prepend_path</code> is NOT translated to remote host because it is likely to be host specific.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-active">Option <code>active</code><a class="anchor-link" href="#Option-active">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>active</code> specifies the active task within a input loop. It should be an index or a list of indexes when the task will be executed. Negative index is acceptable (e.g. task for only the last input loop will be executed with <code>active=-1</code>).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Remote-Targets">Remote Targets<a class="anchor-link" href="#Remote-Targets">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All targets are by default <code>local</code>, in the sense that they are available locally. <strong>Local targets will be synchronized to remote hosts to be processed by tasks</strong>. Remote tasks are targets that reside on a remote host. <strong>Remote targets will not be synchronized between local and remote hosts</strong>.</p>
+<table>
+<thead><tr>
+<th></th>
+<th>Local Targets (default)</th>
+<th>Remote Targets</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>location</td>
+<td>locally</td>
+<td>on remote host (although a remote host can be local)</td>
+</tr>
+<tr>
+<td>representation</td>
+<td>w.r.t local file system</td>
+<td>w.r.t remote file system</td>
+</tr>
+<tr>
+<td>Path translation</td>
+<td>Translate to paths on different remote hosts if needed</td>
+<td>Not translated</td>
+</tr>
+<tr>
+<td>processed in tasks</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>processed outside of tasks</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Synchronized</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>In summary, remote targets allow you to use remote resources directly without synchronizing them to local host. SoS currently assumes that the targets are available on the host where the tasks are executed so there is no need to specify the host name for remote targets.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Targets can be specified as remote if you wrapt them inside a <code>remote</code> function (e.g. <code>remote('input.txt')</code>, <code>remote('input1.txt', 'input2.txt')</code>, <code>remote(fastq_files)</code>, or <code>remote(R_Library('ggplot2'))</code>. For example, you could use the following step to process a large input file and only synchronize small output files to local desktop for further analysis:</p>
+
+<pre><code>[10]
+input: remote('/path/to/large/input/file')
+output: remote('large_output'), 'summary.stat'
+task:
+sh:
+    script to generate large_output and summary.stat
+    from large input files.</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Commands-and-Options">Commands and Options<a class="anchor-link" href="#Commands-and-Options">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option--q">Option <code>-q</code><a class="anchor-link" href="#Option--q">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>-q</code> can be used by all task-related commands. It specifies a remote server or task queue, with detailed information defined in either global (<code>~/.sos/config.yml</code>) or local (<code>./config.yml</code>) configuration files. You can also save configurations to other configuration files and specify them using option <code>-c</code>. E.g.</p>
+<div class="highlight"><pre><span></span>sos run myscript -q shark -c shark.yml
+</pre></div>
+<p>uses definition of <code>shark</code> defined in <code>shark.yml</code>. You can define hosts in any of the configuration files and definitions loaded later override previous definitions. For example, you could define a set of test servers that is identical to definitions in global definition, but with <code>max_running_jobs</code> set to 1. You can then use</p>
+
+<pre><code>sos run myscript -q shark -c test.yml</code></pre>
+<p>for test runs and</p>
+
+<pre><code>sos run myscript -q shark</code></pre>
+<p>for regular execution.</p>
+<p>It is also possible for you to specify a host without configuration. Such hosts have default values</p>
+
+<pre><code>alias = host
+address = host
+queue_type = process
+path_map = []
+shared = []</code></pre>
+<p>which assumes that the host is a remote machine with identical but not shared file systems and without any task queue.</p>
+<p>Finally, if option <code>-q</code> is specified without value, the <code>sos</code> command will exit with a list of configured hosts so you can use command</p>
+
+<pre><code>sos status -q</code></pre>
+<p>to list all configured queued. Details of each queue will be displayed with option <code>-v3</code> or <code>-v4</code>.</p>
+
+<pre><code>sos status -q -v3</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-run--q"><code>sos run -q</code><a class="anchor-link" href="#sos-run--q">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>-q</code> option of command <code>sos run</code> (or <code>sos-runner</code>) sets the default task queue for all tasks. For example,</p>
+<div class="highlight"><pre><span></span>sos run myscript -q shark
+</pre></div>
+<p>would send all tasks in workflow <code>default</code> defined in <code>myscript.sos</code> to a task queue <code>shark</code>. Note that this option does not override option <code>queue</code> of steps so you could send some tasks to specific queues and all others to the default queue.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-dryrun"><code>sos dryrun</code><a class="anchor-link" href="#sos-dryrun">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The dryrun running mode is very useful in checking if your scripts are correctly translated and if your machine settings are correct. <strong>It is strongly recommended that you execute your script in dryrun mode before submitting them to remote hosts and/or task queues</strong>.</p>
+<p>How tasks are executed depends a bit on your configuration but basically,</p>
+<ol>
+<li><p>For local tasks (<code>process</code> task engine), the tasks are executed directly with <code>sos execute task -n</code> (<code>-n</code> for dryrun mode).</p>
+</li>
+<li><p>For direct remote execution (e.g. <code>sos run script -q server -n</code> with <code>queue_type</code> set to <code>process</code> (default)), the tasks will be generated and copied to the remote server, and will be executed with command <code>sos execute task -n</code>.</p>
+</li>
+<li><p>For submitting to a PBS task queue (e.g. <code>sos run script -q pbs -n</code> with <code>queue_type</code> set to <code>pbs</code>), the tasks will be generated, copied to remote host. Job files will also be generated according to <code>job_template</code> and will be copied to the remote host. However, instead of using <code>submit_cmd</code> to submit the job to the PBS queue, <strong>the job script will be executed directly on the head node</strong>. It is therefore important for you to allow the jobs to be run in <code>dryrun</code> mode and complete in seconds. Otherwise your system admin would hunt you for running large jobs directly on head nodes.</p>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dryrun mode allows you to test your workflow on a new server or task queue with the following approach:</p>
+<ol>
+<li>Define a <code>host_test</code> queue that is identical to <code>host</code> but with <code>max_running_jobs</code> set to 1.</li>
+<li><p>Run the script in dryrun mode, which would perform all file synchronization, task translation, submission steps, and execution steps. The only difference is that the scripts are printed instead of executed.</p>
+
+<pre><code> sos run script -q host_test -n</code></pre>
+<p>kill the command with <code>Ctrl-C</code> if the scripts are correct.</p>
+</li>
+<li><p>Submit one job to the task queue using command</p>
+
+<pre><code> sos run script -q host_test</code></pre>
+<p>kill the command if the task gets started and runs correctly.</p>
+</li>
+<li>Submit the rest of the tasks using command
+<pre><code> sos run script -q host</code></pre>
+ The job submitted at step 3 will be recognized and monitored. </li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="-w-and--W"><code>-w</code> and <code>-W</code><a class="anchor-link" href="#-w-and--W">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Options <code>-w</code> (wait) and <code>-W</code> (no-wait) tells SoS to wait (or not wait) for the completion of tasks, which overrides the default wait mode for the task queue used (option <code>wait_for_task</code>). For example, a local process queue might be running in <code>wait</code> mode and a remote PBS queue is likely to be running in <code>no-wait</code> mode.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When a workflow is executed and reaches a point where all tasks have been submitted and no more step could be executed (namely the entire workflow is waiting for the completion of tasks), it will continue to wait in <code>wait</code> mode or quit in <code>no-wait</code> mode. Note that</p>
+<table>
+<thead><tr>
+<th>feature</th>
+<th>wait mode</th>
+<th>no-wait mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>when</td>
+<td><code>-w</code> or default for task queue with <code>wait_for_task=true</code></td>
+<td><code>-W</code> or default for task queue with <code>wait_for_task=false</code></td>
+</tr>
+<tr>
+<td>keyboard interruption</td>
+<td>kills all running tasks</td>
+<td>runing tasks are not affected</td>
+</tr>
+<tr>
+<td>task monitoring</td>
+<td>continuous</td>
+<td>external</td>
+</tr>
+<tr>
+<td>when tasks are completed</td>
+<td>results synced, continue execution</td>
+<td>results stay on  server (if remote) until the workflow resumes to fetch them</td>
+</tr>
+<tr>
+<td>resume execution</td>
+<td>not needed</td>
+<td>Command <code>sos resume</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-resume"><code>sos resume</code><a class="anchor-link" href="#sos-resume">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Command <code>sos resume</code> resumes the execution of specified or last-executed workflow. In its simplest form, you can execute a workflow in no-wait mode</p>
+
+<pre><code>sos run workflow --options -W</code></pre>
+<p>if the command exit with a number of running tasks, you can run</p>
+
+<pre><code>sos resume</code></pre>
+<p>to resume the execution of workflow at any time. The command will exit immediately if all tasks are still running, and resume the execution if some tasks are completed. If more tasks are to be submitted, this command will exit again after submission more tasks unless option <code>-w</code> is specified.</p>
+<p>This command also accepts an option <code>--status</code> to check the status of pending workflows so if you are not sure if your workflows have been completed, you can execute</p>
+
+<pre><code>sos resume -s</code></pre>
+<p>to check the status of them. Note that <code>sos resume</code> does not have to be executed on the directory where the workflows were submitted so you can resume or check status of workflows from any directory.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-status"><code>sos status</code><a class="anchor-link" href="#sos-status">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Command</p>
+<div class="highlight"><pre><span></span>sos status <span class="o">[</span>tasks<span class="o">]</span> -q query
+</pre></div>
+<p>checkes the status of tasks. You can specify any number of first characeters of a task to specify a task, for example,</p>
+<div class="highlight"><pre><span></span>sos task <span class="m">7</span>
+sos task 77e
+sos task 7736e
+</pre></div>
+<p>would all work for a task with ID <code>77e36e7404cf6c2ef7079a09e84a4d6d</code>, but multiple tasks could be identifies if they share the same leading digits. Actually,</p>
+
+<pre><code>sos task</code></pre>
+<p>would match all tasks and list the status of all local tasks.</p>
+<p>Option <code>-q</code> specifies the task queue to monitor. For example,</p>
+
+<pre><code>sos status -q docker</code></pre>
+<p>would check the status of all tasks on a remote host <code>docker</code>. You can monitor the tasks on <code>docker</code> on any machine with defined host <code>docker</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-status--v--q"><code>sos status -v -q</code><a class="anchor-link" href="#sos-status--v--q">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>-v</code> controls the details of the output of command <code>sos status</code>. For example,</p>
+
+<pre><code>sos status e7404cf6c2 -v0</code></pre>
+<p>would print just the status of the task (e.g. <code>running</code>).</p>
+
+<pre><code>sos task 77e -v1</code></pre>
+<p>would print the task id and their status</p>
+
+<pre><code>77e36e7404cf6c2ef7079a09e84a4d6d    running
+77e3c2ef7079a236e7404cf6c2f343d3    completed</code></pre>
+<p>Option <code>-v0</code> and <code>-v1</code> could check the status of multiple tasks, as realized by SoS. Some tasks queues have their own task status command and option <code>-v2</code> (and upper) will use these commands (if specified) to check the status of the jobs. That is to say</p>
+<div class="highlight"><pre><span></span>sos task 77e36 -v2
+</pre></div>
+<p>might return output of a command</p>
+
+<pre><code>qstat 18433</code></pre>
+<p>if the task has been submitted to a cluster named <code>shark</code> with a job id <code>18433</code>.</p>
+<p>If you would like to know more about the tasks,</p>
+<div class="highlight"><pre><span></span>sos task 77e36 -v3
+</pre></div>
+<p>would list the script the task is running and all variables in abbreviated format, and</p>
+<div class="highlight"><pre><span></span>sos task 77e36 -v4
+</pre></div>
+<p>would list all variables in complete form.</p>
+<p>Finally, using <code>-q</code> in combination with <code>-v</code> allows you to list the variables used in remote server.</p>
+<div class="highlight"><pre><span></span>sos task 77e36 -v4 -q linux
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-kill"><code>sos kill</code><a class="anchor-link" href="#sos-kill">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Command</p>
+<div class="highlight"><pre><span></span>sos <span class="nb">kill</span> <span class="o">[</span>tasks<span class="o">]</span> <span class="o">[</span>-q queue<span class="o">]</span>
+</pre></div>
+<p>kills specified or all tasks on specified job queue <code>queue</code>. Because the same job could be executed on different queues (you have have done so), you will have to specify the correct queue name to kill the job on different queues.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-execute"><code>sos execute</code><a class="anchor-link" href="#sos-execute">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Command</p>
+
+<pre><code>`
+sos execute [tasks] [-q queue]</code></pre>
+<p>is the command that is used internally by <code>sos run</code> to execute tasks but you could use this command to execute tasks externally. For example, if a task failed on a server, you could use command</p>
+
+<pre><code>sos execute task_id -q server</code></pre>
+<p>to execute the command on another server. Note that <code>task_id</code> specifies a local task with local paths. The task will be converted to a remote task (with path names converted for that host) if <code>server</code> specifies a remote host. This makes it easy for you to re-submit tasks to the same server after changing server configuration, or submit the same task to a different server.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-purge"><code>sos purge</code><a class="anchor-link" href="#sos-purge">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Command <code>sos purge</code> is used to clear completed or failed tasks. You can remove all tasks related to current project (default), tasks by age (<code>--age</code>) or status (option <code>--status</code>) from local or remote host (option <code>-q</code>). For example, command</p>
+
+<pre><code>sos purge -q cluster</code></pre>
+<p>removes all tasks related to current project from a remote cluster,</p>
+
+<pre><code>sos purge --age 2d</code></pre>
+<p>removes all tasks that are created more than 2 days ago, and</p>
+
+<pre><code>sos purge -q cluster -s completed</code></pre>
+<p>removes all completed tasks from the remote cluster.</p>
+<p>You can also specify the IDs of tasks to be removed, e.g.</p>
+
+<pre><code>sos purge 38ef</code></pre>
+<p>removes all tasks with ID starting with <code>38ef</code>.</p>
+<p>Finally, if you would like to remove all tasks related information, including tasks that are not generated by workflows from the current project (directory), you can use command</p>
+
+<pre><code>sos purge --all</code></pre>
+<p>to clear all information.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-push"><code>sos push</code><a class="anchor-link" href="#sos-push">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would need to send files or directories to a remote host, you can use magic <code>%push files -r HOST</code> to do it, which is roughly requivalent to command <code>sos push files -r HOST</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos-pull"><code>sos pull</code><a class="anchor-link" href="#sos-pull">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would need to retrieve files or directories from a remote host, you can use magic <code>%pull files -r HOST</code> to do it, which is roughly requivalent to command <code>sos pull files -r HOST</code>. Note that the files should be specified relative to local file system. SoS will use <code>path_map</code> to determine the remote file to retrieve.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-simple-example">A simple example<a class="anchor-link" href="#A-simple-example">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following example demonstrates how to configure a remote host (with a PBS queue system) and submit your tasks to it. It can be tricky to set up public key access, configure host, and get everything working but you only need to do this once for each server or task queue that you would like to use. After that, you are free to submit your tasks to any of the servers without worrying about different file systems, task queues etc.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Host-configuration">Host configuration<a class="anchor-link" href="#Host-configuration">&#182;</a></h4><p><code>~/.sos/hosts.yml</code></p>
+
+<pre><code>hosts:
+  nautilus:
+    address: cluster.address
+    paths:
+      home: /scratch/${user_name}
+    queue_type: pbs
+    status_check_interval: 30
+    job_template: |
+      #!/bin/bash
+      #PBS -N ${job_name}
+      #PBS -l nodes=1:ppn=${cores}
+      #PBS -l walltime=${walltime}
+      #PBS -l mem=${mem//1000000}GB
+      #PBS -o ${home_dir}/.sos/tasks/${task}.out
+      #PBS -e ${home_dir}/.sos/tasks/${task}.err
+      #PBS -m ae
+      #PBS -M email@address
+      #PBS -v ${cur_dir}
+      cd ${cur_dir}
+      sos execute ${task} -v ${verbosity} -s ${sig_mode} \
+        ${'--dryrun' if run_mode=='dryrun' else ''}
+    max_running_jobs: 100
+    submit_cmd: msub ${job_file}
+    status_cmd: qstat ${job_id}
+    kill_cmd: qdel ${job_id}
+  workstation:
+    paths:
+      home:/Users/${user_name}</code></pre>
+<p><code>~/.sos/config.yml</code></p>
+
+<pre><code>localhost: workstation</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Test-script">Test script<a class="anchor-link" href="#Test-script">&#182;</a></h4>
+<pre><code>[10]
+input: for_each={'tid': range(10) }
+
+task: walltime='20m', mem='100M'
+
+run:
+    echo I am task ${tid}
+    sleep ${60  * (tid + 1)}</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Commands">Commands<a class="anchor-link" href="#Commands">&#182;</a></h4>
+<pre><code>sos run test -q nautilus
+sos status -q nautilus
+sos kill cb1 -q nautilus</code></pre>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

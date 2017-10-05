@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Command_Line_Options</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+ <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  
+             'number_sections': false,  // sections numbering
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+
+            var file=tutorialsDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SOS"
+            // var path="file:///Users/jma7/Development/SOS/docs"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            
+            var tuts=tutorials;
+            var pos=tutorials.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=tuts[a]
+                  $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/tutorials/'+file+'.html'+'"]').css("color","#126dce");
+
+            $('<li id="indexHome" style="margin-bottom:10pt"> <a href="http://vatlab.github.io/SOS/index.html#documentation"> <img height="32" width="32" style="border:0px;margin-right:5px;vertical-align:bottom" src="http://vatlab.github.io/SOS/img/sos_icon.svg"> <b>Home</b></a> </li>').insertBefore("#toc-level0 li:eq(0)");
+            for (var a=pos+1;a<tuts.length;a++){
+                  var name=tuts[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+            $("#toc-header").hide();
+            $("#toc").attr("style","max-height:938px")
+
+
+            // for (var a =0;a<tuts.length;a++){
+            //       var name =tuts[a];
+            //       if ()
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace("_"," ")+'</a></li>');
+            // }
+
+            // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            
+            // $(".number_sections-btn").hide();
+            // $(".toc_cell_sections-btn".hide();
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_sos {}.lan_bash {background-color: #E6EEFF !important }.lan_python2 {background-color: #F6FAEA !important }.lan_ir {background-color: #FDEDEC !important }.lan_python3 {background-color: #EAFAF1 !important }
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Command-line-options">Command line options<a class="anchor-link" href="#Command-line-options">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS allows you to define parameters that accept values from command line options easily.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Optional-arguments">Optional arguments<a class="anchor-link" href="#Optional-arguments">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Any variable assignment prefixed with <code>parameter:</code> can accept values from command  line. The format of such lines are</p>
+
+<pre><code># comment
+parameter: var_name = default_value</code></pre>
+<p>The default value can be number, string, list of string, or expressions that return values of these types. Other types can be used as long as they can be converted to these types from user-provided values. For example</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># path to tool gatk</span>
+<span class="kn">parameter:</span> <span class="n">gatk_path</span> <span class="o">=</span> <span class="s1">&#39;~/bin/GATK&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>defines a variable <code>gatk_path</code> with default value <code>'~/bin/GATK'</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you execute a workflow without defining <code>gatk_path</code>, the default value will be used</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="kn">parameter:</span> <span class="n">gatk_path</span> <span class="o">=</span> <span class="s1">&#39;~/bin/GATK&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">gatk_path</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>~/bin/GATK
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can set this parameter from command line using option <code>--gatk_path</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">gatk_path</span> <span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">GATK</span>
+<span class="kn">parameter:</span> <span class="n">gatk_path</span> <span class="o">=</span> <span class="s1">&#39;~/bin/GATK&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">gatk_path</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/my/GATK
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also use <code>-</code> in place of <code>_</code> in command line, although the variable name cannot have <code>-</code> in it.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">gatk</span><span class="o">-</span><span class="n">path</span> <span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">GATK</span>
+<span class="kn">parameter:</span> <span class="n">gatk_path</span> <span class="o">=</span> <span class="s1">&#39;~/bin/GATK&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">gatk_path</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/my/GATK
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The default value of the parameter determines the type of values it accepts. For example, the following command yields an error because the parameter expects an integer (from default value <code>0</code>) but a string is passed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
+
+<span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">cutoff</span> <span class="n">zero</span>
+<span class="kn">parameter:</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to process statement if &#34;sos_handle_parameter_&#34; in ...ff&#39;,  0\n)\n: argument --cutoff: invalid int value: &#39;zero&#39;
+Sandbox execution failed.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Simiarly, a list would be created if the parameter has a default value of type list</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">sample</span><span class="o">-</span><span class="n">names</span> <span class="n">A</span>
+<span class="kn">parameter:</span> <span class="n">sample_names</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">sample_names</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;A&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, the convention to specify <code>True</code> or <code>False</code> of a boolean parameter is to use <code>--no-PARAM</code> for <code>PARAM=False</code>. For example,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">trim</span>
+<span class="kn">parameter:</span> <span class="n">trim</span><span class="o">=</span><span class="bp">True</span>
+<span class="k">print</span><span class="p">(</span><span class="n">trim</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>False
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Required-arguments">Required arguments<a class="anchor-link" href="#Required-arguments">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In cases where there is no suitable default values and/or command line arguments are mandatary, you can list the type of arguments (e.g. <code>int</code>, <code>bool</code>, <code>str</code>, <code>list</code> of strings) in place of default values. This will force SoS to get a parameter from command line, and yield an error if no value is specified for this parameter.</p>
+<p>For example, if an integer parameter <code>cutoff</code> is required, you can define it as</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
+
+<span class="c1"># cutoff value</span>
+<span class="kn">parameter:</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="nb">int</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to process statement if &#34;sos_handle_parameter_&#34; in ...&#39;,  int\n)\n: Argument cutoff of type &lt;class &#39;int&#39;&gt; is required
+Sandbox execution failed.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and execute the workflow without parameter, SoS would fail with an error message. This will force the users to provide an integer to this parameter. You can do the same for lists but SoS assumes that you need a <strong>list of strings</strong>. For example, the following definition</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">bam</span><span class="o">-</span><span class="n">files</span> <span class="n">A</span><span class="o">.</span><span class="n">bam</span> <span class="n">B</span><span class="o">.</span><span class="n">bam</span>
+<span class="c1"># input bam files</span>
+<span class="kn">parameter:</span> <span class="n">bam_files</span> <span class="o">=</span> <span class="nb">list</span>
+<span class="k">print</span><span class="p">(</span><span class="n">bam_files</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;A.bam&#39;, &#39;B.bam&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>request a list of strings from command line. SoS will return a list even if only one value is provided.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="parameter-of-subworkflows"><code>parameter</code> of subworkflows<a class="anchor-link" href="#parameter-of-subworkflows">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>parameter</code> statement usually gets its value from command line. However, when a workflow is executed as a subworkflow by action <code>sos_run</code>, the <code>parameter</code> statement can get its value from the <code>args</code> or <code>**kwargs</code> parameters of <code>sos_run</code>.</p>
+<p>For example, when the <code>default</code> workflow of the following script is executed, <code>cutoff</code> takes its default value of <code>10</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">default_1</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">10</span>
+<span class="kn">sh:</span>
+  <span class="n">echo</span> <span class="err">$</span><span class="p">{</span><span class="n">cutoff</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">batch</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">cutoff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>10
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A command line argument can be used to set this parameter to <code>8</code>,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">8</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>8
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, if the workflow is called as a subworkflow of step <code>batch</code>, <code>sos_run</code> set up the environment so that the statement <code>parameter: cutoff=10</code> gets a different cutoff value pass by  <code>sos_run</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="n">batch</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0
+1
+2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

@@ -1,0 +1,425 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Language_Module</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  // sections numbering
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+
+            table_of_contents(cfg,st);
+
+            var file=documentationDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+
+
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // var docs=documentation
+            // for (var a =0;a<docs.length;a++){
+            //       var name =docs[a];
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+            // }
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+            // $("#toc").attr("style","max-height:938px")
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Add-a-new-language-to-SoS">Add a new language to SoS<a class="anchor-link" href="#Add-a-new-language-to-SoS">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is relatively easy to define a new language module to allow SoS to exchange variables with a kernel. To make the extension available to other users, you can either create and distribute a separate package, or extend SoS and send us a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS needs to know a few things before it can support a language properly,</p>
+<ol>
+<li>The Jupyter kernel this language uses to work with Jupyer, which is a <code>ir</code> kernel for language <code>R</code>.</li>
+<li>How to translate a Python object to a <strong>similar</strong> object in this language</li>
+<li>How to translate an object in this language to a <strong>similar</strong> object in Python.</li>
+<li>The color of the prompt of cells executed by this language.</li>
+<li>(Optional but recommend). Information of a running session.</li>
+<li>Optional options for interacting with the language on frontend.</li>
+</ol>
+<p>It is important to understand that, <strong>SoS does not tranfer any variables among kernels, it creates independent homonymous variables of similar types that are native to the destination language</strong>. For example, for the following two variables</p>
+
+<pre><code>a = 1
+b = c(1, 2)</code></pre>
+<p>in R, SoS execute the following statements to create variables <code>a</code> and <code>b</code> in Python</p>
+
+<pre><code>a = 1
+b = [1, 2]</code></pre>
+<p>Note that <code>a</code> and <code>b</code> are of different types in Python although they are of the same type <code>numeric</code> in <code>R</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Define-a-new-language-Module">Define a new language Module<a class="anchor-link" href="#Define-a-new-language-Module">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To support a new language, you will need to write a Python package that defines a class, say <code>mylanguage</code>, that should provide the following class attributes:</p>
+<ol>
+<li><code>supported_kernels</code>: a dictionary of language and names of the kernels that the language supports, such as <code>{'R': ['ir']}</code>. If multiple kernels are supported, SoS will look for a kernel with matched name in the order that is specified (e.g. <code>{'JavaScript': ['ijavascript', 'inodejs']}</code>). Multiple languages can be specified if a language module supports multiple languages (e.g. <code>Matlab</code> and <code>Octave</code>).</li>
+<li><code>background_color</code>: a name or <code>#XXXXXX</code> value for a color that will be used in the prompt area of cells that are executed by the subkernel. An empty string can be used for using default notebook color.</li>
+<li><code>options</code>: A Python dictionary with options that will be passed to the frontend. Currently two options <code>variable_pattern</code> and <code>assignment_pattern</code> are supported. Both options should be regular expressions in JS style. <ul>
+<li>Option <code>variable_pattern</code> is used to identify if a statement is a simple variable (nothing else). If this option is defined and the input text (if executed at the side panel) matches the pattern, SoS will prepend <code>%preview</code> to the code. This option is useful only when <code>%preview var</code> displays more information than <code>var</code>.</li>
+<li>Option <code>assignment_pattern</code> is used to identify if a statement is an assignment operation. If this option is defined and the input text matches the pattern, SoS will prepend <code>%preview var</code> to the code where <code>var</code> should be the first matched portion of the pattern (use <code>( )</code>). This mechanism allows SoS to automatically display result of an assignment when you step through the code.</li>
+</ul>
+</li>
+</ol>
+<p>An instance of the class would be initialized with the sos kernel and the name of the subkernel, which does not have to be one of the <code>supported_kernels</code> (could be self-defined) and should provide the following attributes and functions:</p>
+<ol>
+<li><code>init_statements</code>: a statement that will be executed by the sub-kernel when the kernel starts. This statement usually defines functions to convert object to Python.</li>
+<li><code>get_vars</code>: a Python function that transfer a Python variable to the subkernel.</li>
+<li><code>put_vars</code>: a Python function that put one or more variables in the subkernel to SoS or another subkernel.</li>
+<li><code>sessioninfo</code>: a Python function that returns information of the running kernel, usually including version of the language, the kernel, and currently used packages and their versions. For <code>R</code>, this means a call to <code>sessionInfo()</code> function. The return value of this function can be a string, a list of strings or <code>(key, value)</code> pairs, or a dictinary. The function will be called by the <code>%sessioninfo</code> magic of SoS.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Obtain-variable-from-SoS">Obtain variable from SoS<a class="anchor-link" href="#Obtain-variable-from-SoS">&#182;</a></h2><p>The <code>get_vars</code> function should be defined as</p>
+
+<pre><code>def get_vars(self, var_names)</code></pre>
+<p>where</p>
+<ul>
+<li><code>self</code> is the language instance with access to the SoS kernel, and</li>
+<li><code>var_names</code> are names in the sos dictionary.</li>
+</ul>
+<p>This function is responsible for probing the type of Python variable and create a similar object in the subkernel.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, to create a Python object <code>b = [1, 2]</code> in <code>R</code> (magic <code>%get</code>), this function could</p>
+<ol>
+<li>Obtain a R expression to create this variable (e.g. <code>b &lt;- c(1, 2)</code>)</li>
+<li>Execute the expression in the subkernel to create variable <code>b</code> in it.</li>
+</ol>
+<p>Note that the function <code>get_vars</code> can change the variable name because a valid variable name in Python might not be a valid variable name in another language. The function should give a warning if this happens.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Send-variables-to-other-kernels">Send variables to other kernels<a class="anchor-link" href="#Send-variables-to-other-kernels">&#182;</a></h2><p>The <code>put_vars</code> function should be defined as</p>
+
+<pre><code>def put_vars(self, var_names, to_kernel=None)</code></pre>
+<p>where</p>
+<ol>
+<li><code>self</code> is the language instance with access to the SoS kernel</li>
+<li><code>var_name</code> is a list of variables that should exist in the subkernel. Because a subkernel is responsible for sharing variables with names starting with <code>sos</code> to SoS automatically, this function should be called to pass these variables even when <code>var_names</code> is empty.</li>
+<li><code>to_kernel</code> is the destination kernel to which the variables should be passed.</li>
+</ol>
+<p>Depending on destination kernel, this function can:</p>
+<ul>
+<li>If the destination kernel is <code>sos</code>, the function should return a dictionary of variables that will be merged to the SoS dictionary.</li>
+<li>If direct variable transfer is not supported by the language, the function can return a Python dictionary, in which case the language transfers the variables to SoS and let SoS pass along to the destination kernel.</li>
+<li>If direct variable transfer is supported, the function should return a string. SoS will evaluate the string in the destination kernel to pass variables directly to the destination kernel.</li>
+</ul>
+<p>So basically, a language can start with an implementation of <code>put_vars(to_kernel='sos')</code> and let SoS handle the rest. If need arises, it can</p>
+<ul>
+<li>Implement variable exchanges between instances of the same language. This can be useful because there are usually lossness and more efficient methods in this case.</li>
+<li>Put variable to another languages where direct varable transfer is much more efficient than transferring through SoS.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, to send a <code>R</code> object <code>b &lt;- c(1, 2)</code> from subkernel <code>R</code> to <code>SoS</code> (magic <code>%put</code>), this function can</p>
+<ol>
+<li>Execute an statement in the subkernel to get the value(s) of variable(s) in some format, for example, a string <code>"{'b': [1, 2]}"</code>.</li>
+<li>Post-process these varibles to return a dictionary to SoS.</li>
+</ol>
+<p>The <a href="https://github.com/vatlab/SOS/blob/master/src/sos/R/kernel.py"><code>R</code> sos extension</a> provides a good example to get you started.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>NOTE</strong>: Unlike other language extension mechanisms in which the python module can get hold of the "engine" of the interpreter (e.g. <code>saspy</code> and matlab's Python extension start the interpreter for direct communication) or have access to lower level API of the language (e.g. <code>rpy2</code>), SoS only have access to the interface of the language and perform all conversions by executing commands in the subkernels and intercepting their response. Consequently,</p>
+<ol>
+<li>Data exchange can be slower than other methods.</li>
+<li>Data exchange is less dependent on version of the interpreter.</li>
+<li>Data exchange can happen between a local and a remote kernel.</li>
+</ol>
+<p>Also, although it can be more efficient to save large datasets to disk files and load in another kernel, this method does not work for kernels that do not share the same filesystem. We currently ignore this issue and assume all kernels have access to the same file system.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Registering-the-new-language-module">Registering the new language module<a class="anchor-link" href="#Registering-the-new-language-module">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS makes extensive use of <a href="http://setuptools.readthedocs.io/en/latest/setuptools.html#dynamic-discovery-of-services-and-plugins"><strong>entry points</strong></a>, which allows external modules to register their features in the file system to make them available to other modules. It can be confusing initially but <a href="http://stackoverflow.com/questions/774824/explain-python-entry-points">this stack overflow ticket</a> explains it quite well.</p>
+<p>To register additional language with SoS, you either need to extend <code>entry_points</code> of the <a href="https://github.com/vatlab/SOS/blob/master/setup.py"><code>setup.py</code> script</a> of SoS, or create your own package with these <code>entry_points</code>. Option <code>extras_require</code> can be used to specify additional dependent packages for these features. For example, you can create a package with the following entry_points to provide support for ruby.</p>
+
+<pre><code>    entry_points='''
+[sos-language]
+ruby = sos-ruby.kernel:sos_ruby
+
+[sos-targets]
+Ruby_Library = sos-ruby.target:Ruby-Library
+'''</code></pre>
+<p>With the installation of this package, <code>sos</code> would be able to obtain a class <code>sos_ruby</code> from module <code>sos-ruby.kernel</code>, and use it to work with the <code>ruby</code> language.</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

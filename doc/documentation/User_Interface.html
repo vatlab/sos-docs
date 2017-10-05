@@ -1,0 +1,1714 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>User_Interface</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  // sections numbering
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+
+            table_of_contents(cfg,st);
+
+            var file=documentationDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+
+
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // var docs=documentation
+            // for (var a =0;a<docs.length;a++){
+            //       var name =docs[a];
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+            // }
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+            // $("#toc").attr("style","max-height:938px")
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_SoS {}.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_SAS .input_prompt { background-color: #dcb9b9 !important }.lan_Python2 .input_prompt { background-color: #F6FAEA !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_R .input_prompt { background-color: #FDEDEC !important }
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Command-Line-User-Interface">Command Line User Interface<a class="anchor-link" href="#Command-Line-User-Interface">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Command-sos">Command <code>sos</code><a class="anchor-link" href="#Command-sos">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Command <code>sos</code> accepts a number of subcommands (similar to <code>svn</code>, <code>git</code> etc). Its syntax follows</p>
+<div class="highlight"><pre><span></span>sos subcommand <span class="o">[</span>subcommand-options<span class="o">]</span>
+</pre></div>
+<p>You can use command</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos [-h] [--version]
+           {run,resume,dryrun,status,execute,kill,purge,config,convert,remove,pack,unpack}
+           ...
+
+A workflow system for the execution of commands and scripts in different
+languages.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --version             show program&#39;s version number and exit
+
+subcommands:
+  {run,resume,dryrun,status,execute,kill,purge,config,convert,remove,pack,unpack}
+    run                 Execute default or specified workflow in script
+    resume              Resume the execution of a suspended workflow
+    dryrun              Execute workflow in dryrun mode
+    status              Check the status of specified tasks
+    execute             Execute a packages task
+    kill                Stop the execution of running task
+    purge               Remove local or remote tasks
+    config              Read and write sos configuration files
+    convert             Convert between .sos, .ipynb and other formats
+    remove              Remove specified files and/or their signatures
+    pack                Pack workflow related files into an archive
+    unpack              Unpack workflow related files from an SoS archive
+
+Use &#39;sos cmd -h&#39; for details about each subcommand. Please contact Bo Peng
+(bpeng at mdanderson.org) if you have any question.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>to get a list of subcommands with brief descriptions and</p>
+<div class="highlight"><pre><span></span>sos subcommand -h
+</pre></div>
+<p>to get detailed description of a particular subcommand.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Command-sos-runner">Command <code>sos-runner</code><a class="anchor-link" href="#Command-sos-runner">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Command <code>sos-runner</code> is a shortcut for <code>sos run</code> so</p>
+<div class="highlight"><pre><span></span>% sos-runner script
+</pre></div>
+<p>is equivalent to</p>
+<div class="highlight"><pre><span></span>% sos run script
+</pre></div>
+<p>This allows a SoS script to be executed directly if it is executable with shebang line</p>
+
+<pre><code>#!/usr/bin/env sos-runner</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Workflow-Execution">Workflow Execution<a class="anchor-link" href="#Workflow-Execution">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-run">subcommand <code>run</code><a class="anchor-link" href="#subcommand-run">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="kp">run</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos run [-h] [-j JOBS] [-J EXTERNAL_JOBS] [-c CONFIG_FILE]
+               [-t FILE [FILE ...]] [-b [BIN_DIR [BIN_DIR ...]]] [-q [QUEUE]]
+               [-w] [-W] [-r] [-n] [-s SIGMODE] [-d [DAG]] [-v {0,1,2,3,4}]
+               SCRIPT [WORKFLOW]
+
+Execute default or specified workflow defined in script
+
+positional arguments:
+  SCRIPT                A SoS script that defines one or more workflows, in
+                        format .sos or .ipynb. The script can be a filename or
+                        a URL from which the content of a SoS will be read. If
+                        a valid file cannot be located or downloaded, SoS will
+                        search for the script, with specified name, and with
+                        added extension .sos and .ipynb, in a search path
+                        specified by variable `sos_path` defined in the global
+                        SoS configuration file (~/.sos/config.yml).
+  WORKFLOW              Name of the workflow to execute. This option can be
+                        ignored if the script defines a default workflow (with
+                        no name or with name `default`) or defines only a
+                        single workflow. A subworkflow or a combined workflow
+                        can also be specified, where a subworkflow executes a
+                        subset of workflow (`name_steps` where `steps` can be
+                        `n` (a step `n`), `:n` (up to step `n`), `n:m` (from
+                        step `n` to `m`), and `n:` (from step `n`)), and a
+                        combined workflow executes to multiple (sub)workflows
+                        combined by `+` (e.g. `A_0+B+C`).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JOBS               Maximum number of worker processes for the execution
+                        of the workflow if the workflow can be executed in
+                        parallel (namely having multiple starting points or
+                        execution branches).
+  -J EXTERNAL_JOBS      Maximum number of externally running tasks. This
+                        option overrides option &#34;max_running_jobs&#34; of a task
+                        queue (option -q) so that you can, for example, submit
+                        one job at a time (with -J 1) to test the task queue.
+  -c CONFIG_FILE        A configuration file in the format of YAML/JSON. The
+                        content of the configuration file will be available as
+                        a dictionary CONF in the SoS script being executed.
+  -t FILE [FILE ...]    One of more files or alias of other targets that will
+                        be the target of execution. If specified, SoS will
+                        execute only part of a workflow or multiple workflows
+                        or auxiliary steps to generate specified targets.
+  -b [BIN_DIR [BIN_DIR ...]]
+                        Extra directories in which SoS will look for
+                        executables before standard $PATH. This option
+                        essentially prefix $PATH with these directories. Note
+                        that the default value &#39;~/.sos/bin&#39; is by convention a
+                        default directory for commands that are installed by
+                        SoS. You can use option &#39;-b&#39; without value to disallow
+                        commands under ~/.sos/bin.
+  -q [QUEUE]            host (server) or job queues to execute all tasks in
+                        the workflow. The queue can be defined in global or
+                        local sos configuration file, or a file specified by
+                        option --config. A host is assumed to be a remote
+                        machine with process type if no configuration is
+                        found. SoS will list all configured queues (with
+                        details varying by option -v) if this option is
+                        specified without value.
+  -w                    Wait for the completion of external tasks regardless
+                        of the setting of individual task queue.
+  -W                    Do not wait for the completion of external tasks and
+                        quit SoS if all tasks are being executed by external
+                        task queues. This option overrides the default wait
+                        setting of task queues.
+  -r                    Forcing all targets specified in input, output, and
+                        depends are remote targets so that they are not
+                        synchronized between local and remote hosts.
+
+Run mode options:
+  Control how sos scirpt is executed.
+
+  -n                    Execute a workflow in dryrun mode. Please check
+                        command sos dryrun for details of the dryrun mode.
+  -s SIGMODE            How runtime signature would be handled, which can be
+                        &#34;default&#34; (save and use signature, default mode in
+                        batch mode), &#34;ignore&#34; (ignore runtime signature,
+                        default mode in interactive mode), &#34;force&#34; (ignore
+                        existing signature and overwrite them while executing
+                        the workflow), &#34;build&#34; (build new or overwrite
+                        existing signature from existing environment and
+                        output files), and &#34;assert&#34; for validating existing
+                        files against their signatures. Please refer to online
+                        documentation for details about the use of runtime
+                        signatures.
+
+Output options:
+  Output of workflow
+
+  -d [DAG]              Output Direct Acyclic Graph (DAGs) in graphiviz .dot
+                        format. An exntesion of &#34;.dot&#34; would be added
+                        automatically. Because DAG could change during the
+                        execution of workflow, multiple DAGs could be outputed
+                        with names $FILE_1.dot, $FILE_2.dot. If this option is
+                        specified without a name, the DAG would be wrritten to
+                        the standard output.
+  -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+
+Arbitrary parameters defined by the [parameters] step of the script, and
+[parameters] steps of other scripts if nested workflows are defined in other
+SoS files (option `source`). The name, default and type of the parameters are
+specified in the script. Single value parameters should be passed using option
+`--name value` and multi-value parameters should be passed using option
+`--name value1 value2`.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Please refer to section <a href="SoS_Syntax.html">SoS Syntax</a> of the documentation and the tutorial on <a href="../tutorials/Execution_of_Workflow.html">Execution of Workflow</a> for details about this command.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-resume">subcommand <code>resume</code><a class="anchor-link" href="#subcommand-resume">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">resume</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos resume [-h] [-s] [-w] [-W] [-v {0,1,2,3,4}] [-j JOBS]
+                  [-J EXTERNAL_JOBS]
+                  [workflow_id]
+
+Resume the execution or list status of suspended workflows
+
+positional arguments:
+  workflow_id           First few characters of the ID of a workflow as long
+                        as it uniquely identifies the workflow. The last
+                        executed workflow will be resumed if no workflow is
+                        specified.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s, --status          Return the status of all or specified workflows
+                        without resuming them. This option will list status of
+                        all pending tasks.
+  -w                    Wait for the completion of external tasks regardless
+                        of the setting of individual task queue.
+  -W                    Do not wait for the completion of external tasks and
+                        quit SoS if all tasks are being executed by external
+                        task queues. This option overrides the default wait
+                        setting of task queues.
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+  -j JOBS               Maximum number of worker processes for the execution
+                        of the workflow if the workflow can be executed in
+                        parallel (namely having multiple starting points or
+                        execution branches).
+  -J EXTERNAL_JOBS      Maximum number of externally running tasks. This
+                        option overrides option &#34;max_running_jobs&#34; of a task
+                        queue (option -q) so that you can, for example, submit
+                        one job at a time (with -J 1) to test the task queue.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-dryrun">subcommand <code>dryrun</code><a class="anchor-link" href="#subcommand-dryrun">&#182;</a></h3><p>This command execute the script in dryrun mode. It is alias to command <code>sos run -n</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">dryrun</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos dryrun [-h] [-c CONFIG_FILE] [-t FILES [FILES ...]] [-q [QUEUE]]
+                  [-d [DAG]] [-v {0,1,2,3,4}]
+                  SCRIPT [WORKFLOW]
+
+Execute workflow in dryrun mode. This mode is identical to run mode except
+that 1). Actions might behavior differently. In particular, script-running
+steps would print instead of execute script. 2). Steps will generate empty
+output files if specified output do not exist after execution. 3). Signature
+mode is set to ignore. 4). Option -q is ignored so all tasks are executed
+locally. 5). Tasks are generated but not executed.
+
+positional arguments:
+  SCRIPT                A SoS script that defines one or more workflows, in
+                        format .sos or .ipynb. The script can be a filename or
+                        a URL from which the content of a SoS will be read. If
+                        a valid file cannot be located or downloaded, SoS will
+                        search for the script, with specified name, and with
+                        added extension .sos and .ipynb, in a search path
+                        specified by variable `sos_path` defined in the global
+                        SoS configuration file (~/.sos/config.yml).
+  WORKFLOW              Name of the workflow to execute. This option can be
+                        ignored if the script defines a default workflow (with
+                        no name or with name `default`) or defines only a
+                        single workflow. A subworkflow or a combined workflow
+                        can also be specified, where a subworkflow executes a
+                        subset of workflow (`name_steps` where `steps` can be
+                        `n` (a step `n`), `:n` (up to step `n`), `n:m` (from
+                        step `n` to `m`), and `n:` (from step `n`)), and a
+                        combined workflow executes to multiple (sub)workflows
+                        combined by `+` (e.g. `A_0+B+C`).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CONFIG_FILE        A configuration file in the format of YAML/JSON. The
+                        content of the configuration file will be available as
+                        a dictionary CONF in the SoS script being executed.
+  -t FILES [FILES ...]  One of more files or alias of other targets that will
+                        be the target of execution. If specified, SoS will
+                        execute only part of a workflow or multiple workflows
+                        or auxiliary steps to generate specified targets.
+  -q [QUEUE]            host (server) or job queues to execute all tasks in
+                        the workflow. The queue can be defined in global or
+                        local sos configuration file, or a file specified by
+                        option --config. A host is assumed to be a remote
+                        machine with process type if no configuration is
+                        found. SoS will list all configured queues (with
+                        details varying by option -v) if this option is
+                        specified without value.
+
+Output options:
+  Output of workflow
+
+  -d [DAG]              Output Direct Acyclic Graph (DAGs) in graphiviz .dot
+                        format. An exntesion of &#34;.dot&#34; would be added
+                        automatically. Because DAG could change during the
+                        execution of workflow, multiple DAGs could be outputed
+                        with names $FILE_1.dot, $FILE_2.dot. If this option is
+                        specified without a name, the DAG would be wrritten to
+                        the standard output.
+  -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+
+Arbitrary parameters defined by the [parameters] step of the script, and
+[parameters] steps of other scripts if nested workflows are defined in other
+SoS files (option `source`). The name, default and type of the parameters are
+specified in the script. Single value parameters should be passed using option
+`--name value` and multi-value parameters should be passed using option
+`--name value1 value2`.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Please refer to the tutorial on <a href="../tutorials/Execution_of_Workflow.html">Execution of Workflow</a> for details about this command.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Task-Management">Task Management<a class="anchor-link" href="#Task-Management">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-execute">subcommand <code>execute</code><a class="anchor-link" href="#subcommand-execute">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">execute</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos execute [-h] [-s SIGMODE] [-v {0,1,2,3,4}] [-n] [-q [QUEUE]]
+                   [-c CONFIG] [-w]
+                   tasks [tasks ...]
+
+Execute a packages task
+
+positional arguments:
+  tasks                 IDs of the task.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SIGMODE            How runtime signature would be handled, which can be
+                        &#34;default&#34; (save and use signature, default mode in
+                        batch mode), &#34;ignore&#34; (ignore runtime signature,
+                        default mode in interactive mode), &#34;force&#34; (ignore
+                        existing signature and overwrite them while executing
+                        the workflow), &#34;build&#34; (build new or overwrite
+                        existing signature from existing environment and
+                        output files), and &#34;assert&#34; for validating existing
+                        files against their signatures. Please refer to online
+                        documentation for details about the use of runtime
+                        signatures.
+  -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+  -n, --dryrun          Dryrun mode, which will cause actions to print scripts
+                        instead of executing them.
+  -q [QUEUE], --queue [QUEUE]
+                        Check the status of job on specified tasks queue or
+                        remote host if the tasks . The queue can be defined in
+                        global or local sos configuration file, or a file
+                        specified by option --config. A host is assumed to be
+                        a remote machine with process type if no configuration
+                        is found. SoS will list all configured queues (with
+                        details varying by option -v) if this option is
+                        specified without value.
+  -c CONFIG, --config CONFIG
+                        A configuration file with host definitions, in case
+                        the definitions are not defined in global or local sos
+                        config.yml files.
+  -w, --wait            Wait for the completion of the task, and retrieve job
+                        results if needed after the completion of the task.
+                        This option is only valid with the specification of
+                        the -q option.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-status">subcommand <code>status</code><a class="anchor-link" href="#subcommand-status">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">status</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos status [-h] [-q [QUEUE]] [-c CONFIG] [-v {0,1,2,3,4}] [--age AGE]
+                  [--html]
+                  [tasks [tasks ...]]
+
+Check the status of specified tasks
+
+positional arguments:
+  tasks                 ID of the task. All tasks will be checked if
+                        unspecified. There is no need to specify compelete
+                        task IDs because SoS will match specified name with
+                        tasks starting with these names.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -q [QUEUE], --queue [QUEUE]
+                        Check the status of job on specified tasks queue or
+                        remote host if the tasks . The queue can be defined in
+                        global or local sos configuration file, or a file
+                        specified by option --config. A host is assumed to be
+                        a remote machine with process type if no configuration
+                        is found. SoS will list all configured queues (with
+                        details varying by option -v) if this option is
+                        specified without value.
+  -c CONFIG, --config CONFIG
+                        A configuration file with host definitions, in case
+                        the definitions are not defined in global or local sos
+                        config.yml files.
+  -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+  --age AGE             Limit to tasks that are created more than (default) or
+                        within specified age. Value of this parameter can be
+                        in units s (second), m (minute), h (hour), or d (day,
+                        default), or in the foramt of HH:MM:SS, with optional
+                        prefix + for older (default) and - for newer than
+                        specified age.
+  --html                Output results in HTML format. This option will
+                        override option verbosity and output detailed status
+                        information in HTML tables and figures.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-kill">subcommand <code>kill</code><a class="anchor-link" href="#subcommand-kill">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">kill</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos kill [-h] [-a] [-q [QUEUE]] [-c CONFIG] [-v {0,1,2,3,4}]
+                [tasks [tasks ...]]
+
+Stop the execution of running task
+
+positional arguments:
+  tasks                 IDs of the tasks that will be killed. There is no need
+                        to specify compelete task IDs because SoS will match
+                        specified name with tasks starting with these names.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a, --all             Kill all tasks in local or specified remote task queue
+  -q [QUEUE], --queue [QUEUE]
+                        Kill jobs on specified tasks queue or remote host if
+                        the tasks . The queue can be defined in global or
+                        local sos configuration file, or a file specified by
+                        option --config. A host is assumed to be a remote
+                        machine with process type if no configuration is
+                        found. SoS will list all configured queues (with
+                        details varying by option -v) if this option is
+                        specified without value.
+  -c CONFIG, --config CONFIG
+                        A configuration file with host definitions, in case
+                        the definitions are not defined in global or local sos
+                        config.yml files.
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-purge">subcommand <code>purge</code><a class="anchor-link" href="#subcommand-purge">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">purge</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos purge [-h] [-a] [--age AGE] [-s STATUS [STATUS ...]] [-q [QUEUE]]
+                 [-w [WORKFLOWS [WORKFLOWS ...]]] [-c CONFIG] [-v {0,1,2,3,4}]
+                 [tasks [tasks ...]]
+
+Remove local or remote tasks
+
+positional arguments:
+  tasks                 ID of the tasks to be removed. There is no need to
+                        specify compelete task IDs because SoS will match
+                        specified name with tasks starting with these names.
+                        If no task ID is specified, all tasks related to
+                        specified workflows (option -w) will be removed.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a, --all             Clear all task information on local or specified
+                        remote task queue, including tasks created by other
+                        workflows.
+  --age AGE             Limit to tasks that are created more than (default) or
+                        within specified age. Value of this parameter can be
+                        in units s (second), m (minute), h (hour), or d (day,
+                        default), or in the foramt of HH:MM:SS, with optional
+                        prefix + for older (default) and - for newer than
+                        specified age.
+  -s STATUS [STATUS ...], --status STATUS [STATUS ...]
+                        Only remove tasks with specified status, which can be
+                        pending, submitted, running, completed, failed,
+                        aborted, and result-mismatch. One of more status can
+                        be specified.
+  -q [QUEUE], --queue [QUEUE]
+                        Remove tasks on specified tasks queue or remote host
+                        if the tasks . The queue can be defined in global or
+                        local sos configuration file, or a file specified by
+                        option --config. A host is assumed to be a remote
+                        machine with process type if no configuration is
+                        found. SoS will list all configured queues (with
+                        details varying by option -v) if this option is
+                        specified without value.
+  -w [WORKFLOWS [WORKFLOWS ...]], --workflows [WORKFLOWS [WORKFLOWS ...]]
+                        Remove tasks generated by specified task IDs. If no
+                        workflow is specified, all workflows in the current
+                        project will be assumed.
+  -c CONFIG, --config CONFIG
+                        A configuration file with host definitions, in case
+                        the definitions are not defined in global or local sos
+                        config.yml files.
+  -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-pull">subcommand <code>pull</code><a class="anchor-link" href="#subcommand-pull">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">pull</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos pull [-h] (-q [QUEUE] | -r [HOST]) [-c CONFIG] [-v {0,1,2,3,4}] items [items ...]
+
+Pull files or directories from remote host to local host
+
+positional arguments:
+  items                 Files or directories to be retrieved from remote host. The files should be relative to local file system. The files to retrieve
+                        are determined by &#34;path_map&#34; determined by &#34;paths&#34; definitions of local and remote hosts.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -q [QUEUE], --queue [QUEUE]
+                        Remote host to which the files will be sent. SoS will use value specified by configuration key `default_queue`, or list all
+                        configured queues if no such key is defined
+  -r [HOST], --host [HOST]
+                        Remote host to which the files will be sent. SoS will use value specified by configuration key `default_host`, or list all
+                        configured queues if no such key is defined
+  -c CONFIG, --config CONFIG
+                        A configuration file with host definitions, in case the definitions are not defined in global or local sos config.yml files.
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and trace (4) information to standard output (default to 2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-push">subcommand <code>push</code><a class="anchor-link" href="#subcommand-push">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">push</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos push [-h] (-q [QUEUE] | -r [HOST]) [-c CONFIG] [-v {0,1,2,3,4}] items [items ...]
+
+Push local files or directory to a remote host
+
+positional arguments:
+  items                 Files or directories to be sent to remote host. The location of remote files are determined by &#34;path_map&#34; determined by &#34;paths&#34;
+                        definitions of local and remote hosts.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -q [QUEUE], --queue [QUEUE]
+                        Remote host to which the files will be sent. SoS will use value specified by configuration key `default_queue`, or list all
+                        configured queues if no such key is defined
+  -r [HOST], --host [HOST]
+                        Remote host to which the files will be sent. SoS will use value specified by configuration key `default_host`, or list all
+                        configured queues if no such key is defined
+  -c CONFIG, --config CONFIG
+                        A configuration file with host definitions, in case the definitions are not defined in global or local sos config.yml files.
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and trace (4) information to standard output (default to 2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Project-Management">Project Management<a class="anchor-link" href="#Project-Management">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-convert">subcommand <code>convert</code><a class="anchor-link" href="#subcommand-convert">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos convert [-h] [-v {0,1,2,3,4}]
+                   {ipynb-html,ipynb-sos,sos-term,sos-ipynb,sos-html,ipynb-pdf,sos-md,ipynb-md}
+                   ...
+
+Converts .sos to various formats including .html for web display, to jupyter
+notebook (.ipynb), and to terminal for syntax highlighted viewing on terminal.
+It also allows converting from jupyter notebook (.ipynb) to sos script (.sos).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+
+converters (name of converter is not needed from command line):
+  {ipynb-html,ipynb-sos,sos-term,sos-ipynb,sos-html,ipynb-pdf,sos-md,ipynb-md}
+    ipynb-html          Export Jupyter notebook with a SoS kernel to a .html
+                        file. Additional command line arguments are passed
+                        directly to command &#34;jupyter nbconvert --to html&#34; so
+                        please refer to nbconvert manual for available
+                        options.
+    ipynb-sos           Export Jupyter notebook with a SoS kernel to a .sos
+                        file. The cells are presented in the .sos file as cell
+                        structure lines, which will be ignored if executed in
+                        batch mode
+    sos-term            Write script to terminal with syntax highlighting.
+    sos-ipynb           Convert a sos script to Jupyter notebook (.ipynb) so
+                        that it can be opened by Jupyter notebook.
+    sos-html            Convert sos file to html format with syntax
+                        highlighting, and save the output either to a HTML
+                        file or view it in a broaser.
+    ipynb-pdf           Export Jupyter notebook with a SoS kernel to a .pdf
+                        file. Additional command line arguments are passed
+                        directly to command &#34;jupyter nbconvert --to pdf&#34; so
+                        please refer to nbconvert manual for available
+                        options.
+    sos-md              Convert SOS scriot to a markdown format with scripts
+                        quoted in markdown syntax.
+    ipynb-md            Export Jupyter notebook with a SoS kernel to a
+                        markdown file. Additional command line arguments are
+                        passed directly to command &#34;jupyter nbconvert --to
+                        markdown&#34; so please refer to nbconvert manual for
+                        available options.
+
+Extra command line argument could be specified to customize the style of html,
+markdown, and terminal output.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Please refer to the <a href="../tutorials/File_Conversion.html">File Conversion</a> tutorial for more details about this command.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-preview">subcommand <code>preview</code><a class="anchor-link" href="#subcommand-preview">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">preview</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos preview [-h] [-s {table,scatterplot,png}] [-r [HOST]] [-c CONFIG] [-v {0,1,2,3,4}] [items [items ...]]
+
+Preview files, sos variables, or expressions in the side panel, or notebook if side panel is not opened, unless options --panel or --notebook is
+specified.
+
+positional arguments:
+  items                 Filename, variable name, or expression. Wildcard characters such as &#39;*&#39; and &#39;?&#39; are allowed for filenames.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s {table,scatterplot,png}, --style {table,scatterplot,png}
+                        Option for preview file or variable, which by default is &#34;table&#34; for Pandas DataFrame. The %preview magic also accepts
+                        arbitrary additional keyword arguments, which would be interpreted by individual style. Passing &#39;-h&#39; with &#39;--style&#39; would
+                        display the usage information of particular style.
+  -r [HOST], --host [HOST]
+                        Preview files on specified remote host, which should be defined under key host of sos configuration files (preferrably in
+                        ~/.sos/hosts.yml). If this option is specified without value, SoS will use value specified by configuration key `default_host`,
+                        or list all configured queues if no such key is defined
+  -c CONFIG, --config CONFIG
+                        A configuration file with host definitions, in case the definitions are not defined in global or local sos config.yml files.
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and trace (4) information to standard output (default to 2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-config">subcommand <code>config</code><a class="anchor-link" href="#subcommand-config">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos config [-h] [-g | --hosts | -c CONFIG_FILE]
+                  (--get [OPTION [OPTION ...]] | --unset OPTION [OPTION ...] | --set KEY VALUE [KEY VALUE ...])
+                  [-v {0,1,2,3,4}]
+
+Displays, set, and unset configuration variables defined in global or local
+configuration files.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -g, --global          If set, change global (~/.sos/config.yml) instead of
+                        local (.sos/config.yml) configuration
+  --hosts               If set, change hosts (~/.sos/hosts.yml) instead of
+                        local (.sos/config.yml) configuration
+  -c CONFIG_FILE, --config CONFIG_FILE
+                        User specified configuration file in YAML format. This
+                        file will not be automatically loaded by SoS but can
+                        be specified using option `-c`
+  --get [OPTION [OPTION ...]]
+                        Display values of specified configuration from all
+                        configuration files. The arguments of this option can
+                        be a single configuration option or a list of option.
+                        Wildcard characters are allowed to match more options
+                        (e.g. &#39;*timeout&#39;, quotation is needed to avoid shell
+                        expansion). If no option is given, all options will be
+                        outputted.
+  --unset OPTION [OPTION ...]
+                        Unset (remove) settings for specified options. The
+                        arguments of this option can be a single configuration
+                        option or a list of option. Wildcard characters are
+                        allowed to match more options (e.g. &#39;*timeout&#39;, or &#39;*&#39;
+                        for all options, quotation is needed to avoid shell
+                        expansion).
+  --set KEY VALUE [KEY VALUE ...]
+                        --set KEY VALUE sets VALUE to variable KEY. The value
+                        can be any valid python expression (e.g. 5 for integer
+                        5 and &#39;{&#34;c&#34;: 2, &#34;d&#34;: 1}&#39; for a dictionary) with
+                        invalid expression (e.g. val without quote) considered
+                        as string. Syntax &#39;A.B=v&#39; can be used to add {&#39;B&#39;: v}
+                        to dictionary &#39;A&#39;, and --set KEY VALUE1 VALUE2 ...
+                        will create a list with multiple values.
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Please refer to section <a href="SoS_Syntax.html">SoS Syntax</a> for details about this command.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-remove">subcommand <code>remove</code><a class="anchor-link" href="#subcommand-remove">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">remove</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos remove [-h] [-t | -u | -s | -z] [-e] [--size SIZE] [--age AGE] [-n]
+                  [-y] [-v {0,1,2,3,4}]
+                  [FILE_OR_DIR [FILE_OR_DIR ...]]
+
+Remove specified files and/or their signatures
+
+positional arguments:
+  FILE_OR_DIR           Files and directories to be removed. Directories will
+                        be scanned for files to removed but no directory will
+                        be removed.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t, --tracked         Limit files to only files tracked by SoS, namely files
+                        that are input, output, or dependent files of steps.
+  -u, --untracked       Limit files to untracked files, namely files that are
+                        not tracked by SoS steps.
+  -s, --signature       Remove signatures of specified files (not files
+                        themselves). As a special case, all local signatures
+                        will be removed if this option is specified without
+                        target.
+  -z, --zap             Replace files with their signatures. The file will not
+                        be regenerated by SoS unless is it actually needed by
+                        other steps. This option is usually used to remove
+                        large intermediate files from completed workflows
+                        while allowing relevant steps to be skipped during re-
+                        execution of the workflow.
+  -e, --external        By default the remove command will only remove files
+                        and signatures under the current project directory.
+                        This option allows sos to remove files and/or
+                        signature of external files.
+  --size SIZE           Limit to files that exceed or smaller than specified
+                        size. Value of option should be in unit K, M, KB, MB,
+                        MiB, GB, etc, with optional prefix + for larger than
+                        (default), or - for smaller than specified size.
+  --age AGE             Limit to files that are modified more than (default)
+                        or within specified age. Value of this parameter can
+                        be in units s (second), m (minute), h (hour), or d
+                        (day, default), or in the foramt of HH:MM:SS, with
+                        optional prefix + for older (default) and - for newer
+                        than specified age.
+  -n, --dryrun          List files or directories to be removed, without
+                        actually removing them.
+  -y, --yes             Remove files without confirmation, suitable for batch
+                        removal of files.
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Please refer to the tutorial on <a href="../tutorials/Project_Management.html">Project Management</a> for details about this command.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-pack">subcommand <code>pack</code><a class="anchor-link" href="#subcommand-pack">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">pack</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos pack [-h] [-o OUTPUT] [-i [INCLUDE [INCLUDE ...]]]
+                [-e [EXCLUDE [EXCLUDE ...]]] [-a] [-m MESSAGE] [-n] [-y]
+                [-v {0,1,2,3,4}]
+                [session]
+
+Collect sos scripts, all input, output, and tracked intermediate files related
+to a workflow run and bundle them into a single archive. The archive can be
+examined (without unpacking) with command &#34;sos show&#34; and be unpacked with
+command &#34;sos unpack&#34;. This command does not include files outside of the
+current working directory unless they are specified by option --include, or
+--all.
+
+positional arguments:
+  session               ID of the session to be saved, which can be any number
+                        of digits as long as it can uniquely determine a
+                        workflow session. This parameter can be ignored if
+                        only one session is available.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        Output file, which can be a file with extension &#34;.sar&#34;
+                        (the extension will be be automatically appended if
+                        needed), or &#34;-&#34; for standard output (default).
+  -i [INCLUDE [INCLUDE ...]], --include [INCLUDE [INCLUDE ...]]
+                        Additional files or directories to be incldued in the
+                        archive. SoS will archive all files under specified
+                        directories, including hidden directories such as
+                        &#34;.git&#34;. Option --exclude could be used to exclude
+                        these files.
+  -e [EXCLUDE [EXCLUDE ...]], --exclude [EXCLUDE [EXCLUDE ...]]
+                        Files that should be excluded from archive. The
+                        parameter should be one or more patterns that match
+                        the whole path (e.g. &#34;output/*.log&#34; or file or
+                        directory names such as &#34;tmp&#34; or &#34;*.bam&#34;.
+  -a, --all             Include all tracked files even if they reside outside
+                        of the current working directory.
+  -m MESSAGE, --message MESSAGE
+                        A short message to be included into the archive.
+                        Because the message would be lost during unpacking, it
+                        is highly recommended that you create a README file
+                        and include it with option --include.
+  -n, --dryrun          List files to be included and total file size without
+                        actually archiving them
+  -y, --yes             Overwrite output file if it already exists
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Please refer to the tutorial on <a href="../tutorials/Project_Management.html">Project Management</a> for details about this command.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="subcommand-unpack">subcommand <code>unpack</code><a class="anchor-link" href="#subcommand-unpack">&#182;</a></h3>
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">unpack</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos unpack [-h] [-d DEST] [-s] [-l] [-e] [-n] [-y] [-v {0,1,2,3,4}]
+                  archive [files [files ...]]
+
+Unpack a sos archive to a specified directory. For security reasons, files
+that were outside of the project directory would be extracted in this
+directory unless option -e is specified.
+
+positional arguments:
+  archive               SoS archive saved by command sos pack
+  files                 An optional list of files to be processed, which can
+                        be exact filenames or patterns (e.g. &#34;*.bam&#34;). No
+                        runtime information will be extracted if this option
+                        is specified.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d DEST, --dest DEST  Directory where a sos archive would be unpacked.
+                        Default to current directory.
+  -s, --script          If specified, extract sos script(s) related to the
+                        workflow to the current or specified directory (option
+                        --dest), regardless of their original locations in the
+                        filesystem. Note that sos scripts are not extracted by
+                        default because they are usually external and it is
+                        dangerous to overwrite existing scripts with archived
+                        ones.
+  -l, --list            List content of the archive instead of extracting it.
+                        The names, uncompressed file sizes and modification
+                        dates and times of the specified files are printed,
+                        along with totals for all files specified.
+  -e, --external        Extract files outside of the project to their external
+                        destinations. This option can be dangerous because it
+                        can overwrite system files silently if accompanied
+                        with option -y.
+  -n, --no              Do not overwrite existing files without promoting
+                        users.
+  -y, --yes             Overwrite existing files without promoting users. This
+                        option can be dangerous to use. Note that SoS checks
+                        file signature and ignores existing files that are
+                        identical to those in the archive.
+  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Please refer to the tutorial on <a href="../tutorials/Project_Management.html">Project Management</a> for details about this command.</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

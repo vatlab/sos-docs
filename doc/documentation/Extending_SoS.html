@@ -1,0 +1,458 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Extending_SoS</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  // sections numbering
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+
+            table_of_contents(cfg,st);
+
+            var file=documentationDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+
+
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // var docs=documentation
+            // for (var a =0;a<docs.length;a++){
+            //       var name =docs[a];
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+            // }
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+            // $("#toc").attr("style","max-height:938px")
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #EAFAF1 !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_SoS {}
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Extending-SoS">Extending SoS<a class="anchor-link" href="#Extending-SoS">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS can be easily extended with new actions, targets, converters, file previewers. To make the extension available to other users, you can either create and distribute a separate package, or extend SoS and send us a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Understanding-entry_points">Understanding <code>entry_points</code><a class="anchor-link" href="#Understanding-entry_points">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS makes extensive use of <a href="http://setuptools.readthedocs.io/en/latest/setuptools.html#dynamic-discovery-of-services-and-plugins"><strong>entry points</strong></a>, which allows external modules to register their features in the file system to make them available to other modules. It can be confusing initially but <a href="http://stackoverflow.com/questions/774824/explain-python-entry-points">this stack overflow ticket</a> explains it quite well.</p>
+<p>To register additional feature with SoS, you either need to extend <code>entry_points</code> of the <a href="https://github.com/vatlab/SOS/blob/master/setup.py"><code>setup.py</code> script</a> of SoS, or create your own package with these <code>entry_points</code>. Option <code>extras_require</code> can be used to specify additional dependent packages for these features. For example, you can create a package with the following entry_points to provide support for ruby.</p>
+
+<pre><code>    entry_points='''
+[sos-language]
+ruby = sos-ruby.kernel:sos_ruby
+
+[sos-targets]
+Ruby_Library = sos-ruby.target:Ruby-Library
+'''</code></pre>
+<p>With the installation of this package, <code>sos</code> would be able to obtain a class <code>sos_ruby</code> from module <code>sos-ruby.kernel</code>, and use it to work with the <code>ruby</code> language.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Defining-your-own-actions">Defining your own actions<a class="anchor-link" href="#Defining-your-own-actions">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Under the hood an action is a normal Python function that is decorated as <code>SoS_Action</code>. The <code>decorator</code> defines the common interface of actions and calls the actual function. To define your own action, you generally need to</p>
+
+<pre><code>from sos.actions import SoS_Action
+
+@SoS_Action()
+def my_action(*args, **kwargs):
+    pass</code></pre>
+<p>The decorator accepts two optional parameters:</p>
+<ul>
+<li><code>run_mode=['interactive', 'run']</code> meaning the action will be executable in batch and interactive (Jupyter kernel) mode, and not in <code>dryrun</code> mode. An action usually behave the same in both modes but can be tailered for the environment in which it runs. </li>
+<li><code>acceptable_args=['*']</code> which can be used to specify a list of acceptable parameter (<code>*</code> matches all keyword args). An exception will be raised if an action is defined with a list of <code>acceptable_args</code> and is called with an unrecognized argument.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You then need to add an entry to <code>entry_points</code> as</p>
+
+<pre><code>[sos-actions]
+my_action = mypackage.mymodule:my_action</code></pre>
+<p>If the execution of action depends on some other targets, you can raise an <code>UnknownTarget</code> with the target so that the target can be obtained. For example, if your action depends on a particular <code>R_library</code>, you can test the existence of the target as follows:</p>
+
+<pre><code>from sos.target import UnknownTarget
+from sos.R.target import R_library
+
+@SoS_Action()
+def my_action(script, *args, **kwargs):
+    if not R_library('somelib').exists():
+        raise UnknownTarget(R_library('somelib'))
+    # ...</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Additional-targets">Additional targets<a class="anchor-link" href="#Additional-targets">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Adding additional target is similar with a class derived from <a href="https://github.com/vatlab/SOS/blob/master/src/sos/target.py"><code>BaseTarget</code></a>.</p>
+
+<pre><code>from sos.target import BaseTarget
+
+class my_target(BaseTarget):
+    def __init__(self, *args, **kwargs):
+        pass</code></pre>
+<p>You will need to define several member functions for this class, most notably <code>exists</code> that checks the existence of the target. This function accept a parameter <code>mode</code>, which can be <code>target</code>, <code>signature</code>, or <code>any</code>. Like a file target, a target can be considered exist as long as its signature exists, and if the real target is not needed for the execution of the workflow.</p>
+<p>The details of this class can be found at the source code of <a href="https://github.com/vatlab/SOS/blob/master/src/sos/target.py"><code>BaseTarget</code></a>. The <a href="https://github.com/vatlab/SOS/blob/master/src/sos/R/target.py"><code>R_Library</code></a> provides a good example of a <strong>virtual target</strong> that do not have a fixed corresponding file, can be checked for existence, and actually attempts to obtain (install a R library) the target when it is checked.</p>
+<p>After you defined your target, you can make it available to SOS by adding an appropriate entry point</p>
+
+<pre><code>[sos-targets]
+my_target = mypackage.mymodule:my_target</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="File-format-conversion">File format conversion<a class="anchor-link" href="#File-format-conversion">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To convert between sos and another file format, you would need to define two function, one returnning an <a href="https://docs.python.org/3/library/argparse.html"><code>argparse.ArgumentParser</code></a> that parse converter arguments, and one performing real file conversion.</p>
+<p>Suppose you would like to convert <code>.sos</code> to a <code>.xp</code> format, you can define these two functions as follows</p>
+
+<pre><code>import argparse
+from sos.sos_script import SoS_Script
+
+def get_my_converter_parser():
+    parser = argparse.ArgumentParser('sos_xp')
+    parser.add_argument('--theme', 
+        help='Style of output format')
+    return parser
+
+def my_converter(source_file, dest_file, args=None, unknown_args=[]):
+    # parse additional_args to obtain converter-specific options
+    # then convert from source_file to dest_file
+    script = SoS_Script(source_file)
+    for section in script.sections:
+        # do something
+
+if __name__ == '__main__':
+    parser = get_my_converter_parser()
+    args, unknown_args = parser.parse_known_args(sys.argv[3:])
+    my_converter(sys.argv[1], sys.argv[2], args, unknown_args)</code></pre>
+<p>You can then register the converter in <code>setup.py</code> as</p>
+
+<pre><code>[sos-converters]
+fromExt-toExt.parser: mypackage.mymodule:get_my_converter_parser
+fromExt-toExt.func: mypackage.mymodule:my_converter</code></pre>
+<p>Here <code>fromExt</code> is file extension without leading dot, <code>toExt</code> is destination file extension without leading dot, or a format specified by the <code>--to</code> parameter of command <code>sos convert</code>. If <code>dest_file</code> is unspecified, the output should be written to standard output.</p>
+<p>This example uses <code>if __name__ == '__main__'</code> section so that the converter can be used as a standandalone program, which is not needed but a great way for testing purposes. Note that the input and output files are handled by <code>sos convert</code> so the parser only needs to parse converter-specific options.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Preview-additional-formats">Preview additional formats<a class="anchor-link" href="#Preview-additional-formats">&#182;</a></h2><p>Adding a preview function is very simple. All you need to is to define a function that returns preview information, and add an entry point to link the function to certain file format.</p>
+<p>More specifically, a previewer should be specified as</p>
+
+<pre><code>pattern,priority = preview_module:func</code></pre>
+<p>or</p>
+
+<pre><code>module:func,priority = preview_module:func</code></pre>
+<p>where</p>
+<ol>
+<li><code>pattern</code> is a pattern that matches incoming filename (see module fnmatch.fnmatch for details)</li>
+<li><code>module:func</code> specifies a function in module that detects the type of input file.</li>
+<li><code>priority</code> is an integer number that indicates the priority of previewer in case multiple pattern or function matches the  same file. Developers of third-party previewer can override an existing previewer by specifying a higher priority number.</li>
+<li><p><code>preview_module:func</code> points to a function in a module. The function should accept a filename as the only parameter, and  returns either</p>
+<ul>
+<li>A string that will be displayed as plain text to standard output.</li>
+<li>A dictionary that will be returned as <code>data</code> field of <code>display_data</code> (see <a href="http://jupyter-client.readthedocs.io/en/latest/messaging.html">Jupyter documentation</a> for details). The dictionary typically has <code>text/html</code> for HTML output, "text/plain" for plain text, and "text/png" for image presentation of the file.</li>
+</ul>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adding-a-subcommad-(addon)">Adding a subcommad (addon)<a class="anchor-link" href="#Adding-a-subcommad-(addon)">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like to add a complete subcommand as an addon to SoS, you will need to define two functions and add them to <code>setup.py</code> as two entry points, one with suffix <code>.args</code> and one with suffix <code>.func</code>.</p>
+
+<pre><code>[sos_addons]
+myaddon.args = yourpackage.module:addon_parser
+myaddon.func = yourpackage.module:addon_func</code></pre>
+<p>The <code>addon_parser</code> function should use module <code>argparse</code> to return an <code>ArgumentParser</code> object. SoS would obtain this parser and add it as a subparse of the SoS main parser so that the options can be parsed as</p>
+
+<pre><code>sos myaddon options</code></pre>
+<p>The <code>addon_func</code> should be defined as</p>
+
+<pre><code>def addon_func(args, unknown_args)</code></pre>
+<p>with <code>args</code> being the parsed known arguments, and <code>unknown_args</code> being a list of unknown arguments that you can process by youself.</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

@@ -1,0 +1,1381 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Project_Management</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  
+             'number_sections': false,  // sections numbering
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+
+            var file=tutorialsDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            
+            var tuts=tutorials;
+            var pos=tutorials.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=tuts[a]
+                  $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/tutorials/'+file+'.html'+'"]').css("color","#126dce");
+
+            for (var a=pos+1;a<tuts.length;a++){
+                  var name=tuts[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // for (var a =0;a<tuts.length;a++){
+            //       var name =tuts[a];
+            //       if ()
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace("_"," ")+'</a></li>');
+            // }
+
+            // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            
+            // $(".number_sections-btn").hide();
+            // $(".toc_cell_sections-btn".hide();
+
+
+    });
+</script>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Managing-SoS-Projects">Managing SoS Projects<a class="anchor-link" href="#Managing-SoS-Projects">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tracked-and-Untracked-files">Tracked and Untracked files<a class="anchor-link" href="#Tracked-and-Untracked-files">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The most important concept for managing SoS projects is <font color='red'>tracked files</font>, which are all input, output, and dependent files of steps of an executed workflow. The files are tracked by SoS using a signature system that records the name and content of the files. For a file to be tracked,</p>
+<ul>
+<li>the file has to be included in <code>input</code>, <code>output</code>, or <code>depends</code> statements of one of the steps</li>
+<li>the workflow has to be executed with <a href="Execution_of_Workflow.html">signature</a> (namely, not with <code>-s ignore</code>, which is the default mode under Jupyter notebook).</li>
+</ul>
+<p>Let us create a SoS script that generate some tracked and untracked files</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="o">%</span><span class="nb">set</span> <span class="o">-</span><span class="n">s</span> <span class="n">default</span> <span class="o">-</span><span class="n">v2</span>
+
+<span class="kn">parameter:</span> <span class="kp">name</span><span class="o">=</span><span class="s1">&#39;tracked_f1&#39;</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="kp">name</span>
+<span class="kn">sh:</span>
+    <span class="n">dd</span> <span class="k">if</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">urandom</span> <span class="n">of</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="kp">name</span><span class="p">}</span> <span class="n">count</span><span class="o">=</span><span class="mi">1000</span>
+
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="s1">&#39;d1/tracked_f2&#39;</span>
+<span class="kn">sh:</span>
+    <span class="n">dd</span> <span class="k">if</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">urandom</span> <span class="n">of</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">}</span> <span class="n">count</span><span class="o">=</span><span class="mi">5000</span>
+    <span class="n">dd</span> <span class="k">if</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">urandom</span> <span class="n">of</span><span class="o">=</span><span class="n">d1</span><span class="o">/</span><span class="n">untracked_f4</span> <span class="n">count</span><span class="o">=</span><span class="mi">50</span>
+
+<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="s1">&#39;d2/d3/tracked_f3&#39;</span>
+<span class="kn">sh:</span>
+    <span class="n">dd</span> <span class="k">if</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">urandom</span> <span class="n">of</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">}</span> <span class="n">count</span><span class="o">=</span><span class="mi">600</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sos options is set to &#34;-s default -v2&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Running <span class="ansi-green-fg">default_0</span>: 
+1000+0 records in
+1000+0 records out
+512000 bytes transferred in 0.046287 secs (11061407 bytes/sec)
+INFO: Running <span class="ansi-green-fg">default_1</span>: 
+5000+0 records in
+5000+0 records out
+2560000 bytes transferred in 0.174087 secs (14705287 bytes/sec)
+50+0 records in
+50+0 records out
+25600 bytes transferred in 0.001732 secs (14779653 bytes/sec)
+INFO: Running <span class="ansi-green-fg">default_2</span>: 
+600+0 records in
+600+0 records out
+307200 bytes transferred in 0.023974 secs (12813913 bytes/sec)
+INFO: Workflow default (ID=5cad13496bca14a2) is executed successfully.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">## -- Preview output --</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre> input: d1/tracked_f2
+output: d2/d3/tracked_f3
+</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">> d2/d3/tracked_f3 (300.0 KiB):</font></pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This workflow creates three tracked files <code>tracked_f1</code>, <code>d1/tracked_f2</code>, <code>d2/d3/tracked_f3</code>, and as a side effect creates a <code>d1/untracked_f4</code> file.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Remove-tracked-or-untracked-files">Remove tracked or untracked files<a class="anchor-link" href="#Remove-tracked-or-untracked-files">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Subcommand <code>remove</code> is used to remove untracked files and directories to keep the project directory clean. It can also be used to remove some files so that it can be re-generated. The latter is needed because SoS would not generate removed intermediate files as long as they are not actually used in a another step.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When we re-run the workflow, all steps are ignored.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Running <span class="ansi-green-fg">default_0</span>: 
+INFO: Step <span class="ansi-green-fg">default_0</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: Running <span class="ansi-green-fg">default_1</span>: 
+INFO: Step <span class="ansi-green-fg">default_1</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: Running <span class="ansi-green-fg">default_2</span>: 
+INFO: Step <span class="ansi-green-fg">default_2</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: Workflow default (ID=5cad13496bca14a2) is executed successfully.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">## -- Preview output --</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre> input: d1/tracked_f2
+output: d2/d3/tracked_f3
+</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">> d2/d3/tracked_f3 (300.0 KiB):</font></pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If we remove an intermediate file, the workflow would not complain during re-execution</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">d1</span><span class="o">/</span><span class="n">tracked_f2</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Running <span class="ansi-green-fg">default_0</span>: 
+INFO: Step <span class="ansi-green-fg">default_0</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: Running <span class="ansi-green-fg">default_1</span>: 
+INFO: Step <span class="ansi-green-fg">default_1</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: Running <span class="ansi-green-fg">default_2</span>: 
+INFO: Step <span class="ansi-green-fg">default_2</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: Workflow default (ID=5cad13496bca14a2) is executed successfully.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">## -- Preview output --</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre> input: d1/tracked_f2
+output: d2/d3/tracked_f3
+</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">> d2/d3/tracked_f3 (300.0 KiB):</font></pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can use option <code>-s force</code> to re-generate all files, but it is easier to just remove the intermediate file and its signature using command <code>remove</code>. Option <code>-y</code> stands for <code>-yes</code> and you would be prompted each time for file removal without this option.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">sos</span> <span class="n">remove</span> <span class="o">-</span><span class="n">y</span> <span class="n">d1</span><span class="o">/</span><span class="n">tracked_f2</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: 3 tracked files from 1 run are identified.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Remove tracked file d1/tracked_f2 and its signature
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Running <span class="ansi-green-fg">default_0</span>: 
+INFO: Step <span class="ansi-green-fg">default_0</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: Running <span class="ansi-green-fg">default_1</span>: 
+5000+0 records in
+5000+0 records out
+2560000 bytes transferred in 0.167291 secs (15302683 bytes/sec)
+50+0 records in
+50+0 records out
+25600 bytes transferred in 0.001761 secs (14537528 bytes/sec)
+INFO: Running <span class="ansi-green-fg">default_2</span>: 
+600+0 records in
+600+0 records out
+307200 bytes transferred in 0.020721 secs (14825398 bytes/sec)
+INFO: Workflow default (ID=5cad13496bca14a2) is executed successfully.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">## -- Preview output --</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre> input: d1/tracked_f2
+output: d2/d3/tracked_f3
+</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">> d2/d3/tracked_f3 (300.0 KiB):</font></pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can use the <code>sos remove</code> command to remove all untracked files with option <code>-u</code> (untracked).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">ls</span> <span class="o">-</span><span class="n">R</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>__interactive__.sos
+d1
+d2
+result.txt
+size.txt
+tracked_f1
+
+./d1:
+tracked_f2
+untracked_f4
+
+./d2:
+d3
+
+./d2/d3:
+tracked_f3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">sos</span> <span class="n">remove</span> <span class="o">.</span> <span class="o">-</span><span class="n">u</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: 3 tracked files from 1 run are identified.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Remove untracked file ./d1/untracked_f4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or remove all tracked files with option <code>-t</code> (tracked)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">sos</span> <span class="n">remove</span> <span class="o">.</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: 3 tracked files from 1 run are identified.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Remove tracked file ./d1/tracked_f2 and its signature
+Remove tracked file ./d2/d3/tracked_f3 and its signature
+Remove ./d2/d3 with tracked files
+Remove ./d1 with tracked files
+Remove ./d2 with tracked files
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">ls</span> <span class="o">-</span><span class="n">R</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>__interactive__.sos
+result.txt
+size.txt
+tracked_f1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because files under the currently directly are often important, they are by default not removed with these global options (<code>-t</code> or <code>-u</code>). You will have to remove them explicitly if so desired.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">sos</span> <span class="n">remove</span> <span class="n">tracked_f1</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: 3 tracked files from 1 run are identified.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Remove tracked file tracked_f1 and its signature
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Archving-a-project">Archving a project<a class="anchor-link" href="#Archving-a-project">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let us re-run the project and create all files</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="o">%</span><span class="n">rerun</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Running <span class="ansi-green-fg">default_0</span>: 
+1000+0 records in
+1000+0 records out
+512000 bytes transferred in 0.033955 secs (15078738 bytes/sec)
+INFO: Running <span class="ansi-green-fg">default_1</span>: 
+5000+0 records in
+5000+0 records out
+2560000 bytes transferred in 0.168573 secs (15186308 bytes/sec)
+50+0 records in
+50+0 records out
+25600 bytes transferred in 0.001733 secs (14773553 bytes/sec)
+INFO: Running <span class="ansi-green-fg">default_2</span>: 
+600+0 records in
+600+0 records out
+307200 bytes transferred in 0.021039 secs (14601448 bytes/sec)
+INFO: Workflow default (ID=5cad13496bca14a2) is executed successfully.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">## -- Preview output --</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre> input: d1/tracked_f2
+output: d2/d3/tracked_f3
+</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">> d2/d3/tracked_f3 (300.0 KiB):</font></pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For archiving and reproducibility purposes, it is often needed to create an archive for the analysis so that you can refer to it later. This is very easy to do with the <code>sos pack</code> command.</p>
+<p>To use this feature, you first need to get the workflow session that you would like to pack, using the ID that is printed at the end of the execution. You do not have to specify the complete IDs, only the first few characters (even no character) as long as it can be used to identify an unique session. Because we have only executed one workflow, we can run</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">sos</span> <span class="n">pack</span> <span class="o">-</span><span class="n">o</span> <span class="n">myproj</span><span class="o">.</span><span class="n">sar</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-magenta-intense-fg">WARNING</span>: <span class="ansi-magenta-intense-fg">Missing script file </span>
+INFO: Checking tracked_f1
+INFO: Checking d1/tracked_f2
+INFO: Checking d2/d3/tracked_f3
+INFO: Archiving 3 files (3.2 MiB)...
+INFO: Adding __interactive__.sos
+INFO: Adding tracked_f1
+INFO: Adding d1/tracked_f2
+INFO: Adding d2/d3/tracked_f3
+INFO: Adding runtime files
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can use options <code>--include</code> and <code>--exclude</code> to include or exclude specific files or directories to the archive. For example, if you would like to archive the untracked file <code>d1/untracked_f4</code>, you can add this file, or the whole directory using command</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">sos</span> <span class="n">pack</span> <span class="o">-</span><span class="n">i</span> <span class="n">d1</span> <span class="o">-</span><span class="n">o</span> <span class="n">myproj_all</span><span class="o">.</span><span class="n">sar</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-magenta-intense-fg">WARNING</span>: <span class="ansi-magenta-intense-fg">Missing script file </span>
+INFO: Checking d2/d3/tracked_f3
+INFO: Checking d1/untracked_f4
+INFO: Checking tracked_f1
+INFO: Checking d1/tracked_f2
+INFO: Archiving 4 files (3.2 MiB)...
+INFO: Adding __interactive__.sos
+INFO: Adding d2/d3/tracked_f3
+INFO: Adding d1/untracked_f4
+INFO: Adding tracked_f1
+INFO: Adding d1/tracked_f2
+INFO: Adding runtime files
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Unpacking-an-archive">Unpacking an archive<a class="anchor-link" href="#Unpacking-an-archive">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that we have an archive of the project, we can remove all files under the directory</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">.</span><span class="n">sos</span> <span class="n">d1</span> <span class="n">d2</span> <span class="n">tracked_f1</span> <span class="o">*.</span><span class="n">dot</span> <span class="o">*.</span><span class="n">sos</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">ls</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>myproj.sar
+myproj_all.sar
+result.txt
+size.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can unpack the archive using command <code>sos unpack</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">sos</span> <span class="n">unpack</span> <span class="n">myproj</span><span class="o">.</span><span class="n">sar</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Extracting tracked_f1
+INFO: Extracting d1/tracked_f2
+INFO: Extracting d2/d3/tracked_f3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">ls</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>d1
+d2
+myproj.sar
+myproj_all.sar
+result.txt
+size.txt
+tracked_f1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you have noticed, because the script is specified in Jupyter notebook, it is archived in name <code>__interactive__.sos</code>, but it is not unpacked. This is because sos script does not have to be in the current directory and it can be dangerous to overwrite a local script with an archived one. To unpack the script, use option <code>-s</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">sos</span> <span class="n">unpack</span> <span class="n">myproj</span><span class="o">.</span><span class="n">sar</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">s</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Extracting __interactive__.sos
+INFO: Ignore identical tracked_f1
+INFO: Ignore identical d1/tracked_f2
+INFO: Ignore identical d2/d3/tracked_f3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and now you can check the script that is used to generate this archive</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
+<span class="err">!</span><span class="n">cat</span> <span class="n">__interactive__</span><span class="o">.</span><span class="n">sos</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>parameter: name=&#39;tracked_f1&#39;
+[0]
+output:  name
+sh:
+    dd if=/dev/urandom of=${name} count=1000
+
+[1]
+output:  &#39;d1/tracked_f2&#39;
+sh:
+    dd if=/dev/urandom of=${output} count=5000
+    dd if=/dev/urandom of=d1/untracked_f4 count=50
+
+[2]
+output:  &#39;d2/d3/tracked_f3&#39;
+sh:
+    dd if=/dev/urandom of=${output} count=600</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

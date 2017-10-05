@@ -1,0 +1,633 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Generating_Reports</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  
+             'number_sections': false,  // sections numbering
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+
+            var file=tutorialsDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            
+            var tuts=tutorials;
+            var pos=tutorials.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=tuts[a]
+                  $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/tutorials/'+file+'.html'+'"]').css("color","#126dce");
+
+            for (var a=pos+1;a<tuts.length;a++){
+                  var name=tuts[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // for (var a =0;a<tuts.length;a++){
+            //       var name =tuts[a];
+            //       if ()
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace("_"," ")+'</a></li>');
+            // }
+
+            // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            
+            // $(".number_sections-btn").hide();
+            // $(".toc_cell_sections-btn".hide();
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_sos {}.lan_bash .input_prompt { background-color:  !important }.lan_python2 .input_prompt { background-color:  !important }.lan_ir .input_prompt { background-color:  !important }.lan_python3 .input_prompt { background-color:  !important }
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Generating-Reports-using-SoS">Generating Reports using SoS<a class="anchor-link" href="#Generating-Reports-using-SoS">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are multiple ways to generate reports from the execution of SoS workflows. This tutorial introduces some basic methods but you can certainly be more creative.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-summarization-step">A summarization step<a class="anchor-link" href="#A-summarization-step">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can write a report at the end of the workflow that summarizes the results of previous steps. For example, in the following example, the <code>report</code> action summarizes previous steps and writes a report to the standard output.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.jpg&#39;</span>
+<span class="kn">R:</span>
+    <span class="n">jpeg</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">cars</span> <span class="o">&lt;-</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">barplot</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="kn">run:</span>
+    <span class="n">echo</span> <span class="s2">&quot;100&quot;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="p">[</span><span class="mi">100</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;a.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">a</span><span class="p">:</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="kn">report:</span>
+    <span class="o">*</span> <span class="n">Figure</span>
+    <span class="err">!</span><span class="p">[</span><span class="n">figure</span><span class="p">](</span><span class="n">a</span><span class="o">.</span><span class="n">jpg</span><span class="p">)</span>
+    <span class="o">*</span> <span class="n">result</span>
+    <span class="err">$</span><span class="p">{</span><span class="n">res</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>* Figure
+![figure](a.jpg)
+* result
+100
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is a pretty bad idea to write report to standard output because other actions can also write to it. You should therefore use the <code>output</code> option of the <code>report</code> action to specify an output file of the <code>report</code> action.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="n">preview</span> <span class="n">summary</span><span class="o">.</span><span class="n">md</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.jpg&#39;</span>
+<span class="kn">R:</span>
+    <span class="n">jpeg</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">cars</span> <span class="o">&lt;-</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">barplot</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="kn">run:</span>
+    <span class="n">echo</span> <span class="s2">&quot;100&quot;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="p">[</span><span class="n">counts</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">a</span><span class="p">:</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="p">[</span><span class="mi">100</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;a.jpg&#39;</span>
+<span class="kn">depends:</span> <span class="n">sos_variable</span><span class="p">(</span><span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;summary.md&#39;</span>
+    <span class="o">*</span> <span class="n">Figure</span>
+    <span class="err">!</span><span class="p">[</span><span class="n">figure</span><span class="p">](</span><span class="n">a</span><span class="o">.</span><span class="n">jpg</span><span class="p">)</span>
+    <span class="o">*</span> <span class="n">result</span>
+    <span class="err">$</span><span class="p">{</span><span class="n">counts</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">## %preview summary.md</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">> summary.md (40 B):</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ul>
+<li>Figure
+<img alt="figure" src="a.jpg" /></li>
+<li>result
+100</li>
+</ul>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Instead of outputting reports in <code>.md</code> format and rendering them outside of SoS, you can also render them inside SoS using action <code>pandoc</code> or <code>Rmarkdown</code>. For example,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="n">preview</span> <span class="n">summary</span><span class="o">.</span><span class="n">html</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.jpg&#39;</span>
+<span class="kn">R:</span>
+    <span class="n">jpeg</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">cars</span> <span class="o">&lt;-</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">barplot</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="kn">run:</span>
+    <span class="n">echo</span> <span class="s2">&quot;100&quot;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="p">[</span><span class="n">counts</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">a</span><span class="p">:</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="p">[</span><span class="mi">100</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;a.jpg&#39;</span>
+<span class="kn">depends:</span> <span class="n">sos_variable</span><span class="p">(</span><span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+
+<span class="kn">pandoc:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;summary.html&#39;</span>
+    <span class="o">*</span> <span class="n">Figure</span>
+    <span class="err">!</span><span class="p">[</span><span class="n">figure</span><span class="p">](</span><span class="n">a</span><span class="o">.</span><span class="n">jpg</span><span class="p">)</span>
+    <span class="o">*</span> <span class="n">result</span>
+    <span class="err">$</span><span class="p">{</span><span class="n">counts</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">## %preview summary.html</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">> summary.html (80 B):</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ul>
+<li>Figure <img src="a.jpg" alt="figure" /></li>
+<li>result 100</li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Reporting-to-multiple-output-files">Reporting to multiple output files<a class="anchor-link" href="#Reporting-to-multiple-output-files">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you have a large workflow with several steps or modules, it makes sense to write several reports and join them at last. For example, in the following example, an output file is specified for each <code>report</code> and a summary step is used at the end to collect and process them.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="o">~/</span><span class="n">tmp</span>
+<span class="o">%</span><span class="n">preview</span> <span class="n">summary</span><span class="o">.</span><span class="n">html</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.jpg&#39;</span>
+<span class="kn">R:</span>
+    <span class="n">jpeg</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">cars</span> <span class="o">&lt;-</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="n">barplot</span><span class="p">(</span><span class="n">cars</span><span class="p">)</span>
+
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;figure.md&#39;</span>
+    <span class="o">*</span> <span class="n">Figure</span>
+    <span class="err">!</span><span class="p">[</span><span class="n">figure</span><span class="p">](</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">})</span>    
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="kn">run:</span>
+    <span class="n">echo</span> <span class="s2">&quot;${counts}&quot;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;result.md&#39;</span>
+    <span class="o">*</span> <span class="n">result</span>
+    <span class="err">$</span><span class="p">{</span><span class="n">counts</span><span class="p">}</span>
+
+<span class="p">[</span><span class="mi">100</span><span class="p">]</span>
+<span class="kn">pandoc:</span> <span class="nb">input</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;figure.md&#39;</span><span class="p">,</span> <span class="s1">&#39;result.md&#39;</span><span class="p">],</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;summary.html&#39;</span>
+    <span class="n">Final</span> <span class="kp">report</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">## %preview summary.html</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<pre><font color="green">> summary.html (114 B):</font></pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<p>Final report</p>
+<ul>
+<li><p>Figure <img src="a.jpg" alt="figure" /></p></li>
+<li><p>result 100</p></li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You will notice that both <code>script</code> and <code>input</code> are specified to action <code>pandoc</code>. In this case the <code>script</code> is put before the content of each <code>input</code> files, making it a perfect place to write headers and summaries.</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

@@ -1,0 +1,1444 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+
+  gtag('config', 'UA-107286198-1');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Execution_of_Workflow</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/doc_toc.js"></script>
+
+ <script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        } 
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+
+$( document ).ready(function(){
+
+            var cfg={'threshold':4,     // depth of toc (number of levels)
+             // 'number_sections': true,  
+             'number_sections': false,  // sections numbering
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             // 'sideBar':true,      
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+
+            var file=tutorialsDict[$("h1:first").attr("id")];
+            var path="http://vatlab.github.io/SoS"
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            
+            var tuts=tutorials;
+            var pos=tutorials.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=tuts[a]
+                  $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+path+'/doc/tutorials/'+file+'.html'+'"]').css("color","#126dce");
+
+            for (var a=pos+1;a<tuts.length;a++){
+                  var name=tuts[a]
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+
+            // for (var a =0;a<tuts.length;a++){
+            //       var name =tuts[a];
+            //       if ()
+            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace("_"," ")+'</a></li>');
+            // }
+
+            // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
+            // var home=$("#toc-level0 #indexHome");
+          
+            // home.insertBefore("#toc-level0 li:eq(0)");
+
+            
+            // $(".number_sections-btn").hide();
+            // $(".toc_cell_sections-btn".hide();
+
+
+    });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #F6FAEA !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_SoS {}
+
+</style>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Execution-of-SoS-workflows">Execution of SoS workflows<a class="anchor-link" href="#Execution-of-SoS-workflows">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The content of this chapter is largely applicable to batch mode but we represent it in Jupyter notebook for easy reproduction of results. If you are not familiar with Jupyter notebook, please refer to chapter <a href="../documentation/Notebook_Interface.html">Notebook Interface</a> for details. For the impatience, the magics</p>
+<ul>
+<li><code>%sandgox</code> execute the cell in a temporary directory</li>
+<li><code>!cmd</code> execute shell command <code>cmd</code></li>
+<li><code>%run</code> run the cell as if in command line with specified options</li>
+<li><code>%rerun</code> rerun the last executed script (cell content without magics)</li>
+<li><code>%set</code> set options that would be included in each <code>$run</code> command</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="logging-level">logging level<a class="anchor-link" href="#logging-level">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS uses a logging system to output all sorts of information during the execution of workflows. The amount of output can be controlled by logging level, which can be <code>error</code> (0), <code>warning</code> (1), <code>info</code> (2), <code>debug</code> (3), and <code>trace</code> (4). The default logging level for SoS is <code>info</code> in batch mode and <code>warning</code> in interactive mode.</p>
+<p>For example, logging at <code>info</code> level would produce message indicating the steps executed and input output files, but nothing but warning and errors at the <code>warning</code> level.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">v2</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="p">[</span><span class="mi">30</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">40</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: output:   <span class="ansi-green-fg">[]</span>
+INFO: Executing <span class="ansi-green-fg">default_20</span>: 
+INFO: input:    <span class="ansi-green-fg">[&#39;a.txt&#39;]</span>
+INFO: output:   <span class="ansi-green-fg">[]</span>
+INFO: Executing <span class="ansi-green-fg">default_30</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: output:   <span class="ansi-green-fg">[]</span>
+INFO: Executing <span class="ansi-green-fg">default_40</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: output:   <span class="ansi-green-fg">[]</span>
+INFO: Workflow default (ID=e067d16745aa5e7b) is executed successfully.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">v1</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span>
+<span class="p">[</span><span class="mi">30</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">40</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="dryrun-mode"><code>dryrun</code> mode<a class="anchor-link" href="#dryrun-mode">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>dryrun</code> mode is used to check for syntax errors of a SoS script without actually executing any of the actions. It can be specified with option <code>-n</code>. For example, running the following script in dryrun mode would produce an error message</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
+<span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">n</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="kp">skip</span><span class="o">=</span><span class="bp">False</span><span class="p">]</span>
+<span class="kn">sh:</span>
+   <span class="n">echo</span> <span class="s2">&quot;I am command echo&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>File contains parsing errors: &lt;string&gt;
+	[line  1]: [10, skip=False]
+sh:
+   echo &#34;I am command echo&#34;
+Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#39;, 1, 10, &#39;[10, skip=False]\n&#39;))
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>because the header of the step is wrong (should use <code>:</code> instead of <code>,</code>).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The dryrun mode would print the commands in a script without actually executing them:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">n</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">:</span> <span class="kp">skip</span><span class="o">=</span><span class="bp">False</span><span class="p">]</span>
+<span class="kn">sh:</span>
+   <span class="n">echo</span> <span class="s2">&quot;I am command echo&quot;</span>
+   <span class="n">sleep</span> <span class="mi">100000000</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/bin/sh:
+echo &#34;I am command echo&#34;
+sleep 100000000
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Change-system-$PATH">Change system $PATH<a class="anchor-link" href="#Change-system-$PATH">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are cases where you would like to use a specific version of programs for your workflow but do not want to change the system <code>$PATH</code> because of its global effect. In this case you can prepend pathes to these executables to <code>$PATH</code> using option <code>-b</code>.</p>
+<p>The following example first cretes a executable <code>ls</code> in <code>tmp</code> with an <code>echo</code> command. Using the option <code>-b tmp</code>, the <code>tmp</code> directory is prefixed to the system <code>$PATH</code> before the workflow is executed. The consequence is that this fake <code>ls</code> supersedes the system <code>ls</code> when <code>ls</code> is called in <code>step_10</code> of the workflow.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">mkdir</span> <span class="n">tmp</span>
+<span class="err">!</span><span class="n">echo</span> <span class="s2">&quot;#!/bin/bash&quot;</span> <span class="o">&gt;</span> <span class="n">tmp</span><span class="o">/</span><span class="n">ls</span>
+<span class="err">!</span><span class="n">echo</span> <span class="s2">&quot;echo This is fake ls&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">tmp</span><span class="o">/</span><span class="n">ls</span>
+<span class="err">!</span><span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="n">tmp</span><span class="o">/</span><span class="n">ls</span>
+
+<span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">b</span> <span class="n">tmp</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">sh:</span>
+    <span class="n">ls</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is fake ls
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>-b</code> option has a default value <code>~/.sos/bin</code>, so any command under <code>~/.sos/bin</code> would be executed (before system command with the same name) even if the executables are not under system <code>$PATH</code>. This feature allows you to create commands that would only be used inside SoS-scripts, and more interestingly, allows you to create executable or install programs on-the-fly.</p>
+<p>For example, step 20 of the following workflow depends on an executable <code>lls</code> that is not a system executable.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">lls</span>
+
+<span class="p">[</span><span class="n">install_lls</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="n">executable</span><span class="p">(</span><span class="s1">&#39;lls&#39;</span><span class="p">)]</span>
+<span class="kn">run:</span>
+    <span class="n">echo</span> <span class="s2">&quot;#!/bin/bash&quot;</span> <span class="o">&gt;</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">lls</span>
+    <span class="n">echo</span> <span class="s2">&quot;echo This is lls&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">lls</span>
+    <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">lls</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;lls&#39;</span><span class="p">)</span>
+<span class="kn">run:</span>
+    <span class="n">lls</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>because <code>lls</code> is created under <code>~/.sos/bin</code>, it would be immediately available to SoS after the <code>install_lls</code> step. This works for any program as long as you can create a symbolic link under <code>~/.sos/bin</code> after its installation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can always disable this behavior by setting option <code>-b</code> without value.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Runtime-signature">Runtime signature<a class="anchor-link" href="#Runtime-signature">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One of the most annonying problems with the development and execution of workflows is that it can take very long times to execute then. What makes things worse is that we frequently need to re-run the workflow with different paremeters and even different tools -- it can be really time-consuming to re-execute the whole workflow repeatedly, but it is also very error-prone to repeat selected steps of a workflow.</p>
+<p>SoS addresses this problem by using <font color='red'>runtime signatures</font> to keep track of <font color='red'>execution units</font>, namely the input, output, and dependent targets, and related SoS variables of a piece of workflow. SoS tracks execution of statements at the step level for each <a href="../documentation/SoS_Step.html">input group</a> and saves runtime signatures at a folder called <code>.sos</code> under the project directory. The runtime signatures are used to</p>
+<ol>
+<li>Avoid repeated execution of identical units, and</li>
+<li>Keep track of workflow related files for project management</li>
+</ol>
+<p>This tutorial focuses on the first usage. The second one would be described in detail in <a href="Project_Management.html">Project Management</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="ignore-mode"><code>ignore</code> mode<a class="anchor-link" href="#ignore-mode">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS workflows can be executed in batch mode and in interactive mode using the SoS kernel in Jupyter notebook or qtconsole. Because the SoS kernel is mostly used to execute short statements in SOS and other kernels, runtime signatures are by default set to <code>ignore</code> in interactive mode (and to <code>default</code> in batch mode).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let us create a temporary directory and execute a workflow that take a bit of time to execute. This is done in the default <code>ignore</code> signature mode of the Jupyter notebook</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+
+<span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">.</span><span class="n">sos</span><span class="o">/.</span><span class="n">runtime</span>
+<span class="err">!</span><span class="p">[</span> <span class="o">-</span><span class="n">d</span> <span class="n">temp</span> <span class="p">]</span> <span class="o">||</span> <span class="n">mkdir</span> <span class="n">temp</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+  </div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+
+<span class="kn">parameter:</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="s2">&quot;temp/result.txt&quot;</span>
+<span class="kn">sh:</span>
+    <span class="n">dd</span> <span class="k">if</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">urandom</span> <span class="n">of</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">}</span> <span class="n">count</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">size</span><span class="p">}</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="s1">&#39;temp/size.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sz</span><span class="p">:</span>
+    <span class="n">sz</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;${input}: ${os.path.getsize(input[0])}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, if we re-run the last script, nothing changes and it takes a bit of time to execute the script.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="o">%</span><span class="n">rerun</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>1000+0 records in
+1000+0 records out
+512000 bytes transferred in 0.043572 secs (11750679 bytes/sec)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="default-mode"><code>default</code> mode<a class="anchor-link" href="#default-mode">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now let us switch to <code>default</code> mode of signature by running the script with option <code>-s default</code>. When you run the script for the first time, it would execute normally and save runtime signature of the steps.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">s</span> <span class="n">default</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>1000+0 records in
+1000+0 records out
+512000 bytes transferred in 0.039883 secs (12837583 bytes/sec)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>but both steps would be ignored. Here we use <code>-v2</code> to show the <code>ignored</code> message. This time we use magic <code>%set</code> to make option <code>-s default</code> persistent so that we do not have to specify it each time.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="o">%</span><span class="nb">set</span> <span class="o">-</span><span class="n">s</span> <span class="n">default</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set sos options to &#34;-s default&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: Step <span class="ansi-green-fg">default_10</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Executing <span class="ansi-green-fg">default_20</span>: 
+INFO: input:    <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Step <span class="ansi-green-fg">default_20</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/size.txt&#39;]</span>
+INFO: Workflow default (ID=9cfb3e78e2ed3527) is executed successfully.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, if you use a different parameter (not the default <code>size=1000</code>), the steps would be rerun</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">v2</span> <span class="o">--</span><span class="n">size</span> <span class="mi">2000</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+2000+0 records in
+2000+0 records out
+1024000 bytes transferred in 0.082578 secs (12400406 bytes/sec)
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Executing <span class="ansi-green-fg">default_20</span>: 
+INFO: input:    <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/size.txt&#39;]</span>
+INFO: Workflow default (ID=b1aad5f5c7dcd74a) is executed successfully.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The signature is at the step level so if you change the second step of the script, the first step would still be skipped. Note that the step is independent of the script executed so a step would be skipped even if its signature was saved by the execution of another workflow. The signature is clever enough to allow minor changes such as addition of spaces and comments.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="o">%</span><span class="kp">run</span> <span class="o">--</span><span class="n">size</span> <span class="mi">2000</span> <span class="o">-</span><span class="n">v2</span>
+<span class="kn">parameter:</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="s2">&quot;temp/result.txt&quot;</span>
+<span class="c1"># added comment</span>
+<span class="kn">sh:</span>
+    <span class="n">dd</span> <span class="k">if</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">urandom</span> <span class="n">of</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">}</span> <span class="n">count</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">size</span><span class="p">}</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="s1">&#39;temp/size.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sz</span><span class="p">:</span>
+    <span class="n">sz</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Modified ${input}: ${os.path.getsize(input[0])}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: Step <span class="ansi-green-fg">default_10</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Executing <span class="ansi-green-fg">default_20</span>: 
+INFO: input:    <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/size.txt&#39;]</span>
+INFO: Workflow default (ID=c504a1ca139465fe) is executed successfully.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="assert-mode"><code>assert</code> mode<a class="anchor-link" href="#assert-mode">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>assert</code> mode is used to detect if anything has been changed after the execution of a workflow. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="o">%</span><span class="nb">set</span> <span class="o">-</span><span class="n">s</span> <span class="k">assert</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">size</span> <span class="mi">2000</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set sos options to &#34;-s assert&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: Step <span class="ansi-green-fg">default_10</span> (index=0) is <span class="ansi-green-fg">ignored</span> with matching signature
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Executing <span class="ansi-green-fg">default_20</span>: 
+INFO: input:    <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Step <span class="ansi-green-fg">default_20</span> (index=0) is <span class="ansi-green-fg">ignored</span> with matching signature
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/size.txt&#39;]</span>
+INFO: Workflow default (ID=c504a1ca139465fe) is executed successfully.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now if you change one of the output files, sos would fail with an error message.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="err">!</span><span class="n">echo</span> <span class="s2">&quot;aaa&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">temp</span><span class="o">/</span><span class="n">result</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">size</span> <span class="mi">2000</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+Failed to process step output: &#34;temp/result.txt&#34; (Signature mismatch: File has changed temp/result.txt)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="force-mode"><code>force</code> mode<a class="anchor-link" href="#force-mode">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>force</code> signature mode ignores existing signatures and re-run the workflow. This is needed when you would like to forcefully re-run all the steps to generate another set of output if outcome of some steps is random, or to re-run the workflow because of changes that is not tracked by SoS, for example after you have installed a new version of a program.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="o">%</span><span class="nb">set</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">size</span> <span class="mi">2000</span> <span class="o">-</span><span class="n">s</span> <span class="n">force</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Reset sos options from &#34;-s assert&#34; to &#34;&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>2000+0 records in
+2000+0 records out
+1024000 bytes transferred in 0.078605 secs (13027172 bytes/sec)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="build-mode"><code>build</code> mode<a class="anchor-link" href="#build-mode">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>build</code> mode is somewhat opposite to the <code>force</code> mode in that it creates (or overwrite existing signature if exists) with existing output files. It is useful, for example, if you are adding a step to a workflow that you have tested outside of SoS (without signature) but do not want to rerun it, or if for some reason you have lost your signature files and would like to reconstruct them from existing outputs.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">size</span> <span class="mi">2000</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: Step <span class="ansi-green-fg">default_10</span> (index=0) is <span class="ansi-green-fg">ignored</span> with signature constructed
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Executing <span class="ansi-green-fg">default_20</span>: 
+INFO: input:    <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Step <span class="ansi-green-fg">default_20</span> (index=0) is <span class="ansi-green-fg">ignored</span> with signature constructed
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/size.txt&#39;]</span>
+INFO: Workflow default (ID=c504a1ca139465fe) is executed successfully.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This mode can introduce erraneous files to the signatures because it does not check the validity of the incorporated files. For example, SoS would not complain if you change parameter and replace <code>temp/result.txt</code> with something else.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">tmp</span>
+<span class="err">!</span><span class="n">echo</span> <span class="s2">&quot;something else&quot;</span> <span class="o">&gt;</span> <span class="n">temp</span><span class="o">/</span><span class="n">result</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: Step <span class="ansi-green-fg">default_10</span> (index=0) is <span class="ansi-green-fg">ignored</span> with signature constructed
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Executing <span class="ansi-green-fg">default_20</span>: 
+INFO: input:    <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Step <span class="ansi-green-fg">default_20</span> (index=0) is <span class="ansi-green-fg">ignored</span> with signature constructed
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/size.txt&#39;]</span>
+INFO: Workflow default (ID=37822fa9f98ef8c1) is executed successfully.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># cleanup</span>
+<span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="n">tmp</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Removal-of-large-intermediate-files">Removal of large intermediate files<a class="anchor-link" href="#Removal-of-large-intermediate-files">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS keep tracks of all intermediate files and will rerun steps only if any of the tracked files are removed or changed. However, it is often desired to remove some of the large non-essential intemediate files to reduce diskspace used by completed workflows, while allowing the workflow to be re-executed without these files. SoS provides a command</p>
+
+<pre><code>sos remove files --zap</code></pre>
+<p>to zap specified file, or for example</p>
+
+<pre><code>sos remove . --size +5G --zap</code></pre>
+<p>to zap all files larger than 5G. This command removes specified files but keeps a special <code>${file}.zapped</code> file with essential information (e.g. md5 signature, and size). SoS would consider a file exist when a <code>.zapped</code> file is present and will only regenerate the file if the actual file is needed for a later step.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, let us execute a workflow with output <code>temp/result.txt</code>, and <code>temp/size.txt</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">s</span> <span class="n">force</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="s2">&quot;temp/result.txt&quot;</span>
+<span class="c1"># added comment</span>
+<span class="kn">sh:</span>
+    <span class="n">dd</span> <span class="k">if</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">urandom</span> <span class="n">of</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">}</span> <span class="n">count</span><span class="o">=</span><span class="mi">2000</span>
+
+<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+<span class="kn">output:</span>  <span class="s1">&#39;temp/size.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sz</span><span class="p">:</span>
+    <span class="n">sz</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Modified ${input}: ${os.path.getsize(input[0])}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>2000+0 records in
+2000+0 records out
+1024000 bytes transferred in 0.082712 secs (12380317 bytes/sec)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and let us zap the intermediate file <code>temp/result.txt</code>,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">remove</span> <span class="n">temp</span><span class="o">/</span><span class="n">result</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">zap</span> <span class="o">-</span><span class="n">y</span>
+<span class="err">!</span><span class="n">ls</span> <span class="n">temp</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: 2 tracked files from 1 run are identified.
+INFO: 1 file zapped
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Zap tracked file temp/result.txt
+result.txt.zapped
+size.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see, <code>temp/result.txt</code> is replaced with <code>temp/result.txt.zapped</code>. Now if you rerun the workflow</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">s</span> <span class="n">default</span> <span class="o">-</span><span class="n">v2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
+INFO: input:    <span class="ansi-green-fg">[]</span>
+INFO: Step <span class="ansi-green-fg">default_10</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Executing <span class="ansi-green-fg">default_20</span>: 
+INFO: input:    <span class="ansi-green-fg">[&#39;temp/result.txt&#39;]</span>
+INFO: Step <span class="ansi-green-fg">default_20</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
+INFO: output:   <span class="ansi-green-fg">[&#39;temp/size.txt&#39;]</span>
+INFO: Workflow default (ID=a22d68cbc860dcdd) is executed successfully.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

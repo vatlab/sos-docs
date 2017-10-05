@@ -1,0 +1,429 @@
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Running-SoS-in-Docker">Running SoS in Docker<a class="anchor-link" href="#Running-SoS-in-Docker">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you are using docker, you can run SoS directly using command</p>
+
+<pre><code>% docker run -it mdabioinfo/sos:latest /bin/bash</code></pre>
+<p>to enter a command prompt with sos command. More usefully, you can start a Jupyter server with <a href="https://www.r-project.org/">R</a> and <a href="https://github.com/IRkernel/IRkernel">IRkernel</a>, Julia, Python, and SoS kernels, and many Python and R modules for data sciencists using command</p>
+
+<pre><code>% docker run -d -p 8888:8888 mdabioinfo/sos-notebook</code></pre>
+<p>After the docker is running in the background, you can start a browser and start working with a complete SoS environment with URL</p>
+
+<pre><code>http://localhost:8888</code></pre>
+<p>You can even use this docker image for your daily data analysis if you make your local directory available to the Jupyter server using command</p>
+
+<pre><code>% docker run -d -p 8888:8888 -v $HOME:/home/jovyan/work  mdabioinfo/sos-notebook</code></pre>
+<p>This command mounts your home directory (<code>$HOME</code>) to directory <code>work</code> under the home directory of the docker machine but you can mount any local directory to the docker image. This container is hosted at <a href="http://ec2-34-192-184-206.compute-1.amazonaws.com:8000/">our public Jupyter
+server</a> from which you can open our sample notebooks and create your own notebooks without installing anything.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Installing-SoS-locally">Installing SoS locally<a class="anchor-link" href="#Installing-SoS-locally">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS supports Linux, Mac OSX, and Windows systems and requires <a href="https://www.python.org/">Python 3</a> (version 3.5 or later) so you will need to install Python 3 if you do not have it installed locally. We recommend <a href="https://www.continuum.io/downloads">ananconda Python</a> because it is a complete Python environment with many packages for scientific computing.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After you have installed Python 3, you can install SoS with</p>
+
+<pre><code>% pip3 install sos</code></pre>
+<p>or</p>
+
+<pre><code>% pip install sos</code></pre>
+<p>depending on the command used for your Python 3 installation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Note-for-Windows-Users">Note for Windows Users<a class="anchor-link" href="#Note-for-Windows-Users">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Windows systems lack native support for some of the tools that SoS uses. You could enable <a href="https://msdn.microsoft.com/en-us/commandline/wsl/about">Linux subsystem for windows</a> if you have a Windows 10 system with Developer Mode enabled, or use one of the Linux subsystems such as <a href="https://www.cygwin.com/">Cygwin</a>, <a href="http://www.mingw.org/">MinGW</a>, or <a href="http://www.msys2.org/">MSYS2</a>. We generally recommend the use of MSYS2 because of its pacman package manage system.</p>
+<p>To install MSYS2,</p>
+<ul>
+<li>Install MSYS2 from <a href="http://www.msys2.org/">MSYS2 homepage</a></li>
+<li>Start MSYS2, run
+<pre><code>$ pacman -S openssh rsync git</code></pre>
+</li>
+<li>Add <code>c:\msys64\usr\bin</code> (adapt to your installation) to environment variable <code>$PATH</code> so that commands <code>rsync</code>, <code>rcp</code>, <code>ssh</code>, and <code>git</code> are available to sos.</li>
+</ul>
+<p>Note that</p>
+<ul>
+<li>This configuration allows executing tasks generated from a windows localhost on remote Linux and Mac OSX hosts (task queues). <strong>Remote execution on a windows host is not yet supported</strong>. </li>
+<li>Installation of <code>git</code> is optional especially if you already have <a href="https://git-scm.com/downloads">git for windows</a> installed (which is also based on msys2).</li>
+<li>You might want to install <a href="https://conemu.github.io/">ConEmu</a> as a (much better) replacement for Windows command console.</li>
+<li>You will need to set up <code>$HOME</code> properly to use ssh and public key authentication with other machines. <a href="https://github.com/valtron/llvm-stuff/wiki/Set-up-Windows-dev-environment-with-MSYS2">This page</a> provides a nice summary of the steps.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Supported-Languages">Supported Languages<a class="anchor-link" href="#Supported-Languages">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/Bash.png" style="width:32pt;height:32pt;margin-right:15pt;">Bash</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Install Bash Jupyter kernel using command</p>
+
+<pre><code>pip install bash_kernel
+python -m bash_kernel.install</code></pre>
+<p>or following instructions from <a href="https://github.com/takluyver/bash_kernel">Jupyter Bash Kernel homepage</a>.</p>
+<p>Understandably, it can be tricky to use bash under windows.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/JavaScript.png" style="width:32pt;height:32pt;margin-right:15pt;">JavaScript</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although there appears to be several Jupyter Kernels, SoS is only tested with the <a href="https://github.com/n-riesco/ijavascript">iJavaScript kernel</a>. To use this kernel, you will need to have <code>node.js</code>, <code>npm</code> installed, run</p>
+
+<pre><code>npm install -g ijavascript</code></pre>
+<p>and then install the kernelspec with command</p>
+
+<pre><code>ijsinstall</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/Julia.png" style="width:32pt;height:32pt;margin-right:15pt;">Julia</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After <a href="https://julialang.org/downloads/">installing Julia</a>, you will need to start Julia and install <a href="https://github.com/JuliaLang/IJulia.jl">iJulia</a> and <a href="https://github.com/JuliaStats/Feather.jl">feather.jl</a> with commands</p>
+
+<pre><code>ENV["JUPYTER"] = "/path/to/jupyter"
+Pkg.add("IJulia")
+Pkg.add("Feather")
+Pkg.add("DataFrames")
+Pkg.add("NamedArrays")</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/Matlab.png" style="width:32pt;height:32pt;margin-right:15pt;"> Matlab</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With a properly installed version of Matlab, you will need to install</p>
+<ul>
+<li>Python package <a href="https://github.com/Calysto/matlab_kernel"><code>matlab_kernel</code></a> with command
+<pre><code>  pip install matlab_kernel</code></pre>
+</li>
+<li>If you have not done so, install <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html">matlab engine for Python</a>, which might not support the most recent version of Python.</li>
+</ul>
+<p>You then should be able to see <code>matlab</code> listed under <code>jupyter kernelspec list</code>, and be able to enter matlab commands by creating a matlab notebook from <code>jupyter notebook</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/Octave.png" style="width:32pt;height:32pt;margin-right:15pt;"> Octave</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After installing <a href="https://www.gnu.org/software/octave/">GNU Octave</a>, you can install the <a href="https://github.com/Calysto/octave_kernel">octave kernel</a> with the following commands</p>
+
+<pre><code>pip install octave_kernel
+python -m octave_kernel.install</code></pre>
+<p>For transferring Python's DataFrame and its equivalences in other languages, you will need to install the <a href="https://octave.sourceforge.io/dataframe/index.html">dataframe</a> package using the following command:</p>
+
+<pre><code>octave --eval 'pkg install -forge dataframe'</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/Python.png" style="width:32pt;height:32pt;margin-right:15pt;"> Python 2</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you still have Python 2.x installed on your system and would like to use it with SoS, you will need to</p>
+<ul>
+<li>Place executable <code>python2</code> or <code>python2.7</code> in your <code>$PATH</code> and use action <code>python2</code> for python2 scripts.</li>
+<li>Install python2 kernel following directions <a href="http://ipython.readthedocs.io/en/stable/install/kernel_install.html">here</a>. Most likely you should be using commands<div class="highlight"><pre><span></span>conda create -n ipykernel_py2 <span class="nv">python</span><span class="o">=</span><span class="m">2</span> ipykernel
+<span class="nb">source</span> activate ipykernel_py2    <span class="c1"># On Windows, remove the word &#39;source&#39;</span>
+python -m ipykernel install --user
+</pre></div>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/Python3.png" style="width:32pt;height:32pt;margin-right:15pt;">Python 3</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>No special installation is required because Jupyter notebook comes with Python 3 kernel.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/R.png" style="width:32pt;height:32pt;margin-right:15pt;">R</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you are using anaconda, you can install R and required packages using</p>
+
+<pre><code>conda install -c r r-essentials r-feather
+conda install -c conda-forge feather-format</code></pre>
+<p>Otherwise, you will need to install</p>
+<ul>
+<li><a href="https://www.r-project.org/">R</a> version 3.2 or later (for IRKernel)</li>
+<li><a href="https://github.com/IRkernel/IRkernel">IRKernel</a> R kernel for Jupyter</li>
+<li>Python <a href="https://github.com/wesm/feather">feather-format</a> module and R <a href="https://cran.r-project.org/web/packages/feather/index.html">feather</a> library for exchanging data frames between SoS/Python DataFrame and R data.frame.</li>
+</ul>
+<p>Hint:</p>
+<ul>
+<li>If you are running windows and using conda, you might need to run <code>activate.bat</code> before you could run ir kernel from Jupyter (<a href="https://github.com/ContinuumIO/anaconda-issues/issues/777">issue 777 of anaconda</a>)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3><img src="img/SAS.png" style="width:32pt;height:32pt;margin-right:15pt;">SAS</h3>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With a proper SAS installation, you can check if you already have <code>sas-kernel</code> installed by checking the output of command</p>
+
+<pre><code>jupyter kernelspec list</code></pre>
+<p>If you do not see <code>sas</code> in the list, you can install it by following instructions on <code>sos-kernel</code> <a href="https://github.com/sassoftware/sas_kernel">homepage</a>. In the simplest case, you can install SAS kernel and required modules using command</p>
+
+<pre><code>pip install sas_kernel saspy sas7bdat</code></pre>
+<p>and connect to a local SAS installation with config file (e.g. <code>~/anaconda3/lib/python3.6/site-packages/saspy/sascfg.py</code>)</p>
+
+<pre><code>SAS_config_names=['default']
+SAS_config_options = {'lock_down': True}
+default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code></pre>
+<p>For more complicated cases, you would have to configure your SAS connection as instructed in the <a href="https://sassoftware.github.io/saspy/install.html">saspy manual</a>. Note that</p>
+<ol>
+<li>You will need SAS version 9.4 or higher to use <code>sas_kernel</code>, and as of July 2017, <code>sas_kernel</code> only supports Linux system, namely Windows and mac OSX are not supported.</li>
+<li>The SAS Unversity Edition runs a jupyter server inside a Virtual Machine without ssh access. Although you can use this version to learn SAS and Jupyter, it is not possible to use it with SoS.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Testing-the-Cutting-Edge">Testing the Cutting-Edge<a class="anchor-link" href="#Testing-the-Cutting-Edge">&#182;</a></h1><p>You can get the latest git version of SoS with commands</p>
+
+<pre><code>% git clone https://github.com/vatlab/SOS.git
+% cd SOS
+% python setup.py install</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Running-SoS-in-command-line">Running SoS in command line<a class="anchor-link" href="#Running-SoS-in-command-line">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS can be executed in batch mode from command line or in interactive mode in <a href="http://jupyter.org/">Jupyter Notebook</a>.</p>
+<p>SoS uses a subcommand system with subcommands such as <code>run</code>, <code>dryrun</code>, <code>convert</code>, <code>pack</code>, <code>unpack</code>. You can get a list of subcommands using command</p>
+
+<pre><code>% sos -h</code></pre>
+<p>and usage of a particular subcomand using commands such as</p>
+
+<pre><code>% sos run -h</code></pre>
+<p>You can execute a SoS script <code>myscript</code> (or <code>myscript.sos</code>) in batch mode using command</p>
+
+<pre><code>% sos run myscript [options]</code></pre>
+<p>directly using command</p>
+
+<pre><code>% myscript [options]</code></pre>
+<p>if the script has shebang line</p>
+
+<pre><code>#!/usr/bin/env sos-runner</code></pre>
+<p>Please refer to chapter <a href="doc/documentation/User_Interface.html">Command Line Interface</a> of the SoS documentation for more details.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Running-SoS-interactively">Running SoS interactively<a class="anchor-link" href="#Running-SoS-interactively">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To use SoS interactively with Jupyter, you need to first verify if the sos kernel is properly installed, by checking if <code>sos</code> is listed in the output of command</p>
+
+<pre><code>% jupyter kernelspec list</code></pre>
+<p>Then you can start a Jupyter server with commnad</p>
+
+<pre><code>% jupyter notebook</code></pre>
+<p>and choose <code>SoS</code> as the kernel for a new notebook. Please refer to <a href="doc/documentation/Notebook_Interface.html">Notebook Interface</a> of the SoS documentation for details.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One of the advantages of using a Jupyter notebook is the ability to access the notebook remotely. For example, you can start a Jupyter server from your office computer and connect to it from you home (as long as there is no firewall that blocks the assigned port).</p>
+<p><a href="http://jupyter-notebook.readthedocs.io/en/latest/public_server.html">The jupyter documentation</a> provides detailed instructions on how to start a Jupyter notebook server that accepts external connection. Generally speaking, you should run command</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">notebook.auth</span> <span class="kn">import</span> <span class="n">passwd</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">passwd</span><span class="p">()</span>
+</pre></div>
+<p>from a Python shell to get <code>sha</code> presentation of a password. Generate a new configuration file (<code>~/.jupyter/jupyter_notebook_config.py</code>) with command</p>
+
+<pre><code>jupyter notebook --generate-config</code></pre>
+<p>and modify it with lines such as</p>
+<div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span>
+<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;sha1:bcd259ccf...&lt;your hashed password here&gt;&#39;</span>
+<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">open_browser</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="mi">9999</span>
+</pre></div>
+<p>Then, after you start your notebook server using command</p>
+
+<pre><code>% jupyter notebook</code></pre>
+<p>You should be able to access it remotely with URL</p>
+
+<pre><code>http://url-or-ip-of-notebook-server:9999/</code></pre>
+
+</div>
+</div>
+</div>
+ 
+

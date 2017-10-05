@@ -1,0 +1,661 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta charset='utf-8'>
+ <title>Fusion_sequences.sos</title>
+<meta http-equiv="content-type" content="text/html; charset=None">
+
+<style type="text/css">
+html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+}
+
+a:active,
+a:hover {
+  outline-width: 0;
+}
+
+img {
+  border-style: none;
+}
+
+pre {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #333;
+  background-color: #fff;
+}
+
+a {
+  color: #4078c0;
+  text-decoration: none;
+}
+
+a:hover,
+a:active {
+  text-decoration: underline;
+}
+
+pre {
+  margin-top: 0;
+  margin-bottom: 0;
+  font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.container {
+  width: 980px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.container::before {
+  display: table;
+  content: "";
+}
+
+.container::after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
+.right {
+  float: right !important;
+}
+
+::-moz-placeholder {
+  color: #999;
+}
+
+:-ms-input-placeholder {
+  color: #999;
+}
+
+::placeholder {
+  color: #999;
+}
+
+.form-select::-ms-expand {
+  opacity: 0;
+}
+
+.avatar {
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+
+.commit-tease {
+  position: relative;
+  padding: 10px;
+  margin-bottom: -1px;
+  line-height: 20px;
+  color: #68777d;
+  background-color: #f2f9fc;
+  border: 1px solid #c9e6f2;
+  border-radius: 3px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.commit-tease .message {
+  color: inherit;
+}
+
+.commit-tease .avatar {
+  margin-top: -1px;
+}
+
+.commit-tease-sha {
+  display: inline-block;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  color: #445055;
+}
+
+.full-commit .btn-outline:not(:disabled):hover {
+  color: #4078c0;
+  border: 1px solid #4078c0;
+}
+
+.blob-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.blob-num {
+  width: 1%;
+  min-width: 50px;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+  line-height: 18px;
+  color: rgba(0,0,0,0.3);
+  text-align: right;
+  white-space: nowrap;
+  vertical-align: bottom;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: solid #eee;
+  border-width: 0 1px 0 0;
+}
+
+.blob-num:hover {
+  color: rgba(0,0,0,0.6);
+}
+
+.blob-num::before {
+  content: attr(data-line-number);
+}
+
+.blob-code {
+  position: relative;
+  padding-right: 10px;
+  padding-left: 10px;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.sos-comment {
+  /* background: #f7f7f7; */
+}
+.sos-report {
+  background: #FAFAD2;
+  padding-top: 5px;
+}
+.sos-header {
+  margin-top: 5px;
+  margin-bottom: 0px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: #ddd;
+  /* border-bottom-color: #dde4e6; */
+  color: darkblue;
+  border-top-style: solid;
+
+}
+.sos-directive {
+  padding-top: 5px;
+  /* background-color: #fff9ea; */
+  border-color: #f1c0c0;
+}
+.sos-statement {
+  padding-top: 5px;
+  /* background-color: #f2f9fc; */
+}
+.sos-error {
+  /* background: #ffdddd; */
+  color: red;
+}
+.sos-script {
+  position: relative;
+  padding-right: 10px;
+  padding-left: 30px;
+  vertical-align: top;
+  /* background-color: #eff0f1; */
+}
+
+
+.blob-code-inner {
+  overflow: visible;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+  color: #333;
+  word-wrap: normal;
+  white-space: pre;
+}
+
+.blob-code-inner::before {
+  content: "";
+}
+
+body {
+  min-width: 1020px;
+  word-wrap: break-word;
+}
+
+.user-mention {
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap;
+}
+
+.prose-diff>.markdown-body :not(li.moved).removed {
+  color: #a33;
+  text-decoration: line-through;
+  background: #ffeaea;
+}
+
+.prose-diff>.markdown-body :not(.github-user-ins):not(li.moved).removed {
+  text-decoration: line-through;
+}
+
+.prose-diff>.markdown-body :not(li.moved).added {
+  background: #eaffea;
+}
+
+.prose-diff>.markdown-body :not(.github-user-del):not(li.moved).added li:not(.moved):not(.github-user-del).added {
+  text-decoration: none;
+}
+
+:checked+.radio-label {
+  position: relative;
+  z-index: 1;
+  border-color: #4078c0;
+}
+
+.select-menu-text-filter input::-moz-placeholder {
+  color: #aaa;
+}
+
+.select-menu-text-filter input:-ms-input-placeholder {
+  color: #aaa;
+}
+
+.select-menu-text-filter input::placeholder {
+  color: #aaa;
+}
+
+.tab-size[data-tab-size="8"] {
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+}
+
+# override source
+.source {
+  background: auto;
+}
+
+.file {
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+.file-header {
+  padding: 5px 10px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #d8d8d8;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.file-header::before {
+  display: table;
+  content: "";
+}
+
+.file-header::after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
+.file-actions {
+  float: right;
+  padding-top: 3px;
+}
+
+.file-info {
+  float: left;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+  line-height: 32px;
+}
+
+.file-info-divider {
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  margin-right: 3px;
+  margin-left: 3px;
+  vertical-align: middle;
+  background-color: #ddd;
+}
+
+.header-search-input::-ms-clear {
+  display: none;
+}
+
+.org-validate-group input::-ms-clear {
+  display: none;
+}
+
+
+.source .c { color: #408080; font-style: italic } /* Comment */
+.source .err { border: 1px solid #FF0000 } /* Error */
+.source .k { color: #008000; font-weight: bold } /* Keyword */
+.source .o { color: #666666 } /* Operator */
+.source .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.source .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.source .cp { color: #BC7A00 } /* Comment.Preproc */
+.source .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.source .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.source .cs { color: #408080; font-style: italic } /* Comment.Special */
+.source .gd { color: #A00000 } /* Generic.Deleted */
+.source .ge { font-style: italic } /* Generic.Emph */
+.source .gr { color: #FF0000 } /* Generic.Error */
+.source .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.source .gi { color: #00A000 } /* Generic.Inserted */
+.source .go { color: #888888 } /* Generic.Output */
+.source .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.source .gs { font-weight: bold } /* Generic.Strong */
+.source .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.source .gt { color: #0044DD } /* Generic.Traceback */
+.source .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.source .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.source .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.source .kp { color: #008000 } /* Keyword.Pseudo */
+.source .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.source .kt { color: #B00040 } /* Keyword.Type */
+.source .m { color: #666666 } /* Literal.Number */
+.source .s { color: #BA2121 } /* Literal.String */
+.source .na { color: #7D9029 } /* Name.Attribute */
+.source .nb { color: #008000 } /* Name.Builtin */
+.source .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.source .no { color: #880000 } /* Name.Constant */
+.source .nd { color: #AA22FF } /* Name.Decorator */
+.source .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.source .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.source .nf { color: #0000FF } /* Name.Function */
+.source .nl { color: #A0A000 } /* Name.Label */
+.source .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.source .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.source .nv { color: #19177C } /* Name.Variable */
+.source .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.source .w { color: #bbbbbb } /* Text.Whitespace */
+.source .mb { color: #666666 } /* Literal.Number.Bin */
+.source .mf { color: #666666 } /* Literal.Number.Float */
+.source .mh { color: #666666 } /* Literal.Number.Hex */
+.source .mi { color: #666666 } /* Literal.Number.Integer */
+.source .mo { color: #666666 } /* Literal.Number.Oct */
+.source .sa { color: #BA2121 } /* Literal.String.Affix */
+.source .sb { color: #BA2121 } /* Literal.String.Backtick */
+.source .sc { color: #BA2121 } /* Literal.String.Char */
+.source .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.source .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.source .s2 { color: #BA2121 } /* Literal.String.Double */
+.source .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.source .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.source .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.source .sx { color: #008000 } /* Literal.String.Other */
+.source .sr { color: #BB6688 } /* Literal.String.Regex */
+.source .s1 { color: #BA2121 } /* Literal.String.Single */
+.source .ss { color: #19177C } /* Literal.String.Symbol */
+.source .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.source .fm { color: #0000FF } /* Name.Function.Magic */
+.source .vc { color: #19177C } /* Name.Variable.Class */
+.source .vg { color: #19177C } /* Name.Variable.Global */
+.source .vi { color: #19177C } /* Name.Variable.Instance */
+.source .vm { color: #19177C } /* Name.Variable.Magic */
+.source .il { color: #666666 } /* Literal.Number.Integer.Long */
+ </style>
+</head>
+<body>
+
+
+
+<div class="container new-discussion-timeline experiment-repo-nav">
+
+ <div class="commit-tease">
+      <span class="right">
+      </span>
+ <div>
+        <a class="header-logo-invertocat" href="https://vatlab.github.io/SOS" data-hotkey="g d" aria-label="Homepage">
+        <img src="http://vatlab.github.io/SOS/img/sos_icon.svg" alt="sos_icon">
+        </a>
+
+        <span class="user-mention"><a href="Fusion_sequences.sos">Fusion_sequences.sos</a></span>
+      </div>
+      </div>
+
+  <div class="repository-content">
+  <div class="file">
+  <div class="file-header">
+
+  <div class="file-info">
+      <a href="Fusion_sequences.sos" class="commit-tease-sha">Fusion_sequences.sos</a>
+      <span class="file-info-divider"></span>
+    2.7 KiB
+  </div>
+  <div class="file-actions">
+  </div>
+  </div>
+ <div itemprop="text" class="blob-wrapper data type-python">
+
+<table class="highlight tab-size js-file-line-container"><div class="source blob-code sos-comment"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#fileformat=SOS1.0</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># This script uses command `vtools_report sequence` to retrieve DNA and mRNA sequence around</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># break points of fusions.</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">RNA</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#  Get RNA sequence for a particular fusion candidate with parameter</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#  break_point:  break point in the format of chr1:pos1&gt;chr2:pos2</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#  gene1:  5-prime gene</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#  gene2:  3-prime gene</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">break_point</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="kn">parameter:</span> <span class="n">gene1</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="kn">parameter:</span> <span class="n">gene2</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="kn">parameter:</span> <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;/dev/stdout&#39;</span>
+<span class="kn">parameter:</span> <span class="n">lead</span> <span class="o">=</span> <span class="mi">50</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="n">five_prime</span><span class="p">,</span> <span class="n">three_prime</span> <span class="o">=</span> <span class="n">break_point</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)</span>
+<span class="n">five_chr</span><span class="p">,</span> <span class="n">five_pos</span> <span class="o">=</span> <span class="n">five_prime</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+<span class="n">three_chr</span><span class="p">,</span> <span class="n">three_pos</span> <span class="o">=</span> <span class="n">three_prime</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+ 
+ 
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="n">gene1_strand</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;vtools_report transcript ${five_chr}:${int(five_pos)-lead}-${five_pos} --first-transcript --strand-only -v0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="k">if</span> <span class="n">gene1_strand</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+    <span class="c1"># | &lt;==== </span>
+    <span class="n">gene1_range</span> <span class="o">=</span> <span class="s2">&quot;${int(five_pos)}-${int(five_pos)+lead-1}&quot;</span>
+<span class="kn">else:</span>
+    <span class="c1"># =====&gt; |</span>
+    <span class="n">gene1_range</span> <span class="o">=</span> <span class="s2">&quot;${int(five_pos)-lead+1}-${five_pos}&quot;</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="n">gene2_strand</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;vtools_report transcript ${three_chr}:${int(three_pos)}-${int(three_pos)+lead} --first-transcript --strand-only -v0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="k">if</span> <span class="n">gene2_strand</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+    <span class="c1"># &lt;==== |</span>
+    <span class="n">gene2_range</span> <span class="o">=</span> <span class="s2">&quot;${int(three_pos)-lead+1}-${int(three_pos)}&quot;</span>
+<span class="kn">else:</span>
+    <span class="c1"># | ====&gt;</span>
+    <span class="n">gene2_range</span> <span class="o">=</span> <span class="s2">&quot;${three_pos}-${int(three_pos)+lead - 1}&quot;</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span> <span class="n">allow_error</span><span class="o">=</span><span class="bp">True</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="nb">echo</span> &gt;&gt; <span class="si">${</span><span class="nv">filename</span><span class="si">}</span>
+<span class="nb">echo</span> <span class="s2">&quot;==&gt; </span><span class="si">${</span><span class="nv">gene1</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">${</span><span class="nv">gene2</span><span class="si">}</span><span class="s2">  </span><span class="si">${</span><span class="nv">break_point</span><span class="si">}</span><span class="s2"> (</span><span class="si">${</span><span class="nv">gene1_strand</span><span class="si">}</span><span class="s2"> </span><span class="si">${</span><span class="nv">gene2_strand</span><span class="si">}</span><span class="s2">)&quot;</span> &gt;&gt; <span class="si">${</span><span class="nv">filename</span><span class="si">}</span>
+vtools_report sequence <span class="si">${</span><span class="nv">five_chr</span><span class="si">}</span>:<span class="si">${</span><span class="nv">gene1_range</span><span class="si">}</span> --transcribe --zero-based <span class="se">\</span>
+     --show-transcript <span class="se">\</span>
+     --mark <span class="si">${</span><span class="nv">five_chr</span><span class="si">}</span>:<span class="si">${</span><span class="nv">gene1_range</span><span class="si">}</span> --marked-region -v0 &gt;&gt; <span class="si">${</span><span class="nv">filename</span><span class="si">}</span>
+<span class="nb">echo</span>  &gt;&gt; <span class="si">${</span><span class="nv">filename</span><span class="si">}</span>
+vtools_report sequence <span class="si">${</span><span class="nv">three_chr</span><span class="si">}</span>:<span class="si">${</span><span class="nv">gene2_range</span><span class="si">}</span> --transcribe <span class="se">\</span>
+    --zero-based --show-transcript <span class="se">\</span>
+     --mark <span class="si">${</span><span class="nv">three_chr</span><span class="si">}</span>:<span class="si">${</span><span class="nv">gene2_range</span><span class="si">}</span> --marked-region -v0 &gt;&gt; <span class="si">${</span><span class="nv">filename</span><span class="si">}</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">RNA_all</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Print RNA sequence for all fusions in all fusion report files under current directory</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">filename</span><span class="o">=</span> <span class="s1">&#39;/dev/stdout&#39;</span>
+<span class="kn">parameter:</span> <span class="n">lead</span><span class="o">=</span> <span class="mi">50</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="n">fusion_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*/fusion/fusions_oncofuse.xls&#39;</span><span class="p">)</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fusion_file&#39;</span><span class="p">:</span> <span class="n">fusion_files</span><span class="p">}</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="nb">echo</span> &gt;&gt; <span class="si">${</span><span class="nv">filename</span><span class="si">}</span>
+<span class="nb">echo</span> &gt;&gt; <span class="si">${</span><span class="nv">filename</span><span class="si">}</span>
+<span class="nb">echo</span> <span class="s2">&quot;Sample ID: </span><span class="si">${</span><span class="nv">fusion_file</span><span class="p">!dd</span><span class="si">}</span><span class="s2">&quot;</span> &gt;&gt; <span class="si">${</span><span class="nv">filename</span><span class="si">}</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="n">fusions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fusion_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fusions</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA&#39;</span><span class="p">,</span> <span class="n">break_point</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;GENOMIC&#39;</span><span class="p">],</span> <span class="n">gene1</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;5_FPG_GENE_NAME&#39;</span><span class="p">],</span> 
+		<span class="n">gene2</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;3_FPG_GENE_NAME&#39;</span><span class="p">],</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">lead</span><span class="o">=</span><span class="n">lead</span><span class="p">)</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">init</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;fusion.proj&#39;</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>vtools init fusion -f --build hg19
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Print fusion sequence for all files with different lead length.</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="s1">&#39;fusion.proj&#39;</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA_all&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;RNA50.txt&#39;</span><span class="p">,</span> <span class="n">lead</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA_all&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;RNA300.txt&#39;</span><span class="p">,</span> <span class="n">lead</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+ 
+ 
+</pre></div>
+
+</table>
+</div>
+</div>
+</div>
+</body></html>
