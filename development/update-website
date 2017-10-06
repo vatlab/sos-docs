@@ -1,0 +1,131 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+[getFileNames]
+run: 
+	python findnames.py ..
+
+[convert-documentation]
+input:  '../src/documentation/*.ipynb', group_by=1
+depends: '../src/documentation/toc_doc.tpl'
+output: _input[0].replace('/src/', '/doc/').replace('.ipynb', '.html')
+
+run:
+	cd ../src/documentation
+	sos convert ${_input!a} ${_output!a}  --template toc_doc
+  	perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output!a}
+
+[convert-tutorials]
+input:  '../src/tutorials/*.ipynb', group_by=1
+depends: '../src/tutorials/toc_tut.tpl'
+output: _input[0].replace('/src/', '/doc/').replace('.ipynb', '.html')
+
+run: 
+	cd ../src/tutorials
+	sos convert ${_input!a} ${_output!a}  --template toc_tut
+  	perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output!a}
+
+[convert-homepage]
+input:  '../src/homepage/*.ipynb', group_by=1
+output: "../${_input!bn}.html"
+
+run: 
+	cd ../src/tutorials
+	sos convert ${_input!a} ${_output!a} --template basic
+
+[convert-example-scripts]
+input:  '../src/examples/*.sos', 'release', group_by=1
+output: "../doc/examples/${_input!bn}.html"
+
+run: workdir='../doc/examples'
+	cp ${_input!a} .
+	sos convert ${_input!b} ${_output!b} --raw ${_input!b} --lineno --style tango
+
+[convert-example-notebooks]
+input:  '../src/examples/*.ipynb', group_by=1
+depends: '../src/sos/jupyter/sos-full.tpl'
+output: "../doc/examples/${_input!bn}.html"
+
+run: workdir='../doc/examples'
+	cp ${_input!a} .
+	sos convert ${_input!b} ${_output!b} --template sos-full
+
+[convert-example-report]
+input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/RNASeqDE.ipynb', group_by=1
+depends: '../src/sos/jupyter/sos-report.tpl'
+output: "../doc/examples/${_input!bn}_report.html"
+
+run: workdir='../doc/examples'
+	cp ${_input!a} .
+	sos convert ${_input!b} ${_output!b} --template sos-report
+
+[convert-large-examples]
+input:  '../src/examples/*/*.sos', group_by=1
+output: "../doc/examples/${_input!db}/${_input!bn}.html"
+
+run: workdir='../doc/examples'
+	[ -d ${_input!db} ] || mkdir ${_input!db}
+	cp ${_input!a} ${_input!db}
+	cp ${_input!da}/README.md ${_input!db}
+	cd ${_input!db}
+	sos convert ${_input!b} ${_output!b} --raw ${_input!b}
+
+[index-site]
+input: '../*.html', '../doc/documentation/*.html',
+    '../doc/tutorials/*.html', '../doc/examples/*.html'
+output: '../tipuesearch/tipuesearch_content.js'
+run:
+    python index_site.py ..
+    
+
+[check-doc]
+# check if examples in the documentation can be run successfully
+input: '../src/documentation/*.ipynb', group_by=1
+
+run:
+	# convert ipynb to sos
+	sos convert ${_input!a} ${_input!bn}.sos
+	# then from sos to ipynb with execution
+	sos convert ${_input!bn}.sos ${_input!b} --execute
+
+[check-link]
+
+# https://www.npmjs.com/package/broken-link-checker
+# use command
+#
+#     npm install broken-link-checker -g
+#
+# to install
+depends: executable('blc')
+
+# check homepage
+run:
+    blc http://vatlab.github.io/SoS
+
+input: '../src/*/*.ipynb', group_by=1
+
+if 'homepage' in _input[0]:
+    run("blc http://vatlab.github.io/SoS/${_input!bn}.html")
+else:
+    run("blc http://vatlab.github.io/SoS/doc/${_input!db}/${_input!bn}.html")
+
+[default]
+
+# convert ipynb to HTML
+sos_run('getFileNames')
+sos_run('convert-documentation')
+sos_run('convert-tutorials')
+sos_run('convert-homepage')
+sos_run('convert-example-scripts')
+sos_run('convert-example-notebooks')
+sos_run('convert-example-report')
+sos_run('convert-large-examples')
+sos_run('index-site')
+
+# push changes to website
+parameter: msg = "Update website"
+
+run: workdir='..'
+	git add --all doc/documentation doc/tutorials doc/examples doc/media ...js *.html
+	git commit *.html doc/* --no-verify -m '${msg}' || true
+	git push --no-verify || true
