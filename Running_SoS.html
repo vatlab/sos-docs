@@ -59,7 +59,7 @@ server</a> from which you can open our sample notebooks and create your own note
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>SoS supports Linux, Mac OSX, and Windows systems and requires <a href="https://www.python.org/">Python 3</a> (version 3.5 or later) so you will need to install Python 3 if you do not have it installed locally. We recommend <a href="https://www.continuum.io/downloads">ananconda Python</a> because it is a complete Python environment with many packages for scientific computing.</p>
-<p>SoS consists of two major parts, the <code>SoS</code> workflow engine and <code>SoS Notebook</code>, each with a number of extension modules. Depending on your working envionment, you can install <code>sos</code>, <code>sos-notebook</code>, and selected task engines and language modules.</p><div class="container">
+<p>SoS consists of two major parts, the <code>SoS</code> workflow engine and <code>SoS Notebook</code>, each with a number of extension modules. Depending on your working envionment, you can install <code>sos</code>, <code>sos-notebook</code>, and selected task engines and language modules. Note that you will need to set up Jupyter kernels for these languages before installing SoS. </p><div class="container">
 <div class="row">
 <div class="col col-sm-6">
         <img src="doc/media/components.png" style="width:100%;">
@@ -72,7 +72,7 @@ server</a> from which you can open our sample notebooks and create your own note
 </ul>
 <h4> Task Engines </h4>
 <ul>
-<li><a href="https://pypi.python.org/pypi/sos-pbs/"><strong><code>sos-pbs</code></strong></a>: PBS task engine for Torch, Slurm, IBM LSF etc, required for submitting external tasks to these batch systems</li>
+<li><a href="https://pypi.python.org/pypi/sos-pbs/"><strong><code>sos-pbs</code></strong></a>: PBS task engine for Torch, Slurm, IBM LSF etc</li>
 <li><a href="https://pypi.python.org/pypi/sos-rq/"><strong><code>sos-rq</code></strong></a>: <a href="http://python-rq.org/"><code>rq</code></a> task engine for SoS</li>
 </ul>
 <h4> Language Extensions </h4> 
@@ -85,15 +85,13 @@ server</a> from which you can open our sample notebooks and create your own note
 <li><a href="https://pypi.python.org/pypi/sos-r/"><strong><code>sos-r</code></strong></a>: SoS extension for R</li>
 <li><a href="https://pypi.python.org/pypi/sos-sas/"><strong><code>sos-sas</code></strong></a>: SoS extension for SAS</li>
 </ul>
-<h4> Other extensions</h4>
-<ul>
-<li><a href="https://pypi.python.org/pypi/sos-bioinfo/"><strong><code>sos-bioinfo</code></strong></a>: SoS extension for bioinformatics</li>
-
-</ul>
     </div>
 </div>
-</div><p>In addition to these packages, a <li><a href="https://pypi.python.org/pypi/sos-essentials/"><strong><code>sos-essentials</code></strong></a> package is provided as a shortcut to install <code>sos</code>, <code>sos-pbs</code>, <code>sos-notebook</code>, <code>sos-bash</code>, <code>sos-python</code>, and <code>sos-r</code> to set up a working SoS environment with Bash, Python and R.</li></p>
-
+</div><p>In addition to these packages,</p>
+<ul>
+<li>Package <a href="https://pypi.python.org/pypi/sos-bioinfo/"><strong><code>sos-bioinfo</code></strong></a> provides previewers for common bioinformatics formats, and</li>
+<li>Package <a href="https://pypi.python.org/pypi/sos-essentials/"><strong><code>sos-essentials</code></strong></a> provides a shortcut to install <code>sos</code>, <code>sos-pbs</code>, <code>sos-notebook</code>, <code>sos-bash</code>, <code>sos-python</code>, and <code>sos-r</code> to set up a working SoS environment with Bash, Python and R.</li>
+</ul>
 </div>
 </div>
 </div>
@@ -258,14 +256,8 @@ Pkg.add("NamedArrays")</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>With a properly installed version of Matlab, you will need to install</p>
-<ul>
-<li>Python package <a href="https://github.com/Calysto/matlab_kernel"><code>matlab_kernel</code></a> with command
-<pre><code>  pip install matlab_kernel</code></pre>
-</li>
-<li>If you have not done so, install <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html">matlab engine for Python</a>, which might not support the most recent version of Python.</li>
-</ul>
-<p>You then should be able to see <code>matlab</code> listed under <code>jupyter kernelspec list</code>, and be able to enter matlab commands by creating a matlab notebook from <code>jupyter notebook</code>.</p>
+<p>With a properly installed version of Matlab, you will need to install <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html">matlab engine for Python</a>, which might not support the most recent version of Python.</p>
+<p>You then should be able to see <code>matlab</code> listed under <code>jupyter kernelspec list</code>, and be able to enter matlab commands by creating a matlab notebook from <code>jupyter notebook</code>. SoS uses <a href="https://github.com/Calysto/matlab_kernel"><code>matlab_kernel</code></a> to interact with Matlab.</p>
 
 </div>
 </div>
@@ -385,10 +377,7 @@ conda install -c conda-forge feather-format</code></pre>
 <p>With a proper SAS installation, you can check if you already have <code>sas-kernel</code> installed by checking the output of command</p>
 
 <pre><code>jupyter kernelspec list</code></pre>
-<p>If you do not see <code>sas</code> in the list, you can install it by following instructions on <code>sos-kernel</code> <a href="https://github.com/sassoftware/sas_kernel">homepage</a>. In the simplest case, you can install SAS kernel and required modules using command</p>
-
-<pre><code>pip install sas_kernel saspy sas7bdat</code></pre>
-<p>and connect to a local SAS installation with config file (e.g. <code>~/anaconda3/lib/python3.6/site-packages/saspy/sascfg.py</code>)</p>
+<p>If you do not see <code>sas</code> in the list, you can install it by following instructions on <code>sos-kernel</code> <a href="https://github.com/sassoftware/sas_kernel">homepage</a> and connect it to a local SAS installation with config file (e.g. <code>~/anaconda3/lib/python3.6/site-packages/saspy/sascfg.py</code>)</p>
 
 <pre><code>SAS_config_names=['default']
 SAS_config_options = {'lock_down': True}
