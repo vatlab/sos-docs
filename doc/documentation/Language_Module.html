@@ -217,7 +217,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_SoS {}.lan_ir {}.lan_javascript {}.lan_python2 {}.lan_python3 {}.lan_sas {}
 
 </style>
 <body>
@@ -236,7 +236,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is relatively easy to define a new language module to allow SoS to exchange variables with a kernel. To make the extension available to other users, you can either create and distribute a separate package, or extend SoS and send us a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>.</p>
+<p>It is relatively easy to define a new language module to allow SoS to exchange variables with a kernel. To make the extension available to other users, you will need to create a package with proper entry points. Please check documentation on <a href="Extending_SoS.html"><code>Extending SoS</code></a> for details.</p>
 
 </div>
 </div>
@@ -400,17 +400,16 @@ b = [1, 2]</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS makes extensive use of <a href="http://setuptools.readthedocs.io/en/latest/setuptools.html#dynamic-discovery-of-services-and-plugins"><strong>entry points</strong></a>, which allows external modules to register their features in the file system to make them available to other modules. It can be confusing initially but <a href="http://stackoverflow.com/questions/774824/explain-python-entry-points">this stack overflow ticket</a> explains it quite well.</p>
-<p>To register additional language with SoS, you either need to extend <code>entry_points</code> of the <a href="https://github.com/vatlab/SOS/blob/master/setup.py"><code>setup.py</code> script</a> of SoS, or create your own package with these <code>entry_points</code>. Option <code>extras_require</code> can be used to specify additional dependent packages for these features. For example, you can create a package with the following entry_points to provide support for ruby.</p>
+<p>To register additional language modules with SoS, you will need to add your modules to section <code>sos-language</code> and other relevant sections of entry points of <code>setup.py</code>. For example, you can create a package with the following entry_points to provide support for ruby.</p>
 
 <pre><code>    entry_points='''
 [sos-language]
-ruby = sos-ruby.kernel:sos_ruby
+ruby = sos_ruby.kernel:sos_ruby
 
 [sos-targets]
-Ruby_Library = sos-ruby.target:Ruby-Library
+Ruby_Library = sos_ruby.target:Ruby-Library
 '''</code></pre>
-<p>With the installation of this package, <code>sos</code> would be able to obtain a class <code>sos_ruby</code> from module <code>sos-ruby.kernel</code>, and use it to work with the <code>ruby</code> language.</p>
+<p>With the installation of this package, <code>sos</code> would be able to obtain a class <code>sos_ruby</code> from module <code>sos_ruby.kernel</code>, and use it to work with the <code>ruby</code> language.</p>
 
 </div>
 </div>
