@@ -17,7 +17,7 @@
 
  <meta name="viewport" content="width=device-width, initial-scale=1">
  <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 
@@ -158,14 +158,17 @@ $( document ).ready(function(){
         
             for (var a=pos;a>=0;a--){
                   var name=docs[a]
-                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
+                   + '&nbsp ' + '<i class="fa ' +
+                      (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' +'</a></li>').insertBefore("#toc-level0 li:eq(0)");
             }
             $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
 
 
             for (var a=pos+1;a<docs.length;a++){
                   var name=docs[a]
-                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
+                    + '&nbsp' + '<i class="fa fa-caret-right"></i>' +'</a></li>');
             }
 
             // var docs=documentation
