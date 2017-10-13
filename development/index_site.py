@@ -35,8 +35,8 @@ files under the top docs directory of the SoS website.
 
 def parse_html(url, html):
     print('Parsing {}'.format(html))
-    with open(html) as content:
-        soup = BeautifulSoup(content, "html.parser")
+    with open(html, 'rb') as content:
+        soup = BeautifulSoup(content, "html.parser", from_encoding='utf-8')
         #
         # try to get the title of the page from h1, h2, or title, and
         # uses filename if none of them exists.
