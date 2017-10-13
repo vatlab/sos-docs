@@ -150,7 +150,7 @@ $( document ).ready(function(){
             table_of_contents(cfg,st);
 
             var file=documentationDict[$("h1:first").attr("id")];
-            var path="http://vatlab.github.io/SoS"
+            var path="http://vatlab.github.io/sos-docs"
             $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
             var docs=documentation;
