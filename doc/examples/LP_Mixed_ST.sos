@@ -8,21 +8,22 @@
 # This script fits linear models
 # using Lasso and Ridge regression
 # and summarizes their prediction performance
-# This script is written in a "forward" flavor
+# This script is written in a "mixed" style that
+# takes advantage of both "forward" and "backward" style
+# workflows
 
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
+data_files = [("data_{}.train.csv".format(x + 1), "data_{}.test.csv".format(x + 1)) for x in range(5)]
 
-[lasso_1, ridge_1: shared = {'data_files': 'output'}]
+[simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
 # Simulate sparse data-sets
 depends: R_library("MASS")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
-parameter: replicate = [x+1 for x in range(5)]
-input: None, for_each = ['replicate']
-output: "data_${_replicate}.train.csv", "data_${_replicate}.test.csv"
+output: "data_${id}.train.csv", "data_${id}.test.csv"
 task:
 R:
-  set.seed(${_replicate})
+  set.seed(${id})
   N = sum(c(${N!,}))
   p = length(c(${beta!,}))
   X = MASS::mvrnorm(n = N, rep(0, p), 0.5^abs(outer(1:p, 1:p, FUN = "-")))
@@ -32,12 +33,12 @@ R:
   write.table(cbind(Ytrain, Xtrain), ${_output[0]!r}, row.names = F, col.names = F, sep = ',')
   write.table(cbind(Ytest, Xtest), ${_output[1]!r}, row.names = F, col.names = F, sep = ',')
 
-[ridge_2]
+[ridge_1 (model fitting)]
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
-depends: R_library("glmnet")
+depends: sos_step('simulation')
 parameter: nfolds = 5
-input: group_by = 2
+input: data_files, group_by = 2
 output: "${_input[0]!nn}.ridge.predicted.csv", "${_input[0]!nn}.ridge.coef.csv"
 task:
 R:
@@ -49,12 +50,12 @@ R:
   write.table(Ypred, ${_output[0]!r}, row.names = F, col.names = F, sep = ',')
   write.table(betahat, ${_output[1]!r}, row.names = F, col.names = F, sep = ',')
 
-[lasso_2]
+[lasso_1 (model fitting)]
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
-depends: Py_Module("sklearn")
+depends: sos_step('simulation')
 parameter: nfolds = 5
-input: group_by = 2
+input: data_files, group_by = 2
 output: "${_input[0]!nn}.lasso.predicted.csv", "${_input[0]!nn}.lasso.coef.csv"
 task:
 python:
@@ -67,42 +68,22 @@ python:
   np.savetxt(${_output[0]!r}, Ypred)
   np.savetxt(${_output[1]!r}, model.coef_)
 
-[lasso_3, ridge_3]
+[ridge_2, lasso_2 (evaluate)]
 # Evaluate predictors by calculating mean squared error
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
-depends: sos_variable('data_files')
-parameter: replicates = list(zip(*(iter(data_files),) * 2))
-input: group_by = 2, group_with = 'replicates'
+depends: sos_step('simulation')
+input: group_by = 2, group_with = "data_files"
 output: "${_input[0]!nn}.mse.csv"
 R:
   b = c(${beta!,})
-  Ytruth = as.matrix(read.csv(${_replicates[1]!r}, header = F)[,-1]) %*% b
+  Ytruth = as.matrix(read.csv(${_data_files[1]!r}, header = F)[,-1]) %*% b
   Ypred = scan(${_input[0]!r})
   prediction_mse = mean((Ytruth - Ypred)^2)
   betahat = scan(${_input[1]!r})
   estimation_mse = mean((betahat - b) ^ 2)
   cat(paste(prediction_mse, estimation_mse), file = ${_output!r})
-  
-[default_1]
+ 
+[default]
 sos_run('ridge')
 sos_run('lasso')
-
-[default_2]
-depends: executable("pandoc")
-input: dynamic("*.mse.csv")
-import numpy as np
-ridge_summary = np.mean(np.matrix([sum([x.strip().split() for x in open(f).readlines()], []) for f in input if 'ridge' in f], dtype = float).T, axis = 1).tolist()
-lasso_summary = np.mean(np.matrix([sum([x.strip().split() for x in open(f).readlines()], []) for f in input if 'lasso' in f], dtype = float).T, axis = 1).tolist()
-
-report: output = "report.md"
-
-| Method | Avg. Estimation Error | Avg. Prediction Error |
-|:------:|:-------:|:-------:|
-| LASSO | ${lasso_summary[1]} | ${lasso_summary[0]} |
-| Ridge | ${ridge_summary[1]} | ${ridge_summary[0]} |
-
-download:
-  https://vatlab.github.io/sos-docs/css/pandoc.css
-
-pandoc: input = "report.md", output = "report.html", args = '${input!q} --css pandoc.css --output ${output!q}'
