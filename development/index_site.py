@@ -21,12 +21,11 @@
 #
 #
 import os
-import sys
 import glob
 import re
 import argparse
 from bs4 import BeautifulSoup
-from collections import OrderedDict
+
 
 '''
 A simple script to create tipue content by searching for documentation
@@ -50,19 +49,29 @@ def parse_html(url, html):
             title = os.path.basename(html).rsplit('.')[0]
         else:
             title = title.get_text()
+
         # remove special characters which might mess up js file
-        title = re.sub(r'[^a-zA-Z0-9_\.\-]', ' ', title)
+        #title = re.sub(r'[^a-zA-Z0-9_\.\-]', ' ', title)
         #
         # sear
-        text = ''
+        all_text = ''
+        part = ''
+        
         for header in soup.find_all(re.compile('^h[1-6]$')):
             # remove special character
-            text += re.sub(r'[^a-zA-Z0-9_\-=\'".,\\]', ' ', header.get_text()).replace('"', "'").strip() + r'\n'
-        text = re.sub(r'\s+', ' ', text)
-
-
-    return '{{"title": "{}", "text": "{}", "tags": "", "url": "{}"}}'.format(
-            title, text, url)
+            part += re.sub(r'[^a-zA-Z0-9_\-=\'".,\\]', ' ', header.get_text()).replace('"', "'").strip() + "\n"
+            part = re.sub(r'\s+', ' ', part)
+            url2 = header.find('a')
+            if url2 is None:
+                tag = ''
+            else:
+                tag = url2['href']
+                
+            part = '{{"title": "{}", "text": "{}", "tags": "", "url": "{}"}}'.format(header.get_text(), part, url + tag)
+            all_text += part + ',' + "\n"
+            part = ''
+            
+    return all_text
 
 def generate_tipue_content(docs_dir):
 
@@ -72,13 +81,13 @@ def generate_tipue_content(docs_dir):
     examples = glob.glob(os.path.join(docs_dir, 'doc', 'examples', '*.html'))
 
     text = [parse_html(url, html) for (url, html) in [
-            ('https://vatlab.github.io/SoS/', os.path.join(docs_dir, 'Overview.html')),
-            ('https://vatlab.github.io/SoS/#features', os.path.join(docs_dir, 'Features.html')),
-            ('https://vatlab.github.io/SoS/#runningsos', os.path.join(docs_dir, 'Running_SoS.html')),
-            ('https://vatlab.github.io/SoS/#documentation', os.path.join(docs_dir, 'Documentation.html'))] + 
-            [('https://vatlab.github.io/SoS/doc/documentation/{}'.format(os.path.basename(x)), x) for x in documentations] + 
-            [('https://vatlab.github.io/SoS/doc/tutorials/{}'.format(os.path.basename(x)), x) for x in tutorials] + 
-            [('https://vatlab.github.io/SoS/doc/examples/{}'.format(os.path.basename(x)), x) for x in examples]]
+            ('https://vatlab.github.io/sos-docs/', os.path.join(docs_dir, 'Overview.html')),
+            ('https://vatlab.github.io/sos-docs/#features', os.path.join(docs_dir, 'Features.html')),
+            ('https://vatlab.github.io/sos-docs/#runningsos', os.path.join(docs_dir, 'Running_SoS.html')),
+            ('https://vatlab.github.io/sos-docs/#documentation', os.path.join(docs_dir, 'Documentation.html'))] + 
+            [('https://vatlab.github.io/sos-docs/doc/documentation/{}'.format(os.path.basename(x)), x) for x in documentations] + 
+            [('https://vatlab.github.io/sos-docs/doc/tutorials/{}'.format(os.path.basename(x)), x) for x in tutorials] + 
+            [('https://vatlab.github.io/sos-docs/doc/examples/{}'.format(os.path.basename(x)), x) for x in examples]]
     # write the output to file.
     with open(os.path.join(docs_dir, 'tipuesearch', 'tipuesearch_content.js'), 'w') as out:
         out.write('''\
@@ -97,3 +106,4 @@ if __name__ == '__main__':
         ''')
     args = parser.parse_args()
     generate_tipue_content(args.docs_dir)
+
