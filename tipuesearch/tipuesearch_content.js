@@ -35,6 +35,7 @@ var tipuesearch = {"pages": [
 {"title": "Introductory Videos¶", "text": "Introductory Videos ", "tags": "", "url": "https://vatlab.github.io/sos-docs/#documentation#Introductory-Videos"},
 {"title": "Overviews of SoS and SoS Notebook", "text": "Overviews of SoS and SoS Notebook ", "tags": "", "url": "https://vatlab.github.io/sos-docs/#documentation"},
 {"title": "Installation", "text": "Installation ", "tags": "", "url": "https://vatlab.github.io/sos-docs/#documentation"},
+{"title": "SoS Syntax", "text": "SoS Syntax ", "tags": "", "url": "https://vatlab.github.io/sos-docs/#documentation"},
 {"title": "SoS Workflow Engine¶", "text": "SoS Workflow Engine ", "tags": "", "url": "https://vatlab.github.io/sos-docs/#documentation#SoS-Workflow-Engine"},
 {"title": "SoS Notebook¶", "text": "SoS Notebook ", "tags": "", "url": "https://vatlab.github.io/sos-docs/#documentation#SoS-Notebook"},
 {"title": "Tutorials¶", "text": "Tutorials ", "tags": "", "url": "https://vatlab.github.io/sos-docs/#documentation#Tutorials"},
