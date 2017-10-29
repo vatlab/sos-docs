@@ -7,7 +7,7 @@ Compared to maintaining multiple scripts, or using more specialized workflow lan
 * **SoS allows for notebook-, forward- and make-style definitions of workflows**. SoS does not limit you to particular way of defining a workflow. You can use SoS as a notebook to keep track of steps of analysis (notebook-style), transform the notes to a real workflow (forward-style), and add dependency rules if needed (make-style).
 * **You can use SoS interactively with [iPython](https://ipython.org/) or [Jupyter](http://jupyter.org/), write and debug SoS scripts in [Spyder](https://pythonhosted.org/spyder/), and execute scripts in batch mode** with advanced workflow features. The workflow features of SoS are easy to use yet very powerful in helping you execute your pipelines efficiently not only locally, but also on cluster and cloud systems.
 
-SoS, SoS Notebook, and all SoS extensions are distributed under a GNU
-Public License (V3) for non-commercial use. Commercial users should [contact
+SoS, SoS Notebook, and all SoS extensions are copyrighted by Dr. Bo Peng
+but is free for non-commercial use. Commercial users should contact
 Dr. Bo Peng](email:bpeng@mdanderson.org) for separate commercial licenses. 
 
