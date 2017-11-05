@@ -220,7 +220,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }
 
 </style>
 <body>
@@ -2652,7 +2652,15 @@ call_20
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Nested-workflow">Nested workflow<a class="anchor-link" href="#Nested-workflow">&#182;</a></h3><p>SoS also supports nested workflow in which a complete workflow is treated as part of a step process.
+<h3 id="Nested-workflow-(sos_run)">Nested workflow (<code>sos_run</code>)<a class="anchor-link" href="#Nested-workflow-(sos_run)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS also supports nested workflow in which a complete workflow is treated as part of a step process.
 The workflow is execute by SoS action <code>sos_run</code>, e.g.</p>
 <div class="highlight"><pre><span></span><span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span>            <span class="c1"># execute workflow A</span>
 <span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;A + B&#39;</span><span class="p">)</span>        <span class="c1"># execute workflow B after A</span>
@@ -2872,11 +2880,113 @@ call_20
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Because <code>sos_run</code> is simply a SoS action and takes a string as its parameter, it allows very flexible ways to compose (e.g. determine workflow from command line arguments) and execute (e.g. repeated execution of workflows with different options or input files) complex workflows.</p>
+<p>Because <code>sos_run</code> is simply a SoS action and takes a string as its parameter, it allows very flexible ways to compose (e.g. determine workflow from command line arguments) and execute (e.g. repeated execution of workflows with different options or input files) complex workflows. Furthermore, the workflows can be defined in another file so you can organize your workflow as a master workflow that calls nested workflows defined in other files.</p>
+<p>For example, suppose we create a workflow with two steps:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">nested</span><span class="o">.</span><span class="n">sos</span>
+<span class="o">%</span><span class="kp">run</span>
+
+<span class="p">[</span><span class="mi">10</span><span class="p">:</span> <span class="kp">sigil</span><span class="o">=</span><span class="bp">None</span><span class="p">]</span>
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;nested.sos&#39;</span>
+  <span class="p">[</span><span class="n">nested_20</span><span class="p">]</span>
+  <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name} of a nested workflow&quot;</span><span class="p">)</span>
+  
+  <span class="p">[</span><span class="n">nested_30</span><span class="p">]</span>
+  <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name} of a nested workflow&quot;</span><span class="p">)</span>
+</pre></div>
 
 </div>
 </div>
 </div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> nested.sos (128 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[nested_20]
+print(&#34;This is ${step_name} of a nested workflow&#34;)
+
+[nested_30]
+print(&#34;This is ${step_name} of a nested workflow&#34;)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we use the <code>sigil=None</code> section option to avoid string interpolation of <code>${step_name}</code> in the outputed workflow <code>nested.sos</code>. Then, we can execute this workflow with a <code>sos_run</code> action as follows</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;nested&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;nested.sos&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is nested_20 of a nested workflow
+This is nested_30 of a nested workflow
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
