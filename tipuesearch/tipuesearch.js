@@ -18,7 +18,7 @@ http://www.tipue.com/search
           'contextLength'          : 60,
           'contextStart'           : 90,
           'debug'                  : false,
-          'descriptiveWords'       : 25,
+          'descriptiveWords'       : 0,
           'highlightTerms'         : true,
           'liveContent'            : '*',
           'liveDescription'        : '*',
@@ -30,7 +30,7 @@ http://www.tipue.com/search
           'showRelated'            : true,
           'showTime'               : true,
           'showTitleCount'         : true,
-          'showURL'                : true,
+          'showURL'                : false,
           'wholeWords'             : true
           
           }, options);
@@ -74,7 +74,9 @@ http://www.tipue.com/search
                                    "title": tit,
                                    "text": desc,
                                    "tags": cont,
-                                   "url": tipuesearch_pages[i] 
+                                   "url": tipuesearch_pages[i],
+                                   "mainUrl": tipuesearch_pages[i],
+                                   "mainTitle": tipuesearch_pages[i]
                               });    
                          });
                     }
@@ -275,7 +277,9 @@ http://www.tipue.com/search
                                              "score": score,
                                              "title": tipuesearch_in.pages[i].title,
                                              "desc": s_t,
-                                             "url": tipuesearch_in.pages[i].url 
+                                             "url": tipuesearch_in.pages[i].url,
+                                             "mainUrl": tipuesearch_in.pages[i].mainUrl,
+                                             "mainTitle": tipuesearch_in.pages[i].mainTitle
                                         });
                                         c++;                                                                   
                                    }
@@ -328,7 +332,9 @@ http://www.tipue.com/search
                                              "score": score,
                                              "title": tipuesearch_in.pages[i].title,
                                              "desc": s_t,
-                                             "url": tipuesearch_in.pages[i].url
+                                             "url": tipuesearch_in.pages[i].url,
+                                             "mainUrl": tipuesearch_in.pages[i].mainUrl,
+                                             "mainTitle": tipuesearch_in.pages[i].mainTitle
                                         });
                                         c++;                                                                  
                                    }                              
@@ -366,15 +372,30 @@ http://www.tipue.com/search
                               }
                               out += '</div>';
                               
-                              found.sort(function(a, b) { return b.score - a.score } );
-                              
+                              found.sort(function(a, b) { return b.mainTitle.localeCompare(a.mainTitle) } );
+                              var FoundMainTitles = [];
+                              var SortedMainTitles = [];
                               var l_o = 0;
                               for (var i = 0; i < found.length; i++)
                               {
+                              console.log(found[i]);
                                    if (l_o >= start && l_o < set.show + start)
-                                   {                                   
-                                        out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
- 
+                                   {    
+                                   //MY CODE
+                                        if (FoundMainTitles.length === 0) {
+                                            out += '<hr><div class="tipue_search_content_mainTitle"><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></div>';
+                                            out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                            FoundMainTitles.push(found[i].mainTitle);
+                                        } else if (found[i].mainTitle != FoundMainTitles.slice(-1)) {
+                                            out += '<hr><div class="tipue_search_content_mainTitle"><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></div>';
+                                            out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                            FoundMainTitles = [];
+                                            FoundMainTitles.push(found[i].mainTitle);
+                                        } else if (found[i].mainTitle == FoundMainTitles.slice(-1)) {
+                                            out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                            FoundMainTitles = [];
+                                            FoundMainTitles.push(found[i].mainTitle);
+                                        }
                                         if (set.debug)
                                         {                                             
                                              out += '<div class="tipue_search_content_debug">Score: ' + found[i].score + '</div>';
@@ -446,7 +467,8 @@ http://www.tipue.com/search
                                              t_d = $.trim(t_d);
                                              if (t_d.charAt(t_d.length - 1) != '.')
                                              {
-                                                  t_d += ' ...';
+                                                  //t_d += ' ...';
+                                                  t_d += '';
                                              }
                                              
                                              t_d = t_d.replace(/h0011/g, 'span class=\"tipue_search_content_bold\"');
