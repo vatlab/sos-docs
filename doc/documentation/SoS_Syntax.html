@@ -220,7 +220,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_ir {}.lan_python3 {}.lan_R .input_prompt { background-color: #DCDCDA !important }
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_sas {}
 
 </style>
 <body>
@@ -341,12 +341,12 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <tbody>
 <tr>
 <td><strong>Script format function call</strong></td>
-<td><code>R:</code></td>
-<td>Verbatim inclusion of scripts with indentation</td>
+<td><code>R: expand=True</code></td>
+<td>Verbatim inclusion of scripts with optional indentation and string interpolation</td>
 </tr>
 <tr>
 <td></td>
-<td><code>data &lt;- read.csv("${_input}")</code></td>
+<td><code>data &lt;- read.csv("{_input}")</code></td>
 <td></td>
 </tr>
 <tr>
@@ -366,7 +366,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </tr>
 <tr>
 <td><strong>Output statement</strong></td>
-<td><code>output: "${_input}.idx"</code></td>
+<td><code>output: f"{_input}.idx"</code></td>
 <td>Specify output files of a step</td>
 </tr>
 <tr>
@@ -410,15 +410,15 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>SoS allows you to write SoS <strong>actions</strong> (basically a Python function) that accept a script (string) as the first parameter in a special script format. For example, an action <code>R</code> that executes a script</p>
-<div class="highlight"><pre><span></span><span class="n">R</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">pdf(&#39;{_input}&#39;)</span>
+<div class="highlight"><pre><span></span><span class="n">R</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">pdf(&#39;output.pdf&#39;)</span>
 <span class="s2">plot(0, 0)</span>
 <span class="s2">dev.off()</span>
 <span class="s2">&quot;&quot;&quot;</span><span class="p">,</span> <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span><span class="p">)</span>
 </pre></div>
 <p>can be written as</p>
-<div class="highlight"><pre><span></span><span class="kn">R:</span>     <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
-<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_input}&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="kn">R:</span>  <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
+<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>
 <span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
@@ -430,15 +430,15 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>The script is a <a href="https://www.python.org/dev/peps/pep-0498/">f-string</a> without quotation marks</strong>. You can also indent the script (add equal amount of leading white spaces to all lines) and write the action as</p>
+<p>SoS <strong>automatically dedents scripts in script format</strong> so that you can indent the scripts (add equal amount of leading white spaces to all lines) and write the above example as</p>
 <div class="highlight"><pre><span></span><span class="kn">R:</span>  <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
-   <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_input}&#39;</span><span class="p">)</span>
+   <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>
    <span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
-<p>The latter is much preferred because it avoids trouble if the script contains strings such as <code>[1]</code> and <code>option:</code> (and be treated as SoS directives), and more importantly, allows starting a new statement from a non-indented line. For example, <code>print('Hello world')</code> would be considered part of a R script in</p>
+<p>The latter is much preferred because it avoids trouble if the script contains SoS-like syntax such as <code>[1]</code> and <code>option:</code> (and be treated as SoS directives), and more importantly, allows starting a new statement from a non-indented line. For example, <code>print('Hello world')</code> would be considered part of a R script in</p>
 <div class="highlight"><pre><span></span><span class="kn">R:</span>  <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
-<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_input}&#39;</span><span class="p">)</span>
+<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>
 <span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 
@@ -446,12 +446,43 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </pre></div>
 <p>but a separate statement in</p>
 <div class="highlight"><pre><span></span><span class="kn">R:</span>  <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
-   <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_input}&#39;</span><span class="p">)</span>
+   <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>
    <span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">)</span>
 </pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The script format also accepts an option <code>expand</code> that <strong>expand expressions enclosded in specified sigils</strong> (<a href="https://www.python.org/dev/peps/pep-0498/">literal string interpolation</a>). Using <code>expand=True</code>, the included script is converted to a Python f-string so that the string will be interpolated when it is executed. For example,</p>
+
+<pre><code>output = 'output.pdf'
+R: workdir='result', expand=True
+   pdf('{output}')
+   plot(0, 0)
+   dev.off()</code></pre>
+<p>will be translated to</p>
+
+<pre><code>output = 'output.pdf'
+R(f'''\
+pdf('{output}')
+plot(0, 0)
+dev.off()
+''', workdir='result')</code></pre>
+<p>which will be expanded to</p>
+
+<pre><code>R('''\
+pdf('output.pdf')
+plot(0, 0)
+dev.off()
+''', workdir='result')</code></pre>
+<p>when the action is executed.</p>
 
 </div>
 </div>
@@ -472,7 +503,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">R:</span>
+<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="k">if</span> <span class="p">({</span><span class="n">a</span><span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{{</span>
       <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;This is 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
     <span class="p">}}</span> <span class="k">else</span> <span class="p">{{</span>
@@ -508,7 +539,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>However, as you can imagine, inclusion of long scripts with lots of braces like this could be an impossible task. For this reason, SoS allows you to use an alternative <code>sigil</code> for the format string. For example, using <code>sigil='${ }'</code>, you can use <code>${ }</code> for string interpolation and keep <code>{ }</code> untouched.</p>
+<p>However, as you can imagine, inclusion of long scripts with lots of braces like this could be tedious and error-prone. For this reason, SoS allows you to use an alternative sigil for the format string. For example, using <code>expand='${ }'</code>, you can expand expressions inside <code>${ }</code> instead of <code>{ }</code> for string interpolation and do not have to double the braces.</p>
 
 </div>
 </div>
@@ -520,7 +551,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">R:</span> <span class="kp">sigil</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
     <span class="k">if</span> <span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">a</span><span class="p">}</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
       <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;This is 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -556,49 +587,11 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If your script does not need any string interpolation, you can also use <code>sigil=None</code> to disable string interpolation for the included script:</p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">R:</span> <span class="kp">sigil</span><span class="o">=</span><span class="bp">None</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">TRUE</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;This is 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;This is not 1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
-    <span class="p">}</span>
-</pre></div>
+<p>The value of <code>expand</code> should be a string with a single space separating left and right sigils. Note that the use of alternative sigils is just a convenient way for you to include large trunks of scripts with braces. Under the hood SoS will convert the string to properly formatted f-strings with doubled braces and <code>{ }</code> sigils.</p>
 
 </div>
 </div>
 </div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>This is 1
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -611,7 +604,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS makes extensive use of literal string interpolation. Whereas all regular Python datatypes can be used in a literal string and be interpolated and formatted as usual, targets (files and other types of SoS targets) have a special <code>sos_targets</code> type have a special set of format rules. These variables, named <code>input</code>, <code>_input</code>, <code>output</code>, <code>_output</code>, <code>depends</code>, <code>_depends</code> are defined by SoS for each SoS step, although you can define you own variables in <code>sos_targets</code> type if needed.</p>
+<p>SoS makes extensive use of literal string interpolation. Whereas all regular Python datatypes can be used in a literal string and be interpolated and formatted as usual, targets (collection of files and other types of SoS targets) have a special <code>sos_targets</code> type with a special set of format rules. These variables, named <code>input</code>, <code>_input</code>, <code>output</code>, <code>_output</code>, <code>depends</code>, <code>_depends</code> are defined by SoS for each SoS step, although you can define you own variables in <code>sos_targets</code> type if needed.</p>
 
 </div>
 </div>
@@ -628,7 +621,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="n">sos_targets</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;b.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;c.txt&#39;</span><span class="p">])</span>
@@ -645,7 +638,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[4]:</div>
+<div class="prompt output_prompt">Out[3]:</div>
 
 
 
@@ -664,7 +657,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
@@ -696,7 +689,60 @@ c.txt
 </div>
 
 </div>
-	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can convert a <code>sos_targets</code> to a regular list using function <code>targets</code></p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">targets</span><span class="o">.</span><span class="n">targets</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;a.txt&#39;, &#39;b.txt&#39;, &#39;c.txt&#39;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or through array slicing</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -734,7 +780,7 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The first big difference between the formatting of <code>sos_targets</code> and regular lists is that <strong>formatting are applied to each item and joint by space or comma</strong>. For example, where as a regular list is formatted as a list</p>
+<p>The first big difference between the formatting of <code>sos_targets</code> and regular lists is that <strong>formatting are applied to each item and joint by space or comma</strong>. For example, whereas a regular list is formatted as a list</p>
 
 </div>
 </div>
@@ -779,7 +825,7 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A <code>sos_targets</code> are formatted as</p>
+<p>A <code>sos_targets</code> is formatted as</p>
 
 </div>
 </div>
@@ -1652,7 +1698,7 @@ parameter: var_name = default_value</code></pre>
 <li>dictionary <code>A</code> in <code>CONFIG</code> would have value <code>{'B': 'new', 'C': 'old', 'D': 'new'}</code>. </li>
 </ul>
 </li>
-<li>SoS interpolate string values in <code>CONFIG</code> if they contain <code>${ }</code>. The expressions enclosed by <code>${ }</code> would be evaluated with a local namespace that is the dictionary in which the key exists, and a global namespace that is the complete <code>CONFIG</code> dictionary. That is to say, if a configuration file contains
+<li>SoS interpolate string values in <code>CONFIG</code> if they contain <code>{ }</code>. The expressions enclosed by <code>{ }</code> would be evaluated with a local namespace that is the dictionary in which the key exists, and a global namespace that is the complete <code>CONFIG</code> dictionary. That is to say, if a configuration file contains
 <pre><code>user_name: user
 hosts:
   cluster:
@@ -1907,7 +1953,7 @@ hosts:
 </tr>
 <tr>
 <td></td>
-<td><code>depends: "${_input}.idx"</code></td>
+<td><code>depends: f"{_input}.idx"</code></td>
 <td>Step depends on a file derived from input filename</td>
 </tr>
 <tr>
@@ -1927,7 +1973,7 @@ hosts:
 </tr>
 <tr>
 <td></td>
-<td><code>output: '${_input}.idx'</code></td>
+<td><code>output: f'{_input}.idx'</code></td>
 <td>Step generates output derived from input filename</td>
 </tr>
 <tr>
@@ -2052,7 +2098,7 @@ hosts:
 <span class="c1"># Index gtf file using index_gff</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{resource_dir}/{hg19_gff_index}/genes.gff&#39;</span>
 <span class="kn">task:</span>   <span class="n">working_dir</span><span class="o">=</span><span class="n">resource_dir</span>
-<span class="kn">run:</span>    <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;mdabioinfo/miso:latest&#39;</span>
+<span class="kn">run:</span>    <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;mdabioinfo/miso:latest&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="p">{</span><span class="n">hg19_gff_index</span><span class="p">}</span>
     <span class="n">index_gff</span> <span class="o">--</span><span class="n">index</span> <span class="p">{</span><span class="n">hg19_gff_file</span><span class="p">}</span> <span class="p">{</span><span class="n">hg19_gff_index</span><span class="p">}</span>
 </pre></div>
@@ -2616,7 +2662,7 @@ call_20
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
 <span class="p">[</span><span class="n">default_1</span><span class="p">]</span>
 <span class="kn">parameter:</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">10</span>
-<span class="kn">run:</span>
+<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
   <span class="n">echo</span> <span class="p">{</span><span class="n">cutoff</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">batch</span><span class="p">]</span>
@@ -2764,12 +2810,12 @@ echo 2
 <span class="o">%</span><span class="kp">run</span>
 
 <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;nested.sos&#39;</span><span class="p">,</span> <span class="kp">sigil</span><span class="o">=</span><span class="bp">None</span>
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;nested.sos&#39;</span>
   <span class="p">[</span><span class="n">nested_20</span><span class="p">]</span>
-  <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is {step_name} of a nested workflow&quot;</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;This is {step_name} of a nested workflow&quot;</span><span class="p">)</span>
   
   <span class="p">[</span><span class="n">nested_30</span><span class="p">]</span>
-  <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is {step_name} of a nested workflow&quot;</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;This is {step_name} of a nested workflow&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -2787,7 +2833,7 @@ echo 2
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> nested.sos (126 B):</div>
+<div class="sos_hint">> nested.sos (128 B):</div>
 </div>
 
 </div>
@@ -2799,10 +2845,10 @@ echo 2
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>[nested_20]
-print(&#34;This is {step_name} of a nested workflow&#34;)
+print(f&#34;This is {step_name} of a nested workflow&#34;)
 
 [nested_30]
-print(&#34;This is {step_name} of a nested workflow&#34;)
+print(f&#34;This is {step_name} of a nested workflow&#34;)
 </pre>
 </div>
 </div>
@@ -2816,7 +2862,7 @@ print(&#34;This is {step_name} of a nested workflow&#34;)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here we use the <code>sigil=None</code>  option to avoid string interpolation of <code>${step_name}</code> in the outputed workflow <code>nested.sos</code>. Then, we can execute this workflow with a <code>sos_run</code> action as follows</p>
+<p>Then, we can execute this workflow with a <code>sos_run</code> action as follows</p>
 
 </div>
 </div>
@@ -2844,8 +2890,8 @@ print(&#34;This is {step_name} of a nested workflow&#34;)
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>This is {step_name} of a nested workflow
-This is {step_name} of a nested workflow
+<pre>This is nested_20 of a nested workflow
+This is nested_30 of a nested workflow
 </pre>
 </div>
 </div>
@@ -2888,14 +2934,14 @@ This is {step_name} of a nested workflow
 <span class="c1"># this step provides variable `var`</span>
 <span class="p">[</span><span class="n">index</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{filename}.bam.bai&#39;</span><span class="p">]</span>
 <span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{filename}.bam&quot;</span>
-<span class="kn">run:</span>
+<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
    <span class="n">echo</span> <span class="s2">&quot;Generating {output}&quot;</span>
    <span class="n">touch</span> <span class="p">{</span><span class="n">output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">call</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{filename}.vcf&#39;</span><span class="p">]</span>
 <span class="kn">input:</span>   <span class="n">f</span><span class="s2">&quot;{filename}.bam&quot;</span>
 <span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;{input}.bai&quot;</span>
-<span class="kn">run:</span>
+<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
    <span class="n">echo</span> <span class="s2">&quot;Calling variants from {input} with {depends} to {output}&quot;</span>
    <span class="n">touch</span> <span class="p">{</span><span class="n">output</span><span class="p">}</span>
 </pre></div>

@@ -220,7 +220,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_ir {}.lan_javascript {}.lan_python2 {}.lan_python3 {}.lan_sas {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_sas {}
 
 </style>
 <body>
@@ -533,10 +533,10 @@ sos preview test.png -r dev</code></pre>
 
 <pre><code>[10]
 input: bam_files, group_by=1
-output: "${_input}.bai"
+output: f"{_input}.bai"
 
-run:
-    samtools index ${_input}</code></pre>
+run: expand=True
+    samtools index {_input}</code></pre>
 <p>execute a shell script to process each bam file. This is done sequentially for each input file, and is performed by SoS.</p>
 
 </div>
@@ -550,11 +550,11 @@ run:
 
 <pre><code>[10]
 input: bam_files, group_by=1
-output: "${_input}.bai"
+output: f"{_input}.bai"
 
 task:
-run:
-    samtools index ${_input}</code></pre>
+run: expand=True
+    samtools index {_input}</code></pre>
 <p>This statement declares the rest of the step process as a <code>task</code>. For each input file, a task will be created with an ID determined from task content and context (input and output files, variables etc). The task will be by default executed by a local <code>process</code> task queue where tasks are started as background processes.</p>
 
 </div>
@@ -568,11 +568,11 @@ run:
 
 <pre><code>[10]
 input: bam_files, group_by=1
-output: "${_input}.bai"
+output: f"{_input}.bai"
 
-task: concurrent=False
+task: concurrent=False, expand=True
 run:
-    samtools index ${_input}</code></pre>
+    samtools index {_input}</code></pre>
 <p>You can also use command</p>
 
 <pre><code>sos run myscript -q cluster</code></pre>
@@ -580,11 +580,11 @@ run:
 
 <pre><code>[10]
 input: bam_files, group_by=1
-output: "${_input}.bai"
+output: f"{_input}.bai"
 
-task: queue='cluster'
+task: queue='cluster', expand=True
 run:
-    samtools index ${_input}</code></pre>
+    samtools index {_input}</code></pre>
 <p>to submit the commands to a cluster system to be executed on different computing nodes.</p>
 
 </div>
@@ -946,7 +946,7 @@ run:
    cluster:
       queue: long
       job_template: |
-#PBS -q ${queue}
+#PBS -q {queue}
 ...</code></pre>
 <p>and <code>queue</code> will be used in <code>job_template</code>.</p>
 
@@ -963,7 +963,7 @@ run:
     cluster:
         walltime: '10:00:00'
         job_template: |
-    #PBS -l walltime=${walltime}</code></pre>
+    #PBS -l walltime={walltime}</code></pre>
 <p>would set a default <code>walltime</code> of 10 hours for tasks without specified <code>walltime</code>.</p>
 
 </div>
@@ -978,20 +978,20 @@ run:
 <pre><code>  user_name: bpeng
   hosts:
     cluster:
-      address: ${user_name}@domain.com:${port}
+      address: "{user_name}domain.com:{port}"
       port: 123</code></pre>
 <p><code>hosts['cluster']['address']</code> would be interpolated with <code>port</code> from the <code>hosts['cluster']</code> and <code>user_name</code> from the top level configuration.</p>
 <p>To make it easy to share the <code>hosts.yml</code> file among users in the same group, SoS automatically defines <code>user_name</code> to local user ID if it is not explicitly defined so a typical <code>hosts.yml</code> would contain definitions such as</p>
 
 <pre><code>  hosts:
     cluster:
-      address: ${user_name}@domain.com
+      address: "{user_name}@domain.com"
       paths:
-        home: /home/${user_name}
+        home: "/home/{user_name}"
     desktop:
       paths:
-        home: c:\Users\${user_name}</code></pre>
-<p>with <code>${user_name}</code> automatically determined for each user.</p>
+        home: c:\Users\{user_name}</code></pre>
+<p>with <code>{user_name}</code> automatically determined for each user.</p>
 
 </div>
 </div>
@@ -1006,7 +1006,7 @@ run:
   short:
     queue: short
     job_template: |
-        ${queue}
+        {queue}
   long:
     based_on: hosts.short
     queue: long</code></pre>
@@ -1069,31 +1069,31 @@ run:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Option <code>job_template</code> is a template of a shell script that will be submitted to the PBS system. A typical template would be specified as (using a multi-line string literal of YAML format)</p>
+<p>Option <code>job_template</code> is a template of a shell script that will be submitted to the PBS system. A typical template would be specified as (using a multi-line string literal of YAML</p>
 <div class="highlight"><pre><span></span>hosts:
   server:
     job_template: <span class="p">|</span>
       <span class="c1">#!/bin/bash</span>
-      <span class="c1">#PBS -N ${job_name}</span>
-      <span class="c1">#PBS -l nodes=1:ppn=${cores}</span>
-      <span class="c1">#PBS -l walltime=${walltime}</span>
-      <span class="c1">#PBS -l mem=${mem//10**6}MB</span>
-      <span class="c1">#PBS -o ${cur_dir}/${task}.out</span>
-      <span class="c1">#PBS -e ${cur_dir}/${task}.err</span>
+      <span class="c1">#PBS -N {job_name</span>
+      <span class="c1">#PBS -l nodes=1:ppn={cores}</span>
+      <span class="c1">#PBS -l walltime={walltime}</span>
+      <span class="c1">#PBS -l mem={mem//10**6}MB</span>
+      <span class="c1">#PBS -o {cur_dir}/{task}.out</span>
+      <span class="c1">#PBS -e {cur_dir}/{task}.err</span>
       <span class="c1">#PBS -q long</span>
       <span class="c1">#PBS -m ae</span>
       <span class="c1">#PBS -M your@email.address</span>
-      <span class="c1">#PBS -v ${cur_dir}</span>
+      <span class="c1">#PBS -v {cur_dir}</span>
 
-      <span class="nb">cd</span> <span class="si">${</span><span class="nv">cur_dir</span><span class="si">}</span>
+      <span class="nb">cd</span> <span class="o">{</span>cur_dir<span class="o">}</span>
 
-      sos execute <span class="si">${</span><span class="nv">task</span><span class="si">}</span> -v <span class="si">${</span><span class="nv">verbosity</span><span class="si">}</span> -s <span class="si">${</span><span class="nv">sig_mode</span><span class="si">}</span> <span class="se">\</span>
-        <span class="si">${</span><span class="s1">&#39;--dryrun&#39;</span><span class="p"> if run_mode == </span><span class="s1">&#39;dryrun&#39;</span><span class="p"> else </span><span class="s1">&#39;&#39;</span><span class="si">}</span>
+      sos execute <span class="o">{</span>task<span class="o">}</span> -v <span class="o">{</span>verbosity<span class="o">}</span> -s <span class="o">{</span>sig_mode<span class="o">}</span> <span class="se">\</span>
+        <span class="o">{</span><span class="s1">&#39;--dryrun&#39;</span> <span class="k">if</span> <span class="nv">run_mode</span> <span class="o">==</span> <span class="s1">&#39;dryrun&#39;</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="o">}</span>
 </pre></div>
 <p>The template will be interpolated with the following information</p>
 <ul>
 <li><code>task</code>: task id</li>
-<li><code>job_name</code>: Interpolated value of runtime option <code>name</code>, or task id if <code>name</code> is not provided. For example, <code>name='${step_name}_${_index}'</code> would assign names with step name and index to submitted jobs.</li>
+<li><code>job_name</code>: Interpolated value of runtime option <code>name</code>, or task id if <code>name</code> is not provided. For example, <code>name='{step_name}_{_index}'</code> would assign names with step name and index to submitted jobs.</li>
 <li><code>nodes</code>, <code>cores</code>, <code>walltime</code>, <code>mem</code>: resource task options</li>
 <li><code>cur_dir</code>:  current project directory, which will be translated to path in remote host if the task is executed remotely</li>
 <li><code>verbosity</code> and <code>sig_mode</code>: sos run mode.</li>
@@ -1106,7 +1106,7 @@ run:
 <li>If you need to specify more options (e.g. queue name), you can define multiple host entries with different options, for example, a <code>cluster-short</code> and a <code>cluster-long</code> on the same cluster.</li>
 <li><p>Alternatively, it is possible to derive the options from existing runtime options. For example, you could put a task to long queue if it runs more than 24 hours</p>
 
-<pre><code> #PBS -q ${'long' if int(walltime.split(':')[0]) &gt; 24 else 'short'}</code></pre>
+<pre><code> #PBS -q {'long' if int(walltime.split(':')[0]) &gt; 24 else 'short'}</code></pre>
 </li>
 </ol>
 
@@ -1126,10 +1126,10 @@ run:
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>A <code>submit_cmd</code> template is the command that will be executed to submit the job. It accepts the same set of variables as <code>job_template</code>, with an additional variable <code>job_file</code> pointing to the location of the job file on the remote host. The <code>submit_cmd</code> is usually as simple as</p>
-<div class="highlight"><pre><span></span>qsub <span class="si">${</span><span class="nv">job_file</span><span class="si">}</span>
+<div class="highlight"><pre><span></span>qsub <span class="o">{</span>job_file<span class="o">}</span>
 </pre></div>
 <p>but you could specify some options from command line instead of the job file and define <code>submit_cmd</code> as</p>
-<div class="highlight"><pre><span></span>msub -l <span class="si">${</span><span class="nv">walltime</span><span class="si">}</span> &lt; <span class="si">${</span><span class="nv">job_file</span><span class="si">}</span>
+<div class="highlight"><pre><span></span>msub -l <span class="o">{</span>walltime<span class="o">}</span> &lt; <span class="o">{</span>job_file<span class="o">}</span>
 </pre></div>
 
 </div>
@@ -1153,7 +1153,7 @@ run:
 <p>On a LSF system, the output should be similar to</p>
 
 <pre><code>submit_cmd_output='Job &lt;{job_id}&gt; is submitted to queue &lt;{queue}&gt;'</code></pre>
-<p>The information extracted (namely variables defined) from <code>submit_cmd</code> can be used for other commands such as <code>status_cmd</code>. Note that this parameter uses pattern matching <code>{ }</code> to extract variable, instead of <code>${ }</code> to use variables.</p>
+<p>The information extracted (namely variables defined) from <code>submit_cmd</code> can be used for other commands such as <code>status_cmd</code>.</p>
 <p>This option is defult to <code>{job_id}</code>.</p>
 
 </div>
@@ -1173,8 +1173,8 @@ run:
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>An command to query the status of a submitted task. For a standard PBS system, this option could be</p>
 
-<pre><code>qstat ${job_id}</code></pre>
-<p>where <code>job_id</code> is the output of command <code>submit_cmd</code>. The <code>status_cmd</code> is interpolated with variables <code>job_id</code> (PBS job ID), <code>task</code> (SoS task id), and <code>verbosity</code> (command line verbosity level) so you would adjust options for different verbosity level (e.g. <code>${'-f' if verbosity &gt; 2 else ''}</code>).</p>
+<pre><code>qstat {job_id}</code></pre>
+<p>where <code>job_id</code> is the output of command <code>submit_cmd</code>. The <code>status_cmd</code> is interpolated with variables <code>job_id</code> (PBS job ID), <code>task</code> (SoS task id), and <code>verbosity</code> (command line verbosity level) so you would adjust options for different verbosity level (e.g. <code>{'-f' if verbosity &gt; 2 else ''}</code>).</p>
 <p>Note that the <code>status_cmd</code> is only called with <code>-v 2</code> or higher.</p>
 
 </div>
@@ -1194,7 +1194,7 @@ run:
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>A command to kill a submitted job on the cluster. For a standard PBS system, this option could be</p>
 
-<pre><code>qdel ${job_id}</code></pre>
+<pre><code>qdel {job_id}</code></pre>
 <p>where <code>job_id</code> is the output of command <code>submit_cmd</code>.</p>
 
 </div>
@@ -1217,26 +1217,26 @@ run:
         address: host.url
         description: cluster with PBS
         paths:
-            home: /scratch/${user_name}
+            home: /scratch/{user_name}
         queue_type: pbs
         status_check_interval: 30
         wait_for_task: false
         job_template: |
             #!/bin/bash
-            #PBS -N ${task}
-            #PBS -l nodes=${nodes}:ppn=${ppn}
-            #PBS -l walltime=${walltime}
-            #PBS -l mem=${mem//10**9}GB
-            #PBS -o ${home_dir}/.sos/tasks/${task}.out
-            #PBS -e ${home_dir}/.sos/tasks/${task}.err
+            #PBS -N {task}
+            #PBS -l nodes={nodes}:ppn={ppn}
+            #PBS -l walltime={walltime}
+            #PBS -l mem={mem//10**9}GB
+            #PBS -o {home_dir}/.sos/tasks/{task}.out
+            #PBS -e {home_dir}/.sos/tasks/{task}.err
             #PBS -m ae
             #PBS -M email@address
-            #PBS -v ${cur_dir}
-            cd ${cur_dir}
-            sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}        max_running_jobs: 100
-        submit_cmd: qsub ${job_file}
-        status_cmd: qstat ${job_id}
-        kill_cmd: qdel ${job_id}</code></pre>
+            #PBS -v {cur_dir}
+            cd {cur_dir}
+            sos execute {task} -v {verbosity} -s {sig_mode} {'--dryrun' if run_mode == 'dryrun' else ''}        max_running_jobs: 100
+        submit_cmd: qsub {job_file}
+        status_cmd: qstat {job_id}
+        kill_cmd: qdel {job_id}</code></pre>
 
 </div>
 </div>
@@ -1258,26 +1258,26 @@ run:
         address: host.url
         description: cluster with MOAB
         paths:
-            home: /scratch/${user_name}
+            home: /scratch/{user_name}
         queue_type: pbs
         status_check_interval: 30
         wait_for_task: false
         job_template: |
             #!/bin/bash
-            #PBS -N ${task}
-            #PBS -l nodes=${nodes}:ppn=${ppn}
-            #PBS -l walltime=${walltime}
-            #PBS -l mem=${mem//10**9}GB
-            #PBS -o ${home_dir}/.sos/tasks/${task}.out
-            #PBS -e ${home_dir}/.sos/tasks/${task}.err
+            #PBS -N {task}
+            #PBS -l nodes={nodes}:ppn={ppn}
+            #PBS -l walltime={walltime}
+            #PBS -l mem={mem//10**9}GB
+            #PBS -o {home_dir}/.sos/tasks/{task}.out
+            #PBS -e {home_dir}/.sos/tasks/{task}.err
             #PBS -m ae
             #PBS -M email@address
-            #PBS -v ${cur_dir}
-            cd ${cur_dir}
-            sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}        max_running_jobs: 100
-        submit_cmd: msub ${job_file}
-        status_cmd: qstat ${job_id}
-        kill_cmd: qdel ${job_id}</code></pre>
+            #PBS -v {cur_dir}
+            cd {cur_dir}
+            sos execute {task} -v {verbosity} -s {sig_mode} {'--dryrun' if run_mode == 'dryrun' else ''}        max_running_jobs: 100
+        submit_cmd: msub {job_file}
+        status_cmd: qstat {job_id}
+        kill_cmd: qdel {job_id}</code></pre>
 
 </div>
 </div>
@@ -1299,28 +1299,28 @@ run:
         address: host.url
         description: cluster with LSF
         paths:
-            home: /rsrch2/bcb/${user_name}            
+            home: /rsrch2/bcb/{user_name}            
         queue_type: pbs
         status_check_interval: 30
         wait_for_task: false
         job_template: |
             #!/bin/bash
-            #BSUB -J ${job_name}
-            #BSUB -q ${'short' if int(walltime.split(':')[0]) &lt; 24 else 'long'}
-            #BSUB -n ${cores}
-            #BSUB -M ${mem//10**9}G
+            #BSUB -J {job_name}
+            #BSUB -q {'short' if int(walltime.split(':')[0]) &lt; 24 else 'long'}
+            #BSUB -n {cores}
+            #BSUB -M {mem//10**9}G
             #BSUB -W 1:0
-            #BSUB -o ${home_dir}/.sos/tasks/${task}.out
-            #BSUB -e ${home_dir}/.sos/tasks/${task}.err
+            #BSUB -o {home_dir}/.sos/tasks/{task}.out
+            #BSUB -e {home_dir}/.sos/tasks/{task}.err
             #BSUB -N
             #BSUB -u email@address
-            cd ${cur_dir}
-            sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}
+            cd {cur_dir}
+            sos execute {task} -v {verbosity} -s {sig_mode} {'--dryrun' if run_mode == 'dryrun' else ''}
         max_running_jobs: 100
-        submit_cmd: bsub &lt; ${job_file}
+        submit_cmd: bsub &lt; {job_file}
         submit_cmd_output: 'Job &lt;{job_id}&gt; is submitted to queue &lt;{queue}&gt;'
-        status_cmd: bjobs ${job_id}
-        kill_cmd: bkill ${job_id}</code></pre>
+        status_cmd: bjobs {job_id}
+        kill_cmd: bkill {job_id}</code></pre>
 
 </div>
 </div>
@@ -1343,7 +1343,7 @@ run:
     description: cluster with SLURM
     address: host.url
     paths:
-      home: /home/${user_name}
+      home: /home/{user_name}
     queue_type: pbs
     status_check_interval: 120
     max_running_jobs: 15
@@ -1352,25 +1352,25 @@ run:
     max_mem: 256G
     job_template: |
       #!/bin/bash
-      #SBATCH --time=${walltime}
+      #SBATCH --time={walltime}
       #SBATCH --partition=mstephens
       #SBATCH --account=pi-mstephens
       #SBATCH --nodes=1
-      #SBATCH --ntasks-per-node=${cores}
-      #SBATCH --mem-per-cpu=${mem_per_cpu}
-      #SBATCH --job-name=${job_name}
-      #SBATCH --output=${cur_dir}/.sos/${job_name}.out
-      #SBATCH --error=${cur_dir}/.sos/${job_name}.err
-      cd ${cur_dir}
+      #SBATCH --ntasks-per-node={cores}
+      #SBATCH --mem-per-cpu={mem_per_cpu}
+      #SBATCH --job-name={job_name}
+      #SBATCH --output={cur_dir}/.sos/{job_name}.out
+      #SBATCH --error={cur_dir}/.sos/{job_name}.err
+      cd {cur_dir}
       mkdir -p .sos
-      sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}
+      sos execute {task} -v {verbosity} -s {sig_mode} {'--dryrun' if run_mode == 'dryrun' else ''}
     walltime: "06:00:00"
     cores: 20
     mem_per_cpu: 1000
-    submit_cmd: sbatch ${job_file}
+    submit_cmd: sbatch {job_file}
     submit_cmd_output: "Submitted batch job {job_id}"
-    status_cmd: squeue --job ${job_id}
-    kill_cmd: scancel ${job_id}</code></pre>
+    status_cmd: squeue --job {job_id}
+    kill_cmd: scancel {job_id}</code></pre>
 
 </div>
 </div>
@@ -1391,20 +1391,20 @@ run:
 
 <pre><code>    taskspooler:
         description: task spooler on a single machine
-        address: ${user_name}@host.url
+        address: {user_name}@host.url
         port: 32771
         paths:
-            home: /home/${user_name}
+            home: /home/{user_name}
         queue_type: pbs
         status_check_interval: 5
         job_template: |
             #!/bin/bash
-            cd ${cur_dir}
-            sos execute ${task} -v ${verbosity} -s ${sig_mode} ${'--dryrun' if run_mode == 'dryrun' else ''}
+            cd {cur_dir}
+            sos execute {task} -v {verbosity} -s {sig_mode} {'--dryrun' if run_mode == 'dryrun' else ''}
         max_running_jobs: 100
-        submit_cmd: tsp -L ${task} sh ${job_file}
-        status_cmd: tsp -s ${job_id}
-        kill_cmd: tsp -r ${job_id}</code></pre>
+        submit_cmd: tsp -L {task} sh {job_file}
+        status_cmd: tsp -s {job_id}
+        kill_cmd: tsp -r {job_id}</code></pre>
 
 </div>
 </div>
@@ -1489,7 +1489,7 @@ run:
         redis_port: 6379
         queue: high
         paths:
-            home: /Users/${user_name}</code></pre>
+            home: /Users/{user_name}</code></pre>
 
 </div>
 </div>
@@ -1573,7 +1573,7 @@ run:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The total amount of memory needed across all nodes. Default units are bytes; can also be expressed in megabytes (<code>mem=4000MB</code>). gigabytes (<code>mem=4GB</code>) or gibibytes (<code>mem=4GiB</code>), although all inputs are converted to bytes internally. To use this option in a <code>job_template</code>, you generally need to use expressions such as <code>${mem//1e9}GB</code>.</p>
+<p>The total amount of memory needed across all nodes. Default units are bytes; can also be expressed in megabytes (<code>mem=4000MB</code>). gigabytes (<code>mem=4GB</code>) or gibibytes (<code>mem=4GiB</code>), although all inputs are converted to bytes internally. To use this option in a <code>job_template</code>, you generally need to use expressions such as <code>{mem//1e9}GB</code>.</p>
 
 </div>
 </div>
@@ -1591,7 +1591,7 @@ run:
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Name of the task, which can be a string such as <code>'task'</code> (for task ID) that would be interpolated when a task is generated. The value of this parameter has to be single quoted because otherwise the string would be interpolated before it is passed to task engine.</p>
-<p>This option has default <code>'${step_name}_${_index}'</code> and is currently only used to produce variable <code>job_name</code> for job template.</p>
+<p>This option has default <code>'{step_name}_{_index}'</code> and is currently only used to produce variable <code>job_name</code> for job template.</p>
 
 </div>
 </div>
@@ -1700,14 +1700,14 @@ run:
 import random
 input: for_each={'seed': [random.randint(1, 10000000) for x in range(10000)]}
 task: mem=`1G`, walltime='1m', cores=2, trunk_size=1000
-sh:
-    run_simulation --seed $(seed) &gt;&gt; res_${seed}.res</code></pre>
+sh: expand=True
+    run_simulation --seed (seed) &gt;&gt; res_{seed}.res</code></pre>
 <p>The unbrella tasks have the following properties:</p>
 <ol>
 <li>Tasks embedded by an umbrella task are executed normally in the sense that they have their own input, output, task ID, signatures etc, although only the umbrella tasks are visible to task engines.</li>
 <li>Umbrella task IDs are prefixed by <code>M#_</code> where <code>#</code> is the number of embedded tasks.</li>
 <li>Umbrella tasks adjust resource options such as <code>walltime</code> automatically so in the above example, each umbrella task will have <code>walltime='16:40:00'</code> (1000 minutes). </li>
-<li>Option <code>name</code> (job name on PBS systems) will be adjusted to <code>${name)_##</code> (e.g. <code>default_10_6000_1000</code> if default <code>name='${step_name}_${_index}'</code> is used) where <code>##</code> is the number of subtasks.</li>
+<li>Option <code>name</code> (job name on PBS systems) will be adjusted to <code>{name)_##</code> (e.g. <code>default_10_6000_1000</code> if default <code>name='{step_name}_{_index}'</code> is used) where <code>##</code> is the number of subtasks.</li>
 <li>The entire umbrella will fail if any of the subtasks fails. However, since each subtask has its own signature, completed tasks will be ignored when you rerun the umbrella task (unless <code>-s force</code> is specified to forcefully re-execute all tasks).</li>
 </ol>
 
@@ -1731,8 +1731,8 @@ sh:
 <pre><code>import random
 input: for_each={'seed': [random.randint(1, 10000000) for x in range(10000)]}
 task: mem=`1G`, walltime='1m', cores=2, trunk_size=1000, trunk_workers=5
-sh:
-    run_simulation --seed $(seed) &gt;&gt; res_${seed}.res</code></pre>
+sh: expand=True
+    run_simulation --seed (seed) &gt;&gt; res_{seed}.res</code></pre>
 <ul>
 <li>There would be <code>10000 / 1000 = 10</code> umbrealla tasks each with <code>1000</code> (<code>trunk_size</code>) subtasks.</li>
 <li>Each umbrella task would use <code>2 * 5 + 1 = 11</code> cores where the extra core is used by the master process.</li>
@@ -1799,7 +1799,7 @@ sh:
 <span class="p">[</span><span class="mi">10</span> <span class="p">(</span><span class="n">simulate</span><span class="p">):</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;rng&#39;</span><span class="p">]</span>
 <span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)}</span>
 <span class="kn">task:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;rng&#39;</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;${i}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{i}&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="n">rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 
@@ -2438,30 +2438,30 @@ sos execute [tasks] [-q queue]</code></pre>
   nautilus:
     address: cluster.address
     paths:
-      home: /scratch/${user_name}
+      home: /scratch/{user_name}
     queue_type: pbs
     status_check_interval: 30
     job_template: |
       #!/bin/bash
-      #PBS -N ${job_name}
-      #PBS -l nodes=1:ppn=${cores}
-      #PBS -l walltime=${walltime}
-      #PBS -l mem=${mem//1000000}GB
-      #PBS -o ${home_dir}/.sos/tasks/${task}.out
-      #PBS -e ${home_dir}/.sos/tasks/${task}.err
+      #PBS -N {job_name}
+      #PBS -l nodes=1:ppn={cores}
+      #PBS -l walltime={walltime}
+      #PBS -l mem={mem//1000000}GB
+      #PBS -o {home_dir}/.sos/tasks/{task}.out
+      #PBS -e {home_dir}/.sos/tasks/{task}.err
       #PBS -m ae
       #PBS -M email@address
-      #PBS -v ${cur_dir}
-      cd ${cur_dir}
-      sos execute ${task} -v ${verbosity} -s ${sig_mode} \
-        ${'--dryrun' if run_mode=='dryrun' else ''}
+      #PBS -v {cur_dir}
+      cd {cur_dir}
+      sos execute {task} -v {verbosity} -s {sig_mode} \
+        {'--dryrun' if run_mode=='dryrun' else ''}
     max_running_jobs: 100
-    submit_cmd: msub ${job_file}
-    status_cmd: qstat ${job_id}
-    kill_cmd: qdel ${job_id}
+    submit_cmd: msub {job_file}
+    status_cmd: qstat {job_id}
+    kill_cmd: qdel {job_id}
   workstation:
     paths:
-      home:/Users/${user_name}</code></pre>
+      home:/Users/{user_name}</code></pre>
 <p><code>~/.sos/config.yml</code></p>
 
 <pre><code>localhost: workstation</code></pre>
@@ -2479,9 +2479,9 @@ input: for_each={'tid': range(10) }
 
 task: walltime='20m', mem='100M'
 
-run:
-    echo I am task ${tid}
-    sleep ${60  * (tid + 1)}</code></pre>
+run: expand=True
+    echo I am task {tid}
+    sleep {60  * (tid + 1)}</code></pre>
 
 </div>
 </div>

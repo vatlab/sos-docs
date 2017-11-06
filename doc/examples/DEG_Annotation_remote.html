@@ -11766,7 +11766,9 @@ div#notebook {
         }
     });
     </script>
-    <!-- End of mathjax configuration --></head><style type="text/css">
+    <!-- End of mathjax configuration --></head>
+
+ <meta name="viewport" content="width=device-width, initial-scale=1"><style type="text/css">
 
 table {
    padding: 0;
@@ -11833,7 +11835,7 @@ table tr th :last-child, table tr td :last-child {
 
 .sos_dataframe tr:hover {
     background-color: #e6f2ff;
-}.lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #F6FAEA !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }</style>
+}.lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_julia-0.6 {}.lan_python2 {}.lan_python3 {}.lan_sas {}</style>
 
 
 
@@ -11933,15 +11935,15 @@ function sortDataFrame(id, n, dtype) {
     
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">q</span> <span class="n">shark</span>
 <span class="kn">input:</span> <span class="s1">&#39;DEG_list.csv&#39;</span>
 <span class="kn">output:</span> <span class="s1">&#39;annotated_DEG_list.csv&#39;</span>
 <span class="kn">task:</span>
-<span class="kn">R:</span>
-    <span class="n">data</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">&#39;${input}&#39;</span><span class="p">,</span> <span class="p">)</span>
+<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">data</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">&#39;{input}&#39;</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">biomaRt</span><span class="p">)</span>
     <span class="n">ensembl</span> <span class="o">&lt;-</span> <span class="n">useEnsembl</span><span class="p">(</span><span class="n">biomart</span><span class="o">=</span><span class="s1">&#39;ensembl&#39;</span><span class="p">)</span>
     <span class="n">ensembl</span> <span class="o">&lt;-</span> <span class="n">useEnsembl</span><span class="p">(</span><span class="n">biomart</span><span class="o">=</span><span class="s2">&quot;ensembl&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;mmusculus_gene_ensembl&quot;</span><span class="p">)</span>
@@ -11950,43 +11952,10 @@ function sortDataFrame(id, n, dtype) {
         <span class="n">filters</span> <span class="o">=</span> <span class="s1">&#39;ensembl_gene_id&#39;</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ensembl_gene_id&#39;</span><span class="p">],</span> <span class="n">mart</span> <span class="o">=</span> <span class="n">ensembl</span><span class="p">)</span>
 
     <span class="n">annotated</span> <span class="o">&lt;-</span> <span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">hgnc</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;ensembl_gene_id&#39;</span><span class="p">,</span> <span class="nb">all</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
-    <span class="n">write</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="n">annotated</span><span class="p">,</span> <span class="s1">&#39;${output}&#39;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">write</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="n">annotated</span><span class="p">,</span> <span class="s1">&#39;{output}&#39;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="hidden_output">
-        
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>1 task completed.
-</pre>
-</div>
-</div>
-
-        </div><div class="hidden_output">
-        
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Only the first 200 of the 1184 records are previewed. Use option --limit to set a new limit.
-</pre>
-</div>
-</div>
-
-        </div>
 </div>
 </div>
 

@@ -11766,7 +11766,9 @@ div#notebook {
         }
     });
     </script>
-    <!-- End of mathjax configuration --></head><style type="text/css">
+    <!-- End of mathjax configuration --></head>
+
+ <meta name="viewport" content="width=device-width, initial-scale=1"><style type="text/css">
 
 table {
    padding: 0;
@@ -11833,7 +11835,7 @@ table tr th :last-child, table tr td :last-child {
 
 .sos_dataframe tr:hover {
     background-color: #e6f2ff;
-}.lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #F6FAEA !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }</style>
+}.lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_julia-0.6 {}.lan_python2 {}.lan_python3 {}.lan_sas {}</style>
 
 
 
@@ -11958,11 +11960,11 @@ function sortDataFrame(id, n, dtype) {
 
 <span class="p">[</span><span class="n">QC</span><span class="p">]</span>
 <span class="kn">input:</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;~/RNASeq/R376-8-P8/raw_data/R376-8-P8_S3_L001_R2_001.fastq.gz&#39;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="n">remote</span><span class="p">(</span><span class="s2">&quot;${_input!dd}/QC/${_input!bnn}_fastqc.html&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">remote</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_input:dd}/QC/{_input:bnn}_fastqc.html&quot;</span><span class="p">)</span>
 
 <span class="kn">task:</span> <span class="kp">walltime</span><span class="o">=</span><span class="s1">&#39;30m&#39;</span><span class="p">,</span> <span class="kp">mem</span><span class="o">=</span><span class="s1">&#39;4G&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">fastqc</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">--</span><span class="n">outdir</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="err">!</span><span class="n">dd</span><span class="p">}</span><span class="o">/</span><span class="n">QC</span>
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">fastqc</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">--</span><span class="n">outdir</span> <span class="p">{</span><span class="n">_input</span><span class="err">!</span><span class="n">dd</span><span class="p">}</span><span class="o">/</span><span class="n">QC</span>
 </pre></div>
 
 </div>
@@ -12053,8 +12055,8 @@ function sortDataFrame(id, n, dtype) {
 <span class="kn">output:</span> <span class="s2">&quot;~/RNASeq/R376-8-P8/QC/R376-8-P8_S3_L001_R1_001_fastqc.html&quot;</span>
 
 <span class="kn">task:</span> <span class="kp">walltime</span><span class="o">=</span><span class="s1">&#39;30m&#39;</span><span class="p">,</span> <span class="kp">mem</span><span class="o">=</span><span class="s1">&#39;4G&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">fastqc</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">--</span><span class="n">outdir</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="err">!</span><span class="n">dd</span><span class="p">}</span><span class="o">/</span><span class="n">QC</span>
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">fastqc</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">--</span><span class="n">outdir</span> <span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">dd</span><span class="p">}</span><span class="o">/</span><span class="n">QC</span>
 </pre></div>
 
 </div>
@@ -12090,7 +12092,7 @@ function sortDataFrame(id, n, dtype) {
 <p>The above example uses</p>
 
 <pre><code>output: "~/RNASeq/R376-8-P8/QC/R376-8-P8_S3_L001_R1_001_fastqc.html"</code></pre>
-<p>to specify output directly. It is possible to use <code>input</code> to specify <code>output</code> as the first two examples, but <code>${_input}</code> is now a remote target and cannot be used directly. The trick is to use a <code>R</code> (resolve) converter to obtain the string representation of <code>${_input}</code> before using it for string interpolation.</p>
+<p>to specify output directly. It is possible to use <code>input</code> to specify <code>output</code> as the first two examples, but <code>{_input}</code> is now a remote target and cannot be used directly. The trick is to use a <code>R</code> (resolve) converter to obtain the string representation of <code>{_input}</code> before using it for string interpolation.</p>
 
 </div>
 </div>
@@ -12104,11 +12106,11 @@ function sortDataFrame(id, n, dtype) {
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">q</span> <span class="n">nautilus</span>
 
 <span class="kn">input:</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;~/RNASeq/R376-8-P8/raw_data/R376-8-P8_S3_L001_R1_001.fastq.gz&#39;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="s2">&quot;${_input!Rdd}/QC/${_input!Rnnb}_fastqc.html&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input:Rdd}/QC/{_input:Rnnb}_fastqc.html&quot;</span>
 
 <span class="kn">task:</span> <span class="kp">walltime</span><span class="o">=</span><span class="s1">&#39;30m&#39;</span><span class="p">,</span> <span class="kp">mem</span><span class="o">=</span><span class="s1">&#39;4G&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">fastqc</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">--</span><span class="n">outdir</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="err">!</span><span class="n">dd</span><span class="p">}</span><span class="o">/</span><span class="n">QC</span>
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">fastqc</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">--</span><span class="n">outdir</span> <span class="p">{</span><span class="n">_input</span><span class="err">!</span><span class="n">dd</span><span class="p">}</span><span class="o">/</span><span class="n">QC</span>
 </pre></div>
 
 </div>

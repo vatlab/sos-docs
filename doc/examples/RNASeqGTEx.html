@@ -11766,7 +11766,9 @@ div#notebook {
         }
     });
     </script>
-    <!-- End of mathjax configuration --></head><style type="text/css">
+    <!-- End of mathjax configuration --></head>
+
+ <meta name="viewport" content="width=device-width, initial-scale=1"><style type="text/css">
 
 table {
    padding: 0;
@@ -11833,7 +11835,7 @@ table tr th :last-child, table tr td :last-child {
 
 .sos_dataframe tr:hover {
     background-color: #e6f2ff;
-}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}</style>
+}.lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_julia-0.6 {}.lan_python2 {}.lan_python3 {}.lan_sas {}</style>
 
 
 
@@ -11973,9 +11975,9 @@ function sortDataFrame(id, n, dtype) {
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">RNASeq_to_HDF5</span><span class="p">]</span>
 <span class="c1"># Convert RNASeq data to HDF5</span>
 <span class="kn">parameter:</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;np.uint32&#39;</span>
-<span class="kn">output:</span> <span class="s2">&quot;${input[0]!nb}.hdf5&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{input[0]:nb}.hdf5&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">python:</span>
+<span class="kn">python:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
     <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
     <span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">os</span>
@@ -12042,14 +12044,14 @@ function sortDataFrame(id, n, dtype) {
 <span class="kn">parameter:</span> <span class="n">read_cutoff</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="kn">parameter:</span> <span class="n">sample_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="kn">input:</span> <span class="n">rna_rpkm</span><span class="p">,</span> <span class="n">rna_cnts</span><span class="p">,</span> <span class="n">genotype</span><span class="p">,</span> <span class="n">sample_attr</span>
-<span class="kn">output:</span> <span class="s2">&quot;${cwd!a}/rna_processed/${input[0]!nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;${cwd!a}/rna_processed/${input[0]!nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;${cwd!a}/rna_processed/${input[0]!nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;${cwd!a}/rna_processed/${input[0]!nnb}.qnorm.h5&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;${cwd!a}/rna_processed/${input[0]!nnb}.h5&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">),</span>
-        <span class="s2">&quot;${cwd!a}/rna_processed/${input[0]!nnb}.h5&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.qnorm.h5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.h5&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">),</span>
+        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.h5&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;mstephens&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;20:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;90G&quot;</span>
-<span class="kn">python:</span>
+<span class="kn">python:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
 
     <span class="c1"># Adopted by Gao Wang from:</span>
     <span class="c1"># https://github.com/broadinstitute/gtex-pipeline</span>
@@ -12277,13 +12279,13 @@ function sortDataFrame(id, n, dtype) {
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">rnaseq_2</span><span class="p">]</span>
 <span class="c1"># PEER analysis</span>
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">)</span>
-<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;h5ls ${input[2]} | awk &#39;{print $1}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;h5ls {input[2]} | awk &#39;{print $1}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tissues&#39;</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s2">&quot;${cwd!a}/peer_analysis/${_tissues}_PEER_covariates.txt&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;${cwd!a}/peer_analysis/${_tissues}_PEER_alpha.txt&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;${cwd!a}/peer_analysis/${_tissues}_PEER_residuals.txt&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_covariates.txt&quot;</span><span class="p">,</span> 
+        <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_alpha.txt&quot;</span><span class="p">,</span> 
+        <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_residuals.txt&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;30:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;8G&quot;</span><span class="p">,</span> <span class="kp">trunk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="kp">trunk_workers</span><span class="o">=</span><span class="mi">1</span>
-<span class="kn">R:</span>
+<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
     <span class="n">alphaprior_a</span><span class="o">=</span><span class="mf">0.001</span>
     <span class="n">alphaprior_b</span><span class="o">=</span><span class="mf">0.01</span>
     <span class="n">epsprior_a</span><span class="o">=</span><span class="mf">0.1</span>

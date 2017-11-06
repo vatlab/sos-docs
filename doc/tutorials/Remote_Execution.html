@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #F6FAEA !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_SoS {}
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_javascript {}.lan_julia-0.6 {}.lan_python2 {}.lan_python3 {}.lan_sas {}
 
 </style>
 <body>
@@ -657,15 +657,15 @@ $( document ).ready(function(){
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>With all the pieces put together, you can now execute the task on the remote host using <code>task</code> options</p>
 <div class="highlight"><pre><span></span><span class="kn">depends:</span>  <span class="n">hg19_fasta</span><span class="p">,</span> <span class="n">hg19_genes_gtf</span>
-<span class="kn">output:</span>   <span class="s2">&quot;${hg19_star_index}/chrName.txt&quot;</span>
+<span class="kn">output:</span>   <span class="n">f</span><span class="s2">&quot;{hg19_star_index}/chrName.txt&quot;</span>
 <span class="kn">task:</span>     <span class="kp">queue</span><span class="o">=</span><span class="s1">&#39;monster&#39;</span><span class="p">,</span> <span class="kp">from_host</span><span class="o">=</span><span class="n">hg19_star_index</span>
-<span class="kn">run:</span>
+<span class="kn">run:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">STAR</span> \
         <span class="o">--</span><span class="n">runThreadN</span> <span class="mi">8</span> \
         <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="err">$</span><span class="p">{</span><span class="n">hg19_star_index</span><span class="p">}</span> \
-        <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="err">$</span><span class="p">{</span><span class="n">hg19_fasta</span><span class="p">}</span> \
-        <span class="o">--</span><span class="n">sjdbGTFfile</span> <span class="err">$</span><span class="p">{</span><span class="n">hg19_genes_gtf</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">hg19_star_index</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">hg19_fasta</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">sjdbGTFfile</span> <span class="p">{</span><span class="n">hg19_genes_gtf</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">sjdbOverhang</span> <span class="mi">100</span>
 </pre></div>
 <p>For this example,</p>
@@ -763,39 +763,39 @@ sos kill tasks -q pbs</code></pre>
 <p>The following step runs tophat2 on the input fastq files using a remote host (with alias <code>linux</code>) and docker image <code>genomicpariscentre/tophat2</code>.</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="n">tophat</span><span class="o">-</span><span class="n">align</span><span class="p">]</span>
 <span class="c1"># align reads using the TOPHAT aligner</span>
-<span class="kn">depends:</span>  <span class="n">hg19_genes_gtf</span><span class="p">,</span> <span class="n">hg19_fasta</span><span class="p">,</span> <span class="s2">&quot;${hg19_Bowtie2_index}/genome.1.bt2&quot;</span>
+<span class="kn">depends:</span>  <span class="n">hg19_genes_gtf</span><span class="p">,</span> <span class="n">hg19_fasta</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{hg19_Bowtie2_index}/genome.1.bt2&quot;</span>
 <span class="kn">input:</span>    <span class="n">fastq_files</span>
-<span class="kn">output:</span>   <span class="s2">&quot;${output_dir}/tophat_main/alignments.bam&quot;</span>
+<span class="kn">output:</span>   <span class="n">f</span><span class="s2">&quot;{output_dir}/tophat_main/alignments.bam&quot;</span>
 
 <span class="kn">task:</span>   <span class="kp">queue</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span> <span class="kp">to_host</span><span class="o">=</span><span class="n">hg19_Bowtie2_index</span><span class="p">,</span>
-        <span class="kp">from_host</span><span class="o">=</span><span class="s2">&quot;${output_dir}/tophat_main&quot;</span>
+        <span class="kp">from_host</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;{output_dir}/tophat_main&quot;</span>
 
-<span class="n">R1</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">input</span> <span class="k">if</span> <span class="s1">&#39;_R1_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
-<span class="n">R2</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">input</span> <span class="k">if</span> <span class="s1">&#39;_R2_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
-<span class="kp">stop_if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">R2</span><span class="p">),</span> <span class="s2">&quot;Unequal number of R1 and R2 files from input ${fastq_files}&quot;</span><span class="p">)</span>
+<span class="n">R1</span> <span class="o">=</span> <span class="n">sos_targets</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">input</span> <span class="k">if</span> <span class="s1">&#39;_R1_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]))</span>
+<span class="n">R2</span> <span class="o">=</span> <span class="n">sos_targets</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">input</span> <span class="k">if</span> <span class="s1">&#39;_R2_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]))</span>
+<span class="kp">stop_if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">R2</span><span class="p">),</span> <span class="n">f</span><span class="s2">&quot;Unequal number of R1 and R2 files from input {fastq_files}&quot;</span><span class="p">)</span>
 
 <span class="c1"># genomicpariscentre only has tophat2 (bowtie2) so it does not support option --bortie1</span>
-<span class="kn">run:</span>    <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;genomicpariscentre/tophat2&#39;</span>
+<span class="kn">run:</span>    <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;genomicpariscentre/tophat2&#39;</span><span class="p">,</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
 
-    <span class="p">[</span> <span class="o">-</span><span class="n">d</span> <span class="err">$</span><span class="p">{</span><span class="n">output_dir</span><span class="p">}</span> <span class="p">]</span> <span class="o">||</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="err">$</span><span class="p">{</span><span class="n">output_dir</span><span class="p">}</span>
+    <span class="p">[</span> <span class="o">-</span><span class="n">d</span> <span class="p">{</span><span class="n">output_dir</span><span class="p">}</span> <span class="p">]</span> <span class="o">||</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="p">{</span><span class="n">output_dir</span><span class="p">}</span>
     <span class="n">tophat2</span>  \
         <span class="o">--</span><span class="n">read</span><span class="o">-</span><span class="n">realign</span><span class="o">-</span><span class="n">edit</span><span class="o">-</span><span class="n">dist</span> <span class="mi">1</span> \
         <span class="o">--</span><span class="n">segment</span><span class="o">-</span><span class="n">length</span> <span class="mi">24</span> \
-        <span class="o">-</span><span class="n">o</span> <span class="s1">&#39;${output_dir}/tophat_main&#39;</span> \
+        <span class="o">-</span><span class="n">o</span> <span class="s1">&#39;{output_dir}/tophat_main&#39;</span> \
         <span class="o">-</span><span class="n">p</span> <span class="mi">7</span> \
-        <span class="o">--</span><span class="n">GTF</span> <span class="s1">&#39;${hg19_genes_gtf}&#39;</span> \
+        <span class="o">--</span><span class="n">GTF</span> <span class="s1">&#39;{hg19_genes_gtf}&#39;</span> \
         <span class="o">--</span><span class="n">rg</span><span class="o">-</span><span class="nb">id</span> <span class="mi">0</span> \
-        <span class="o">--</span><span class="n">rg</span><span class="o">-</span><span class="n">sample</span> <span class="s1">&#39;${sample_name}&#39;</span> \
+        <span class="o">--</span><span class="n">rg</span><span class="o">-</span><span class="n">sample</span> <span class="s1">&#39;{sample_name}&#39;</span> \
         <span class="o">--</span><span class="n">library</span><span class="o">-</span><span class="nb">type</span> <span class="n">fr</span><span class="o">-</span><span class="n">firststrand</span> \
         <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">coverage</span><span class="o">-</span><span class="n">search</span> \
         <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">fasta</span><span class="o">-</span><span class="n">order</span>  \
         <span class="o">--</span><span class="n">fusion</span><span class="o">-</span><span class="n">search</span> <span class="o">--</span><span class="n">fusion</span><span class="o">-</span><span class="n">anchor</span><span class="o">-</span><span class="n">length</span> <span class="mi">13</span> \
-        <span class="o">--</span><span class="n">fusion</span><span class="o">-</span><span class="n">ignore</span><span class="o">-</span><span class="n">chromosomes</span> <span class="n">chrM</span><span class="p">,</span><span class="n">M</span> <span class="s1">&#39;${hg19_Bowtie2_index}/genome&#39;</span> \
-        <span class="s1">&#39;${R1!ae,}&#39;</span> <span class="s1">&#39;${R2!ae,}&#39;</span>
+        <span class="o">--</span><span class="n">fusion</span><span class="o">-</span><span class="n">ignore</span><span class="o">-</span><span class="n">chromosomes</span> <span class="n">chrM</span><span class="p">,</span><span class="n">M</span> <span class="s1">&#39;{hg19_Bowtie2_index}/genome&#39;</span> \
+        <span class="s1">&#39;{R1:ae,}&#39;</span> <span class="s1">&#39;{R2:ae,}&#39;</span>
 </pre></div>
 <p>When the step is executed, SoS will</p>
 <ol>
-<li>Transfer <code>hg19_genes_gtf</code>, <code>hg19_fasta</code>, <code>${hg19_Bowtie2_index}/genome.1.bt2</code> (specified by <code>depends</code>), <code>fastq_files</code> (specified by <code>input</code>) and <code>hg19_Bowtie2_index</code> (specified by <code>to_host</code>) to remote server.</li>
+<li>Transfer <code>hg19_genes_gtf</code>, <code>hg19_fasta</code>, <code>{hg19_Bowtie2_index}/genome.1.bt2</code> (specified by <code>depends</code>), <code>fastq_files</code> (specified by <code>input</code>) and <code>hg19_Bowtie2_index</code> (specified by <code>to_host</code>) to remote server.</li>
 <li>Translate all variables (<code>input</code>, <code>output</code>, etc).</li>
 <li>On server <code>linux</code>, before starting the script, download docker image <code>genomicpariscentre/tophat2</code> if not already available.</li>
 <li>Start the bash script in the docker container.</li>

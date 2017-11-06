@@ -11882,7 +11882,7 @@ div.cell {
 }
 .display_control_panel .display_control {
     opacity: 0;
-}.lan_SoS {}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }</style>
+}.lan_SoS {}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_javascript {}.lan_julia-0.6 {}.lan_python2 {}.lan_python3 {}.lan_sas {}</style>
 
 
 
@@ -12057,7 +12057,7 @@ Display content:<br>
         
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="err">$</span><span class="p">{</span><span class="s1">&#39;~/Documents/RNAseqDE&#39;</span><span class="err">!</span><span class="n">a</span><span class="p">}</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="p">{</span><span class="s1">&#39;~/Documents/RNAseqDE&#39;</span><span class="p">:</span><span class="n">a</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -12185,10 +12185,10 @@ Display content:<br>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="kp">download</span> <span class="n">SRA</span> <span class="n">files</span><span class="p">)]</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;files&#39;</span>
-<span class="kn">output:</span> <span class="s2">&quot;${cwd!a}/${_files}.sra&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/{_files}.sra&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">download:</span> 
-    <span class="n">ftp</span><span class="p">:</span><span class="o">//</span><span class="n">ftp</span><span class="o">-</span><span class="n">trace</span><span class="o">.</span><span class="n">ncbi</span><span class="o">.</span><span class="n">nlm</span><span class="o">.</span><span class="n">nih</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">sra</span><span class="o">/</span><span class="n">sra</span><span class="o">-</span><span class="n">instant</span><span class="o">/</span><span class="n">reads</span><span class="o">/</span><span class="n">ByStudy</span><span class="o">/</span><span class="n">sra</span><span class="o">/</span><span class="n">SRP</span><span class="o">/</span><span class="n">SRP033</span><span class="o">/</span><span class="n">SRP033351</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">_files</span><span class="p">}</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">b</span><span class="p">}</span>
+<span class="kn">download:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">ftp</span><span class="p">:</span><span class="o">//</span><span class="n">ftp</span><span class="o">-</span><span class="n">trace</span><span class="o">.</span><span class="n">ncbi</span><span class="o">.</span><span class="n">nlm</span><span class="o">.</span><span class="n">nih</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">sra</span><span class="o">/</span><span class="n">sra</span><span class="o">-</span><span class="n">instant</span><span class="o">/</span><span class="n">reads</span><span class="o">/</span><span class="n">ByStudy</span><span class="o">/</span><span class="n">sra</span><span class="o">/</span><span class="n">SRP</span><span class="o">/</span><span class="n">SRP033</span><span class="o">/</span><span class="n">SRP033351</span><span class="o">/</span><span class="p">{</span><span class="n">_files</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">b</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -12216,8 +12216,8 @@ Display content:<br>
 <span class="kn">input:</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.sra&#39;</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{_name}_1.fastq&quot;</span><span class="p">),</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{_name}_2.fastq&quot;</span><span class="p">)</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;inutano/sra-toolkit&#39;</span>
-    <span class="n">fastq</span><span class="o">-</span><span class="n">dump</span> <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">files</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;inutano/sra-toolkit&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">fastq</span><span class="o">-</span><span class="n">dump</span> <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">files</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -12243,12 +12243,12 @@ Display content:<br>
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_3</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">alignment</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span>
-<span class="kn">output:</span> <span class="p">[</span><span class="s2">&quot;${cwd!a}/</span><span class="si">%s</span><span class="s2">.Aligned.out.sam&quot;</span> <span class="o">%</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{cwd:a}/{f}.Aligned.out.sam&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;darcyabjones/star&#39;</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="err">$</span><span class="p">{</span><span class="n">cwd</span><span class="err">!</span><span class="n">a</span><span class="p">}</span><span class="o">/</span><span class="n">ENSEMBL</span><span class="o">.</span><span class="n">homo_sapiens</span><span class="o">.</span><span class="n">release</span><span class="o">-</span><span class="mi">75</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
-        <span class="o">--</span><span class="n">runThreadN</span> <span class="err">$</span><span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">nnn</span><span class="p">}</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;darcyabjones/star&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">cwd</span><span class="p">:</span><span class="n">a</span><span class="p">}</span><span class="o">/</span><span class="n">ENSEMBL</span><span class="o">.</span><span class="n">homo_sapiens</span><span class="o">.</span><span class="n">release</span><span class="o">-</span><span class="mi">75</span> \
+        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
+        <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">nnn</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -12276,8 +12276,8 @@ Display content:<br>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.Aligned.out.sam&#39;</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{_name}.bam&#39;</span><span class="p">)</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;darcyabjones/samtools&#39;</span>
-    <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bS</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">o</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;darcyabjones/samtools&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bS</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
 </div>

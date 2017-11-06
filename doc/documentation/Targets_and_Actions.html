@@ -220,7 +220,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_sas {}
 
 </style>
 <body>
@@ -474,21 +474,21 @@ print(&#39;I just slept {:.2f} seconds&#39;.format(time.time() - st))
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">seq</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="s1">&#39;seq&#39;</span>
-<span class="kn">run:</span>
-   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="nb">all</span> <span class="n">groups</span> <span class="err">$</span><span class="p">{</span><span class="n">_index</span><span class="p">}</span>
-<span class="kn">run:</span> <span class="kp">active</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="n">even</span> <span class="n">groups</span> <span class="err">$</span><span class="p">{</span><span class="n">_index</span><span class="p">}</span>
-<span class="kn">run:</span> <span class="kp">active</span><span class="o">=-</span><span class="mi">1</span>
-   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="n">last</span> <span class="n">group</span> <span class="err">$</span><span class="p">{</span><span class="n">_index</span><span class="p">}</span>
+<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="nb">all</span> <span class="n">groups</span> <span class="p">{</span><span class="n">_index</span><span class="p">}</span>
+<span class="kn">run:</span> <span class="kp">active</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="n">even</span> <span class="n">groups</span> <span class="p">{</span><span class="n">_index</span><span class="p">}</span>
+<span class="kn">run:</span> <span class="kp">active</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="n">last</span> <span class="n">group</span> <span class="p">{</span><span class="n">_index</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -505,14 +505,23 @@ print(&#39;I just slept {:.2f} seconds&#39;.format(time.time() - st))
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>I am active at all groups 0
+<pre>echo I am active at all groups 0
+I am active at all groups 0
+echo I am active at even groups 0
 I am active at even groups 0
+echo I am active at all groups 1
 I am active at all groups 1
+echo I am active at all groups 2
 I am active at all groups 2
+echo I am active at even groups 2
 I am active at even groups 2
+echo I am active at all groups 3
 I am active at all groups 3
+echo I am active at all groups 4
 I am active at all groups 4
+echo I am active at even groups 4
 I am active at even groups 4
+echo I am active at last group 4
 I am active at last group 4
 </pre>
 </div>
@@ -653,10 +662,10 @@ under /Users/bpeng1/SOS/docs/src/documentation to test it.</span>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>All script-executing actions accept an option <code>args</code>, which changes how the script is executed.</p>
-<p>By default, such an action has an <code>interpreter</code> (e.g. <code>bash</code>), a default <code>args='${filename!q}'</code>, amd the script would be executed as <code>interpreter args</code>, which is</p>
+<p>By default, such an action has an <code>interpreter</code> (e.g. <code>bash</code>), a default <code>args='{filename:q}'</code>, amd the script would be executed as <code>interpreter args</code>, which is</p>
 
-<pre><code>bash ${filename!q}</code></pre>
-<p>where <code>${filename!q}</code> would be replaced by the temporary script file.</p>
+<pre><code>bash {filename:q}</code></pre>
+<p>where <code>{filename:q}</code> would be replaced by the temporary script file.</p>
 
 </div>
 </div>
@@ -677,7 +686,7 @@ under /Users/bpeng1/SOS/docs/src/documentation to test it.</span>
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">bash:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-n ${filename!q}&#39;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">bash:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-n {filename:q}&#39;</span>
     <span class="n">echo</span> <span class="s2">&quot;-n means running in dryrun mode (only check syntax)&quot;</span>
 </pre></div>
 
@@ -702,7 +711,7 @@ under /Users/bpeng1/SOS/docs/src/documentation to test it.</span>
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">python:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-m timeit ${script}&#39;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">python:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-m timeit {script}&#39;</span>
     <span class="s1">&#39;&quot;-&quot;.join(str(n) for n in range(100))&#39;</span>
 </pre></div>
 
@@ -1668,18 +1677,18 @@ under &#34;/private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmp2be4gap5&
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
 <span class="c1"># use sigil=None to stop interpolating expressions in script</span>
-<span class="p">[</span><span class="n">sos</span><span class="p">:</span> <span class="kp">sigil</span><span class="o">=</span><span class="bp">None</span><span class="p">]</span>
+<span class="p">[</span><span class="n">sos</span><span class="p">]</span>
 <span class="kn">run:</span>
     <span class="c1">#!/usr/bin/env sos-runner</span>
     <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name}&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;This is {step_name}&quot;</span><span class="p">)</span>
     <span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is ${step_name}&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;This is {step_name}&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -1696,25 +1705,15 @@ under &#34;/private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmp2be4gap5&
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>This is default_10
-This is default_20
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
 <pre>INFO: Executing <span class="ansi-green-fg">default_10</span>: 
-INFO: input:    <span class="ansi-green-fg">[]</span>
-INFO: output:   <span class="ansi-green-fg">[]</span>
+INFO: input:    
+This is default_10
+INFO: output:   
 INFO: Executing <span class="ansi-green-fg">default_20</span>: 
-INFO: input:    <span class="ansi-green-fg">[]</span>
-INFO: output:   <span class="ansi-green-fg">[]</span>
-INFO: Workflow default (ID=546b66a93731ebf2) is executed successfully.
+INFO: input:    
+This is default_20
+INFO: output:   
+INFO: Workflow default (ID=9668068c46c0e2c0) is executed successfully.
 </pre>
 </div>
 </div>
@@ -1875,7 +1874,7 @@ B_0
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
@@ -1883,7 +1882,7 @@ B_0
 <span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span> <span class="n">b</span><span class="o">.</span><span class="n">txt</span>
 
 <span class="p">[</span><span class="n">process</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Handling ${input}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Handling {input}&quot;</span><span class="p">)</span>
 
 <span class="p">[</span><span class="n">default</span><span class="p">]</span>
 <span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b.txt&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
@@ -1927,14 +1926,14 @@ Handling b.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
 <span class="o">%</span><span class="kp">run</span>
 
 <span class="p">[</span><span class="n">process</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Working with seed ${seed}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Working with seed {seed}&quot;</span><span class="p">)</span>
 
 <span class="p">[</span><span class="n">default</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
@@ -1983,7 +1982,7 @@ Working with seed 4
 
 <span class="p">[</span><span class="n">default</span><span class="p">]</span>
 <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;process&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Result from subworkflow process is ${result}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Result from subworkflow process is {result}&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -2023,7 +2022,7 @@ Working with seed 4
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
@@ -2031,7 +2030,7 @@ Working with seed 4
 
 <span class="p">[</span><span class="n">default</span><span class="p">]</span>
 <span class="kn">parameter:</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">10</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Process with cutoff=${cutoff}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Process with cutoff={cutoff}&quot;</span><span class="p">)</span>
 
 <span class="p">[</span><span class="n">batch</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
@@ -2163,7 +2162,7 @@ Process with cutoff=8
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
@@ -2171,7 +2170,7 @@ Process with cutoff=8
 
 <span class="p">[</span><span class="n">default</span><span class="p">]</span>
 <span class="kn">parameter:</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">10</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Process with cutoff=${cutoff}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Process with cutoff={cutoff}&quot;</span><span class="p">)</span>
 
 <span class="p">[</span><span class="n">batch</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
@@ -2250,18 +2249,18 @@ Process with cutoff=8
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
 
 <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">report:</span>
-    <span class="n">Runing</span> <span class="err">$</span><span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
+<span class="kn">report:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">Runing</span> <span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
 
 <span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">report:</span>
-    <span class="n">Runing</span> <span class="err">$</span><span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
+<span class="kn">report:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">Runing</span> <span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -2303,20 +2302,20 @@ Runing default_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="kp">run</span>
 
 <span class="o">%</span><span class="n">preview</span> <span class="kp">report</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">%</span><span class="kp">run</span>
 <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;report.txt&#39;</span>
-    <span class="n">Runing</span> <span class="err">$</span><span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;report.txt&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">Runing</span> <span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
 
 <span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;report.txt&#39;</span>
-    <span class="n">Runing</span> <span class="err">$</span><span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;report.txt&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">Runing</span> <span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -2337,7 +2336,7 @@ Runing default_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
@@ -2367,21 +2366,11 @@ Runing default_20
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
+<div class="output_subarea output_stream output_stdout output_text">
 <pre># run some command and generate a out.txt
 echo &#34;* some result &#34; &gt; out.txt
 
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Summary Report:
+Summary Report:
 
 * some result
 
@@ -2407,10 +2396,10 @@ echo &#34;* some result &#34; &gt; out.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">run:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-n ${filename!q}&#39;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">run:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-n {filename:q}&#39;</span>
       <span class="n">echo</span> <span class="s2">&quot;a&quot;</span>
 </pre></div>
 
@@ -2477,7 +2466,7 @@ echo &#34;* some result &#34; &gt; out.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">perl:</span>
@@ -2786,12 +2775,12 @@ A: 45 3 19 8 57 9 phil
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
 <span class="o">%</span><span class="n">preview</span> <span class="n">out</span><span class="o">.</span><span class="n">html</span>
-<span class="kn">pandoc:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;out.html&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;${input!q} --output ${output!q} -s&#39;</span>
+<span class="kn">pandoc:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;out.html&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;{input:q} --output {output:q} -s&#39;</span>
     <span class="n">Itemize</span>
 
     <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
@@ -2972,11 +2961,11 @@ docker_build: tag='mdabioinfo/miso:latest'
 GATK_RESOURCE_DIR = '/path/to/resource'
 GATK_URL = 'ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/'
 
-download:   dest=GATK_RESOURCE_DIR
-    ${GATK_URL}/1000G_omni2.5.hg19.sites.vcf.gz
-    ${GATK_URL}/1000G_omni2.5.hg19.sites.vcf.gz.md5
-    ${GATK_URL}/1000G_omni2.5.hg19.sites.vcf.idx.gz
-    ${GATK_URL}/1000G_omni2.5.hg19.sites.vcf.idx.gz.md5</code></pre>
+download:   dest=GATK_RESOURCE_DIR, expand=True
+    {GATK_URL}/1000G_omni2.5.hg19.sites.vcf.gz
+    {GATK_URL}/1000G_omni2.5.hg19.sites.vcf.gz.md5
+    {GATK_URL}/1000G_omni2.5.hg19.sites.vcf.idx.gz
+    {GATK_URL}/1000G_omni2.5.hg19.sites.vcf.idx.gz.md5</code></pre>
 <p>download the specified files to <code>GATK_RESOURCE_DIR</code>. The <code>.md5</code> files will be automatically used to validate the content of the associated files. Note that</p>
 <p>SoS automatically save signature of downloaded and decompressed files so the files will not be re-downloaded if the action is called multiple times. You can however still still specifies input and output of the step to use step signature</p>
 
@@ -2989,7 +2978,7 @@ RESOUCE_FILES =  '''1000G_omni2.5.hg19.sites.vcf.gz
     1000G_omni2.5.hg19.sites.vcf.idx.gz.md5'''.split() 
 input: []
 output:  [os.path.join(GATK_RESOURCE_DIR, x) for x in GATK_RESOURCE_FILES]
-download(['${GATK_URL}/${x}' for x in GATK_RESOURCE_FILES], dest=GATK_RESOURCE_DIR)</code></pre>
+download([f'{GATK_URL}/{x}' for x in GATK_RESOURCE_FILES], dest=GATK_RESOURCE_DIR)</code></pre>
 <p>Note that the <code>download</code> action uses up to 5 processes to download files. You can change this number by adjusting system configuration <code>sos_download_processes</code>.</p>
 
 </div>
@@ -3092,14 +3081,14 @@ download(['${GATK_URL}/${x}' for x in GATK_RESOURCE_FILES], dest=GATK_RESOURCE_D
 <span class="o">%</span><span class="kp">run</span>
 <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;idx&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)}</span>
-<span class="kn">output:</span> <span class="s2">&quot;${idx}.txt&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{idx}.txt&quot;</span>
 <span class="kp">stop_if</span><span class="p">(</span><span class="n">idx</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="kn">run:</span>
-    <span class="n">echo</span> <span class="s2">&quot;Generating ${_output}&quot;</span>
-    <span class="n">touch</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">echo</span> <span class="s2">&quot;Generating {_output}&quot;</span>
+    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Output of last step is ${input}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Output of last step is {input}&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -3277,7 +3266,7 @@ touch 9.txt
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Targets of type <code>FileTarget</code> represents files on a file system. The type <code>FileTarget</code> should not be used explicitly because SoS treats string type targets as <code>FileTarget</code>.</p>
 <p>SoS uses md5 signature to detect changes of the content of files. To reduce the time to generate signature for large files, SoS extracts strips of data from large files to calculate partial MD5. The resulting signatures are different from md5 signature of complete files calcualted from other tools.</p>
-<p>A file can be <strong>zapped</strong> by command <code>sos remove --zap</code> and still be considered available by SoS. This command removes a <code>file</code> and generates <code>${file}.zapped</code> with essential information such as signature and size of the original file. A step would not be rerun if its input, dependent, or output files are zapped instead of removed. This feature is useful for the removal of large intermediate files generated from the execution of workflows, whiling still keeping the complete runtime information of the workflow.</p>
+<p>A file can be <strong>zapped</strong> by command <code>sos remove --zap</code> and still be considered available by SoS. This command removes a <code>file</code> and generates <code>{file}.zapped</code> with essential information such as signature and size of the original file. A step would not be rerun if its input, dependent, or output files are zapped instead of removed. This feature is useful for the removal of large intermediate files generated from the execution of workflows, whiling still keeping the complete runtime information of the workflow.</p>
 
 </div>
 </div>
@@ -3302,8 +3291,8 @@ touch 9.txt
 <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="kn">input:</span>     <span class="s1">&#39;a.txt&#39;</span>
 <span class="kn">depends:</span>   <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;some_command&#39;</span><span class="p">)</span>
-<span class="kn">sh:</span>
-    <span class="n">some_command</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">}</span>
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">some_command</span> <span class="p">{</span><span class="nb">input</span><span class="p">}</span>
 
 <span class="sb">`executable`</span> <span class="n">target</span> <span class="n">can</span> <span class="n">also</span> <span class="n">be</span> <span class="n">output</span> <span class="n">of</span> <span class="n">a</span> <span class="n">step</span> <span class="n">but</span> <span class="n">installing</span> <span class="n">executables</span> <span class="n">can</span> <span class="n">be</span> <span class="n">tricky</span> <span class="n">because</span> <span class="n">the</span> <span class="n">commands</span> <span class="n">should</span> <span class="n">be</span> <span class="n">installed</span> <span class="n">to</span> <span class="n">existing</span> <span class="sb">`$PATH`</span> <span class="n">so</span> <span class="n">that</span> <span class="n">they</span> <span class="n">can</span> <span class="n">be</span> <span class="n">immediately</span> <span class="n">accessible</span> <span class="n">by</span> <span class="n">SoS</span><span class="o">.</span> <span class="n">Because</span> <span class="n">SoS</span> <span class="n">automatically</span> <span class="n">adds</span> <span class="sb">`~/.sos/bin`</span> <span class="n">to</span> <span class="sb">`$PATH`</span> <span class="p">(</span><span class="n">option</span> <span class="sb">`-b`</span><span class="p">),</span> <span class="n">an</span> <span class="n">environment</span><span class="o">-</span><span class="n">neutral</span> <span class="n">way</span> <span class="k">for</span> <span class="n">on</span><span class="o">-</span><span class="n">the</span><span class="o">-</span><span class="n">fly</span> <span class="n">installation</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">install</span> <span class="n">commands</span> <span class="n">to</span> <span class="n">this</span> <span class="n">directory</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span>
 
@@ -3369,8 +3358,8 @@ touch 9.txt
 
 <span class="p">[</span><span class="mi">100</span><span class="p">]</span>
 <span class="kn">depends:</span> <span class="n">sos_variable</span><span class="p">(</span><span class="s1">&#39;counts&#39;</span><span class="p">)</span>
-<span class="kn">report:</span>
-    <span class="n">There</span> <span class="n">are</span> <span class="err">$</span><span class="p">{</span><span class="n">counts</span><span class="p">}</span> <span class="n">objects</span>
+<span class="kn">report:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">There</span> <span class="n">are</span> <span class="p">{</span><span class="n">counts</span><span class="p">}</span> <span class="n">objects</span>
 </pre></div>
 
 </div>
@@ -3407,15 +3396,61 @@ sh:
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Target-sos_step">Target <code>sos_step</code><a class="anchor-link" href="#Target-sos_step">&#182;</a></h3><p>The <code>sos_step</code> target represents, needless to say, a SoS step. This target provides a straightforward method to specify step dependencies. For example,</p>
-<p>[init]
-print("Initialize")</p>
-<p>[10]
-depends: sos_step("init")
-print("I am ${step_name}")</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<span class="p">[</span><span class="n">init</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Initialize&quot;</span><span class="p">)</span>
+
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s2">&quot;init&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;I am {step_name}&quot;</span><span class="p">)</span>
+</pre></div>
 
 </div>
 </div>
 </div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Resolving [sos_step(&#34;init&#34;)] objects from 1 nodes
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Initialize
+I am default_10
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3439,7 +3474,7 @@ print("I am ${step_name}")</p>
     <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
 
 <span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Last output is ${input}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Last output is {input}&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -3469,7 +3504,7 @@ print("I am ${step_name}")</p>
     <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
 
 <span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Last output is ${input}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Last output is {input}&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -3772,7 +3807,7 @@ print("I am ${step_name}")</p>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">v2</span>
 <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;I am at ${step_name}&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;I am at {step_name}&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -3816,7 +3851,7 @@ print("I am ${step_name}")</p>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span> <span class="o">-</span><span class="n">v1</span>
 <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;I am at ${step_name}&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;I am at {step_name}&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -3895,7 +3930,7 @@ print("I am ${step_name}")</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Action <code>matlab</code> execute specified matlab script with default options <code>-nojvm -nodisplay -nosplash -r ${filename!n};quit</code>. The options start matlab without desktop, execute the strip (with parameter without <code>.m</code> extension), and quit matlab when the script is completed.</p>
+<p>Action <code>matlab</code> execute specified matlab script with default options <code>-nojvm -nodisplay -nosplash -r {filename:n};quit</code>. The options start matlab without desktop, execute the strip (with parameter without <code>.m</code> extension), and quit matlab when the script is completed.</p>
 
 </div>
 </div>
@@ -4166,9 +4201,9 @@ Mars     3390   641.85
 <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="kn">output:</span> <span class="s1">&#39;test.jpg&#39;</span>
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;ggplot2&#39;</span><span class="p">)</span>
-<span class="kn">R:</span>
+<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
   <span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span> 
-  <span class="n">jpeg</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+  <span class="n">jpeg</span><span class="p">({</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
   <span class="n">qplot</span><span class="p">(</span><span class="n">Sepal</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">Petal</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">iris</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">Species</span><span class="p">)</span>
   <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
