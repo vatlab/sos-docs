@@ -27,7 +27,7 @@ import argparse
 from bs4 import BeautifulSoup
 
 
-'''
+'''ite
 A simple script to create tipue content by searching for documentation
 files under the top docs directory of the SoS website.
 '''
@@ -49,15 +49,25 @@ def parse_html(url, html):
             title = os.path.basename(html).rsplit('.')[0]
         else:
             title = title.get_text()
+            
+        maintitle = soup.find('h1')
+        if maintitle is None:
+            maintitle = soup.find('h2')
+        if maintitle is None:
+            maintitle = soup.find('title')
+        if maintitle is None:
+            maintitle = os.path.basename(html).rsplit('.')[0]
+        else:
+            maintitle = maintitle.get_text()
 
         # remove special characters which might mess up js file
-        #title = re.sub(r'[^a-zA-Z0-9_\.\-]', ' ', title)
+        title = re.sub(r'[¶^a-zA-Z0-9_\.\-]', ' ', title)
         #
         # sear
         all_text = []
-        
         for header in soup.find_all(re.compile('^h[1-6]$')):
             # remove special character
+            
             part = re.sub(r'[^a-zA-Z0-9_\-=\'".,\\]', ' ', header.get_text()).replace('"', "'").strip() + "\n"
             part = re.sub(r'\s+', ' ', part)
             url2 = header.find('a')
@@ -66,8 +76,9 @@ def parse_html(url, html):
             else:
                 tag = url2['href']
                 
-            part = '{{"title": "{}", "text": "{}", "tags": "", "url": "{}"}}'.format(header.get_text(), part, url + tag)
+            part = '{{"mainTitle": "{}", "title": "{}", "text": "{}", "tags": "", "mainUrl": "{}", "url": "{}"}}'.format(re.sub('¶', '', maintitle), re.sub('¶', '', header.get_text()), part, url, url + tag)
             all_text.append(part)
+       
     return all_text
 
 def generate_tipue_content(docs_dir):
