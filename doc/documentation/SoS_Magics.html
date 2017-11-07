@@ -220,7 +220,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_javascript {}.lan_sas {}
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_R .input_prompt { background-color: #FDEDEC !important }
 
 </style>
 <body>
@@ -393,13 +393,15 @@ optional arguments:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Magic <code>clear</code> clears the output of cells in the following ways:</p>
+<p>Magic <code>clear</code> clears task lists or the output of cells in the following ways:</p>
 <ol>
 <li><p>If <code>%clear</code> is used in a regular cell, the output of the cell will be cleared after the cell is executed, effectively suppress any output of the cell. This is useful in suppressing long output of sos workflows or shell commands.</p>
 </li>
 <li><p>If <code>%clear</code> is executed in the side panel, the output of currently selected cells in the main notebook will be cleared. This magic can then be used as a way to selectively clean up the main notebook without leaving the magic itself in the notebook.</p>
 </li>
 <li><p>If <code>%clear -a</code> or <code>%clear --all</code> is executed, it would remove the output of all cells in the notebook, leaving a clean notebook without any output. This is usually used in removing all tests results and leaving only defined workflow steps in the notebook.</p>
+</li>
+<li><p>If option <code>-s</code> (<code>--status</code>) is specified with a status (most frequently <code>completed</code>), all tasks with matching status will be removed. The aforementioned rules apply to the cells that will be affected.</p>
 </li>
 </ol>
 
@@ -623,11 +625,162 @@ optional arguments:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For example, you can see all keys in the SoS dictionary using</p>
+<h3 id="%expand"><code>%expand</code><a class="anchor-link" href="#%expand">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Script in SoS cells are by default sent to SoS or the subkernels in verbatim. However, similar to the <code>expand</code> option of the SoS actions, you can interpolate scripts before they are executed by the kernels. Basically,</p>
+<ol>
+<li>By default, scripts are not interpolated.</li>
+<li>With <code>%expand</code> magic, scripts are treated as Python f-string and are interpolated with sigil <code>{ }</code></li>
+<li>With <code>%expand ${ }</code> or other sigils, scripts are interpolated with specified sigil so that you can avoid using symbols that already used in the script.</li>
+</ol>
+<p>As you can imagine, string interpolation allows passing information from the SoS kernel to the subkernels. Although this method is less flexible and powerful than inter-kernel variable exchange using magics such as <code>%get</code>, it is sometimes easier to use and can be especially useful if you plan to include the script as a SoS action in a SoS workflow.</p>
+<p>For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">par</span> <span class="o">=</span> <span class="mi">100</span>
+</pre></div>
 
 </div>
 </div>
 </div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="n">cat</span><span class="p">(</span><span class="s2">&quot;A parameter {par} is specified.&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A parameter 100 is specified.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the script contains <code>{ }</code>, which is quite common in R, you can double the braces</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="k">if</span> <span class="p">({</span><span class="n">par</span><span class="p">}</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">)</span> <span class="p">{{</span>
+    <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;A parameter {par} greater than 50 is specified.&quot;</span><span class="p">);</span>
+<span class="p">}}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A parameter 100 greater than 50 is specified.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If there are multiple braces, it is obviously better to use a different sigil, such as <code>${ }</code> to interpolate the script</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span> <span class="err">$</span><span class="p">{</span> <span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">par</span><span class="p">}</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;A parameter ${par} greater than 50 is specified.&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A parameter 100 greater than 50 is specified.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
