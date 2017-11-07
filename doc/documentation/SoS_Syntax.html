@@ -220,7 +220,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_octave {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_julia-0.6 {}.lan_sas {}
 
 </style>
 <body>
@@ -3173,6 +3173,77 @@ call_20
 
 </div>
 	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Modularize-SoS-Workflow">Modularize SoS Workflow<a class="anchor-link" href="#Modularize-SoS-Workflow">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS encourages verbatim inclusion of scripts in a single SoS Script (or Notebook) so that the entire workflow can be self-contained, easily readable and modifiable, can be easily versioned, archived and shared. Such workflows are robust to changes in dependent scripts or modulars and therefore more reproducible.</p>
+<p>However, there are certainly cases when it makes more sense to keep parts of the workflow outside of a SoS script, user cases include but not limited to</p>
+<ol>
+<li>Parts of workflow that are meant to be the same across multiple workflows (e.g. a workflow to deliver and archive results).</li>
+<li>Scripts that are long, or multi-file in nature, or functions that are designed to be reused by multiple scripts in the same or across SoS workflows.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS provides a number of features that allow the inclusion, importing, or execution of external functions, scripts, or workflows. They are scattered around the documentation so here is a summary of what you can do to modularize your SoS workflow:</p>
+<table>
+<thead><tr>
+<th>Method</th>
+<th>Example</th>
+<th>Pros</th>
+<th>Cons</th>
+<th>Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>utility modules and libraries</strong></td>
+<td><code>import my_module</code> in Python, <code>library(my_library)</code> in R etc</td>
+<td>Most clean, and can be used for highly reusable components that worth the effort to formalize and maintain them.</td>
+<td>It can be difficult to keep the modules backward compatible so changes in such modules might make a previous workflow non-reproducible.</td>
+<td>It is usually not practical to rerun archived projects just to test compatibility of these modules.</td>
+</tr>
+<tr>
+<td><strong>include shared configurations or functions</strong></td>
+<td><code>python: input='utility.py'</code></td>
+<td>Easier to maintain than modules, include the same scripts across actions or workflows</td>
+<td>Without proper wrapping and testing, such functions tend to be changed easily and break previous workflow</td>
+<td>Suitable only for configuration and functions that do not need to be changed.</td>
+</tr>
+<tr>
+<td><strong>nested workflow</strong></td>
+<td><code>sos_run(source="file.sos")</code></td>
+<td>Allows the separation of a big workflow to multiple smaller workflows maintained in different SoS workflows. Very flexible because the workflows and sources can be determined programmatically.</td>
+<td>The workflows should be logically and functionally separated so that changes in one workflow will not break the entire workflow.</td>
+<td>Suitable for the creation of large workflows.</td>
+</tr>
+<tr>
+<td><strong>external commands</strong></td>
+<td><code>sh("sos run workflow")</code> in SoS or <code>!sos run workflow</code> in SoS Notebook</td>
+<td>Similar to <code>sos_run</code> in SoS</td>
+<td>Similar to <code>sos_run</code> in SoS</td>
+<td>Useful for SoS notebooks with standardized sub-workflows</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
     </div>
   </div>
 </body>
