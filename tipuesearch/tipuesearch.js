@@ -371,10 +371,8 @@ http://www.tipue.com/search
                                    set.showTime = false;
                               }
                               out += '</div>';
-                              
                               found.sort(function(a, b) { return b.mainTitle.localeCompare(a.mainTitle) } );
                               var FoundMainTitles = [];
-                              var SortedMainTitles = [];
                               var l_o = 0;
                               for (var i = 0; i < found.length; i++)
                               {
@@ -382,20 +380,23 @@ http://www.tipue.com/search
                                    if (l_o >= start && l_o < set.show + start)
                                    {    
                                    //MY CODE
-                                        if (FoundMainTitles.length === 0) {
+                                        if (FoundMainTitles.length === 0 && found[i].score > 19) {
                                             out += '<hr><div class="tipue_search_content_mainTitle"><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></div>';
                                             out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
                                             FoundMainTitles.push(found[i].mainTitle);
-                                        } else if (found[i].mainTitle != FoundMainTitles.slice(-1)) {
+                                        } else if (found[i].mainTitle != FoundMainTitles.slice(-1) && found[i].score > 19) {
                                             out += '<hr><div class="tipue_search_content_mainTitle"><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></div>';
                                             out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
                                             FoundMainTitles = [];
-                                            FoundMainTitles.push(found[i].mainTitle);
+                                            FoundMainTitles.push(found[i].mainTitle && found[i].score > 19);
                                         } else if (found[i].mainTitle == FoundMainTitles.slice(-1)) {
                                             out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
                                             FoundMainTitles = [];
                                             FoundMainTitles.push(found[i].mainTitle);
+                                        } else {
+                                            out += '<p style = "color: red; font-size: 60px">TESTING FOR ERRORS</p>';
                                         }
+                                        
                                         if (set.debug)
                                         {                                             
                                              out += '<div class="tipue_search_content_debug">Score: ' + found[i].score + '</div>';
