@@ -50,6 +50,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
  <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 
@@ -223,7 +225,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_javascript {}.lan_julia-0.6 {}.lan_python2 {}.lan_python3 {}.lan_sas {}
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }
 
 </style>
 <body>
@@ -242,7 +244,8 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Before we start our tutorial, it is important to understand a SoS script can be executed from command line in batch mode, or interactively in Jupyter notebook. This tutorial is written in Jupyter but you can execute the scripts in batch mode if you save them to disk and execute them using command <code>sos run</code> or <code>sos-runner</code>. There are some minor differences in executing scripts in these modes so the following cell turns on more output (<code>-v2</code>), change default signature mode to <code>default</code> (<code>-s default</code>), and turn off automatic output preview (<code>%preview --off</code>). It then creates some empty files as input files of the sample workflows and remove existing runtime signatures by executing some shell commands (<code>!cmd</code>). Please refer to <a href="../documentation/Notebook_Interface.html">Chapter Notebook Interface</a> of the SoS documentation if you would like to learn more about them.</p>
+<p>Before we start our tutorial, it is important to understand a SoS script can be executed from command line in batch mode, or interactively in Jupyter notebook. This tutorial is written in Jupyter but you can execute the scripts in batch mode if you save them to disk and execute them using command <code>sos run</code> or <code>sos-runner</code>.</p>
+<p>The following commands create some fake input files and fake commands in order to demonstrate the commands. Please refer to <a href="../documentation/Notebook_Interface.html">Chapter Notebook Interface</a> of the SoS documentation if you would like to learn more about them.</p>
 
 </div>
 </div>
@@ -304,7 +307,7 @@ $( document ).ready(function(){
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># using a fake STAR in ~/</span>
@@ -351,7 +354,7 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The first command builds an index of the reference genome in preparation for the latter steps, the second command aligns reads from the first sample to the reference genome, and the third command aligns reads from the second sample to the reference genome. Do not panic if you do not know what these commands are doing, this is just an example.</p>
+<p>The first command (supposedly) builds an index of the reference genome in preparation for the latter steps, the second command aligns reads from the first sample to the reference genome, and the third command aligns reads from the second sample to the reference genome. Do not panic if you do not know what these commands are doing, this is just an example.</p>
 <p>These commands generate, among other files, two files named <code>aligned/control.out.tab</code> and <code>aligned/mutated.out.tab</code> with expression counts of all genes. You then wrote a <a href="https://www.r-project.org/">R</a> script to analyze the results, something like</p>
 
 </div>
@@ -360,7 +363,7 @@ Generating aligned/mutated.out.tab from mutated.fastq
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">)</span>
@@ -400,7 +403,7 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Data-Exchange-among-subkernels">Data Exchange among subkernels<a class="anchor-link" href="#Data-Exchange-among-subkernels">&#182;</a></h2>
+<h2 id="String-interpolation">String interpolation<a class="anchor-link" href="#String-interpolation">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -408,8 +411,7 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>String interpolation is useful for composing scripts to be executed by subkernels, but it would be awkward to pass a large amount of information in this way, and it disallows passing information among subkernels.</p>
-<p>SoS provides a few <code>magics</code> to faciliate data exchange among subkernels. For example, the <code>%get</code> magic retrieves information from the SoS kernel to a subkernel, so your shell script could be written as:</p>
+<p>When you work with multiple kernels in the same SoS notebook, the SoS kernel is called the <strong>master kernel</strong> and the rest are called <strong>subkernels</strong>. The SoS kernel is based on a Python syntax so you can define any variables and execute any Python statements such as</p>
 
 </div>
 </div>
@@ -417,7 +419,7 @@ Generating aligned/mutated.out.tab from mutated.fastq
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">INDEXDIR</span> <span class="o">=</span> <span class="s1">&#39;STAR_index&#39;</span>
@@ -429,7 +431,130 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div><div class="cell border-box-sizing code_cell rendered lan_Bash">
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, a trick to "compose" scripts in subkernels is to use string interpolation to expand expressions inside <code>{ }</code> with their values. For example, with the above definitions, you can execute the commands as</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Bash">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="c1"># using a fake STAR in ~/</span>
+<span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="n">HOME</span><span class="o">/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="p">:</span><span class="err">$</span><span class="n">PATH</span>
+<span class="c1"># index reference genome</span>
+<span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
+    <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">INDEXDIR</span><span class="p">}</span>
+<span class="c1"># align reads to the reference genome</span>
+<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
+    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
+    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">ALIGNDIR</span><span class="p">}</span><span class="o">/</span><span class="n">control</span>
+<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
+    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
+    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">ALIGNDIR</span><span class="p">}</span><span class="o">/</span><span class="n">mutated</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Generating STAR_index/chrName.txt
+Generating aligned/control.out.tab from control.fastq
+Generating aligned/mutated.out.tab from mutated.fastq
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{ALIGNDIR}/control.out.tab&#39;</span><span class="p">)</span>
+<span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{ALIGNDIR}/mutated.out.tab&#39;</span><span class="p">)</span>
+<span class="c1"># normalize, compare, output etc, ignored.</span>
+<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
+<span class="c1"># plot results</span>
+<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<strong>pdf:</strong> 2
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>using magic <code>%expand</code>. Here we use the default method to expand expressions inside sigil <code>{ }</code>, but if you scripts already have braces, you can use magics such as <code>%expand ${ }</code> to use an alternative sigil.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-Exchange-among-subkernels">Data Exchange among subkernels<a class="anchor-link" href="#Data-Exchange-among-subkernels">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>String interpolation is useful for composing scripts to be executed by subkernels, but it would be awkward to pass a large amount of information in this way, and it disallows passing information among subkernels.</p>
+<p>SoS provides a few <code>magics</code> to facilitate data exchange among subkernels. For example, the <code>%get</code> magic retrieves information from the SoS kernel to a subkernel, so your shell script could be written as:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Bash">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -591,14 +716,15 @@ Generating aligned/mutated.out.tab from mutated.fastq
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
+<span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
 
 <span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
@@ -640,33 +766,23 @@ Generating aligned/mutated.out.tab from mutated.fastq
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Running <span class="ansi-green-fg">interactive_0</span>: 
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Generating STAR_index/chrName.txt
+<pre># index reference genome
+STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+    --genomeDir STAR_index
+Generating STAR_index/chrName.txt
+
+# align reads to the reference genome
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn control.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/control
 Generating aligned/control.out.tab from control.fastq
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn mutated.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/mutated
 Generating aligned/mutated.out.tab from mutated.fastq
+
 Generating myfigure.pdf
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Workflow interactive (ID=868b4f6042b50900) is executed successfully.
 </pre>
 </div>
 </div>
@@ -701,14 +817,15 @@ Generating myfigure.pdf
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
+<span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
 
 <span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
@@ -751,33 +868,23 @@ Generating myfigure.pdf
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Running <span class="ansi-green-fg">interactive_0</span>: 
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Generating STAR_index/chrName.txt
+<pre># index reference genome
+STAR --runMode genomeGenerate --genomeFastaFile human38.fastq\
+    --genomeDir STAR_index
+Generating STAR_index/chrName.txt
+
+# align reads to the reference genome
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn control.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/control
 Generating aligned/control.out.tab from control.fastq
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn mutated.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/mutated
 Generating aligned/mutated.out.tab from mutated.fastq
+
 Generating myfigure.pdf
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Workflow interactive (ID=585d898c6b6548e9) is executed successfully.
 </pre>
 </div>
 </div>
@@ -812,14 +919,15 @@ Generating myfigure.pdf
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_sos">
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
+<span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
 
 <span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
@@ -866,75 +974,21 @@ Generating myfigure.pdf
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Running <span class="ansi-green-fg">default_1</span>: index reference genome
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Generating STAR_index/chrName.txt
-</pre>
-</div>
-</div>
+<pre>STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+    --genomeDir STAR_index
+Generating STAR_index/chrName.txt
 
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Running <span class="ansi-green-fg">default_2</span>: align reads to the reference genome
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Generating aligned/control.out.tab from control.fastq
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn control.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/control
+Generating aligned/control.out.tab from control.fastq
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn mutated.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/mutated
 Generating aligned/mutated.out.tab from mutated.fastq
-</pre>
-</div>
-</div>
 
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Running <span class="ansi-green-fg">default_3</span>: compare expression values
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Generating myfigure.pdf
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Workflow default (ID=160b0c267773e5bc) is executed successfully.
+Generating myfigure.pdf
 </pre>
 </div>
 </div>
@@ -1056,10 +1110,11 @@ Generating aligned/mutated.out.tab from mutated.fastq
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
+<span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
 
 <span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
@@ -1101,6 +1156,37 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+    --genomeDir STAR_index
+Generating STAR_index/chrName.txt
+
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn control.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/control
+Generating aligned/control.out.tab from control.fastq
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn mutated.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/mutated
+Generating aligned/mutated.out.tab from mutated.fastq
+
+Generating myfigure.pdf
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
   </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
@@ -1119,7 +1205,7 @@ Generating aligned/mutated.out.tab from mutated.fastq
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">fastq_files</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">fastq</span> <span class="n">case</span><span class="o">.</span><span class="n">fastq</span>
@@ -1191,10 +1277,10 @@ Generating myfigure.pdf
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">v4</span>
 <span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
 
@@ -1228,6 +1314,7 @@ Generating myfigure.pdf
 
 <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 <span class="c1"># compare expression values</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="s1">&#39;myfigure.pdf&#39;</span>
 <span class="kn">R:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[0]}&#39;</span><span class="p">)</span>
@@ -1265,7 +1352,18 @@ STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
     --outFileNamePrefix aligned/mutated
 Generating aligned/mutated.out.tab from mutated.fastq
 
-Generating myfigure.pdf
+[]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>IndexError: list index out of range
 </pre>
 </div>
 </div>
@@ -1409,7 +1507,7 @@ Generating aligned/mutated.out.tab from case.fastq
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
 
 <span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
@@ -1550,7 +1648,7 @@ INFO: Workflow default (ID=1c3c60b5b3a1bf3a) is executed successfully.
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="kp">run</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
 
 <span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
@@ -1742,8 +1840,8 @@ INFO: <span class="ansi-green-fg">default_2</span> (index=0) is <span class="ans
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="kp">report</span><span class="o">.</span><span class="n">html</span>
-<span class="o">%</span><span class="kp">run</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">report</span><span class="o">.</span><span class="n">html</span>
+<span class="o">%</span><span class="n">run</span>
 
 <span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>

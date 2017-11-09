@@ -51,6 +51,9 @@
  <meta name="viewport" content="width=device-width, initial-scale=1">
  <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 
@@ -220,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_javascript {}.lan_julia-0.6 {}.lan_sas {}
 
 </style>
 <body>
@@ -239,7 +242,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS can be easily extended with new actions, targets, converters, file previewers. To make the extension available to other users, you can either create and distribute a separate package, or extend SoS and send us a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>.</p>
+<p>SoS can be easily extended with new actions, targets, converters, file previewers. To make the extension available to other users, you can either create and distribute a separate package, or extend SoS and send us a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>. Please open a ticket and discuss the idea with us before you send a pull request.</p>
 
 </div>
 </div>
@@ -256,10 +259,10 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS makes extensive use of <a href="http://setuptools.readthedocs.io/en/latest/setuptools.html#dynamic-discovery-of-services-and-plugins"><strong>entry points</strong></a>, which allows external modules to register their features in the file system to make them available to other modules. It can be confusing initially but <a href="http://stackoverflow.com/questions/774824/explain-python-entry-points">this stack overflow ticket</a> explains it quite well.</p>
+<p>SoS makes extensive use of <a href="http://setuptools.readthedocs.io/en/latest/setuptools.html#dynamic-discovery-of-services-and-plugins"><strong>entry points</strong></a>, which allows external modules to register their features in the file system to make them available to other modules. It can be confusing initially but <a href="http://stackoverflow.com/questions/774824/explain-python-entry-points">this stack overflow ticket</a> explains the <code>entry_points</code> mechanism quite well.</p>
 <p>To register additional feature with SoS, your package should define one or more sos-recognizable <code>entry_points</code> such as <code>sos-languages</code>, <code>sos-targets</code>, and <code>sos-actions</code>, with a syntax similar to</p>
 
-<pre><code>    entry_points='''
+<pre><code>entry_points='''
 [sos-language]
 ruby = sos_ruby.kernel:sos_ruby
 
@@ -290,11 +293,7 @@ Ruby_Library = sos_ruby.target:Ruby-Library
 @SoS_Action()
 def my_action(*args, **kwargs):
     pass</code></pre>
-<p>The decorator accepts two optional parameters:</p>
-<ul>
-<li><code>run_mode=['interactive', 'run']</code> meaning the action will be executable in batch and interactive (Jupyter kernel) mode, and not in <code>dryrun</code> mode. An action usually behave the same in both modes but can be tailered for the environment in which it runs. </li>
-<li><code>acceptable_args=['*']</code> which can be used to specify a list of acceptable parameter (<code>*</code> matches all keyword args). An exception will be raised if an action is defined with a list of <code>acceptable_args</code> and is called with an unrecognized argument.</li>
-</ul>
+<p>The decorator accepts an optional parameter <code>acceptable_args=['*']</code> which can be used to specify a list of acceptable parameter (<code>*</code> matches all keyword args). An exception will be raised if an action is defined with a list of <code>acceptable_args</code> and is called with an unrecognized argument.</p>
 
 </div>
 </div>
@@ -303,14 +302,35 @@ def my_action(*args, **kwargs):
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You then need to add an entry to <code>entry_points</code> as</p>
+<p>You then need to add an entry to <code>entry_points</code> in your <code>setup.py</code> file as</p>
 
 <pre><code>[sos-actions]
 my_action = mypackage.mymodule:my_action</code></pre>
-<p>If the execution of action depends on some other targets, you can raise an <code>UnknownTarget</code> with the target so that the target can be obtained. For example, if your action depends on a particular <code>R_library</code>, you can test the existence of the target as follows:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The most important feature of an SoS actions is that they can behave different in different run_mode, which can be <code>dryrun</code>, <code>run</code>, or <code>interactive</code> (for SoS Notebook). Depending on the nature of your action, you might want to do nothing for in <code>dryrun</code> mode and give more visual feedback in <code>interactive</code> mode. The relevant code would usually look like</p>
+
+<pre><code>if env['config']['run_mode'] == 'dryrun':
+    return None</code></pre>
+<p>Note that because actions are often used in script format with ignored return value, actions usually return <code>None</code> for success, and raise an exception when error happens.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the execution of action depends on some other targets, you can raise an <code>UnknownTarget</code> with the target so that the target can be obtained, and the SoS step and the action will be re-executed after the target is obtained. For example, if your action depends on a particular <code>R_library</code>, you can test the existence of the target as follows:</p>
 
 <pre><code>from sos.target import UnknownTarget
-from sos.R.target import R_library
+from sos_R.target import R_library
 
 @SoS_Action()
 def my_action(script, *args, **kwargs):
@@ -339,9 +359,9 @@ def my_action(script, *args, **kwargs):
 
 class my_target(BaseTarget):
     def __init__(self, *args, **kwargs):
-        pass</code></pre>
+        super(my_target, self).__init__(self)</code></pre>
 <p>You will need to define several member functions for this class, most notably <code>exists</code> that checks the existence of the target. This function accept a parameter <code>mode</code>, which can be <code>target</code>, <code>signature</code>, or <code>any</code>. Like a file target, a target can be considered exist as long as its signature exists, and if the real target is not needed for the execution of the workflow.</p>
-<p>The details of this class can be found at the source code of <a href="https://github.com/vatlab/SOS/blob/master/src/sos/target.py"><code>BaseTarget</code></a>. The <a href="https://github.com/vatlab/SOS/blob/master/src/sos/R/target.py"><code>R_Library</code></a> provides a good example of a <strong>virtual target</strong> that do not have a fixed corresponding file, can be checked for existence, and actually attempts to obtain (install a R library) the target when it is checked.</p>
+<p>The details of this class can be found at the source code of <a href="https://github.com/vatlab/SoS/blob/master/src/sos/target.py"><code>BaseTarget</code></a>. The <a href="https://github.com/vatlab/sos-r/blob/master/src/sos_R/target.py"><code>R_Library</code></a> provides a good example of a <strong>virtual target</strong> that does not have a fixed corresponding file, can be checked for existence, and actually attempts to obtain (install a R library) the target when it is checked.</p>
 <p>After you defined your target, you can make it available to SOS by adding an appropriate entry point</p>
 
 <pre><code>[sos-targets]
@@ -400,7 +420,7 @@ fromExt-toExt.func: mypackage.mymodule:my_converter</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Preview-additional-formats">Preview additional formats<a class="anchor-link" href="#Preview-additional-formats">&#182;</a></h2><p>Adding a preview function is very simple. All you need to is to define a function that returns preview information, and add an entry point to link the function to certain file format.</p>
+<h2 id="Preview-additional-formats">Preview additional formats<a class="anchor-link" href="#Preview-additional-formats">&#182;</a></h2><p>Adding a preview function is very simple. All you need to do is define a function that returns preview information, and add an entry point to link the function to certain file format.</p>
 <p>More specifically, a previewer should be specified as</p>
 
 <pre><code>pattern,priority = preview_module:func</code></pre>
@@ -412,7 +432,7 @@ fromExt-toExt.func: mypackage.mymodule:my_converter</code></pre>
 <li><code>pattern</code> is a pattern that matches incoming filename (see module fnmatch.fnmatch for details)</li>
 <li><code>module:func</code> specifies a function in module that detects the type of input file.</li>
 <li><code>priority</code> is an integer number that indicates the priority of previewer in case multiple pattern or function matches the  same file. Developers of third-party previewer can override an existing previewer by specifying a higher priority number.</li>
-<li><p><code>preview_module:func</code> points to a function in a module. The function should accept a filename as the only parameter, and  returns either</p>
+<li><p><code>preview_module:func</code> points to a function in a module. The function should accept a filename as the only parameter, and returns either</p>
 <ul>
 <li>A string that will be displayed as plain text to standard output.</li>
 <li>A dictionary that will be returned as <code>data</code> field of <code>display_data</code> (see <a href="http://jupyter-client.readthedocs.io/en/latest/messaging.html">Jupyter documentation</a> for details). The dictionary typically has <code>text/html</code> for HTML output, "text/plain" for plain text, and "text/png" for image presentation of the file.</li>
@@ -446,7 +466,7 @@ myaddon.func = yourpackage.module:addon_func</code></pre>
 <p>The <code>addon_func</code> should be defined as</p>
 
 <pre><code>def addon_func(args, unknown_args)</code></pre>
-<p>with <code>args</code> being the parsed known arguments, and <code>unknown_args</code> being a list of unknown arguments that you can process by youself.</p>
+<p>with <code>args</code> being the parsed known arguments, and <code>unknown_args</code> being a list of unknown arguments that you can process by yourself.</p>
 
 </div>
 </div>

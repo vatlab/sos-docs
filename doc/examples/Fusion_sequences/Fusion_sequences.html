@@ -536,24 +536,16 @@ body {
 <span class="n">three_chr</span><span class="p">,</span> <span class="n">three_pos</span> <span class="o">=</span> <span class="n">three_prime</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
  
  
-</pre></div>
-
-<div class="source blob-code sos-statement"><pre><span></span><span class="n">gene1_strand</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;vtools_report transcript ${five_chr}:${int(five_pos)-lead}-${five_pos} --first-transcript --strand-only -v0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</pre></div>
-
-<div class="source blob-code sos-statement"><pre><span></span><span class="k">if</span> <span class="n">gene1_strand</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+<span class="n">gene1_strand</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;vtools_report transcript ${five_chr}:${int(five_pos)-lead}-${five_pos} --first-transcript --strand-only -v0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">gene1_strand</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
     <span class="c1"># | &lt;==== </span>
     <span class="n">gene1_range</span> <span class="o">=</span> <span class="s2">&quot;${int(five_pos)}-${int(five_pos)+lead-1}&quot;</span>
 <span class="kn">else:</span>
     <span class="c1"># =====&gt; |</span>
     <span class="n">gene1_range</span> <span class="o">=</span> <span class="s2">&quot;${int(five_pos)-lead+1}-${five_pos}&quot;</span>
  
-</pre></div>
-
-<div class="source blob-code sos-statement"><pre><span></span><span class="n">gene2_strand</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;vtools_report transcript ${three_chr}:${int(three_pos)}-${int(three_pos)+lead} --first-transcript --strand-only -v0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-</pre></div>
-
-<div class="source blob-code sos-statement"><pre><span></span><span class="k">if</span> <span class="n">gene2_strand</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+<span class="n">gene2_strand</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;vtools_report transcript ${three_chr}:${int(three_pos)}-${int(three_pos)+lead} --first-transcript --strand-only -v0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">gene2_strand</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
     <span class="c1"># &lt;==== |</span>
     <span class="n">gene2_range</span> <span class="o">=</span> <span class="s2">&quot;${int(three_pos)-lead+1}-${int(three_pos)}&quot;</span>
 <span class="kn">else:</span>
@@ -594,9 +586,7 @@ vtools_report sequence <span class="si">${</span><span class="nv">three_chr</spa
 </pre></div>
 
 <div class="source blob-code sos-statement"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-</pre></div>
-
-<div class="source blob-code sos-statement"><pre><span></span><span class="n">fusion_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*/fusion/fusions_oncofuse.xls&#39;</span><span class="p">)</span>
+<span class="n">fusion_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*/fusion/fusions_oncofuse.xls&#39;</span><span class="p">)</span>
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fusion_file&#39;</span><span class="p">:</span> <span class="n">fusion_files</span><span class="p">}</span>
@@ -613,10 +603,8 @@ vtools_report sequence <span class="si">${</span><span class="nv">three_chr</spa
 </pre></div>
 
 <div class="source blob-code sos-statement"><pre><span></span><span class="n">fusions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fusion_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
-</pre></div>
-
-<div class="source blob-code sos-statement"><pre><span></span><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fusions</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-    <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA&#39;</span><span class="p">,</span> <span class="n">break_point</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;GENOMIC&#39;</span><span class="p">],</span> <span class="n">gene1</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;5_FPG_GENE_NAME&#39;</span><span class="p">],</span> 
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fusions</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA&#39;</span><span class="p">,</span> <span class="n">break_point</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;GENOMIC&#39;</span><span class="p">],</span> <span class="n">gene1</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;5_FPG_GENE_NAME&#39;</span><span class="p">],</span> 
 		<span class="n">gene2</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;3_FPG_GENE_NAME&#39;</span><span class="p">],</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">lead</span><span class="o">=</span><span class="n">lead</span><span class="p">)</span>
  
 </pre></div>
@@ -648,8 +636,8 @@ vtools_report sequence <span class="si">${</span><span class="nv">three_chr</spa
  
 </pre></div>
 
-<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA_all&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;RNA50.txt&#39;</span><span class="p">,</span> <span class="n">lead</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA_all&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;RNA300.txt&#39;</span><span class="p">,</span> <span class="n">lead</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<div class="source blob-code sos-statement"><pre><span></span><span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA_all&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;RNA50.txt&#39;</span><span class="p">,</span> <span class="n">lead</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;RNA_all&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;RNA300.txt&#39;</span><span class="p">,</span> <span class="n">lead</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
  
  
 </pre></div>
