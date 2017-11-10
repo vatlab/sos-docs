@@ -246,10 +246,10 @@ http://www.tipue.com/search
 
                                         if (tipuesearch_in.pages[i].url.search(pat) != -1)
                                         {
-                                             score += 20;
+                                             score += 0;
                                         }
                                         
-                                        if (score != 0)
+                                        if (score > 15)
                                         {
                                              for (var e = 0; e < tipuesearch_weight.weight.length; e++)
                                              {
@@ -306,12 +306,12 @@ http://www.tipue.com/search
                                    if (tipuesearch_in.pages[i].tags.search(pat) != -1)
                                    {
                                         var m_c = tipuesearch_in.pages[i].tags.match(pat).length;
-                                        score += (10 * m_c);
+                                        score += (0 * m_c);
                                    }
                               
                                    if (tipuesearch_in.pages[i].url.search(pat) != -1)
                                    {
-                                        score += 20;
+                                        score += 0;
                                    }
                                    
                                    if (score != 0)
@@ -325,7 +325,7 @@ http://www.tipue.com/search
                                         }
                                    }
                               
-                                   if (score != 0)
+                                   if (score > 15)
                                    {
                                         found.push(
                                         {
@@ -380,22 +380,23 @@ http://www.tipue.com/search
                                    if (l_o >= start && l_o < set.show + start)
                                    {    
                                    //MY CODE
-                                        if (FoundMainTitles.length === 0 && found[i].score > 19) {
+                                        if (FoundMainTitles.length === 0) {
                                             out += '<hr><div class="tipue_search_content_mainTitle"><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></div>';
                                             out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
                                             FoundMainTitles.push(found[i].mainTitle);
-                                        } else if (found[i].mainTitle != FoundMainTitles.slice(-1) && found[i].score > 19) {
+                                        } else if (found[i].mainTitle != FoundMainTitles.slice(-1)) {
                                             out += '<hr><div class="tipue_search_content_mainTitle"><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></div>';
                                             out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
                                             FoundMainTitles = [];
-                                            FoundMainTitles.push(found[i].mainTitle && found[i].score > 19);
+                                            FoundMainTitles.push(found[i].mainTitle);
                                         } else if (found[i].mainTitle == FoundMainTitles.slice(-1)) {
                                             out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
                                             FoundMainTitles = [];
                                             FoundMainTitles.push(found[i].mainTitle);
-                                        } else {
-                                            out += '<p style = "color: red; font-size: 60px">TESTING FOR ERRORS</p>';
                                         }
+//                                        } else {
+//                                            out += '<p style = "color: red; font-size: 60px">TESTING FOR ERRORS</p>';
+//                                        }
                                         
                                         if (set.debug)
                                         {                                             
