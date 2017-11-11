@@ -321,14 +321,6 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Basic-Syntax">Basic Syntax<a class="anchor-link" href="#Basic-Syntax">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>SoS is based on the Python 3 (3.6 and above) programming language</strong>. If you are unfamiliar with Python, you can learn some basics of Python, usually in less than half a day, by reading some Python tutorials (e.g. <a href="https://docs.python.org/3/tutorial/">the official python tutorial</a>). This <a href="https://docs.python.org/3/tutorial/introduction.html">short introduction</a> is good enough for you to get started with SoS.</p>
 <p>SoS adds the following syntax to standard Python syntax:</p>
 <table>
@@ -390,7 +382,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Script-style-function">Script style function<a class="anchor-link" href="#Script-style-function">&#182;</a></h3>
+<h2 id="Script-style-function-call">Script style function call<a class="anchor-link" href="#Script-style-function-call">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -610,18 +602,6 @@ dev.off()
 
 <div class="output_area">
 
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre><span class="ansi-magenta-intense-fg">WARNING</span>: <span class="ansi-magenta-intense-fg">var : str = 5
- is {&#39;var&#39;: &lt;class &#39;str&#39;&gt;}</span>
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
 <div class="prompt output_prompt">Out[3]:</div>
 
 
@@ -642,7 +622,7 @@ dev.off()
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Format-of-sos_targets-type">Format of <code>sos_targets</code> type<a class="anchor-link" href="#Format-of-sos_targets-type">&#182;</a></h3>
+<h2 id="SoS-Target-classes">SoS Target classes<a class="anchor-link" href="#SoS-Target-classes">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -650,7 +630,8 @@ dev.off()
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS makes extensive use of literal string interpolation. Whereas all regular Python data types can be used in literal strings and be interpolated and formatted as usual, targets (collection of SoS targets) have a special <code>sos_targets</code> type with a special set of format rules. These variables, named <code>input</code>, <code>_input</code>, <code>output</code>, <code>_output</code>, <code>depends</code>, <code>_depends</code> are defined by SoS for each SoS step, although variables of this type can be explicitly defined to make use of the special format rules.</p>
+<p>The concept of <strong>target</strong> plays an important role in SoS. A <strong>target</strong> is an object that that be created and detected. A SoS step can take a list of targets as input, check the existence of a list of dependent targets, and produce a list of targets as output. Targets can be created, removed, and their contents are tracked by SoS with <strong>signatures</strong>. For example, SoS can skip a workflow step if its output has been created, but will still rerun the step if the input file has been changed. A target can also be <strong>zapped</strong>, namely with its content replaced by its signature, so a target can be considered "exist" (so that a step can be skipped) but "non-exist" if the actual content is needed.</p>
+<p>As illustrated by the following diagram, SoS supports a number of built-in targets such as <code>file_target</code>, <code>sos_variable</code>, <code>executable</code>, and targets defined by language modules such as <code>R_Library</code> for <code>R</code>. This section will describe general usage of targets and syntax for the most frequently used target <code>file_target</code>. Please refer to Chapter <a href="Targets_and_Actions.html">Targets and Actions</a> for descriptions of other target types. Note that <strong>SoS provides a very flexible and intuitive set of methods to work with files and list of files, gearing towards converting and using different formats of filenames in different scripts</strong>. You do not have to understand all the technical details but learning how to use <code>path</code> and <code>path</code> would great facilitate the use of filenames in SoS.</p>
 
 </div>
 </div>
@@ -659,7 +640,24 @@ dev.off()
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Variables with type <code>sos_targets</code> keep lists of targets, which can be initialized from one or more targets or lists of targets. Lists of targets will be flattened and concatenated so the end result will always be an one-dimensional list. The variables appear to be a sequence that can be sliced, iterated, and even compared to a regular list correctly. For example, the following statement creates a <code>sos_targets</code> of three filenames from a single filename and a list of two filenames:</p>
+<p><img src="../media/target_classes.png" alt="sos_step"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="File-and-directory-names-(path-objects)">File and directory names (<code>path</code> objects)<a class="anchor-link" href="#File-and-directory-names-(path-objects)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>path</code> type handles the manipulation of file and directory names. It is derived from Python <a href="https://docs.python.org/3/library/pathlib.html">pathlib.Path</a> so you can use any of the properties and functions defined for this class. For example,</p>
 
 </div>
 </div>
@@ -670,52 +668,22 @@ dev.off()
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="n">sos_targets</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;b.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;c.txt&#39;</span><span class="p">])</span>
-<span class="n">targets</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/sos-docs/src/documentation/SoS_Syntax.ipynb&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[4]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[a.txt, b.txt, c.txt]</pre>
 </div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>You can access one or more elements of a <code>sos_targets</code> or iterate through it</p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">targets</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -734,7 +702,7 @@ dev.off()
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>c.txt</pre>
+<pre>path(&#39;/Users/bpeng1/sos-docs/src/documentation/SoS_Syntax.ipynb&#39;)</pre>
 </div>
 
 </div>
@@ -750,7 +718,7 @@ dev.off()
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">targets</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="kp">name</span>
 </pre></div>
 
 </div>
@@ -769,7 +737,7 @@ dev.off()
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[b.txt, c.txt]</pre>
+<pre>&#39;SoS_Syntax.ipynb&#39;</pre>
 </div>
 
 </div>
@@ -785,8 +753,7 @@ dev.off()
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
-   <span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parent</span>
 </pre></div>
 
 </div>
@@ -799,38 +766,29 @@ dev.off()
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[7]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>a.txt
-b.txt
-c.txt
-</pre>
-</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>path(&#39;~/sos-docs/src/documentation&#39;)</pre>
 </div>
 
 </div>
-</div>
-
-</div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Because <code>targets</code> are created with strings, the results of these operations are one or lists of <code>file_target</code>, which can be used as a regular string</p>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;something.txt&#39;</span>
 </pre></div>
 
 </div>
@@ -849,7 +807,7 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(&#39;c&#39;, &#39;.txt&#39;)</pre>
+<pre>path(&#39;~/sos-docs/src/documentation/something.txt&#39;)</pre>
 </div>
 
 </div>
@@ -858,23 +816,14 @@ c.txt
 </div>
 
 </div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To convert a <code>sos_targets</code> to a regular list, you can use function <code>list</code></p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">suffix</span>
 </pre></div>
 
 </div>
@@ -893,7 +842,7 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[a.txt, b.txt, c.txt]</pre>
+<pre>&#39;.ipynb&#39;</pre>
 </div>
 
 </div>
@@ -902,23 +851,14 @@ c.txt
 </div>
 
 </div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>or slice part of the <code>sos_targets</code> using slices</p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parts</span>
 </pre></div>
 
 </div>
@@ -937,7 +877,7 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>list</pre>
+<pre>(&#39;~&#39;, &#39;sos-docs&#39;, &#39;src&#39;, &#39;documentation&#39;, &#39;SoS_Syntax.ipynb&#39;)</pre>
 </div>
 
 </div>
@@ -946,24 +886,14 @@ c.txt
 </div>
 
 </div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The first big difference between the formatting of <code>sos_targets</code> and regular lists is that <strong>formatting are applied to each item and joint by space or comma</strong>. For example, whereas a regular list is formatted as a list</p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">target_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;c.txt&#39;</span><span class="p">]</span>
-<span class="n">f</span><span class="s2">&quot;{target_list}&quot;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -982,7 +912,7 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#34;[&#39;a.txt&#39;, &#39;b.txt&#39;, &#39;c.txt&#39;]&#34;</pre>
+<pre>False</pre>
 </div>
 
 </div>
@@ -991,23 +921,14 @@ c.txt
 </div>
 
 </div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>A <code>sos_targets</code> is formatted as</p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{targets}&quot;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -1026,7 +947,7 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;a.txt b.txt c.txt&#39;</pre>
+<pre>False</pre>
 </div>
 
 </div>
@@ -1035,23 +956,14 @@ c.txt
 </div>
 
 </div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>or separated by <code>,</code> with format option <code>","</code></p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{targets:,}&quot;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s1">&#39;SoS_Syntax.html&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -1070,7 +982,7 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;a.txt,b.txt,c.txt&#39;</pre>
+<pre>path(&#39;~/sos-docs/src/documentation/SoS_Syntax.html&#39;)</pre>
 </div>
 
 </div>
@@ -1079,24 +991,14 @@ c.txt
 </div>
 
 </div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>One particular consequence of this format rule is that a <code>sos_targets</code> with only one element will appear the same as a single target so you can use <code>input</code> in place of <code>input[0]</code> if you know there is only one target inside <code>input</code>:</p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">single_target</span> <span class="o">=</span> <span class="n">sos_targets</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">)</span>
-<span class="n">f</span><span class="s2">&quot;{single_target[0]} is the same as {single_target}&quot;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.html&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -1115,7 +1017,7 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;a.txt is the same as a.txt&#39;</pre>
+<pre>path(&#39;~/sos-docs/src/documentation/SoS_Syntax.html&#39;)</pre>
 </div>
 
 </div>
@@ -1129,7 +1031,251 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The second difference is that <code>sos_targets</code> <strong>treats strings in the list as filenames and provides a set of format options that are defined to manipulate filenames</strong>:</p>
+<p>and you can evaluate <code>path</code> in format strings as</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;Hello My name is {p.name}&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;Hello My name is SoS_Syntax.ipynb&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that <code>path</code> offers a <a href="https://docs.python.org/3/library/os.html#os.PathLike"><code>os.PathLike</code></a> interface and can be used directly with <code>os.path</code> functions such as</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">expanduser</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;/Users/bpeng1/sos-docs/src/documentation/SoS_Syntax.ipynb&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and while <code>p.expanduser()</code> returns a <code>path</code> object, the traditional <code>os.path.expanduser</code> returns a <code>str</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>On top of regular <code>pathlib.Path</code> functionalities, <strong><code>path</code> allows you to add <code>path</code> to a <code>str</code> and with a <code>str</code> as result</strong>. So, for example, with</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>p + '.tmp'</code> returns a string, which is essentially <code>str(p) + '.tmp'</code></p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;test.txt.tmp&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you need a <code>path</code> as result, simply convert the <code>str</code> to <code>path</code> with</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">path</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>path(&#39;test.txt.tmp&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The second difference is that <code>path</code> <strong>accepts a list of format options to easily format path in different formats</strong>:</p>
 
 </div>
 </div>
@@ -1264,11 +1410,11 @@ c.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="kp">name</span> <span class="n">filename</span> <span class="n">basefilename</span> <span class="n">expanded</span> <span class="n">parparname</span>
-<span class="nb">file</span> <span class="o">=</span> <span class="n">sos_targets</span><span class="p">(</span><span class="s1">&#39;~/sos/examples/update_toc.sos&#39;</span><span class="p">)</span>
+<span class="nb">file</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/sos/examples/update_toc.sos&#39;</span><span class="p">)</span>
 <span class="kp">name</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{file:n}&quot;</span>
 <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{file:b}&quot;</span>
 <span class="n">basefilename</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{file:bn}&quot;</span>
@@ -1427,7 +1573,7 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>R</code> formatter is used to resolve special targets to convert, for example, a <code>remote</code> target <code>remote(target)</code> to a regular <code>target</code> and an <code>executable</code> target to its command name. For example,</p>
+<p>Note that, for completeness, we list the <code>R</code> formatter here although this formatter is used to resolve special targets, for example a <code>remote</code> target <code>remote(target)</code>, to a regular <code>BaseTarget</code> and an <code>executable</code> target to its command name. For example,</p>
 
 </div>
 </div>
@@ -1435,7 +1581,7 @@ c.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">sos_targets</span><span class="p">(</span><span class="n">remote</span><span class="p">(</span><span class="s1">&#39;file.txt&#39;</span><span class="p">),</span> <span class="n">sos_variable</span><span class="p">(</span><span class="s1">&#39;some&#39;</span><span class="p">))</span>
@@ -1450,7 +1596,7 @@ c.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{a}&quot;</span>
@@ -1466,7 +1612,7 @@ c.txt
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[17]:</div>
+<div class="prompt output_prompt">Out[23]:</div>
 
 
 
@@ -1485,7 +1631,7 @@ c.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{a:R,}&quot;</span>
@@ -1501,7 +1647,7 @@ c.txt
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[18]:</div>
+<div class="prompt output_prompt">Out[24]:</div>
 
 
 
@@ -1521,7 +1667,7 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Finally, because as a last rule, any non-SoS format character will stop SoS from treating the string as a <code>file_target</code> and will format the item as a regular string. For example, the <code>n&gt;10</code> format will format each target as a <code>file_target</code> with <code>n</code>, and '&gt;10' as a regular string.</p>
+<p>Finally, <code>path</code> formats the object with these format operators and then the resulting string with additional formatters. For example, you can format the <code>path</code> object as a regular string</p>
 
 </div>
 </div>
@@ -1529,10 +1675,10 @@ c.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{targets:n&gt;10}&quot;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{file:&gt;50}&quot;</span>
 </pre></div>
 
 </div>
@@ -1545,13 +1691,13 @@ c.txt
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[19]:</div>
+<div class="prompt output_prompt">Out[25]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;         a          b          c&#39;</pre>
+<pre>&#39;                     ~/sos/examples/update_toc.sos&#39;</pre>
 </div>
 
 </div>
@@ -1561,6 +1707,827 @@ c.txt
 
 </div>
 	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or apply <code>path</code> formatter (<code>bn</code> for base name of filename) and then as a regular string.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{file:bn&gt;50}&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[26]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;                                        update_toc&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Path-list-(paths-object)">Path list (<code>paths</code> object)<a class="anchor-link" href="#Path-list-(paths-object)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>paths</code> type keeps a list of <code>path</code> objects. It can be initialized from one or more paths or lists of paths. Lists of paths will be flattened and concatenated so the end result will always be an one-dimensional list. The variables appear to be a sequence that can be sliced, iterated, and even compared to a regular list correctly. For example, the following statement creates a <code>paths</code> object with three filenames from a single filename and a list of two filenames:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;b.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;c.txt&#39;</span><span class="p">])</span>
+<span class="n">targets</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[27]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[path(&#39;a.txt&#39;), path(&#39;b.txt&#39;), path(&#39;c.txt&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can access one or more elements of a <code>paths</code> or iterate through it</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">targets</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[28]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>path(&#39;c.txt&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">targets</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[29]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[path(&#39;b.txt&#39;), path(&#39;c.txt&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+   <span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a.txt
+b.txt
+c.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To convert a <code>paths</code> object to a regular list, you can use function <code>list</code></p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[31]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[path(&#39;a.txt&#39;), path(&#39;b.txt&#39;), path(&#39;c.txt&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or slice part of the <code>paths</code> using slices</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[32]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>list</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first big difference between the formatting of <code>paths</code> and regular lists of <code>path</code> is that <strong>formatting are applied to each item and joint by space or comma</strong>. For example, whereas a regular list is formatted as a list</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">target_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;c.txt&#39;</span><span class="p">]</span>
+<span class="n">f</span><span class="s2">&quot;{target_list}&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[33]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#34;[&#39;a.txt&#39;, &#39;b.txt&#39;, &#39;c.txt&#39;]&#34;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A <code>paths</code> is formatted as</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{targets}&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[34]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;a.txt b.txt c.txt&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or separated by <code>,</code> with format option <code>","</code></p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{targets:,}&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[35]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;a.txt,b.txt,c.txt&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or after formatting each element with specified formatter</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;{targets:r,}&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[36]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#34;&#39;a.txt&#39;,&#39;b.txt&#39;,&#39;c.txt&#39;&#34;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One particular consequence of this format rule is that a <code>sos_targets</code> with only one element will appear the same as a single target so you can use <code>input</code> in place of <code>input[0]</code> if you know there is only one target inside <code>input</code>:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">single</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="s1">&#39;SoS_Syntax.ipynb&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="s2">&quot;{single[0]} is the same as {single}&quot;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[37]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;SoS_Syntax.ipynb is the same as SoS_Syntax.ipynb&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The second feature of the <code>paths</code> object that it will pass unknown attributes to the first <code>path</code> if the object only contains one <code>path</code>. That is to say, in many cases you can <strong>use a <code>paths</code> with only one <code>path</code> just like a <code>path</code> object</strong>.</p>
+<p>For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">single</span><span class="o">.</span><span class="n">suffix</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[38]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;.ipynb&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">single</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[39]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>path(&#39;/Users/bpeng1/sos-docs/src/documentation/SoS_Syntax.ipynb&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">single</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[40]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="File-target-(file_target)">File target (<code>file_target</code>)<a class="anchor-link" href="#File-target-(file_target)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A <code>file_target</code> is <code>path</code> and a <code>BaseTarget</code>. It can be created from a string or a <code>path</code>, and because the <code>BaseTarget</code> side of the interface is transparent to the users, it behaves exactly like a <code>path</code>. For this reason, <code>file_target</code> is rarely used directly in SoS scripts.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Target-list-(sos_targets)">Target list (<code>sos_targets</code>)<a class="anchor-link" href="#Target-list-(sos_targets)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>sos_targets</code> is the type for all SoS system variables such as <code>input</code>, <code>_input</code>, <code>output</code>, <code>_output</code>, <code>depends</code>, <code>_depends</code>. They are created by SoS from <code>input:</code>, <code>output:</code> and <code>depends:</code> statements and are used to, for example, compose scripts in different languages.</p>
+<p><code>sos_targets</code> shares the same design as <code>paths</code> although its content is a list of <code>BaseTargets</code>. it can be created from <code>str</code>, <code>list</code>, <code>path</code>, <code>paths</code>, <code>file_targets</code>, and many other <code>BaseTarget</code> types. Although this type is very flexible, it closely resembles <code>paths</code> and share all its features.</p>
+<p>For example, the <code>input</code> of the following step is a <code>sos_targets</code> object with a single <code>file_target</code> object, so it will be interpolated as a <code>file_target</code> object (without <code>[ ]</code> for a normal list):</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;SoS_Syntax.ipynb&#39;</span>
+
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="nb">input</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>       0 SoS_Syntax.ipynb
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and if you have multiple input files, you can pass them altogether as a <code>sos_targets</code> with two <code>file_target</code></p>
+
+<pre><code>input = sos_targets('SoS_Syntax.ipynb', 'SoS_Magics.ipynb')
+_input = sos_targets('SoS_Syntax.ipynb', 'SoS_Magics.ipynb')</code></pre>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;SoS_Syntax.ipynb&#39;</span><span class="p">,</span> <span class="s1">&#39;SoS_Magics.ipynb&#39;</span>
+
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+    <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>       0 SoS_Syntax.ipynb
+    2923 SoS_Magics.ipynb
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or separately as two groups of inputs:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;SoS_Syntax.ipynb&#39;</span><span class="p">,</span> <span class="s1">&#39;SoS_Magics.ipynb&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>       0 SoS_Syntax.ipynb
+    2923 SoS_Magics.ipynb
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this case, the step input contains two <code>file_target</code> (</p>
+
+<pre><code>input = sos_targets('SoS_Syntax.ipynb', 'SoS_Magics.ipynb')`</code></pre>
+<p>but the step process is executed twice, with</p>
+
+<pre><code>_input = sos_targets('SoS_Syntax.ipynb')
+_input = sos_targets('SoS_Magics.ipynb')</code></pre>
+<p>respectively. Because <code>_input</code> contains only one element, it is not necessary to use <code>_input[0]</code> in the script.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1610,7 +2577,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[44]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># path to tool gatk</span>
@@ -1644,7 +2611,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[45]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
@@ -1688,7 +2655,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">gatk_path</span> <span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">GATK</span>
@@ -1732,7 +2699,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">gatk</span><span class="o">-</span><span class="n">path</span> <span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">GATK</span>
@@ -1775,7 +2742,7 @@ parameter: var_name = default_value</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
@@ -1819,7 +2786,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[49]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">sample</span><span class="o">-</span><span class="n">names</span> <span class="n">A</span>
@@ -1863,7 +2830,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[50]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">trim</span>
@@ -1914,7 +2881,7 @@ parameter: var_name = default_value</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
@@ -1949,7 +2916,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">100</span>
@@ -1993,7 +2960,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[53]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">100</span>
@@ -2008,18 +2975,6 @@ parameter: var_name = default_value</code></pre>
 <div class="output_wrapper">
 <div class="output">
 
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre><span class="ansi-magenta-intense-fg">WARNING</span>: <span class="ansi-magenta-intense-fg">cutoff : int
- is {&#39;cutoff&#39;: &lt;class &#39;int&#39;&gt;}</span>
-</pre>
-</div>
-</div>
 
 <div class="output_area">
 
@@ -2049,7 +3004,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[54]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">bam</span><span class="o">-</span><span class="n">files</span> <span class="n">A</span><span class="o">.</span><span class="n">bam</span> <span class="n">B</span><span class="o">.</span><span class="n">bam</span>
@@ -2065,18 +3020,6 @@ parameter: var_name = default_value</code></pre>
 <div class="output_wrapper">
 <div class="output">
 
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre><span class="ansi-magenta-intense-fg">WARNING</span>: <span class="ansi-magenta-intense-fg">bam_files : list
- is {&#39;bam_files&#39;: &lt;class &#39;list&#39;&gt;}</span>
-</pre>
-</div>
-</div>
 
 <div class="output_area">
 
@@ -2106,7 +3049,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="prompt input_prompt">In&nbsp;[55]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">100</span>
@@ -2458,7 +3401,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[56]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
@@ -2479,7 +3422,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gff_0</span><span class="p">]</span>
@@ -2498,7 +3441,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># This is step 1 of the gff workflow</span>
@@ -2561,7 +3504,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
@@ -2588,7 +3531,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mapping_5</span> <span class="p">(</span><span class="n">get</span> <span class="n">data</span><span class="p">)]</span>
@@ -2615,7 +3558,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[61]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mouse_10</span><span class="p">]</span>
@@ -2655,7 +3598,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[62]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
@@ -2684,7 +3627,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="prompt input_prompt">In&nbsp;[63]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mouse_10</span><span class="p">,</span><span class="n">human_10</span><span class="p">]</span>
@@ -2711,7 +3654,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="prompt input_prompt">In&nbsp;[64]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="n">mouse</span>
@@ -2739,7 +3682,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="prompt input_prompt">In&nbsp;[65]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mouse_20</span><span class="p">,</span><span class="n">human_20</span><span class="p">]</span>
@@ -2798,7 +3741,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="prompt input_prompt">In&nbsp;[66]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="n">default</span><span class="p">:</span><span class="o">-</span><span class="mi">20</span>
@@ -2871,7 +3814,7 @@ default_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div>
+<div class="prompt input_prompt">In&nbsp;[67]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1">#local run</span>
@@ -2953,7 +3896,7 @@ The workflow is execute by SoS action <code>sos_run</code>, e.g.</p>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="prompt input_prompt">In&nbsp;[68]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">forward</span><span class="o">.</span><span class="n">dot</span>
@@ -3064,7 +4007,7 @@ call_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="prompt input_prompt">In&nbsp;[69]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
@@ -3116,7 +4059,7 @@ call_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[70]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">8</span>
@@ -3160,7 +4103,7 @@ call_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="prompt input_prompt">In&nbsp;[71]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="n">batch</span>
@@ -3211,7 +4154,7 @@ echo 2
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="prompt input_prompt">In&nbsp;[72]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">nested</span><span class="o">.</span><span class="n">sos</span>
@@ -3278,7 +4221,7 @@ print(f&#34;This is {step_name} of a nested workflow&#34;)
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="prompt input_prompt">In&nbsp;[73]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;nested&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;nested.sos&#39;</span><span class="p">)</span>
@@ -3329,7 +4272,7 @@ This is nested_30 of a nested workflow
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="prompt input_prompt">In&nbsp;[74]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
@@ -3367,53 +4310,10 @@ This is nested_30 of a nested workflow
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>echo &#34;Generating test.bam.bai&#34;
-Generating test.bam.bai
-touch test.bam.bai
-
-echo &#34;Calling variants from test.bam with test.bam.bai to test.vcf&#34;
-Calling variants from test.bam with test.bam.bai to test.vcf
-touch test.vcf
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>exists() takes 1 positional argument but 2 were given
 </pre>
 </div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">%preview test.vcf</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint"> input: test.bam<br>output: test.vcf
-</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> test.vcf (0 B):</div>
-</div>
-
 </div>
 
 <div class="output_area">
@@ -3476,7 +4376,7 @@ touch test.vcf
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
@@ -3508,57 +4408,6 @@ touch test.vcf
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre># a real step would download a fasta file for hg19
-touch hg19.fa
-
-align_10
-align_20
-touch dbsnp.vcf
-call_10
-call_20
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> mixed.dot (269 B):</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbQAAAG7CAYAAACrYmCTAAAAAXNSR0IArs4c6QAAQABJREFUeAHsnQW4FVXXx7etqCgqgt2FCQYYKKJiITZiATZ2vmIHdry2KCZ2FyYqqAh2oWBhYLfYrfPt33q/fTz33HPj1JyZc/7reebOnIkd/31n1l5rr5gq8uREQkAICAEhIARSjsDUKW+/mi8EhIAQEAJCwBAQQ9M/ghAQAkJACNQEAtPWRC9S2om///7b/frrr+63336zPcdsv//+u+Na9vbPP/80+B2u0fVpppmm0Tb11FM3OjfDDDO4mWaaKbPNOOOMdszzIiEgBIRA2hEQQytiBP/44w/39ddfu2+++cb23333nZsyZYrL3v/www/uxx9/dGHP8S+//NKAef35559F1F7+R6abbroGTK5NmzZu1llnta1t27aZ/eyzz+7atWvnsvdzzTWXm3POOR376aefvvyNU4lCQAgIgVYiMJWMQv6H1F9//eU+//xz9+mnn7pPPvnE9vz+4osvMtuXX35pDAzmlEtIPnzow8ceRpDNDGAQM888cwPGkS0tZR8jSeWTuvKdox1BWmtpj+QXpMDcfbaU+PPPPzdgxjBltsC0Ydw8n0v0EcY299xzuw4dOmS2jh07unnnndfNN998tuf3tNNqLpWLn34LASFQGgJ1w9CQjt5//3333nvv2f7DDz90bB999JH74IMPjGmh1gsEM5pnnnkyH+XwgW7fvr19tINUwgccqQUmVE8Ec4TBIalmS6tfffVVZgIQJgOfffaZMcSAD+pQ8FxooYXcAgss4BZccEHbFllkEbfooos69kiJIiEgBIRAIQjUFEPjI/v222+7t956y02aNMmO2b/zzjv2kQ3AIEXxMeVDGj6o7IMEgTSBNCUqHwJIfUi/QQJmIhEmFOyZVCD5BYLhLb744m6JJZZwSy65pO2XWmopO663yUPARHshIASaRyCVDA31IIxr/Pjx7rXXXnOvv/66bUhfqN2mmmoqU23xMQxbmPkz+0eiEiUPASQ+pOggSTMZCRuMEJdJ1K6MZadOnWxbfvnl3YorrmiMTmrM5I2pWiQE4kQg8QyNtZ1XX33Vvfjii7a99NJLxryQxvi4MYtfbrnl3DLLLJPZmMlLZRXnv1Hl60JljOT9xhtvZLYJEyaY9M0kBqkNJtelSxe38sor2wajkzRX+bFRDUIgKQgkjqGheho3bpx75plnbHvllVcc1oAYHPCB4oPVuXNnx8ycDxjGFKL6RQDjFCR0JPWXX37ZMeFBcsdwB+vNlVZayXXr1s22Nddc01TN9YuWei4EahuBqjM01ISjRo1yTzzxhBszZowZaYQPUdeuXd1qq61mG+soqBJFQqAlBFBNopJ+7rnn3LPPPmv7MDFirXTttdd266yzjltvvfVMfdlSebouBIRAOhCInaExc37kkUfcQw895B599FFbL5llllncWmutldlgYpK80vEPlJZWIsnB4MaOHZvZfvrpJ7OoXH/99d1GG23kNthgA9MEpKVPaqcQEAINEYiFoeHXdeedd7oRI0aYFIZ5/Oqrr+569erlevbs6VZddVVTDzVsmn4JgcohgBr7+eefd6NHj3YPP/ywe/rppx3uBEhvffr0cVtttZVZvVauBSpZCAiBciNQMYaGD9JNN93kbrnlFlP7zDHHHK53795us802c8yIZ5tttnL3ReUJgaIR+P77701zcN999zm2b7/91qHy3m677dz2229vfnNFF64HhYAQiAWBsjI0zOnvueced+WVV9qsFya27bbb2ta9e3ezSoylV6pECJSAAFaTTz75pLvttttsg7mhTdhtt93c5ptvrignJWCrR4VAJREoC0NDGrv44ovd5ZdfbtEjttxySzdw4ECTxDCtFwmBtCIAc2Otd/jw4e6uu+4yH8Y99tjD7bvvvpLa0jqoanfNIlASQ8MB9rTTTnPXXnutm3/++d1+++3n+vfv75DMREKg1hBAUuN//aKLLnIff/yx/a8feeSRZlhSa31Vf4RAGhEoKh8aEtnee+/tcGDGHJp1MsykDzroIDGzNP4XqM2tQoCJGv/j/K/zP8//Pu8A7wLvhEgICIHqIlAQQ8M68bzzzrOX+KmnnjKrRUyhWVfAQkwkBOoBAf7X+Z/nfx/LXd4FGNv555/vsgNc1wMW6qMQSBICrVY54gCNOnHixInujDPOcLvvvruYWJJGUm2pGgIwsSuuuMINHjzYLbvssqaWJN6kSAgIgXgRaBVDw08H82XMmK+++mpLqxJvMytTGzm+rr/+eosViRsBH6RqrP9NnjzZ/KBCL4mKQjxCwn+RKWCnnXay5KBEVMFf6tRTTw23lmWPZeqGG27oyGCdSyQx5ToR8VdYYQWz9sMRvjWEpSARYN58802zdEWqaY6y+4vkQ4T+QNtss03ifRVJk7PLLruYm8qtt95qjtqh/doLASEQAwIk+GyO/FpB5C0Vo2OOOSbyFl/N3Zq6a1tvvXX0+OOPRz6RZ+Rzn0XHHntsVfrgmWrkhzryfnuR/yhG3ifK2nH44YdH3gHdjr1jeuRT3kTe+KZsbfT+VpFnnFa3N3hoVK6PjRj5wM+RZ6KRZy6Rl8wjz9QiH/m+0b25J1544YXI+xxGPoh0dOKJJ0Y+SLCVkXtf9u/s/nqji8gz88gzc2tfwCT7/iQe847wrvjI/xHvjkgICIH4ECAlR5PkQ1TZi3nuuec2eU9aL/gYf9Y3ry6yLvjElJGP7F+V7gSG5vOBNajfr8lEPmJF5tzOO+9cNobmg0BHbN5pOC9D48Psg0FHMJls8mHJIh8iKvtU3uONN944Oumkk+waGPtoMXnvyz6Z21+ueXP5VDG00J9zzjnH/r94h0RCQAjEg0CTlhxkId5hhx3MggvLrloj1gJZ3A8Bj8k8nbRUI+RuI5huoHL69IUs0QsvvHAovsEe9R9R68lskE3E2SQWJ+l8miPwDe0N+emau59ruf1t6f4kXz/44IPt3dlxxx0to3eS26q2CYFaQWDapjrCOg1Zm88888ymbqn6eRJCEl5rn332cQ8++KCthR166KEWyYGEkARAxl+ItCFEVocISHvDDTeYdRqL+cOGDbPzhOQiU/WXX37p7r//ftsvtthilq4me4G/qXKtkP8vnzUn1o3IjE3YJNaR2BdKMBv8+3LJz3XMwm7kyJGONjLxCIyZe+njddddZ+teJDiFCZEvLjCY3PLy/Sb3GERd2UTcTYggv6zz5RJ9hZmRkRorQPD16lyLj8i9mLzDLMlxx7jghB+oqf6G62nb8+7ce++9tubpJba0NV/tFQKpQyCvhEYIKxxIDzjggLyGAkno5TXXXGMf+wMPPNAcXXFwPeKIIyw31mOPPeZOOOEEky74kG+xxRYW2YF2Tz/99PYhxgiEKBAhGST51rzKz22yySZmwHDYYYdZQGXyawVqrlzu4WNNxHakquOPP97aR/JRcCyGkFjIAZdNtHn//fe3qCy0DYORbCMRmDx9ol6/lmNxCckdRzBopIbWUsh24NfCGjwCA4UwEslHfp3P8tTBCDt06GBtwcgFwuVjr732cl51ak74hxxyiLvkkksyxeTrb+ZiCg8wsmHseZd4p0RCQAhUGIF8mk0/w7Z1Cz+Lznc5Mee8OsfaicEE5LMZRz49TeQlqshLKZl2+hh8dh/GDYH8xz3yKsfw0/YXXnhh5PNkZc55V4XoxhtvtN8tlcs6kZdeIm8pmXmeA9aSvDqzwbncH02toeXe58OJmXGFl54ylzDqYAvkGbsZj4TfXjVofW9qHZT7/b9YlGsU4hlW5Jm/lR3WGSnTS692/wUXXBCqaLTHgIMyhwwZ0uCazy4e+ZBRmXN+ohH5CUTmd76DtK6hhb54ta1hwTslEgJCoLII5FU5Enkcateune2T+gcVIRTMwZdeemmTXMh95Y0ZMs32VoymmsMEnuzFTRHPozJD6vEMwNZ0Qh2oNpsrF8xIR+I/4g2KL3dWASSnIPFQEZIYKs5A7777rvMGLu6PP/4waRQJD9UxKsBCCCnz5JNPNhwxRe/bt6/zEwZ38803WzG5kmNryvYWpdYW7iXLNG3CdaKWKbiBhHeqlvuqvgmBaiOQl6GFdRucqcNxtRuar/4QnSTsuYf1G9ZsCJZcKJGbDVXjf//7X1tjI/IDH3OopXLDWiMMJk7y5uGmOg11rrvuug4fKNa46A8qSJgbqtBC6T//+Y+tv+GHSHn9+vWz9a9JkyY1MhZpTdnzzTefZWEgPQsZo1FftmRc0ppyk3wP7xCU5PcoyfipbUKgEATyMjRm5506dXK33367JTwspMBq34vhAwYNJHCcbrrpCmoOjPGss84y52ECLe+6665mHILDdUvlepN/q4t1rWp+vIjggiRKfEEkLNb9CCBNRuZiCMbDBhGMGodnMGLNsVDyfn4mAWPMgqR5xx13FFpE6u7nHeJdyrZWTV0n1GAhkBIE8hqF0HYklcsuu8yFGWZK+mNGFESYuPTSSxs0GYOPoUOHNjiX+4M8blg+Is14p2KzjPTranYbKrbmyg3GEmPGjGlQLEYccRISGxLqVVddZZE9UJ1i+VkqIeURLYaYhViVFkowQxgs6txgcALWtUy8O7xDvEsiISAEKo9AkwxtwIABtt5Egk7WjpJIITQS4ZkC8dFlNsxHBEmCdR9UcHvuuadZ14X7vKOvMS/WmwKhSsPHCmrTpo1ZR+KfBrVULut4WPWF5KZIiOPGjbMwSFZAGf7QT0zyffSNTGmkNPnll19ckBCxGkQqoH6YENaI3qAlc3/uASpJKDyfe53f4EwOMKwQyQ0G08wm1iuRDAOBLcTaZSDaDbEGx7oZYbFg/tTPtebaGMpI0553hneHNVveJZEQEAIxINCczQlhmLAY9D5cDawGm3smrms+GGzk12TMgswbLERE/gjkDQ4ibzhh1zyEFr7JqwLtsv/4R958PPKL9XZ90KBBFtqJi8cdd1zkDUMirB2xbvQm11F4juvNlct1v85kIbSos3379mblR/inclg5EhYrtNlLXJFnCpH3p4vmnHNO64dn4BZmyiehjLwRSKbvtIVt/fXXt7BatBMi3BeWj3PPPbdd94GnI79W9r+L///XO9dHnkFHa6yxRhQsSRvc8P8/wIxyvGm6Yel9y6xMP7GIvHtFFCKgeBWuRc/A2tFL0JFnvGZJ6df6Is+s8xWdykghWNjyzvDu8A6JhIAQiAeBFoMT+/BIlnm6bdu2NvNnlp4Wou04HBMVozWErxDSB87VRA1pykKxuXJRoyEV4Y9F3UhupBfJlgRz24KjN6o41KJN1Zn7TFO/kTCRkNZaay2TkJDekLCQ2vBHw1evtXT33Xeb2jLbsTzfs0hYSIStsYpFEstef0PabC5CC/6G3l3BYSXI/2DSCdUqgZSRQpFm+T8QCQEhEA8CDXVHeerkhSTiAyo3HHZxjiWNTBqo0I9JUKV5aaPZ7jVXLoYlRLwohrJVicU8j8UgH38YKkYsXhLKFBOsHzMnWnGAQ3prqLXR9ykrm5nxuzlmxvW41yCps1jCgZowcaussooxs9Yw+GLr0nNCQAg0RqBFhsYjvJhYpmFgQKQHwipxHLeJeuPmJ/8MMTFbihKBNSbSB+tQRPTgg1iMmT3hpLyKy3JzeRWjSQekpmFCwjWiqaSFMKZgfe22224zbLJDeyWtDxMmTLAoLLg2nHLKKXac5PYmDT+1RwiUDYFCNZvecdfSgngJIPI+Wpbio9Ay6uF+ovcTTcNLbLaeROoVUqlUkojo4X3ooh49elhEEdbSvFFC5OMpVrzuSvYrqWWT3oZ3gHeBtVLeDZEQEALVQ6DFNbSmOOfo0aMtViCzfxxug6qlqfvr7TxSWbDsC31nfSyumXsxfnihndo3jwDxLVG9Y7FJ4GfcEXBiFwkBIVBdBJo022+pWbzAGDsQ5R4jCqKwe2s4xyI+hgj1TqzHEW0/e4uLmYF9oU7l9T5eLfWf/2n+t/kf53+d/3n+93kHxMxaQk/XhUA8CBQtoeU277XXXrPI6T7Qrl0i9h8pUzBGyA5NlfucfguBpCKAxSqRVojjiS8jhDUqUViwGBUJASGQLATKxtBCt1CzsZCP4QiBfrEY9FmXzUnZr+1IcghAaZ9IBFDVEkQZlwXve2eSGKG/SHmDo3QhFp2J7KAaJQRqGIGyM7RsrEiuCXPDB8qnbjEfq169ejmfUsViC3bs2DH7dh0LgaogQEQTksGiQsSaFx8yrE3xJ4OJVTM2Z1UAUaVCIKUIVJShZWNCpmeirLONGjXKwmlh9s/6Axuz4FKdirPr07EQaAoBnLTRHmDYxIbZPfElyWreu3dv20LaoKbK0HkhIASSh0BsDC2768QNJJYfkRTYCASMwQTrEkS4YGOG3JwDc3Z5OhYCzSFAZBc0BPiJsbHe6w2LLQUO/nps3bt3T2x29ub6pmtCQAj8i0BVGNq/1f/viAC7fGgIVssGg8PsnfW3rl27mml0ly5dHJvUlLno6Xc2AqgPSeHDhkuJj/Fp62BYnXbu3NnSIa299to2aQrJN7Of17EQEALpRSARDC0XPiKV4+vzzDPP2EZIJ2bZEKlR+DAhzYWNTNPTTz99bjH6XcMIkEngzTffNGkLiYuNiRCRUiCke0K1Ee2ejegrIW1NDcOirgmBukYgkQwt34gQQopZN8yNME5sJPIk1h+zb/KRLbPMMg7mxn6JJZawLaR/yVemziUfAcadtD5spAKCibH3UTlMiidmJTnaVlhhBdtgYkjyGvfkj61aKATKjUBqGFq+jrMWx8fNp3XJbPwmsSLm1xCOzTA3IsaTKSBsBBAmb9qMM86Yr2idiwkBxvCjjz5yxJwkUn3YGEOYGBkIIBzFGUMmK2SADhu/NYYxDZaqEQIJRyDVDK0pbFl/4wP59ttv20eR2TwfSDbOZycs9XnLLL0MzM3nV3NYt4UN9SZJO5ntyzm8KbTzn8cpGenqiy++MDUgVq5hI70NTIysANlpdVAJMtGAcbEhdTMZ8bnt7HzIhpC/Rp0VAkKg3hGoSYbW3KBi3cZHljU5Pqjhw4rPHB9aPrqswwQJj7JQa8HUYG4wQJ9U035zjmOMC8hIEMJccUz0fB8cOLbYjc31uZRr4EU+NXyziH6PxMTGMcY8ZNGGcbFxDIMCX35np35BwmKCwGSBiQO+XeSpYyLBehfH4BtneLBScNGzQkAIJA+BumNorRkCPuLhw4zVHB9oNuL3hY93+IDzEecDny9FDFIdkSVgbuQBg8EhhaAiY9/URo4wmGhrNvoD42jNRr41pNOmNtR/XIOBkYgTJkbkF6StXAqxKmHo2QweJo91KsyJDavUMBEQs8pFUb+FgBAoJwJiaGVCEwYQJBf2MAPOBcbAvilGwnmYSVCHIuk1xaBgLtnXaH4244OJht8wEOrFYR3mCaMMTLQlpgoDDow4HNOuIInmJuosE4wqRggIASFQNAJiaEVDV94HUeFhsHLIIYe44447rmyFYzyB47DPzVa2MlWQEBACQiCJCBSdPiaJnUlzm84++2xzPzj44IPL2g0yHhApHqlOJASEgBCoZQTE0BIwuqzXIUEdfvjhttZWziaRfJX1PyLIi4SAEBACtYyAGFoCRveMM84wg5H99tuv7K3B7B1HY3J6iYSAEBACtYyAGFqVRxcXgaFDh7ojjzzStWnTpiKtQe1Ibi/CRYmEgBAQArWKgBhalUf2lFNOMbP3QYMGVawl2223nVlgPvzwwxWrQwULASEgBKqNgBhaFUcAx+7LL7/cHX300WZSX6mm4LxMOh6MQ0RCQAgIgVpFQAytiiN70kknWdSM3XbbreKtIPPyiBEjpHasONKqQAgIgWohIIZWJeSJLzl8+HDzOSMsVKVpm222MWfvkSNHVroqlS8EhIAQqAoCcqyuCuzO9e/f35JPkimAyB5x0JprrmkBf6+99to4qlMdQkAICIFYEZCEFivc/6uMFDc33HCDO+GEE2JjZtQstWMVBltVCgEhEBsCktBig/rfivr27Wt53MaPHx9rWhoyChDVnrW03r17/9sgHQkBISAEagABSWgxDyJM7Pbbb3cnnnhirMyMbpKypVu3blZ/zN1WdUJACAiBiiMghlZxiBtWQODhzp07uy233LLhhZh+bbXVVu7ee+/Nm+4mpiaoGiEgBIRARRAQQ6sIrPkLff75503dh7l+tXKDwdBIzPnEE0/kb6TOCgEhIARSioDW0GIcuI022shM55966qkYa21c1UorreSweLz44osbX9QZISAEhEBKEZCEFtPAjR071uEDhnRWbUJKu/vuux2ZuUVCQAgIgVpBQBJaTCPZo0cPUzM+9thjMdXYdDUTJkxwyy+/vENSJCSWSAgIASFQCwhMWwudSHofRo0aZWtWTz75ZCKautxyy7nFF1/c3XXXXWJoiRgRNUIICIFyICAJrRwotlDGGmus4dq2beseeuihFu6M7/Jhhx3m7rvvPvfmm2/GV6lqEgJCQAhUEAGtoVUQXIp+4IEH3NNPP52ItbPsrvbp08e99dZb7u23384+rWMhIASEQGoREEOr4NBhdHHsscc6mMeqq65awZoKLxorxznnnNPcCAp/Wk8IASEgBJKHgBhaBceENaqXX37ZDRkypIK1FFc0AZE32WQTMbTi4NNTQkAIJBABraFVaFD++ecft+KKK7pOnTq5W265pUK1lFYsIbj69evnPv/8czfXXHOVVpieFgJCQAhUGQFJaBUaAJgYqWGIqJ9U2nDDDS3aP+t8IiEgBIRA2hGQhFaBEfz7779NMuvatatLeu6xDTbYwNbSbr755gogoSKFgBAQAvEhIAmtAlhfd9117r333nPHH398BUovb5Gbbrqpe/jhhx1MWCQEhIAQSDMCYmhlHr0///zTjEAGDhxo2aHLXHzZi8MwZMqUKeZaUPbCVaAQEAJCIEYExNDKDPaVV17pPvnkEzPXL3PRFSluySWXNMardbSKwKtChYAQiBEBMbQygv3777+7U045xe25556WGbqMRVe0KKQ0MbSKQqzChYAQiAEBMbQygnzppZe6b775xh111FFlLLXyRcHQyKT96aefVr4y1SAEhIAQqBACYmhlAvaXX35xp512mttnn33cPPPMU6ZS4ylmnXXWcTPMMIN75JFH4qlQtQgBISAEKoCAGFoRoOI0nUsXXXSR+/nnn93gwYNzLyX+90wzzeTWWmsts3ZMfGPVQCEgBIRAEwiIoTUBTFOnCeg788wzu0GDBpnxB/f9+OOP7swzz3QHHHCAa9++fVOPJvp8r1693KOPPqqkn4keJTVOCAiB5hCQY3Vz6OS5duutt1q4KGIhTjXVVG7vvfc2dd1ll13m3n//fdeuXbs8TyX/FDEnu3TpYrEnV1pppeQ3WC0UAkJACOQgoASfOYC09PPdd9910003nfvjjz/s1qFDh9qedah8qsiWykvKdZjY3HPPbWpHMbSkjIraIQSEQCEISOVYCFr+3nfeeacB4/rrr78c2xNPPOEWWGABiw7y/fffF1hq9W9H2lxvvfVM7Vj91qgFQkAICIHCERBDKxAzMjzDwHKJc7/++qs79dRTjbE99dRTubck/ve6667rxo0b54h2IhICQkAIpA0BMbQCR2zSpEktPoFKMo3GITA03A+ee+65FvuoG4SAEBACSUNADK2AEUEC++qrr5p8Ytppp7W8Yk8//bRbYoklmrwvqRcWX3xxN//887vHHnssqU1Uu4SAEBACTSIghtYkNI0vEEG/KYKZzTfffO6ZZ55xxEdMKyGliaGldfTUbiFQ3wiIoRUw/hiE5COY2aKLLmrMbKGFFsp3S2rOwdCQMIlLKRICQkAIpAkBMbQCRguGxvpYNsHMll12WYcRSMeOHbMvpfJ47bXXNuOWF198MZXtV6OFgBCoXwTE0AoYe3zQsglmtsoqq7gxY8ZY1ufsa2k9XmyxxYwxjx07Nq1dULuFgBCoUwTE0AoYeEz2g0k7kUKQZkaNGuXatm1bQCnJv3XNNdc08/3kt1QtFAJCQAj8i4AY2r9YtHj09ttv2z1TTz2123TTTd2DDz7o2rRp0+JzabsBhpZGP7q04az2CgEhUF4Eajb0VRRFFjT4u+++c2z4VyFdsRG2KhwDJ+tibNNPP33mGEY1++yz2zbrrLOaM/Vnn31m6Pfr189dc801DpVjLRIM7euvv3ZIpEsvvXQtdlF9EgJCoAYRSN0XmXiJH330kWM96+OPP7aI9ySm/OSTT2zDTwwGRvipcsVWRCKDqVEeDtMwx4MPPtjNO++8ZqqP7xZrT4S+4t60U+fOnR0pZZDSxNDSPppqvxCoHwQSG20f5kGqFqztXn/9dYe6j41IHb/99puNEEkpYSqBseAH1qFDh4xkFSQs9qR8CZJY2CORQdkSW5DcyG0WpLuwpx2snQXmCSNlCybuM844ozlU44fG1qlTJ7fyyiu7pZZaKnWMrnv37tb+YcOGGUb6IwSEgBBIOgKJYWgffPCBWQs+//zz7qWXXnKvvPKKJcyE+cAQApMIeyJxEB0+CfTll18aow1MN+xhyDBImCkR7EnPsuqqq5oxSdL91Q499FA3evRoSyeTBIzVBiEgBIRASwhUjaGhNuSD+fjjj9s2efJkk6BQd/HhZ+N4+eWXt3xjLXUkideR3F577TVjCjBpNvKOweQWXnhh16NHD9t69uxp6sok9YG8bzvuuKOpbmvR8CVJWKstQkAIlAeBWBkaH/QRI0a4e+65xyQwVHRdu3Z15BJj69atW01aDWYPFetvhMci3Qzbs88+aypUJLjNN9/c9enTx5h59jPVOGaCscgii5jUjPpRJASEgBBIOgIVZ2gTJ050w4cPd7fccosZc2BA0bt3b7fZZps5JBOYWj0T64FIqvfee6+77777zNAF45LtttvODRw40KKQVAsf1iMPP/xwh/pRJASEgBBIOgIVYWjffvutu/HGG42RYdSx4IILup122slts802pkZMOijVbB8qydtvv91df/317sMPPzSjEhgb6r927drF2jSkRSYcqB9FQkAICIGkI1BWhvbGG2+48847z1133XXmowUD69+/v6kTyYgsaj0C+NGhkrz22muNwf399982KTjooIPcMsss0/qCSrjz5JNPdldccYVD/SgSAkJACCQdgbI4TY0fP95tvfXWph7jI3z22WebaftVV11lRg9iZoX/G4AZRiNgiJvAmWeeaQyOQMhgDeaVJtY3sT794osvKl2VyhcCQkAIlIxASQyNmfv2229vakQ+fHfeeadDSttnn33MEbnk1qkAQwCn7n333dewBWOwxgIU7CspPeFiAGNVBmv9IwoBIZAGBIpiaJijn3DCCab6Ys2Hj+wLL7zgtthiC/sApqHjaWwjzAWMwRrMwR71I2MRnLvL2S8c0vH3E0MrJ6oqSwgIgUohUPAaGo7PAwYMMGu8IUOGuP32269mYxpWCvRylfvXX3+5iy66yB133HEO61HiSyJVlZMwRpkyZYp74IEHylmsyhICQkAIlB2BgiQ01sYIXIvVImGgMFCo1QC9ZUe6AgWCPWPAWDAmjA1jVE4idJeSfZYTUZUlBIRApRBoFUNDncV6zZFHHunOOOMMS5uCRCBKBgKMBalsGBvGiLEqlwoShkZoLwJBi4SAEBACSUagRZUjQXpxgia24l133WUm+EnuUL23DSvTLbfc0mJH4qxNHMlS6IcffrBgz4w9kUxEQkAICIGkItCshMYsH+daVFpjx44VM0vqKGa1ixBijBVjxtiVKqmRjRvDEAxRREJACAiBJCPQLEPba6+9LKDuqFGjLJVIkjuitv2LAGlrGDNiZzKGpdIqq6yidbRSQdTzQkAIVByBJhkaESrYiMGIM2+1iPBPl1xyidt9990bNOGcc85xQ4cObXCumj8IuBzytOW2Aynp4YcfNudokmaWK/Fobj3Zvxkzxi6MY/a1Qo9lGFIoYrpf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pmnUEKkbG0GiE0JACLQSATG0VgKl28qLAIwL9WI2IaFttdVW2ad0LASEgBBoNQJiaK2GSjeWE4EtttjCTTfddJkikdZwup5tttky53QgBISAECgEATG0QtDSvWVDYNZZZ3WbbbZZxicNaW2nnXYqW/kqSAgIgfpDQAyt/sY8MT2Ggf3111/WnhlnnNH17t07MW1TQ4SAEEgfAmJo6Ruzmmnxxhtv7GaeeWbrz9Zbb+1mmmmmmumbOiIEhED8CLQcgyj+NqnGGkPg119/dd9++61tP//8s/vjjz8yG07Wo0ePdosttph76KGHLFAxwYrZWE+bY445XLt27TKqyRqDRt0RAkKgjAgo9FUZwazHoggiTLDh999/3xHWikj67Nm++uorY2K//fZbydC0bdvWmNs888zjiDbCRggt9osvvrhbYoklxPRKRlkFCIF0IyCGlu7xi7X17733nnv66afd+PHj3cSJE92ECROMcdEIrBTnm2++DLOB0XTo0CEjYSFpsWEMEiQwrBw5JlhxkNr+/PNPO/7999/dd999ZwxxypQptv/mm2/cp59+mmGYMM2vv/7aMKCcpZZaytLQkIpmlVVWsRBbSHciISAE6gMBMbT6GOeCe4nV4YsvvmjqQJgY25dffmmm9jCM7K1Tp05ukUUWyesoXXDFBT6ACvOtt94yBksKGhjta6+95khTQ7zIpZde2q2++upujTXWcL169XILLLBAgTXodiEgBNKCgBhaWkYqhnaiImQdi+3hhx826YcwVGuuuabr1q2bbSuvvHIqjDdgvs8884wxYvZsqD5hvhtttJFtPXr0aOALFwPEqkIICIEKIiCGVkFw01D0Dz/84O666y530003uVGjRpmUtdZaa7kNN9zQJJoVV1wxDd1osY0wszFjxriRI0fahiSHChTrSnKvwdyaCpjcYuG6QQgIgUQgIIaWiGGIvxF83C+66CI3YsQIqxwGtt1227k+ffq4WWaZJf4GxVwjKslbbrnFtpdfftlhbDLQJx8dNGiQrQPG3BxVJwSEQBkQEEMrA4hpKQLz+WuvvdZdfPHFts602mqr2Qec+In1HHJq0qRJhssVV1xhlplEMNl///0tgHJaxlbtFAJCwDkxtDr4L0DdNmzYMHf66ae777//3u2www5u7733dqyHif5FAAtL1K9Dhw51TzzxhBmSDBkyxK23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"
->
-</div>
-
-</div>
-
 </div>
 </div>
 
