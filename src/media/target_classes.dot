@@ -1,23 +1,23 @@
 digraph sos_classes {
+        node [ fontname = "Lucida Console", fontsize=16, shape=box, style=filled, color=lightgray, fillcolor=lightgray, fontcolor=blue ]; 
+        rankdir = TB;
 
-    subgraph cluster_0 {
-        color = lightgray;
-        label = "Target classes";
+        label = "Target Classes Hierachy";
+        fontsize = 20;
         
+        Path [label="pathlib.Path", fontcolor=black, fillcolor=white];
 
-        Path [shape=box, style=filled, color=gray, fillcolor=gray, label="pathlib.Path"];
+        path [label="path", color=red];
 
-        path [shape=box, style=filled, color=gray, fillcolor=gray, label="path"];
+        file_target [label="file_target"];
 
-        file_target [shape=box, style=filled, color=gray, fillcolor=gray, label="file_target"];
-
-        BaseTarget [shape=box, style=filled, color=gray, fillcolor=gray];
-        sos_variable  [shape=box, style=filled, color=gray, fillcolor=gray];
-        env_variable  [shape=box, style=filled, color=gray, fillcolor=gray];
-        executable [shape=box, style=filled, color=gray, fillcolor=gray];
-        dynamic [shape=box, style=filled, color=gray, fillcolor=gray];
-        remote [shape=box, style=filled, color=gray, fillcolor=gray];
-        other_targets [ shape=box, style=filled, color=gray, fillcolor=gray, label="Other targets such as R_Library"];
+        BaseTarget [fontcolor=black, fillcolor=white];
+        sos_variable;
+        env_variable;
+        executable ;
+        dynamic ;
+        remote ;
+        other_targets [ label="..."];
 
         Path -> path -> file_target;
         BaseTarget -> file_target;
@@ -28,23 +28,39 @@ digraph sos_classes {
         BaseTarget -> remote;
         BaseTarget -> other_targets;
 
-    }
+
+
 
     subgraph cluster_1 {
-        color = lightgray;
         label = "paths";
         style = filled;
+        color = red;
+        fillcolor = lightgray;
+        fontcolor = blue;
+        fontsize = 16;
+        fontname = "Lucida Console";
         
-        node [shape=record label="paths"];
+        node [shape=record label="paths", fillcolor=white, fontcolor=gray, fontcolor=black, fontsize=12, color=gray];
         struct1 [label="<f0>path|<f1>path|<f2>path|<f3>..."];
     }
 
+    empty1 [style=invis];
     subgraph cluster_2 {
-        color = lightgray;
         label = "sos_targets";
-        style = filled;
+        fontname = "Lucida Console";
         
-        node [shape=record label="sos_targets"];
-        struct2 [label="<f0>BaseTarget|<f1>BaseTarget|<f2>..."];
+        style = filled;
+        color = lightgray;
+        fillcolor = lightgray;
+        fontcolor = blue;
+        fontsize = 16;
+
+        node [shape=record label="sos_targets", fillcolor=white, fontcolor=gray, fontcolor=black, fontsize=12, color=gray];
+        struct2 [label="<f0>BaseTarget|<f1>BaseTarget|<f2>BaseTarget|<f3>..."];
     }
+    empty [style=invis];
+    env_variable -> empty [style=invis];
+    empty -> struct1 [style=invis];
+    empty -> empty1 [style=invis];
+    empty -> struct2 [style=invis];
 }
