@@ -1,0 +1,50 @@
+digraph sos_classes {
+
+    subgraph cluster_0 {
+        color = lightgray;
+        label = "Target classes";
+        
+
+        Path [shape=box, style=filled, color=gray, fillcolor=gray, label="pathlib.Path"];
+
+        path [shape=box, style=filled, color=gray, fillcolor=gray, label="path"];
+
+        file_target [shape=box, style=filled, color=gray, fillcolor=gray, label="file_target"];
+
+        BaseTarget [shape=box, style=filled, color=gray, fillcolor=gray];
+        sos_variable  [shape=box, style=filled, color=gray, fillcolor=gray];
+        env_variable  [shape=box, style=filled, color=gray, fillcolor=gray];
+        executable [shape=box, style=filled, color=gray, fillcolor=gray];
+        dynamic [shape=box, style=filled, color=gray, fillcolor=gray];
+        remote [shape=box, style=filled, color=gray, fillcolor=gray];
+        other_targets [ shape=box, style=filled, color=gray, fillcolor=gray, label="Other targets such as R_Library"];
+
+        Path -> path -> file_target;
+        BaseTarget -> file_target;
+        BaseTarget -> executable;
+        BaseTarget -> sos_variable;
+        BaseTarget -> env_variable;
+        BaseTarget -> dynamic;
+        BaseTarget -> remote;
+        BaseTarget -> other_targets;
+
+    }
+
+    subgraph cluster_1 {
+        color = lightgray;
+        label = "paths";
+        style = filled;
+        
+        node [shape=record label="paths"];
+        struct1 [label="<f0>path|<f1>path|<f2>path|<f3>..."];
+    }
+
+    subgraph cluster_2 {
+        color = lightgray;
+        label = "sos_targets";
+        style = filled;
+        
+        node [shape=record label="sos_targets"];
+        struct2 [label="<f0>BaseTarget|<f1>BaseTarget|<f2>..."];
+    }
+}
