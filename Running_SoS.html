@@ -34,22 +34,15 @@
 <p>to enter a command prompt with sos command. More usefully, you can start a Jupyter server with <a href="https://www.r-project.org/">R</a> and <a href="https://github.com/IRkernel/IRkernel">IRkernel</a>, Julia, Python, and SoS kernels, and many Python and R modules for data sciencists using command</p>
 
 <pre><code>% docker run -d -p 8888:8888 mdabioinfo/sos-notebook</code></pre>
-<p>After the docker is running in the background, you will need to find the name of the instance using command <code>docker ps</code>,</p>
-
-<pre><code>% docker ps
-CONTAINER ID        IMAGE                     COMMAND                  CREATED              STATUS              PORTS                    NAMES
-588af406993c        mdabioinfo/sos-notebook   "tini -- start-not..."   About a minute ago   Up About a minute   0.0.0.0:8888-&gt;8888/tcp   eager_volhard</code></pre>
-<p>and get the log message of the docker instance with commands such as</p>
+<p>After the docker is running in the background, you will need to find the name of the instance from the last column of the output of command <code>docker ps</code> and get the log message of the docker instance with <code>docker logs</code> followed by the name of your docker instance, e.g.</p>
 
 <pre><code>% docker logs eager_volhard
 Execute the command: jupyter notebook
 ...
-[C 18:14:24.899 NotebookApp]
-
     Copy/paste this URL into your browser when you connect for the first time,
     to login with a token:
         http://localhost:8888/?token=754a646651c82657725be887a1a2579ab69a702ba80ae4b3</code></pre>
-<p>and then start a browser and start working with a complete SoS environment with the URL in the log message. You could also set up the docker image to disable password as discussed <a href="https://github.com/jupyter/docker-stacks/tree/master/scipy-notebook">here</a> but using a Jupyter server without password is strongly discouraged.</p>
+<p>You can then enter the URL in the log message to a browser and start working with a complete SoS environment. You could also set up the docker image to disable password as discussed <a href="https://github.com/jupyter/docker-stacks/tree/master/scipy-notebook">here</a> but using a Jupyter server without password is strongly discouraged.</p>
 <p>You can even use this docker image for your daily data analysis if you make your local directory available to the Jupyter server using command</p>
 
 <pre><code>% docker run -d -p 8888:8888 -v $HOME:/home/jovyan/work  mdabioinfo/sos-notebook</code></pre>
