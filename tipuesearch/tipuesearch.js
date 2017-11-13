@@ -381,16 +381,16 @@ http://www.tipue.com/search
                                    {    
                                    //MY CODE
                                         if (FoundMainTitles.length === 0) {
-                                            out += '<hr><div class="tipue_search_content_mainTitle"><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></div>';
-                                            out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                            out += '<hr><div class="tipue_search_content_mainTitle"><h1><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></h1></div>';
+                                            out += '<div class="tipue_search_content_title"><h2><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></h2></div>';
                                             FoundMainTitles.push(found[i].mainTitle);
                                         } else if (found[i].mainTitle != FoundMainTitles.slice(-1)) {
-                                            out += '<hr><div class="tipue_search_content_mainTitle"><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></div>';
-                                            out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                            out += '<hr><div class="tipue_search_content_mainTitle"><h1><a href="' + found[i].mainUrl + '"' + tipue_search_w + '>' +  found[i].mainTitle + '</a></h1></div>';
+                                            out += '<div class="tipue_search_content_title"><h2><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></h2></div>';
                                             FoundMainTitles = [];
                                             FoundMainTitles.push(found[i].mainTitle);
                                         } else if (found[i].mainTitle == FoundMainTitles.slice(-1)) {
-                                            out += '<div class="tipue_search_content_title"><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></div>';
+                                            out += '<div class="tipue_search_content_title"><h2><a href="' + found[i].url + '"' + tipue_search_w + '>' +  found[i].title + '</a></h2></div>';
                                             FoundMainTitles = [];
                                             FoundMainTitles.push(found[i].mainTitle);
                                         }
