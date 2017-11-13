@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_javascript {}.lan_julia-0.6 {}.lan_sas {}
+ .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_SoS {}.lan_javascript {}.lan_julia-0.6 {}.lan_octave {}
 
 </style>
 <body>
@@ -355,17 +355,17 @@ def my_action(script, *args, **kwargs):
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Adding additional target is similar with a class derived from <a href="https://github.com/vatlab/SOS/blob/master/src/sos/target.py"><code>BaseTarget</code></a>.</p>
 
-<pre><code>from sos.target import BaseTarget
+<pre><code>from sos.targets import BaseTarget
 
 class my_target(BaseTarget):
     def __init__(self, *args, **kwargs):
         super(my_target, self).__init__(self)</code></pre>
-<p>You will need to define several member functions for this class, most notably <code>exists</code> that checks the existence of the target. This function accept a parameter <code>mode</code>, which can be <code>target</code>, <code>signature</code>, or <code>any</code>. Like a file target, a target can be considered exist as long as its signature exists, and if the real target is not needed for the execution of the workflow.</p>
-<p>The details of this class can be found at the source code of <a href="https://github.com/vatlab/SoS/blob/master/src/sos/target.py"><code>BaseTarget</code></a>. The <a href="https://github.com/vatlab/sos-r/blob/master/src/sos_R/target.py"><code>R_Library</code></a> provides a good example of a <strong>virtual target</strong> that does not have a fixed corresponding file, can be checked for existence, and actually attempts to obtain (install a R library) the target when it is checked.</p>
+<p>You will need to define several member functions for this class, most notably <code>target_exists</code> that checks the existence of the target. This function accept a parameter <code>mode</code>, which can be <code>target</code>, <code>signature</code>, or <code>any</code>. Like a file target, a target can be considered exist as long as its signature exists, and if the real target is not needed for the execution of the workflow.</p>
+<p>The details of this class can be found at the source code of <a href="https://github.com/vatlab/SoS/blob/master/src/sos/targets.py"><code>BaseTarget</code></a>. The <a href="https://github.com/vatlab/sos-r/blob/master/src/sos_R/targets.py"><code>R_Library</code></a> provides a good example of a <strong>virtual target</strong> that does not have a fixed corresponding file, can be checked for existence, and actually attempts to obtain (install a R library) the target when it is checked.</p>
 <p>After you defined your target, you can make it available to SOS by adding an appropriate entry point</p>
 
 <pre><code>[sos-targets]
-my_target = mypackage.mymodule:my_target</code></pre>
+my_target = mypackage.targets:my_target</code></pre>
 
 </div>
 </div>
@@ -386,7 +386,7 @@ my_target = mypackage.mymodule:my_target</code></pre>
 <p>Suppose you would like to convert <code>.sos</code> to a <code>.xp</code> format, you can define these two functions as follows</p>
 
 <pre><code>import argparse
-from sos.sos_script import SoS_Script
+from sos.parser import SoS_Script
 
 def get_my_converter_parser():
     parser = argparse.ArgumentParser('sos_xp')
