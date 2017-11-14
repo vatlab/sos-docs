@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_bash {}.lan_python3 {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_python3 {}
 
 </style>
 <body>
@@ -391,7 +391,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>A <strong>target</strong> is an object that can be created and detected. A SoS step can take a list of targets as input, check the existence of a list of dependent targets, and produce a list of targets as output. Targets can be created, removed, and their contents are tracked by SoS with <strong>signatures</strong>. For example, SoS can skip a workflow step if its output targets have been created, but will still rerun the step if the input or ouptut targets have been changed. A target can also be <strong>zapped</strong>, which is a special action to replace content of large files wit their signature, so a target can be considered "exist" for signature validation, but in the meantime "non-exist" if the actual content is needed.</p>
-<p>SoS provides a very flexible and intuitive set of methods to work with files and list of files, gearing towards converting and using different formats of filenames in different scripts. You do not have to understand all the technical details but learning how to use <code>path</code> and <code>paths</code> would greatly facilitate the use of filenames in SoS.</p>
+<p>SoS provides a very flexible and intuitive set of methods to work with files and list of files, gearing towards converting and using different formats of filenames in different scripts. <strong>You do not have to understand the technical details of SoS variables such as <code>input</code> and <code>_input</code> in a majority of the cases</strong> but understanding what these variables are and how to use then would greatly facilitate the use of filenames in more complex scenarios.</p>
 <p>In addition to <code>file_target</code>, SoS provides a number of built-in targets such as <code>file_target</code>, <code>sos_variable</code>, and <code>executable</code>, and targets defined by language modules such as <code>R_Library</code> for <code>R</code>. This section describes general usages of targets and syntax for the most frequently used target <code>file_target</code>. Please refer to Chapter <a href="Targets_and_Actions.html">Targets and Actions</a> for descriptions of other target types.</p>
 
 </div>
@@ -419,7 +419,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="File-and-directory-names-(path-objects)">File and directory names (<code>path</code> objects)<a class="anchor-link" href="#File-and-directory-names-(path-objects)">&#182;</a></h3>
+<h3 id="File-and-directory-names-(path)">File and directory names (<code>path</code>)<a class="anchor-link" href="#File-and-directory-names-(path)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -875,7 +875,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>83838</pre>
+<pre>169712</pre>
 </div>
 
 </div>
@@ -1657,7 +1657,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Path-list-(paths-object)">Path list (<code>paths</code> object)<a class="anchor-link" href="#Path-list-(paths-object)">&#182;</a></h3>
+<h3 id="Path-list-(paths)">Path list (<code>paths</code>)<a class="anchor-link" href="#Path-list-(paths)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -2236,9 +2236,132 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>83838</pre>
+<pre>169712</pre>
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, although <code>paths</code> usually contains file or directory names, the fact that it formats as space separated items is very useful for passing lists of strings to command lines and SoS magics, so you will see the following usage pattern from time to time:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sample_A&#39;</span><span class="p">,</span> <span class="s1">&#39;sample_B&#39;</span><span class="p">,</span> <span class="s1">&#39;sample_C&#39;</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">echo</span> <span class="p">{</span><span class="n">paths</span><span class="p">(</span><span class="n">samples</span><span class="p">)}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> !echo sample_A sample_B sample_C<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sample_A sample_B sample_C
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here a list of strings to converted to <code>paths</code> just to be formatted as command line options, which is equivalent to the following but avoids problems when <code>samples</code> is a single string such as <code>'sample_A'</code></p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">echo</span> <span class="p">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">samples</span><span class="p">)}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> !echo sample_A sample_B sample_C<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sample_A sample_B sample_C
+</pre>
+</div>
 </div>
 
 </div>
@@ -2258,7 +2381,7 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A <code>file_target</code> is <code>path</code> with additional <code>BaseTarget</code> interface. A <code>file_target</code> object can be created from a string or a <code>path</code> and it behaves exactly like a <code>path</code> object from an usage point of view. For this reason, <code>file_target</code> is rarely used explicitly in SoS scripts.</p>
+<p>A <code>file_target</code> is <code>path</code> with additional <code>BaseTarget</code> interface. A <code>file_target</code> object can be created from a string or a <code>path</code> and it behaves exactly like a <code>path</code> object from an user point of view. For this reason, <code>file_target</code> is rarely used explicitly in SoS scripts.</p>
 
 </div>
 </div>
@@ -2285,7 +2408,7 @@ c.txt
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="prompt input_prompt">In&nbsp;[44]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;SoS_Syntax.ipynb&#39;</span>
@@ -2311,7 +2434,7 @@ c.txt
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>input=&#39;SoS_Syntax.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39;
-    3070 SoS_Syntax.ipynb
+    3485 SoS_Syntax.ipynb
 </pre>
 </div>
 </div>
@@ -2333,7 +2456,7 @@ _input=&#39;SoS_Syntax.ipynb&#39;
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="prompt input_prompt">In&nbsp;[45]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;SoS_Syntax.ipynb&#39;</span><span class="p">,</span> <span class="s1">&#39;SoS_Magics.ipynb&#39;</span>
@@ -2360,7 +2483,7 @@ _input=&#39;SoS_Syntax.ipynb&#39;
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
-    3070 SoS_Syntax.ipynb
+    3485 SoS_Syntax.ipynb
     2923 SoS_Magics.ipynb
 </pre>
 </div>
@@ -2383,7 +2506,7 @@ _input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div>
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;SoS_Syntax.ipynb&#39;</span><span class="p">,</span> <span class="s1">&#39;SoS_Magics.ipynb&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
@@ -2409,7 +2532,7 @@ _input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39;
-    3070 SoS_Syntax.ipynb
+    3485 SoS_Syntax.ipynb
 input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Magics.ipynb&#39;
     2923 SoS_Magics.ipynb
@@ -2434,6 +2557,237 @@ _input=&#39;SoS_Magics.ipynb&#39;
 <pre><code>_input = sos_targets('SoS_Syntax.ipynb')
 _input = sos_targets('SoS_Magics.ipynb')</code></pre>
 <p>respectively. Because <code>_input</code> contains only one element, it is not necessary to use <code>_input[0]</code> in the script.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Whereas you can always use <code>input</code>, <code>_input</code> etc in scripts (format-string) easily, using them outside of scripts is a bit tricker. Let us check a few common usages and see how to use <code>sos_targets</code> in SoS.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First, it is a common practice to generate another file with a slightly different name. For example, in the following script, <code>input</code> is a <code>sos_targets</code> with two filenames, <code>_input</code> is a <code>sos_targets</code> with one filename, and we need to generate <code>test.bam.bai</code> from input file <code>test.bam</code>. In this particular case, you can append the <code>.bai</code> extension directly to <code>_input</code> using the <code>+</code> operator, by passing the <code>+</code> operation to the first <code>file_target</code> of <code>_input</code>:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">test1</span><span class="o">.</span><span class="n">bam</span> <span class="n">test2</span><span class="o">.</span><span class="n">bam</span>
+
+<span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;test1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;test2.bam&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">input_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
+<span class="kn">output:</span> <span class="n">_input</span> <span class="o">+</span> <span class="s1">&#39;.bai&#39;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Generating {_output} from {_input}&quot;</span><span class="p">)</span>
+<span class="n">_output</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Generating test1.bam.bai from test1.bam
+Generating test2.bam.bai from test2.bam
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the extensions are different, you can use the <code>with_suffix</code> function of <code>pathlib.Path</code>, again by calling the <code>with_suffix</code> function of its only element <code>_input[0]</code>:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">test1</span><span class="o">.</span><span class="n">bam</span> <span class="n">test2</span><span class="o">.</span><span class="n">bam</span>
+
+<span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;test1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;test2.bam&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">input_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
+<span class="kn">output:</span> <span class="n">_input</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.bai&#39;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Generating {_output} from {_input}&quot;</span><span class="p">)</span>
+<span class="n">_output</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Generating test1.bai from test1.bam
+Generating test2.bai from test2.bam
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also use the <code>:n</code> formatter to retrieve the part of <code>_input</code> without extension, and add <code>.bam.bai</code> to it as follows:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="n">test1</span><span class="o">.</span><span class="n">bam</span> <span class="n">test2</span><span class="o">.</span><span class="n">bam</span>
+
+<span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;test1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;test2.bam&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">input_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input:n}.bam.bai&quot;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Generating {_output} from {_input}&quot;</span><span class="p">)</span>
+<span class="n">_output</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Generating test1.bam.bai from test1.bam
+Generating test2.bam.bai from test2.bam
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the result of <code>_input + '.bai'</code> is a <code>path</code> and <code>f'{_input:n}.bam.bai'</code> is a <code>str</code> but both will be converted to <code>_output</code> with type <code>sos_targets</code>. You can use either style although <code>:u</code>, <code>:b</code> etc can be shorter than <code>expanduser()</code> and <code>.name</code>, especially when you combine multiple formatters to extract certain parts of a <code>path</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Second, because <code>path</code>, <code>path</code>, and even <code>sos_targets</code> supports the <code>os.PathLike</code> interface, you can use them as filenames directly in SoS (Python). For example, you can pass <code>sos_targets</code> with one element to usual <code>os.path</code> functions such as <code>getsize</code> and open it directly with the <code>open</code> function:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s2">&quot;SoS_Syntax.ipynb&quot;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Size of {repr(input)} is {os.path.getsize(input)}.&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The first two lines of {repr(input)} are:&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myself</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">myself</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">myself</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Size of [file_target(&#39;SoS_Syntax.ipynb&#39;)] is 0.
+The first two lines of [file_target(&#39;SoS_Syntax.ipynb&#39;)] are:
+
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, although Python standard libraries supports <code>os.PathLike</code> interface, third party modules might or might not work correctly in this day so it can be safer to use <code>str(input)</code> to convert the paths to <code>str</code> before passing them to these functions.</p>
 
 </div>
 </div>
@@ -2540,7 +2894,7 @@ dev.off()
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
@@ -2588,7 +2942,7 @@ dev.off()
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
@@ -2645,7 +2999,7 @@ dev.off()
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[53]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">var :</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">5</span>
@@ -2662,7 +3016,7 @@ dev.off()
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[46]:</div>
+<div class="prompt output_prompt">Out[53]:</div>
 
 
 
@@ -2727,7 +3081,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="prompt input_prompt">In&nbsp;[54]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># path to tool gatk</span>
@@ -2761,7 +3115,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="prompt input_prompt">In&nbsp;[55]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
@@ -2805,7 +3159,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="prompt input_prompt">In&nbsp;[56]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">gatk_path</span> <span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">GATK</span>
@@ -2849,7 +3203,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">gatk</span><span class="o">-</span><span class="n">path</span> <span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">GATK</span>
@@ -2893,7 +3247,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">gatk</span><span class="o">-</span><span class="n">path</span> <span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">GATK</span>
@@ -2936,7 +3290,7 @@ parameter: var_name = default_value</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[52]:</div>
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
@@ -2980,7 +3334,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[53]:</div>
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">sample</span><span class="o">-</span><span class="n">names</span> <span class="n">A</span>
@@ -3024,7 +3378,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[54]:</div>
+<div class="prompt input_prompt">In&nbsp;[61]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">files</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span> <span class="n">b</span><span class="o">.</span><span class="n">txt</span>
@@ -3075,7 +3429,7 @@ parameter: var_name = default_value</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="prompt input_prompt">In&nbsp;[62]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
@@ -3110,7 +3464,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="prompt input_prompt">In&nbsp;[63]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">100</span>
@@ -3154,7 +3508,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div>
+<div class="prompt input_prompt">In&nbsp;[64]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">100</span>
@@ -3198,7 +3552,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="prompt input_prompt">In&nbsp;[65]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">bam</span><span class="o">-</span><span class="n">files</span> <span class="n">A</span><span class="o">.</span><span class="n">bam</span> <span class="n">B</span><span class="o">.</span><span class="n">bam</span>
@@ -3221,7 +3575,7 @@ parameter: var_name = default_value</code></pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>[path(&#39;A.bam&#39;), path(&#39;B.bam&#39;)]
+<pre>A.bam B.bam
 </pre>
 </div>
 </div>
@@ -3243,7 +3597,7 @@ parameter: var_name = default_value</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="prompt input_prompt">In&nbsp;[66]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">100</span>
@@ -3595,7 +3949,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="prompt input_prompt">In&nbsp;[67]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
@@ -3616,7 +3970,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div>
+<div class="prompt input_prompt">In&nbsp;[68]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gff_0</span><span class="p">]</span>
@@ -3635,7 +3989,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div>
+<div class="prompt input_prompt">In&nbsp;[69]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># This is step 1 of the gff workflow</span>
@@ -3698,7 +4052,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div>
+<div class="prompt input_prompt">In&nbsp;[70]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
@@ -3725,7 +4079,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div>
+<div class="prompt input_prompt">In&nbsp;[71]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mapping_5</span> <span class="p">(</span><span class="n">get</span> <span class="n">data</span><span class="p">)]</span>
@@ -3752,7 +4106,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[65]:</div>
+<div class="prompt input_prompt">In&nbsp;[72]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mouse_10</span><span class="p">]</span>
@@ -3792,7 +4146,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[66]:</div>
+<div class="prompt input_prompt">In&nbsp;[73]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
@@ -3821,7 +4175,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[67]:</div>
+<div class="prompt input_prompt">In&nbsp;[74]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mouse_10</span><span class="p">,</span><span class="n">human_10</span><span class="p">]</span>
@@ -3848,7 +4202,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[68]:</div>
+<div class="prompt input_prompt">In&nbsp;[75]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="n">mouse</span>
@@ -3876,7 +4230,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[69]:</div>
+<div class="prompt input_prompt">In&nbsp;[76]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mouse_20</span><span class="p">,</span><span class="n">human_20</span><span class="p">]</span>
@@ -3935,7 +4289,7 @@ hosts:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[70]:</div>
+<div class="prompt input_prompt">In&nbsp;[77]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="n">default</span><span class="p">:</span><span class="o">-</span><span class="mi">20</span>
@@ -4008,7 +4362,7 @@ default_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[71]:</div>
+<div class="prompt input_prompt">In&nbsp;[78]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1">#local run</span>
@@ -4090,7 +4444,7 @@ The workflow is execute by SoS action <code>sos_run</code>, e.g.</p>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[72]:</div>
+<div class="prompt input_prompt">In&nbsp;[79]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">forward</span><span class="o">.</span><span class="n">dot</span>
@@ -4201,7 +4555,7 @@ call_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[73]:</div>
+<div class="prompt input_prompt">In&nbsp;[80]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
@@ -4253,7 +4607,7 @@ call_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[74]:</div>
+<div class="prompt input_prompt">In&nbsp;[81]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">8</span>
@@ -4297,7 +4651,7 @@ call_20
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[75]:</div>
+<div class="prompt input_prompt">In&nbsp;[82]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="n">batch</span>
@@ -4348,7 +4702,7 @@ echo 2
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[76]:</div>
+<div class="prompt input_prompt">In&nbsp;[83]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">nested</span><span class="o">.</span><span class="n">sos</span>
@@ -4415,7 +4769,7 @@ print(f&#34;This is {step_name} of a nested workflow&#34;)
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[77]:</div>
+<div class="prompt input_prompt">In&nbsp;[84]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;nested&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;nested.sos&#39;</span><span class="p">)</span>
@@ -4466,7 +4820,7 @@ This is nested_30 of a nested workflow
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[78]:</div>
+<div class="prompt input_prompt">In&nbsp;[85]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
@@ -4576,7 +4930,7 @@ touch test.vcf
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[79]:</div>
+<div class="prompt input_prompt">In&nbsp;[86]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>

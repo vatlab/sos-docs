@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_SAS .input_prompt { background-color: #9CD4F9 !important }.lan_Matlab .input_prompt { background-color: #dff8fb !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_javascript {}.lan_sas {}
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_SAS .input_prompt { background-color: #9CD4F9 !important }.lan_Matlab .input_prompt { background-color: #dff8fb !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_sas {}.lan_sqlite3 {}
 
 </style>
 <body>
@@ -5005,7 +5005,7 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS <code>%put</code> variables from SoS to Julia as the followings:</p>
+<p>The convertion of datatype from SoS to Julia is as followings:</p>
 <table>
 <thead><tr>
 <th>Python</th>
@@ -5022,77 +5022,97 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 <tr>
 <td><code>boolean</code></td>
 <td></td>
-<td><code>boolean</code></td>
+<td><code>Bool</code></td>
 </tr>
 <tr>
 <td><code>integer</code></td>
 <td></td>
-<td><code>integer</code></td>
+<td><code>Int64</code></td>
 </tr>
 <tr>
 <td><code>numpy.float64</code></td>
 <td></td>
-<td><code>double</code></td>
+<td><code>Float64</code></td>
 </tr>
 <tr>
 <td><code>float</code></td>
 <td></td>
-<td><code>float</code></td>
+<td><code>Float64</code></td>
 </tr>
 <tr>
 <td><code>complex</code></td>
 <td></td>
-<td><code>complex</code></td>
+<td><code>Complex{}</code></td>
 </tr>
 <tr>
 <td><code>str</code></td>
 <td></td>
-<td><code>str</code></td>
+<td><code>String</code></td>
 </tr>
 <tr>
 <td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
-<td>homogenous type, all numeric</td>
-<td><code>list{numeric}</code></td>
+<td>homogenous type, all integer</td>
+<td><code>Array{Int64,1}</code></td>
 </tr>
 <tr>
 <td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
-<td>homogenous type, all char</td>
-<td><code>list{string}</code></td>
+<td>homogenous type, all numeric with any float</td>
+<td><code>Array{Float64,1}</code></td>
+</tr>
+<tr>
+<td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
+<td>homogenous type, all str</td>
+<td><code>Array{String,1}</code></td>
 </tr>
 <tr>
 <td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
 <td>multiple types</td>
-<td><code>list{any}</code></td>
+<td><code>Array{Any,1}</code></td>
 </tr>
 <tr>
 <td><code>set</code></td>
-<td></td>
+<td>homogenous type, all integer</td>
+<td><code>Set{Int64}</code></td>
+</tr>
+<tr>
 <td><code>set</code></td>
+<td>homogenous type, all numeric with any float</td>
+<td><code>Set{Float64}</code></td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td>homogenous type, all str</td>
+<td><code>Set{String}</code></td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td>multiple types</td>
+<td><code>Set{Any}</code></td>
 </tr>
 <tr>
 <td><code>dict</code></td>
 <td></td>
-<td><code>dict</code></td>
+<td><code>Dict{}</code></td>
 </tr>
 <tr>
 <td><code>numpy.ndarray</code></td>
 <td></td>
-<td><code>array</code></td>
+<td><code>Array{}</code></td>
 </tr>
 <tr>
 <td><code>numpy.matrix</code></td>
 <td></td>
-<td><code>array</code></td>
+<td><code>Array{}</code></td>
 </tr>
 <tr>
 <td><code>pandas.Series</code></td>
 <td></td>
-<td><code>NamedArrays.NamedArray</code></td>
+<td><code>NamedArrays.NamedArray{}</code></td>
 </tr>
 <tr>
 <td><code>pandas.DataFrame</code></td>
 <td></td>
-<td><code>Dataframes.Dataframe</code></td>
+<td><code>Dataframes.Dataframe{}</code></td>
 </tr>
 </tbody>
 </table>
@@ -5105,7 +5125,17 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Thanks to the similarity of datatype between SoS and Julia, SoS <code>%get</code> data from Julia is similar as <code>%put</code> data from Julia, as follows:</p>
+<p>We design to convert all kinds of <code>SoS</code> <code>str</code> to <code>Julia</code> <code>String</code> instead of <code>Julia</code> <code>Char</code> if the <code>SoS</code> <code>str</code> is length 1 because we cannot combining <code>Julia</code> <code>Char</code> with <code>Julia</code> <code>Char</code> or <code>Julia</code> <code>Char</code> with <code>Julia</code> <code>String</code>.</p>
+<p>However, for a <code>Julia</code> <code>String</code>, it cannot be converted as Integer becasue strings are immutable in <code>Julia</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Thanks to the similarity of datatype between SoS and Julia, the convertion of datatype from Julia to SoS is as followings:</p>
 <table>
 <thead><tr>
 <th>Julia</th>
@@ -5120,78 +5150,58 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 <td><code>None</code></td>
 </tr>
 <tr>
-<td><code>boolean</code></td>
+<td><code>Bool</code></td>
 <td></td>
 <td><code>boolean</code></td>
 </tr>
 <tr>
-<td><code>integer</code></td>
+<td><code>Int64</code></td>
 <td></td>
 <td><code>integer</code></td>
 </tr>
 <tr>
-<td><code>double</code></td>
+<td><code>Char</code></td>
 <td></td>
-<td><code>double</code></td>
+<td><code>str</code></td>
 </tr>
 <tr>
-<td><code>character</code></td>
+<td><code>Complex{}</code></td>
+<td></td>
+<td><code>complex</code></td>
+</tr>
+<tr>
+<td><code>Float64</code></td>
 <td></td>
 <td><code>numpy.float64</code></td>
 </tr>
 <tr>
-<td><code>complex</code></td>
-<td></td>
-<td><code>complex</code></td>
-</tr>
-<tr>
-<td><code>float</code></td>
-<td></td>
-<td><code>float</code></td>
-</tr>
-<tr>
-<td><code>str</code></td>
+<td><code>String</code></td>
 <td></td>
 <td><code>str</code></td>
 </tr>
 <tr>
-<td><code>list{any}</code></td>
+<td><code>Array{,1}</code></td>
 <td></td>
 <td><code>Sequence (</code>list<code>,</code>tuple<code>, ...)</code></td>
 </tr>
 <tr>
-<td><code>list{string}</code></td>
-<td></td>
-<td><code>Sequence (</code>list<code>,</code>tuple<code>, ...)</code></td>
-</tr>
-<tr>
-<td><code>list{numeric}</code></td>
-<td></td>
-<td><code>Sequence (</code>list<code>,</code>tuple<code>, ...)</code></td>
-</tr>
-<tr>
-<td><code>set</code></td>
+<td><code>Set{}</code></td>
 <td></td>
 <td><code>set</code></td>
 </tr>
 <tr>
-<td><code>dict</code></td>
+<td><code>Dict{}</code></td>
 <td></td>
 <td><code>dict</code></td>
 </tr>
 <tr>
-<td><code>array</code></td>
-<td>1 dimension</td>
-<td><code>numpy.array</code></td>
-</tr>
-<tr>
-<td><code>array</code></td>
-<td>2 dimension</td>
+<td><code>Array{Int64/Float64,2}</code></td>
+<td>2 dimensions</td>
 <td><code>numpy.matrix</code></td>
 </tr>
 <tr>
-<td><code>array</code></td>
-<td>&gt; 2 dimension</td>
+<td><code>Array{Int64/Float64,}</code></td>
+<td>&gt; 2 dimensions</td>
 <td><code>numpy.ndarray</code></td>
 </tr>
 <tr>
@@ -5401,7 +5411,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Matlab-(Octave)">Matlab (Octave)<a class="anchor-link" href="#Matlab-(Octave)">&#182;</a></h3>
+<h3 id="MATLAB-(Octave)">MATLAB (Octave)<a class="anchor-link" href="#MATLAB-(Octave)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -5409,7 +5419,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS tries to exchange variables with Matlab/Octave in the most natural way. For example it converts numpy arrays to Matlab matrix, and dictionaries to Matlab struct. It converts Python DataFrame (or R <code>data.frame</code>) to <code>table</code> in Matlab but to <code>dataframe</code> in Octave because the latter is closer to Python DataFrame.</p>
+<p>SoS tries to exchange variables with MATLAB/Octave in the most natural way. For example it converts numpy arrays to MATLAB matrix, and dictionaries to MATLAB struct. It converts Python DataFrame (or R <code>data.frame</code>) to <code>table</code> in MATLAB but to <code>dataframe</code> in Octave because the latter is closer to Python DataFrame.</p>
 
 </div>
 </div>
@@ -5418,12 +5428,12 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS <code>%put</code> variables from SoS to Matlab/Octave as the followings:</p>
+<p>The convertion of datatype from SoS to MATLAB (Octave) is as followings:</p>
 <table>
 <thead><tr>
 <th>Python</th>
 <th>condition</th>
-<th>Matlab/Octave</th>
+<th>MATLAB/Octave</th>
 </tr>
 </thead>
 <tbody>
@@ -5500,7 +5510,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 <tr>
 <td><code>pandas.DataFrame</code></td>
 <td></td>
-<td><code>table</code> (Matlab)</td>
+<td><code>table</code> (MATLAB)</td>
 </tr>
 <tr>
 <td></td>
@@ -5518,10 +5528,10 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS <code>%get</code> data from Matlab as follows:</p>
+<p>The convertion of datatype from MATLAB (Octave) to SoS is as followings:</p>
 <table>
 <thead><tr>
-<th>Matlab</th>
+<th>MATLAB</th>
 <th>length (n)</th>
 <th>Python</th>
 </tr>
@@ -5612,7 +5622,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For example, a R dataframe is transfered as table to Matlab.</p>
+<p>For example, a R dataframe is transfered as table to MATLAB.</p>
 
 </div>
 </div>
