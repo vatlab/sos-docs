@@ -263,16 +263,21 @@ Pkg.add("NamedArrays")</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Because SoS requires Python 3.6 and only MATLAB version 2017b+ supports this version of Python, you will need to have a working version of MATLAB 2017b installed on your system. Then, you will need to install <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html">matlab engine for Python</a>, which 
+<p>Because SoS requires Python 3.6 and only MATLAB version 2017b+ supports this version of Python, you will need to have a working version of MATLAB 2017b or later installed on your system. Then, you will need to install <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html">matlab engine for Python</a>, which 
 typically involves the execution of command <code>python setup.py install</code>  under <code>matlabroot\extern\engines\python</code>.</p>
-<p>You can then install <a href="https://github.com/Calysto/matlab_kernel"><code>matlab_kernel</code></a> and SoS MATLAB language module using command</p>
+<p>Because of <a href="https://mathworksservicerequest.secure.force.com/apex/cp_case_detail?cc=us&amp;id=5000Z00000tgPA0">a bug with usage statistics collection in MATLAB 2017b</a>, you will need to turn off MATLAB's usage statistics collection system before you use MATLAB 2017b with SoS. To resolve this issue, You can opt-out of usage statistics collection by using the following steps: On the <code>Home</code> tab, in the <code>Environment</code> section, click <code>Preferences</code>, then select <code>MATLAB</code> &gt; <code>General</code> in the <code>Preferences</code> window. Uncheck the box <code>Improve MATLAB by sending user experience information to MathWorks</code>.</p>
+<p>There are two different implementations of MATLAB kernels for Jupyter <a href="https://github.com/Calysto/matlab_kernel"><code>matlab_kernel</code></a> and <a href="https://github.com/imatlab/imatlab">imatlab</a>. Because of <a href="https://github.com/vatlab/sos-matlab/issues/2">a bug with <code>matlab_kernel</code></a>, you should install the <code>imatlab</code> kernel using the following commands</p>
 
-<pre><code>pip install sos-matlab --upgrade</code></pre>
-<p>to make sure you have the latest version of <code>sos-matlab</code>, <code>matlab-kernel</code> installed. After that, you can use command</p>
+<pre><code>pip install imatlab
+python -mimatlab install --user</code></pre>
+<p>where the <code>--user</code> flag is not required if you have administrator rights to your Python installation. After the installation of <code>imatlab</code>, you can use command</p>
 
 <pre><code>jupyter kernelspec list</code></pre>
-<p>to verify if you have a working matlab kernel for Jupyter, and start using MATLAB within a SoS Notebook.</p>
-<p><strong>Note</strong>: If you do not see the <code>matlab</code> kernel in the output of <code>jupyter kernelspec list</code> after installing <code>sos-matlab</code>, it might be due to a prior failed installation and you can try to uninstall and re-install <code>matlab-kernel</code>, with commands <code>pip uninstall matlab-kernel</code> and <code>pip install matlab-kernel</code>.</p>
+<p>to verify if you have a working matlab kernel for Jupyter, and you can try to use the MATLAB kernel in Jupyter by itself (not through SoS).</p>
+<p>Finally, install the SoS language module for MATLAB with the following command</p>
+
+<pre><code>pip install sos-matlab</code></pre>
+<p>An option <code>--upgrade</code> can be used to make sure you have the latest version of <code>sos-matlab</code> installed.</p>
 
 </div>
 </div>
