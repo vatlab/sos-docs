@@ -1,0 +1,22 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+[convert-data: provides='{FILENAME}.csv']
+input: f'{FILENAME}.xlsx'
+
+python: expand=True
+    import pandas as pd
+    data = pd.read_excel('{input}')
+    data.to_csv('{output}')
+
+[plot-data]
+input: 'DEG_list.csv'
+output: 'result.pdf'
+
+task:
+R: expand=True
+    data = read.csv('{input}')
+    pdf('{output}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()
+
