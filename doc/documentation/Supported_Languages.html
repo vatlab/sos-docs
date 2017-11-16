@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_SAS .input_prompt { background-color: #9CD4F9 !important }.lan_Matlab .input_prompt { background-color: #dff8fb !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_sas {}.lan_sqlite3 {}
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_SAS .input_prompt { background-color: #9CD4F9 !important }.lan_Matlab .input_prompt { background-color: #dff8fb !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }
 
 </style>
 <body>
@@ -287,10 +287,10 @@ $( document ).ready(function(){
 </tr>
 </tbody>
 </table>
-<p>Despite of the flexibility on the use of local and remote kernels, multiple instances of the same kernel, use of self-defined languages, the simplest version with only a language name</p>
+<p>Despite of the flexibility on the use of local and remote kernels, multiple instances of the same kernel, use of self-defined languages, the majority of the times you will be using magics like</p>
 
 <pre><code>%use R</code></pre>
-<p>and default kernel (<code>ir</code>), color (<code>FDEDEC</code>), and name (<code>R</code>) will be used most of the time.</p>
+<p>to switch to a language with default kernel (<code>ir</code>), color (<code>FDEDEC</code>), and name (<code>R</code>).</p>
 
 </div>
 </div>
@@ -5005,7 +5005,7 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The convertion of datatype from SoS to Julia is as followings:</p>
+<p>When transferring data from Python (SoS) to Julia (e.g. <code>%get</code> from Julia), the resulting Julia types are list as follows:</p>
 <table>
 <thead><tr>
 <th>Python</th>
@@ -5125,17 +5125,144 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We design to convert all kinds of <code>SoS</code> <code>str</code> to <code>Julia</code> <code>String</code> instead of <code>Julia</code> <code>Char</code> if the <code>SoS</code> <code>str</code> is length 1 because we cannot combining <code>Julia</code> <code>Char</code> with <code>Julia</code> <code>Char</code> or <code>Julia</code> <code>Char</code> with <code>Julia</code> <code>String</code>.</p>
-<p>However, for a <code>Julia</code> <code>String</code>, it cannot be converted as Integer becasue strings are immutable in <code>Julia</code>.</p>
+<p>It is worth noting that although Julia supports <code>Char</code> (single character) and <code>String</code> types, SoS always transfer Python <code>str</code> to Julia <code>String</code>, so if you have a Python string <code>X</code>,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">sos_var</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
+</pre></div>
 
 </div>
 </div>
 </div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Julia">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">sos_var</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#34;X&#34;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Julia">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="n">sos_var</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>String</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Thanks to the similarity of datatype between SoS and Julia, the convertion of datatype from Julia to SoS is as followings:</p>
+<p>If you need to access the first character as a <code>Char</code>, just use</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Julia">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">Int</span><span class="p">(</span><span class="n">sos_var</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+88
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Conversion of datatypes from Julia to SoS (<code>%get var --from Julia</code> from SoS) follows the following rules:</p>
 <table>
 <thead><tr>
 <th>Julia</th>
@@ -5233,7 +5360,7 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">mtcars</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
@@ -5262,7 +5389,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[1]:</div>
+<div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -5289,7 +5416,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">mpg</span> <span class="o">=</span> <span class="n">mtcars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -5305,7 +5432,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[2]:</div>
+<div class="prompt output_prompt">Out[6]:</div>
 
 
 
@@ -5350,7 +5477,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">put</span> <span class="n">mpg</span>
@@ -5370,10 +5497,11 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 
 </div>
 </div>
-</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">mpg</span>
@@ -5389,7 +5517,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[4]:</div>
+<div class="prompt output_prompt">Out[9]:</div>
 
 
 
@@ -5407,6 +5535,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 
 </div>
+	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
