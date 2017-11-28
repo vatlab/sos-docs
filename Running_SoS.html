@@ -409,17 +409,23 @@ conda install -c conda-forge feather-format</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>With a proper SAS installation, you can check if you already have <code>sas-kernel</code> installed by checking the output of command</p>
-
-<pre><code>jupyter kernelspec list</code></pre>
-<p>If you do not see <code>sas</code> in the list, you can install it by following instructions on <code>sos-kernel</code> <a href="https://github.com/sassoftware/sas_kernel">homepage</a> and connect it to a local SAS installation with config file (e.g. <code>~/anaconda3/lib/python3.6/site-packages/saspy/sascfg.py</code>)</p>
+<p>With a local or remote SAS installation of version 9.4 or higher, you will first need to install <code>sas-kernel</code> <a href="https://github.com/sassoftware/sas_kernel">homepage</a> and connect it to SAS. If you have a local installation of SAS, the config file (e.g. <code>~/anaconda3/lib/python3.6/site-packages/saspy/sascfg.py</code>) should look similar to</p>
 
 <pre><code>SAS_config_names=['default']
 SAS_config_options = {'lock_down': True}
 default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code></pre>
-<p>For more complicated cases, you would have to configure your SAS connection as instructed in the <a href="https://sassoftware.github.io/saspy/install.html">saspy manual</a>. Note that</p>
+<p>For more complicated cases, you would have to configure your SAS connection as instructed in the <a href="https://sassoftware.github.io/saspy/install.html">saspy manual</a>.</p>
+<p>After installation of <code>sas-kernel</code>, you can check if the kernel is properly installed by checking the output of command</p>
+
+<pre><code>jupyter kernelspec list</code></pre>
+<p>and use the <code>SAS</code> kernel with jupyter notebook.</p>
+<p>You can then install the <code>sos-sas</code> module with command</p>
+
+<pre><code>pip install sos-sas</code></pre>
+<p>to enable <code>SAS</code> support in <code>SoS</code>.</p>
+<p><strong>Note:</strong></p>
 <ol>
-<li>You will need SAS version 9.4 or higher to use <code>sas_kernel</code>, and as of July 2017, <code>sas_kernel</code> only supports Linux system, namely Windows and mac OSX are not supported.</li>
+<li>You will need SAS version 9.4 or higher to use <code>sas_kernel</code>, and as of July 2017, <code>sas_kernel</code> only supports Linux system, so Windows and MacOSX systems are not supported.</li>
 <li>The SAS Unversity Edition runs a jupyter server inside a Virtual Machine without ssh access. Although you can use this version to learn SAS and Jupyter, it is not possible to use it with SoS.</li>
 </ol>
 
@@ -432,9 +438,10 @@ default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Testing-the-Cutting-Edge">Testing the Cutting-Edge<a class="anchor-link" href="#Testing-the-Cutting-Edge">&#182;</a></h1><p>You can get the latest git version of SoS with commands</p>
 
-<pre><code>% git clone https://github.com/vatlab/SOS.git
-% cd SOS
+<pre><code>% git clone https://github.com/vatlab/SoS.git
+% cd SoS
 % python setup.py install</code></pre>
+<p>You will need to do the same for other SoS modules such as <code>sos-notebook</code>, <code>sos-pbs</code> to test the latest version of these modules.</p>
 
 </div>
 </div>
