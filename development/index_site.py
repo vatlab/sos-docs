@@ -70,7 +70,7 @@ def parse_html(url, html):
             
             part = re.sub(r'[^a-zA-Z0-9_\-=\'".,\\]', ' ', header.get_text()).replace('"', "'").strip() + "\n"
             part = re.sub(r'\s+', ' ', part)
-            url2 = header.find('a')
+            url2 = header.find('a', attrs='href')
             if url2 is None:
                 tag = ''
             else:
