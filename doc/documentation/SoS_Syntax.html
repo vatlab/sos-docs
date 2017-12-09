@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_python3 {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_django_extensions {}.lan_jupyter3_python_3 {}
 
 </style>
 <body>
@@ -391,7 +391,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>A <strong>target</strong> is an object that can be created and detected. A SoS step can take a list of targets as input, check the existence of a list of dependent targets, and produce a list of targets as output. Targets can be created, removed, and their contents are tracked by SoS with <strong>signatures</strong>. For example, SoS can skip a workflow step if its output targets have been created, but will still rerun the step if the input or ouptut targets have been changed. A target can also be <strong>zapped</strong>, which is a special action to replace content of large files wit their signature, so a target can be considered "exist" for signature validation, but in the meantime "non-exist" if the actual content is needed.</p>
-<p>SoS provides a very flexible and intuitive set of methods to work with files and list of files, gearing towards converting and using different formats of filenames in different scripts. <strong>You do not have to understand the technical details of SoS variables such as <code>input</code> and <code>_input</code> in a majority of the cases</strong> but understanding what these variables are and how to use then would greatly facilitate the use of filenames in more complex scenarios.</p>
+<p>SoS provides a very flexible and intuitive set of methods to work with files and list of files, gearing towards converting and using different formats of filenames in different scripts. <strong>You do not have to understand the technical details of SoS variables such as <code>step_input</code> and <code>_input</code> in a majority of the cases</strong> but understanding what these variables are and how to use then would greatly facilitate the use of filenames in more complex scenarios.</p>
 <p>In addition to <code>file_target</code>, SoS provides a number of built-in targets such as <code>file_target</code>, <code>sos_variable</code>, and <code>executable</code>, and targets defined by language modules such as <code>R_Library</code> for <code>R</code>. This section describes general usages of targets and syntax for the most frequently used target <code>file_target</code>. Please refer to Chapter <a href="Targets_and_Actions.html">Targets and Actions</a> for descriptions of other target types.</p>
 
 </div>
@@ -875,7 +875,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>169712</pre>
+<pre>170846</pre>
 </div>
 
 </div>
@@ -2090,7 +2090,7 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>One particular consequence of this format rule is that a <code>sos_targets</code> with only one element will appear the same as a single target so you can use <code>input</code> in place of <code>input[0]</code> if you know there is only one target inside <code>input</code>:</p>
+<p>One particular consequence of this format rule is that a <code>paths</code> with only one element will behave exactly like a single path so you can use <code>input</code> (a <code>paths</code>) in place of <code>input[0]</code> (a <code>path</code>) if you know there is only one target inside <code>input</code>:</p>
 
 </div>
 </div>
@@ -2130,17 +2130,7 @@ c.txt
 </div>
 
 </div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The second feature of the <code>paths</code> object that it will pass unknown attributes to the first <code>path</code> if the object only contains one <code>path</code>. That is to say, in many cases you can <strong>use a <code>paths</code> object with only one <code>path</code> just like a <code>path</code> object</strong>.</p>
-<p>For example,</p>
-
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -2236,7 +2226,7 @@ c.txt
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>169712</pre>
+<pre>170846</pre>
 </div>
 
 </div>
@@ -2398,9 +2388,9 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>sos_targets</code> is the type for all SoS system variables such as <code>input</code>, <code>_input</code>, <code>output</code>, <code>_output</code>, <code>depends</code>, <code>_depends</code>. These variables are created by SoS from <code>input:</code>, <code>output:</code> and <code>depends:</code> statements and are used to, for example, compose scripts in different languages.</p>
+<p><code>sos_targets</code> is the type for all SoS system variables such as <code>step_input</code>, <code>_input</code>, <code>step_output</code>, <code>_output</code>, <code>step_depends</code>, <code>_depends</code>. These variables are created by SoS from <code>input:</code>, <code>output:</code> and <code>depends:</code> statements and are used to, for example, compose scripts in different languages.</p>
 <p><code>sos_targets</code> shares the same design as <code>paths</code> although its content is a list of <code>BaseTargets</code>. it can be created from <code>str</code>, <code>list</code>, <code>path</code>, <code>paths</code>, <code>file_targets</code>, and many other <code>BaseTarget</code> types. Although this type is very flexible, it closely resembles <code>paths</code> and share all its features.</p>
-<p>For example, the <code>input</code> of the following step is a <code>sos_targets</code> object with a single <code>file_target</code> object, so it will be interpolated as a <code>file_target</code> object (without <code>[ ]</code> for a normal list):</p>
+<p>For example, variable <code>_input</code> of the following step is a <code>sos_targets</code> object with a single <code>file_target</code> object, so it will be interpolated as a <code>file_target</code> object (without <code>[ ]</code> for a normal list):</p>
 
 </div>
 </div>
@@ -2415,7 +2405,7 @@ c.txt
 <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;input={input:r}&quot;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;_input={_input:r}&quot;</span><span class="p">)</span>
 <span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="nb">input</span><span class="p">}</span>
+    <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -2434,7 +2424,7 @@ c.txt
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>input=&#39;SoS_Syntax.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39;
-    3485 SoS_Syntax.ipynb
+    3502 SoS_Syntax.ipynb
 </pre>
 </div>
 </div>
@@ -2460,7 +2450,7 @@ _input=&#39;SoS_Syntax.ipynb&#39;
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;SoS_Syntax.ipynb&#39;</span><span class="p">,</span> <span class="s1">&#39;SoS_Magics.ipynb&#39;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;input={input:r}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;step_input={step_input:r}&quot;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;_input={_input:r}&quot;</span><span class="p">)</span>
 <span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
@@ -2481,10 +2471,10 @@ _input=&#39;SoS_Syntax.ipynb&#39;
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
+<pre>step_input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
-    3485 SoS_Syntax.ipynb
-    2923 SoS_Magics.ipynb
+    3502 SoS_Syntax.ipynb
+    2960 SoS_Magics.ipynb
 </pre>
 </div>
 </div>
@@ -2510,7 +2500,7 @@ _input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;SoS_Syntax.ipynb&#39;</span><span class="p">,</span> <span class="s1">&#39;SoS_Magics.ipynb&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;input={input:r}&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;step_input={step_input:r}&quot;</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;_input={_input:r}&quot;</span><span class="p">)</span>
 <span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
@@ -2530,12 +2520,12 @@ _input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
+<pre>step_input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39;
-    3485 SoS_Syntax.ipynb
-input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
+    2858 SoS_Syntax.ipynb
+step_input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Magics.ipynb&#39;
-    2923 SoS_Magics.ipynb
+    2960 SoS_Magics.ipynb
 </pre>
 </div>
 </div>
@@ -2551,7 +2541,7 @@ _input=&#39;SoS_Magics.ipynb&#39;
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In this case, the step input contains two <code>file_target</code> (</p>
 
-<pre><code>input = sos_targets('SoS_Syntax.ipynb', 'SoS_Magics.ipynb')`</code></pre>
+<pre><code>step_input = sos_targets('SoS_Syntax.ipynb', 'SoS_Magics.ipynb')`</code></pre>
 <p>but the step process is executed twice, with</p>
 
 <pre><code>_input = sos_targets('SoS_Syntax.ipynb')
@@ -2565,7 +2555,7 @@ _input = sos_targets('SoS_Magics.ipynb')</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Whereas you can always use <code>input</code>, <code>_input</code> etc in scripts (format-string) easily, using them outside of scripts is a bit tricker. Let us check a few common usages and see how to use <code>sos_targets</code> in SoS.</p>
+<p>Whereas you can always use <code>step_input</code>, <code>_input</code> etc in scripts (format-string) easily, using them outside of scripts is a bit tricker. Let us check a few common usages and see how to use <code>sos_targets</code> in SoS.</p>
 
 </div>
 </div>
@@ -2574,7 +2564,7 @@ _input = sos_targets('SoS_Magics.ipynb')</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>First, it is a common practice to generate another file with a slightly different name. For example, in the following script, <code>input</code> is a <code>sos_targets</code> with two filenames, <code>_input</code> is a <code>sos_targets</code> with one filename, and we need to generate <code>test.bam.bai</code> from input file <code>test.bam</code>. In this particular case, you can append the <code>.bai</code> extension directly to <code>_input</code> using the <code>+</code> operator, by passing the <code>+</code> operation to the first <code>file_target</code> of <code>_input</code>:</p>
+<p>First, it is a common practice to generate another file with a slightly different name. For example, in the following script, <code>step_input</code> is a <code>sos_targets</code> with two filenames, <code>_input</code> is a <code>sos_targets</code> with one filename, and we need to generate <code>test.bam.bai</code> from input file <code>test.bam</code>. In this particular case, you can append the <code>.bai</code> extension directly to <code>_input</code> using the <code>+</code> operator, by passing the <code>+</code> operation to the first <code>file_target</code> of <code>_input</code>:</p>
 
 </div>
 </div>
@@ -2610,8 +2600,8 @@ _input = sos_targets('SoS_Magics.ipynb')</code></pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Generating test1.bam.bai from test1.bam
-Generating test2.bam.bai from test2.bam
+<pre>Generating /private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmplfk7afle/test1.bam.bai from test1.bam
+Generating /private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmplfk7afle/test2.bam.bai from test2.bam
 </pre>
 </div>
 </div>
@@ -2748,8 +2738,8 @@ Generating test2.bam.bai from test2.bam
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">input:</span> <span class="s2">&quot;SoS_Syntax.ipynb&quot;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Size of {repr(input)} is {os.path.getsize(input)}.&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The first two lines of {repr(input)} are:&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Size of {repr(_input)} is {os.path.getsize(_input)}.&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The first two lines of {repr(_input)} are:&quot;</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myself</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="n">myself</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
@@ -2886,7 +2876,7 @@ dev.off()
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Although the use of expressions in literal string (<code>{ }</code> parts) is very convenient, the braces might conflict with the braces in languages such as R for which braces are widely used. The official method to include braces in such literal stringS is to double the braces (<code>{{ }}</code>)  as in the following example</p>
+<p>Although the use of expressions in literal string (<code>{ }</code> parts) is very convenient, the braces might conflict with the braces in languages such as R for which braces are widely used. The official method to include braces in such literal strings is to double the braces (<code>{{ }}</code>)  as in the following example</p>
 
 </div>
 </div>
@@ -2920,7 +2910,7 @@ dev.off()
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Generating myfigure.pdf
+<pre>This is 1
 </pre>
 </div>
 </div>
@@ -2968,7 +2958,7 @@ dev.off()
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Generating myfigure.pdf
+<pre>This is 1
 </pre>
 </div>
 </div>
@@ -4490,7 +4480,7 @@ call_20
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> forward.dot (123 B):</div>
+<div class="sos_hint">> forward.dot (121 B):</div>
 </div>
 
 </div>
@@ -4834,15 +4824,15 @@ This is nested_30 of a nested workflow
 <span class="p">[</span><span class="n">index</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{filename}.bam.bai&#39;</span><span class="p">]</span>
 <span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{filename}.bam&quot;</span>
 <span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-   <span class="n">echo</span> <span class="s2">&quot;Generating {output}&quot;</span>
-   <span class="n">touch</span> <span class="p">{</span><span class="n">output</span><span class="p">}</span>
+   <span class="n">echo</span> <span class="s2">&quot;Generating {_output}&quot;</span>
+   <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">call</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{filename}.vcf&#39;</span><span class="p">]</span>
 <span class="kn">input:</span>   <span class="n">f</span><span class="s2">&quot;{filename}.bam&quot;</span>
-<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;{input}.bai&quot;</span>
+<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;{_input}.bai&quot;</span>
 <span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-   <span class="n">echo</span> <span class="s2">&quot;Calling variants from {input} with {depends} to {output}&quot;</span>
-   <span class="n">touch</span> <span class="p">{</span><span class="n">output</span><span class="p">}</span>
+   <span class="n">echo</span> <span class="s2">&quot;Calling variants from {_input} with {_depends} to {_output}&quot;</span>
+   <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -4852,6 +4842,17 @@ This is nested_30 of a nested workflow
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: Target unavailable: test.bam.bai
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -4877,7 +4878,7 @@ touch test.vcf
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> target.dot (118 B):</div>
+<div class="sos_hint">> target.dot (116 B):</div>
 </div>
 
 </div>
@@ -4994,7 +4995,7 @@ call_20
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> mixed.dot (269 B):</div>
+<div class="sos_hint">> mixed.dot (267 B):</div>
 </div>
 
 </div>

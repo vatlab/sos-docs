@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_sas {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_django_extensions {}.lan_jupyter3_python_3 {}
 
 </style>
 <body>
@@ -282,7 +282,7 @@ $( document ).ready(function(){
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos [-h] [--version]
-           {run,resume,dryrun,status,execute,kill,purge,config,convert,remove,pack,unpack}
+           {run,resume,dryrun,status,push,pull,preview,execute,kill,purge,config,convert,remove,pack,unpack}
            ...
 
 A workflow system for the execution of commands and scripts in different
@@ -293,11 +293,15 @@ optional arguments:
   --version             show program&#39;s version number and exit
 
 subcommands:
-  {run,resume,dryrun,status,execute,kill,purge,config,convert,remove,pack,unpack}
+  {run,resume,dryrun,status,push,pull,preview,execute,kill,purge,config,convert,remove,pack,unpack}
     run                 Execute default or specified workflow in script
     resume              Resume the execution of a suspended workflow
     dryrun              Execute workflow in dryrun mode
     status              Check the status of specified tasks
+    push                Push local files or directory to a remote host
+    pull                Pull files or directories from remote host to local
+                        host
+    preview             Preview files on local or remote host
     execute             Execute a packages task
     kill                Stop the execution of running task
     purge               Remove local or remote tasks
@@ -396,7 +400,8 @@ Use &#39;sos cmd -h&#39; for details about each subcommand. Please contact Bo Pe
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos run [-h] [-j JOBS] [-J EXTERNAL_JOBS] [-c CONFIG_FILE]
                [-t FILE [FILE ...]] [-b [BIN_DIR [BIN_DIR ...]]] [-q [QUEUE]]
-               [-w] [-W] [-r] [-n] [-s SIGMODE] [-d [DAG]] [-v {0,1,2,3,4}]
+               [-w] [-W] [-r [HOST]] [-n] [-s SIGMODE] [-d [DAG]]
+               [-v {0,1,2,3,4}]
                SCRIPT [WORKFLOW]
 
 Execute default or specified workflow defined in script
@@ -451,18 +456,23 @@ optional arguments:
                         local sos configuration file, or a file specified by
                         option --config. A host is assumed to be a remote
                         machine with process type if no configuration is
-                        found. SoS will list all configured queues (with
-                        details varying by option -v) if this option is
-                        specified without value.
+                        found. If this option is specified without value, SoS
+                        will list all configured queues and exit.
   -w                    Wait for the completion of external tasks regardless
                         of the setting of individual task queue.
   -W                    Do not wait for the completion of external tasks and
                         quit SoS if all tasks are being executed by external
                         task queues. This option overrides the default wait
                         setting of task queues.
-  -r                    Forcing all targets specified in input, output, and
-                        depends are remote targets so that they are not
-                        synchronized between local and remote hosts.
+  -r [HOST]             Execute the workflow in specified remote host, which
+                        should be defined under key host of sos configuration
+                        files (preferrably in ~/.sos/hosts.yml). This option
+                        basically copy the workflow to remote host and invoke
+                        sos command there. No path translation and
+                        input/output file synchronization will be performed
+                        before or after the execution of the workflow. If this
+                        option is specified without value, SoS will list all
+                        configured queues and exit.
 
 Run mode options:
   Control how sos scirpt is executed.
@@ -551,7 +561,7 @@ specified in the script. Single value parameters should be passed using option
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos resume [-h] [-s] [-w] [-W] [-v {0,1,2,3,4}] [-j JOBS]
-                  [-J EXTERNAL_JOBS]
+                  [-J EXTERNAL_JOBS] [-r [__REMOTE__]]
                   [workflow_id]
 
 Resume the execution or list status of suspended workflows
@@ -585,6 +595,8 @@ optional arguments:
                         option overrides option &#34;max_running_jobs&#34; of a task
                         queue (option -q) so that you can, for example, submit
                         one job at a time (with -J 1) to test the task queue.
+  -r [__REMOTE__]       Resume workflow that was executed on remote host (sos
+                        run with option -r)
 </pre>
 </div>
 </div>
@@ -671,9 +683,8 @@ optional arguments:
                         local sos configuration file, or a file specified by
                         option --config. A host is assumed to be a remote
                         machine with process type if no configuration is
-                        found. SoS will list all configured queues (with
-                        details varying by option -v) if this option is
-                        specified without value.
+                        found. If this option is specified without value, SoS
+                        will list all configured queues and exit.
 
 Output options:
   Output of workflow
@@ -785,12 +796,11 @@ optional arguments:
                         global or local sos configuration file, or a file
                         specified by option --config. A host is assumed to be
                         a remote machine with process type if no configuration
-                        is found. SoS will list all configured queues (with
-                        details varying by option -v) if this option is
-                        specified without value.
+                        is found. If this option is specified without value,
+                        SoS will list all configured queues and exit.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
-                        the definitions are not defined in global or local sos
+                        the definitions are not defined in global sos
                         config.yml files.
   -w, --wait            Wait for the completion of the task, and retrieve job
                         results if needed after the completion of the task.
@@ -836,8 +846,9 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos status [-h] [-q [QUEUE]] [-c CONFIG] [-v {0,1,2,3,4}] [--age AGE]
-                  [--html]
+<pre>usage: sos status [-h] [-q [QUEUE]] [-c CONFIG] [-v {0,1,2,3,4}]
+                  [-t [TAGS [TAGS ...]]] [-s [STATUS [STATUS ...]]]
+                  [--age AGE] [--html]
                   [tasks [tasks ...]]
 
 Check the status of specified tasks
@@ -856,16 +867,19 @@ optional arguments:
                         global or local sos configuration file, or a file
                         specified by option --config. A host is assumed to be
                         a remote machine with process type if no configuration
-                        is found. SoS will list all configured queues (with
-                        details varying by option -v) if this option is
-                        specified without value.
+                        is found. If this option is specified without value,
+                        SoS will list all configured queues and exit.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
-                        the definitions are not defined in global or local sos
+                        the definitions are not defined in global sos
                         config.yml files.
   -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
                         trace (4) information to standard output (default to
                         2).
+  -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
+                        Only list tasks with one of the specified tags.
+  -s [STATUS [STATUS ...]], --status [STATUS [STATUS ...]]
+                        Display tasks with one of the specified status.
   --age AGE             Limit to tasks that are created more than (default) or
                         within specified age. Value of this parameter can be
                         in units s (second), m (minute), h (hour), or d (day,
@@ -915,7 +929,8 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos kill [-h] [-a] [-q [QUEUE]] [-c CONFIG] [-v {0,1,2,3,4}]
+<pre>usage: sos kill [-h] [-a] [-q [QUEUE]] [-t [TAGS [TAGS ...]]] [-c CONFIG]
+                [-v {0,1,2,3,4}]
                 [tasks [tasks ...]]
 
 Stop the execution of running task
@@ -934,12 +949,13 @@ optional arguments:
                         local sos configuration file, or a file specified by
                         option --config. A host is assumed to be a remote
                         machine with process type if no configuration is
-                        found. SoS will list all configured queues (with
-                        details varying by option -v) if this option is
-                        specified without value.
+                        found. If this option is specified without value, SoS
+                        will list all configured queues and exit.
+  -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
+                        Only kill tasks with one of the specified tags.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
-                        the definitions are not defined in global or local sos
+                        the definitions are not defined in global sos
                         config.yml files.
   -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
                         Output error (0), warning (1), info (2), debug (3) and
@@ -985,8 +1001,9 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos purge [-h] [-a] [--age AGE] [-s STATUS [STATUS ...]] [-q [QUEUE]]
-                 [-w [WORKFLOWS [WORKFLOWS ...]]] [-c CONFIG] [-v {0,1,2,3,4}]
+<pre>usage: sos purge [-h] [-a] [--age AGE] [-s STATUS [STATUS ...]]
+                 [-t [TAGS [TAGS ...]]] [-q [QUEUE]] [-c CONFIG]
+                 [-v {0,1,2,3,4}]
                  [tasks [tasks ...]]
 
 Remove local or remote tasks
@@ -1012,24 +1029,21 @@ optional arguments:
   -s STATUS [STATUS ...], --status STATUS [STATUS ...]
                         Only remove tasks with specified status, which can be
                         pending, submitted, running, completed, failed,
-                        aborted, and result-mismatch. One of more status can
-                        be specified.
+                        aborted, and signature-mismatch. One of more status
+                        can be specified.
+  -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
+                        Only remove tasks with one of the specified tags.
   -q [QUEUE], --queue [QUEUE]
                         Remove tasks on specified tasks queue or remote host
                         if the tasks . The queue can be defined in global or
                         local sos configuration file, or a file specified by
                         option --config. A host is assumed to be a remote
                         machine with process type if no configuration is
-                        found. SoS will list all configured queues (with
-                        details varying by option -v) if this option is
-                        specified without value.
-  -w [WORKFLOWS [WORKFLOWS ...]], --workflows [WORKFLOWS [WORKFLOWS ...]]
-                        Remove tasks generated by specified task IDs. If no
-                        workflow is specified, all workflows in the current
-                        project will be assumed.
+                        found. If this option is specified without value, SoS
+                        will list all configured queues and exit.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
-                        the definitions are not defined in global or local sos
+                        the definitions are not defined in global sos
                         config.yml files.
   -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
                         trace (4) information to standard output (default to
@@ -1054,7 +1068,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">pull</span> <span class="o">-</span><span class="n">h</span>
@@ -1074,26 +1088,31 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos pull [-h] (-q [QUEUE] | -r [HOST]) [-c CONFIG] [-v {0,1,2,3,4}] items [items ...]
+<pre>usage: sos pull [-h] [-f [HOST]] [-c CONFIG] [-v {0,1,2,3,4}]
+                items [items ...]
 
 Pull files or directories from remote host to local host
 
 positional arguments:
-  items                 Files or directories to be retrieved from remote host. The files should be relative to local file system. The files to retrieve
-                        are determined by &#34;path_map&#34; determined by &#34;paths&#34; definitions of local and remote hosts.
+  items                 Files or directories to be retrieved from remote host.
+                        The files should be relative to local file system. The
+                        files to retrieve are determined by &#34;path_map&#34;
+                        determined by &#34;paths&#34; definitions of local and remote
+                        hosts.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -q [QUEUE], --queue [QUEUE]
-                        Remote host to which the files will be sent. SoS will use value specified by configuration key `default_queue`, or list all
-                        configured queues if no such key is defined
-  -r [HOST], --host [HOST]
-                        Remote host to which the files will be sent. SoS will use value specified by configuration key `default_host`, or list all
-                        configured queues if no such key is defined
+  -f [HOST], --from [HOST]
+                        Remote host to which the files will be sent. SoS will
+                        list all configured queues and exit
   -c CONFIG, --config CONFIG
-                        A configuration file with host definitions, in case the definitions are not defined in global or local sos config.yml files.
+                        A configuration file with host definitions, in case
+                        the definitions are not defined in global sos
+                        config.yml files.
   -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
-                        Output error (0), warning (1), info (2), debug (3) and trace (4) information to standard output (default to 2).
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
 </pre>
 </div>
 </div>
@@ -1114,7 +1133,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">push</span> <span class="o">-</span><span class="n">h</span>
@@ -1134,26 +1153,30 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos push [-h] (-q [QUEUE] | -r [HOST]) [-c CONFIG] [-v {0,1,2,3,4}] items [items ...]
+<pre>usage: sos push [-h] [-t [HOST]] [-c CONFIG] [-v {0,1,2,3,4}]
+                items [items ...]
 
 Push local files or directory to a remote host
 
 positional arguments:
-  items                 Files or directories to be sent to remote host. The location of remote files are determined by &#34;path_map&#34; determined by &#34;paths&#34;
-                        definitions of local and remote hosts.
+  items                 Files or directories to be sent to remote host. The
+                        location of remote files are determined by &#34;path_map&#34;
+                        determined by &#34;paths&#34; definitions of local and remote
+                        hosts.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -q [QUEUE], --queue [QUEUE]
-                        Remote host to which the files will be sent. SoS will use value specified by configuration key `default_queue`, or list all
-                        configured queues if no such key is defined
-  -r [HOST], --host [HOST]
-                        Remote host to which the files will be sent. SoS will use value specified by configuration key `default_host`, or list all
-                        configured queues if no such key is defined
+  -t [HOST], --to [HOST]
+                        Remote host to which the files will be sent. SoS will
+                        list all configured queues and exit
   -c CONFIG, --config CONFIG
-                        A configuration file with host definitions, in case the definitions are not defined in global or local sos config.yml files.
+                        A configuration file with host definitions, in case
+                        the definitions are not defined in global sos
+                        config.yml files.
   -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
-                        Output error (0), warning (1), info (2), debug (3) and trace (4) information to standard output (default to 2).
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
 </pre>
 </div>
 </div>
@@ -1182,7 +1205,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="o">-</span><span class="n">h</span>
@@ -1203,7 +1226,7 @@ optional arguments:
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos convert [-h] [-v {0,1,2,3,4}]
-                   {ipynb-html,ipynb-sos,sos-term,sos-ipynb,sos-html,ipynb-pdf,sos-md,ipynb-md}
+                   {sos-ipynb,ipynb-sos,ipynb-html,ipynb-pdf,ipynb-md,ipynb-ipynb,rmd-ipynb,sos-html,sos-term,sos-md}
                    ...
 
 Converts .sos to various formats including .html for web display, to jupyter
@@ -1218,34 +1241,40 @@ optional arguments:
                         2).
 
 converters (name of converter is not needed from command line):
-  {ipynb-html,ipynb-sos,sos-term,sos-ipynb,sos-html,ipynb-pdf,sos-md,ipynb-md}
+  {sos-ipynb,ipynb-sos,ipynb-html,ipynb-pdf,ipynb-md,ipynb-ipynb,rmd-ipynb,sos-html,sos-term,sos-md}
+    sos-ipynb           Convert a sos script to Jupyter notebook (.ipynb) so
+                        that it can be opened by Jupyter notebook.
+    ipynb-sos           Export Jupyter notebook with a SoS kernel to a .sos
+                        file. The cells are presented in the .sos file as cell
+                        structure lines, which will be ignored if executed in
+                        batch mode
     ipynb-html          Export Jupyter notebook with a SoS kernel to a .html
                         file. Additional command line arguments are passed
                         directly to command &#34;jupyter nbconvert --to html&#34; so
                         please refer to nbconvert manual for available
                         options.
-    ipynb-sos           Export Jupyter notebook with a SoS kernel to a .sos
-                        file. The cells are presented in the .sos file as cell
-                        structure lines, which will be ignored if executed in
-                        batch mode
-    sos-term            Write script to terminal with syntax highlighting.
-    sos-ipynb           Convert a sos script to Jupyter notebook (.ipynb) so
-                        that it can be opened by Jupyter notebook.
-    sos-html            Convert sos file to html format with syntax
-                        highlighting, and save the output either to a HTML
-                        file or view it in a broaser.
     ipynb-pdf           Export Jupyter notebook with a SoS kernel to a .pdf
                         file. Additional command line arguments are passed
                         directly to command &#34;jupyter nbconvert --to pdf&#34; so
                         please refer to nbconvert manual for available
                         options.
-    sos-md              Convert SOS scriot to a markdown format with scripts
-                        quoted in markdown syntax.
     ipynb-md            Export Jupyter notebook with a SoS kernel to a
                         markdown file. Additional command line arguments are
                         passed directly to command &#34;jupyter nbconvert --to
                         markdown&#34; so please refer to nbconvert manual for
                         available options.
+    ipynb-ipynb         Export a Jupyter notebook with a non-SoS kernel to a
+                        SoS notebook with SoS kernel. A SoS notebook will
+                        simply be copied to the destination file.
+    rmd-ipynb           Export a Rmarkdown file kernel to a SoS notebook. It
+                        currently only handles code block and Markdown, and
+                        not inline expression.
+    sos-html            Convert sos file to html format with syntax
+                        highlighting, and save the output either to a HTML
+                        file or view it in a broaser.
+    sos-term            Write script to terminal with syntax highlighting.
+    sos-md              Convert SOS script to a markdown format with scripts
+                        quoted in markdown syntax.
 
 Extra command line argument could be specified to customize the style of html,
 markdown, and terminal output.
@@ -1278,7 +1307,7 @@ markdown, and terminal output.
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">preview</span> <span class="o">-</span><span class="n">h</span>
@@ -1298,28 +1327,41 @@ markdown, and terminal output.
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos preview [-h] [-s {table,scatterplot,png}] [-r [HOST]] [-c CONFIG] [-v {0,1,2,3,4}] [items [items ...]]
+<pre>usage: sos preview [-h] [-s {table,scatterplot,png}] [-r [HOST]] [-c CONFIG]
+                   [-v {0,1,2,3,4}]
+                   [items [items ...]]
 
-Preview files, sos variables, or expressions in the side panel, or notebook if side panel is not opened, unless options --panel or --notebook is
-specified.
+Preview files, sos variables, or expressions in the side panel, or notebook if
+side panel is not opened, unless options --panel or --notebook is specified.
 
 positional arguments:
-  items                 Filename, variable name, or expression. Wildcard characters such as &#39;*&#39; and &#39;?&#39; are allowed for filenames.
+  items                 Filename, variable name, or expression. Wildcard
+                        characters such as &#39;*&#39; and &#39;?&#39; are allowed for
+                        filenames.
 
 optional arguments:
   -h, --help            show this help message and exit
   -s {table,scatterplot,png}, --style {table,scatterplot,png}
-                        Option for preview file or variable, which by default is &#34;table&#34; for Pandas DataFrame. The %preview magic also accepts
-                        arbitrary additional keyword arguments, which would be interpreted by individual style. Passing &#39;-h&#39; with &#39;--style&#39; would
-                        display the usage information of particular style.
+                        Option for preview file or variable, which by default
+                        is &#34;table&#34; for Pandas DataFrame. The %preview magic
+                        also accepts arbitrary additional keyword arguments,
+                        which would be interpreted by individual style.
+                        Passing &#39;-h&#39; with &#39;--style&#39; would display the usage
+                        information of particular style.
   -r [HOST], --host [HOST]
-                        Preview files on specified remote host, which should be defined under key host of sos configuration files (preferrably in
-                        ~/.sos/hosts.yml). If this option is specified without value, SoS will use value specified by configuration key `default_host`,
-                        or list all configured queues if no such key is defined
+                        Preview files on specified remote host, which should
+                        be defined under key host of sos configuration files
+                        (preferrably in ~/.sos/hosts.yml). If this option is
+                        specified without value, SoS will list all configured
+                        queues and exit.
   -c CONFIG, --config CONFIG
-                        A configuration file with host definitions, in case the definitions are not defined in global or local sos config.yml files.
+                        A configuration file with host definitions, in case
+                        the definitions are not defined in global sos
+                        config.yml files.
   -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
-                        Output error (0), warning (1), info (2), debug (3) and trace (4) information to standard output (default to 2).
+                        Output error (0), warning (1), info (2), debug (3) and
+                        trace (4) information to standard output (default to
+                        2).
 </pre>
 </div>
 </div>
@@ -1340,7 +1382,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">config</span> <span class="o">-</span><span class="n">h</span>
@@ -1360,31 +1402,26 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos config [-h] [-g | --hosts | -c CONFIG_FILE]
-                  (--get [OPTION [OPTION ...]] | --unset OPTION [OPTION ...] | --set KEY VALUE [KEY VALUE ...])
-                  [-v {0,1,2,3,4}]
+<pre>usage: sos config [-h] [-s | --hosts | -c CONFIG_FILE]
+                  [--get [OPTION [OPTION ...]] | --unset OPTION [OPTION ...] |
+                  --set KEY VALUE [KEY VALUE ...]] [-v {0,1,2,3,4}]
 
-Displays, set, and unset configuration variables defined in global or local
+Displays configurations in host, global, local, and user specified
 configuration files.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -g, --global          If set, change global (~/.sos/config.yml) instead of
-                        local (.sos/config.yml) configuration
-  --hosts               If set, change hosts (~/.sos/hosts.yml) instead of
-                        local (.sos/config.yml) configuration
+  -s, --site            Set (--set) or unset (--unset) options in system site
+                        configuration file (${SOS}/site_config.yml).
+  --hosts               Set (--set) or unset (--unset) options in hosts
+                        (~/.sos/hosts.yml)
   -c CONFIG_FILE, --config CONFIG_FILE
-                        User specified configuration file in YAML format. This
-                        file will not be automatically loaded by SoS but can
-                        be specified using option `-c`
+                        Set (--set) or unset (--unset) options in user
+                        specified configuration file, or display options
+                        (--get) also in this file.
   --get [OPTION [OPTION ...]]
-                        Display values of specified configuration from all
-                        configuration files. The arguments of this option can
-                        be a single configuration option or a list of option.
-                        Wildcard characters are allowed to match more options
-                        (e.g. &#39;*timeout&#39;, quotation is needed to avoid shell
-                        expansion). If no option is given, all options will be
-                        outputted.
+                        Display values of options that contain one of the
+                        specified words from all configuration files.
   --unset OPTION [OPTION ...]
                         Unset (remove) settings for specified options. The
                         arguments of this option can be a single configuration
@@ -1433,7 +1470,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">remove</span> <span class="o">-</span><span class="n">h</span>
@@ -1531,7 +1568,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">pack</span> <span class="o">-</span><span class="n">h</span>
@@ -1629,7 +1666,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">unpack</span> <span class="o">-</span><span class="n">h</span>
