@@ -1,7 +1,7 @@
 var tipuesearch = {"pages": [
-{"mainTitle": "A Multi-Language Notebook", "title": "A Multi-Language Notebook", "text": "A Multi-Language Notebook ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/", "url": "https://vatlab.github.io/sos-docs/"},
-{"mainTitle": "A Multi-Language Notebook", "title": "that Transforms to", "text": "that Transforms to ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/", "url": "https://vatlab.github.io/sos-docs/"},
-{"mainTitle": "A Multi-Language Notebook", "title": "a Workflow Engine", "text": "a Workflow Engine ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/", "url": "https://vatlab.github.io/sos-docs/"},
+{"mainTitle": "A Multi-Language Notebook ", "title": "A Multi-Language Notebook ", "text": "A Multi-Language Notebook ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/", "url": "https://vatlab.github.io/sos-docs/"},
+{"mainTitle": "A Multi-Language Notebook ", "title": "that Transforms to ", "text": "that Transforms to ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/", "url": "https://vatlab.github.io/sos-docs/"},
+{"mainTitle": "A Multi-Language Notebook ", "title": "a Workflow Engine", "text": "a Workflow Engine ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/", "url": "https://vatlab.github.io/sos-docs/"},
 {"mainTitle": "Readable Multi-Script Format", "title": "Readable Multi-Script Format", "text": "Readable Multi-Script Format ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/#features", "url": "https://vatlab.github.io/sos-docs/#features"},
 {"mainTitle": "Readable Multi-Script Format", "title": "Multi-Kernel Jupyter Notebook", "text": "Multi-Kernel Jupyter Notebook ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/#features", "url": "https://vatlab.github.io/sos-docs/#features"},
 {"mainTitle": "Readable Multi-Script Format", "title": "Mixed Style Workflows", "text": "Mixed Style Workflows ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/#features", "url": "https://vatlab.github.io/sos-docs/#features"},
