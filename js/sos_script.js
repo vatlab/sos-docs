@@ -117,7 +117,7 @@ var options = [
     ["Reproducible"]
 ];
 
-var interval = 2000;
+var interval = 1500;
 
 var holder1 = $(".rotating_words");
 var currentIndex = 0;
