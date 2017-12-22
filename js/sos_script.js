@@ -108,3 +108,24 @@ $(document).ready(function(){
 
 	
 });
+
+var options = [
+    ["Readable"],
+    ["Interactive"],
+    ["Cross-Platform"],
+    ["Cross-Language"],
+    ["Reproducible"]
+];
+
+var interval = 2000;
+
+var holder1 = $(".rotating_words");
+var currentIndex = 0;
+
+function doIt() {
+    holder1.html(options[currentIndex][0]);
+    currentIndex = (currentIndex + 1) % options.length;
+    setTimeout(doIt, interval);
+}
+
+doIt();
