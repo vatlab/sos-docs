@@ -109,23 +109,38 @@ $(document).ready(function(){
 	
 });
 
-var options = [
-    ["Readable"],
-    ["Interactive"],
-    ["Cross-Platform"],
-    ["Cross-Language"],
-    ["Reproducible"]
+//var options = [
+//    ["Readable"],
+//    ["Interactive"],
+//    ["Cross-Platform"],
+//    ["Cross-Language"],
+//    ["Reproducible"]
+//];
+var options2 = [
+    ["Notebook"],
+    ["Workflow Engine"],
 ];
 
-var interval = 1500;
+//var interval = 1400;
+var interval2 = 2800;
 
-var holder1 = $(".rotating_words");
-var currentIndex = 0;
+//var holder1 = $(".rotating_words");
+var holder2 = $("#rotating_title");
+//var currentIndex = 0;
+var currentIndex2 = 0;
 
-function doIt() {
-    holder1.html(options[currentIndex][0]);
-    currentIndex = (currentIndex + 1) % options.length;
-    setTimeout(doIt, interval);
+//function doIt() {
+//    holder1.html(options[currentIndex][0]);
+//    currentIndex = (currentIndex + 1) % options.length;
+//    setTimeout(doIt, interval);
+//}
+
+//doIt();
+
+function doIt2() {
+    holder2.html(options2[currentIndex2][0]);
+    currentIndex2 = (currentIndex2 + 1) % options2.length;
+    setTimeout(doIt2, interval2);
 }
 
-doIt();
+doIt2();
