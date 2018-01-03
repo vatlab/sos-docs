@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(document).ready(function () {
 	$("#intro_content").load("https://raw.githubusercontent.com/vatlab/sos-docs/master/Overview.html");
 	$("#installation_content").load("https://raw.githubusercontent.com/vatlab/sos-docs/master/Running_SoS.html");
 	$("#documentation_content").load("https://raw.githubusercontent.com/vatlab/sos-docs/master/Documentation.html");
@@ -117,7 +117,7 @@ $(document).ready(function(){
 //    ["Reproducible"]
 //];
 var options2 = [
-    ["Notebook"],
+    ["Polyglot Notebook"],
     ["Workflow Engine"],
 ];
 
