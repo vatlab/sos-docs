@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_django_extensions {}.lan_jupyter3_python_3 {}.lan_bash {}.lan_imatlab {}.lan_ir {}.lan_julia-0.6 {}.lan_python3 {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_sas {}
 
 </style>
 <body>
@@ -1344,7 +1344,7 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Input files might might come with additional information such as sample type, and sample name, and you can pair these information to input files using the <code>paired_with</code> option. For example, <code>bam_files</code> in the following example have matched <code>mutated</code> and <code>sample_name</code>, you can atteched these information to groups of input files <code>_input</code> with looped paired with variables.</p>
+<p>Option <code>paired_with</code> pairs variables with step input (variable <code>step_input</code>) so that corresponding information is available for input groups (<code>_input</code>). For example,</p>
 
 </div>
 </div>
@@ -1437,6 +1437,54 @@ B_R1_1.fastq B_R2_1.fastq
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>0: _input=case/A1.bam ctrl/A1.bam _mutated=[&#39;case&#39;, &#39;ctrl&#39;], _sample_name=[&#39;A1&#39;, &#39;A1&#39;]
 1: _input=case/A2.bam ctrl/A2.bam _mutated=[&#39;case&#39;, &#39;ctrl&#39;], _sample_name=[&#39;A2&#39;, &#39;A2&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Values to option <code>paired_with</code> are usually lists of the same length as <code>step_input</code> but it can also be other types such as <code>paths</code> and <code>sos_targets</code>, in this case the iterator variables (e.g. <code>_mutated</code> for <code>mutated</code> will have the same type as the input variable). For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="err">!</span><span class="n">touch</span> <span class="mf">1.</span><span class="n">txt</span> <span class="mf">2.</span><span class="n">txt</span>
+
+<span class="n">anno</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="s1">&#39;1.ann&#39;</span><span class="p">,</span> <span class="s1">&#39;1.ann&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="s1">&#39;anno&#39;</span>
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+  <span class="n">echo</span> <span class="s1">&#39;Pair {_anno} of type {type(_anno).__name__} with {_input}&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Pair 1.ann 1.ann of type paths with 1.txt 2.txt
 </pre>
 </div>
 </div>
