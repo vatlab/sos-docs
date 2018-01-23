@@ -1450,7 +1450,7 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Values to option <code>paired_with</code> are usually lists of the same length as <code>step_input</code> but it can also be other types such as <code>paths</code> and <code>sos_targets</code>, in this case the iterator variables (e.g. <code>_mutated</code> for <code>mutated</code> will have the same type as the input variable). For example,</p>
+<p>Values to option <code>paired_with</code> are usually lists of the same length as <code>step_input</code> but it can also be other types such as <code>paths</code> and <code>sos_targets</code>, in this case the iterator variables (e.g. <code>_mutated</code> for <code>mutated</code>) will have the same type as the input variable. For example,</p>
 
 </div>
 </div>
@@ -1458,14 +1458,15 @@ B_R1_1.fastq B_R2_1.fastq
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="mf">1.</span><span class="n">txt</span> <span class="mf">2.</span><span class="n">txt</span>
+<span class="err">!</span><span class="n">touch</span> <span class="mf">1.</span><span class="n">txt</span> <span class="mf">2.</span><span class="n">txt</span> <span class="mf">3.</span><span class="n">txt</span>
 
-<span class="n">anno</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="s1">&#39;1.ann&#39;</span><span class="p">,</span> <span class="s1">&#39;1.ann&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="s1">&#39;anno&#39;</span>
+<span class="n">anno</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="s1">&#39;1.ann&#39;</span><span class="p">,</span> <span class="s1">&#39;2.ann&#39;</span><span class="p">,</span> <span class="s1">&#39;3.ann&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;pairwise&#39;</span><span class="p">,</span>
+       <span class="kp">paired_with</span><span class="o">=</span><span class="s1">&#39;anno&#39;</span>
 <span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
   <span class="n">echo</span> <span class="s1">&#39;Pair {_anno} of type {type(_anno).__name__} with {_input}&#39;</span>
 </pre></div>
@@ -1484,7 +1485,8 @@ B_R1_1.fastq B_R2_1.fastq
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Pair 1.ann 1.ann of type paths with 1.txt 2.txt
+<pre>Pair 1.ann 2.ann of type paths with 1.txt 2.txt
+Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </pre>
 </div>
 </div>
