@@ -70,13 +70,18 @@ def parse_html(url, html):
             
             part = re.sub(r'[^a-zA-Z0-9_\-=\'".,\\]', ' ', header.get_text()).replace('"', "'").strip() + "\n"
             part = re.sub(r'\s+', ' ', part)
-            url2 = header.find('a', attrs='href')
-            if url2 is None:
-                tag = ''
+            ids = [x for x in header.findAll('a') if x.get('id')]
+            if ids:
+                tag = '#' + ids[0].get('id')
             else:
-                tag = url2['href']
+                hrefs = header.findAll('a', {'class': 'anchor-link'})
+                if hrefs: 
+                    tag = hrefs[0].get('href')
+                else:
+                    tag = ''
                 
-            part = '{{"mainTitle": "{}", "title": "{}", "text": "{}", "tags": "", "mainUrl": "{}", "url": "{}"}}'.format(re.sub('¶', '', maintitle), re.sub('¶', '', header.get_text()), part, url, url + tag)
+            part = '{{"mainTitle": "{}", "title": "{}", "text": "{}", "tags": "", "mainUrl": "{}", "url": "{}"}}'.format(
+                    re.sub('¶', '', maintitle), re.sub('¶', '', header.get_text()), part, url, url + tag)
             all_text.append(part)
        
     return all_text
