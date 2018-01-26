@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }
+ .lan_SoS {}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_sparql {}
 
 </style>
 <body>
@@ -837,6 +837,738 @@ This is step wf_30 of a workflow
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-exchange-among-kernels">Data exchange among kernels<a class="anchor-link" href="#Data-exchange-among-kernels">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A SoS notebook can have multiple live kernels. A SoS notebook can be used as a collection of cells from multiple independent notebooks. However, the real power of SoS Notebook lies in its ability to exchange data among kernels.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Magic-%expand">Magic <code>%expand</code><a class="anchor-link" href="#Magic-%expand">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Cell content is by default sent to SoS or subkernels untouched. A <code>expand</code> magic interpolate cell content with variables in the SoS kernel as if the content is a Python f-string. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;somefile&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Bash">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">echo</span> <span class="p">{</span><span class="n">filename</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{filename}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Bash">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="n">echo</span> <span class="p">{</span><span class="n">filename</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>somefile
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;myfile&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;A filename &quot;{filename}&quot; is passed &#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A filename &#34;myfile&#34; is passed 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;myfile&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;A filename &quot;{filename}&quot; is passed &#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A filename &#34;somefile&#34; is passed 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the last example, <code>{filename}</code> is expanded by the <code>%expand</code> magic so the following statements are sent to Python 3:</p>
+
+<pre><code>filename = 'myfile'
+print(f'A filename "somefile" is passed ')</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can imagine, you can keep constants such as filenames and parameters  in SoS and use these information to compose scripts in subkernels for execution.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>By default, the <code>expand</code> magic expands expressions in braces <code>{ }</code>. However, as you can see from the last example, <code>%expand</code> can be awkward if the script already contains <code>{ }</code>. Although the official method is to double the braces, as in</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;myfile&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;A filename &quot;{{filename}}&quot; is passed &#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A filename &#34;myfile&#34; is passed 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS recommend the use of an alternative sigil so that you do not have to change the syntax of the original script</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span> <span class="err">$</span><span class="p">{</span> <span class="p">}</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;myfile&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;SoS filename ${filename}, Python 3 filename: &quot;{filename}&quot;&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>SoS filename somefile, Python 3 filename: &#34;myfile&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Magics-%get-and-%put">Magics <code>%get</code> and <code>%put</code><a class="anchor-link" href="#Magics-%get-and-%put">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%expand</code> passes information from SoS to kernels through string interpolation. This method is straightforward and easy to use but it is not suitable for passing large datasets and complex data types. Using magics such as <code>%get</code>, <code>%put</code>, <code>%with</code> and <code>%use</code>, you can pass variables among kernels for supported languages. Using the same example, a variable <code>filename</code> is passed from SoS to the Python 3 kernel.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">filename</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;A filename &quot;{filename}&quot; is passed &#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A filename &#34;somefile&#34; is passed 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This method is described in detail in Chapter <a href="Supported_Languages.html">Supported Language</a> and will not be repeated here.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Magic-%capture">Magic <code>%capture</code><a class="anchor-link" href="#Magic-%capture">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>capture</code> captures output from a subkernel, parse, and save the result to a variable in SoS. The output can be standard output, or a file created by the subkernel.</p>
+<p>By default, the <code>%capture</code> magic captures the standard output from a cell and save it to specified variable:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="o">--</span><span class="n">to</span> <span class="n">r_var</span>
+<span class="n">cat</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1 2 3</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">r_var</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;1 2 3&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the cell generates a file, you can capture the result from a text file</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Bash">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="o">--</span><span class="n">to</span> <span class="n">bash_var</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">a.txt</span>
+<span class="err">!</span><span class="n">ls</span> <span class="o">|</span> <span class="n">head</span> <span class="o">-</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">bash_var</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[27]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;Extending_SoS.ipynb\nLanguage_Module.ipynb\n&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>capture</code> magic allows passing information from the output of cells back to SoS. If the output text is structured, it can even parse the output in <code>json</code>, <code>csv</code> (comma separated values), or <code>tsv</code> (tab separated values) formats and save them in Python <code>dict</code> or <code>Pandas.DataFrame</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="n">csv</span> <span class="o">--</span><span class="n">to</span> <span class="n">table</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;a,b</span><span class="se">\n</span><span class="s1">1,2</span><span class="se">\n</span><span class="s1">3,4&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a,b
+1,2
+3,4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">table</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[31]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This method is especially suitable for kernels without a language module so there is no way to use a <code>%get</code> magic to retrieve information from it. For example, a <a href="https://www.w3.org/TR/rdf-sparql-query/"><code>sparql</code> kernel</a> simply executes sparql queries and return results. It does not have a concept of variable so you will have to capture its output to handle it in SoS:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_sparql">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="n">json</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">output.txt</span> <span class="o">--</span><span class="n">to</span> <span class="n">sparql</span>
+
+<span class="o">%</span><span class="n">outfile</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">%</span><span class="n">endpoint</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dbpedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">sparql</span>
+<span class="o">%</span><span class="n">display</span> <span class="n">table</span> <span class="n">withtypes</span>
+
+<span class="n">SELECT</span> <span class="n">DISTINCT</span> <span class="err">?</span><span class="nb">property</span>
+<span class="n">WHERE</span> <span class="p">{</span>
+   <span class="err">?</span><span class="n">s</span> <span class="err">?</span><span class="nb">property</span> <span class="err">?</span><span class="n">person</span> <span class="o">.</span>
+   <span class="err">?</span><span class="n">person</span> <span class="n">rdf</span><span class="p">:</span><span class="nb">type</span> <span class="n">foaf</span><span class="p">:</span><span class="n">Person</span> <span class="o">.</span>
+<span class="p">}</span>
+<span class="n">LIMIT</span> <span class="mi">3</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="krn-spql"><div class="magic">Output file: output.txt</div><div class="magic">Endpoint set to: http://dbpedia.org/sparql</div><div class="magic">Display: table<br/>Show Types: on</div></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="krn-spql"><table><tr class=hdr><th>property</th><th>type</th></tr><tr class=odd><td class=val><a href="http://www.w3.org/2002/07/owl#differentFrom" target="_other">http://www.w3.org/2002/07/owl#differentFrom</a></td><td class=typ>uri</td></tr><tr class=even><td class=val><a href="http://www.w3.org/2000/01/rdf-schema#seeAlso" target="_other">http://www.w3.org/2000/01/rdf-schema#seeAlso</a></td><td class=typ>uri</td></tr><tr class=odd><td class=val><a href="http://www.w3.org/2002/07/owl#sameAs" target="_other">http://www.w3.org/2002/07/owl#sameAs</a></td><td class=typ>uri</td></tr></table><div class="tinfo">Total: 3, Shown: 3</div></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">sparql</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;head&#39;: {&#39;link&#39;: [], &#39;vars&#39;: [&#39;property&#39;]},
+ &#39;results&#39;: {&#39;bindings&#39;: [{&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
+     &#39;value&#39;: &#39;http://www.w3.org/2002/07/owl#differentFrom&#39;}},
+   {&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
+     &#39;value&#39;: &#39;http://www.w3.org/2000/01/rdf-schema#seeAlso&#39;}},
+   {&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
+     &#39;value&#39;: &#39;http://www.w3.org/2002/07/owl#sameAs&#39;}}],
+  &#39;distinct&#39;: False,
+  &#39;ordered&#39;: True}}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">

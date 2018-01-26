@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_django_extensions {}.lan_jupyter3_python_3 {}
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_sparql {}
 
 </style>
 <body>
@@ -375,6 +375,170 @@ optional arguments:
 
 </div>
 	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%capture"><code>%capture</code><a class="anchor-link" href="#%capture">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>capture</code> magic is executed after the evaluation of the current cell (in SoS or any subkernel), capture the output of the cell (either <code>stdout</code> or a file specified by <code>--from</code>), parse it as <code>text</code>, <code>json</code>, <code>csv</code>, or <code>tsv</code>, and save the result to specified variable (<code>--to</code>) as text, Python dictionary, or <code>Pandas</code> <code>DataFrame</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %capture [-h] [-f SOURCE] -t VAR [{text,json,csv,tsv}]
+
+Capture output (stdout) or output file from a subkernel as variable in SoS
+
+positional arguments:
+  {text,json,csv,tsv}   How to interpret the captured text. By default the
+                        captured content will be saved plain text. Otherwise
+                        SoS will try to parse the text as json, csv (comma
+                        separated text), tsv (tab separated text), and store
+                        dictionary or Pandas DataFrame to the variable.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f SOURCE, --from SOURCE
+                        File from which the content is captured, default to
+                        standard output
+  -t VAR, --to VAR      Name of variable to which the captured content will be
+                        saved
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The magic can be applied to any kernel (including SoS) but it only captures output as standard output. For example, in the following R code, although both statements print something, only the <code>cat</code> function writes to standard output. The result of function <code>paste</code> is returned as the result of the cell and is displayed.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="o">--</span><span class="n">to</span> <span class="n">R_out</span>
+<span class="n">cat</span><span class="p">(</span><span class="s2">&quot;this is to stdout&quot;</span><span class="p">)</span>
+<span class="n">paste</span><span class="p">(</span><span class="s2">&quot;this is the return value&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>this is to stdout</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'this is the return value'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">R_out</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;this is to stdout&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The ability to parse tables as <code>Pandas</code> <code>DataFrame</code> is convenient but magic parse tables with <code>pandas.read_csv(sep)</code> with any additional parameter. If you need more flexibility in parsing the table (e.g. table without header), you will have to capture the output as text and parse it by yourself.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
