@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_django_extensions {}.lan_jupyter3_python_3 {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_javascript {}
 
 </style>
 <body>
@@ -282,7 +282,7 @@ $( document ).ready(function(){
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos [-h] [--version]
-           {run,resume,dryrun,status,push,pull,preview,execute,kill,purge,config,convert,remove,pack,unpack}
+           {run,resume,dryrun,status,push,pull,preview,execute,kill,purge,config,convert,remove}
            ...
 
 A workflow system for the execution of commands and scripts in different
@@ -293,7 +293,7 @@ optional arguments:
   --version             show program&#39;s version number and exit
 
 subcommands:
-  {run,resume,dryrun,status,push,pull,preview,execute,kill,purge,config,convert,remove,pack,unpack}
+  {run,resume,dryrun,status,push,pull,preview,execute,kill,purge,config,convert,remove}
     run                 Execute default or specified workflow in script
     resume              Resume the execution of a suspended workflow
     dryrun              Execute workflow in dryrun mode
@@ -308,8 +308,6 @@ subcommands:
     config              Read and write sos configuration files
     convert             Convert between .sos, .ipynb and other formats
     remove              Remove specified files and/or their signatures
-    pack                Pack workflow related files into an archive
-    unpack              Unpack workflow related files from an SoS archive
 
 Use &#39;sos cmd -h&#39; for details about each subcommand. Please contact Bo Peng
 (bpeng at mdanderson.org) if you have any question.
@@ -429,9 +427,9 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -j JOBS               Maximum number of worker processes for the execution
-                        of the workflow if the workflow can be executed in
-                        parallel (namely having multiple starting points or
-                        execution branches).
+                        of steps in a workflow and input groups in a step
+                        (with input option concurrent), default to half of
+                        number of CPUs
   -J EXTERNAL_JOBS      Maximum number of externally running tasks. This
                         option overrides option &#34;max_running_jobs&#34; of a task
                         queue (option -q) so that you can, for example, submit
@@ -1226,7 +1224,7 @@ optional arguments:
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos convert [-h] [-v {0,1,2,3,4}]
-                   {sos-ipynb,ipynb-sos,ipynb-html,ipynb-pdf,ipynb-md,ipynb-ipynb,rmd-ipynb,sos-html,sos-term,sos-md}
+                   {sos-html,sos-term,sos-md,sos-ipynb,ipynb-sos,ipynb-html,ipynb-pdf,ipynb-md,ipynb-ipynb,rmd-ipynb}
                    ...
 
 Converts .sos to various formats including .html for web display, to jupyter
@@ -1241,7 +1239,13 @@ optional arguments:
                         2).
 
 converters (name of converter is not needed from command line):
-  {sos-ipynb,ipynb-sos,ipynb-html,ipynb-pdf,ipynb-md,ipynb-ipynb,rmd-ipynb,sos-html,sos-term,sos-md}
+  {sos-html,sos-term,sos-md,sos-ipynb,ipynb-sos,ipynb-html,ipynb-pdf,ipynb-md,ipynb-ipynb,rmd-ipynb}
+    sos-html            Convert sos file to html format with syntax
+                        highlighting, and save the output either to a HTML
+                        file or view it in a broaser.
+    sos-term            Write script to terminal with syntax highlighting.
+    sos-md              Convert SOS script to a markdown format with scripts
+                        quoted in markdown syntax.
     sos-ipynb           Convert a sos script to Jupyter notebook (.ipynb) so
                         that it can be opened by Jupyter notebook.
     ipynb-sos           Export Jupyter notebook with a SoS kernel to a .sos
@@ -1269,12 +1273,6 @@ converters (name of converter is not needed from command line):
     rmd-ipynb           Export a Rmarkdown file kernel to a SoS notebook. It
                         currently only handles code block and Markdown, and
                         not inline expression.
-    sos-html            Convert sos file to html format with syntax
-                        highlighting, and save the output either to a HTML
-                        file or view it in a broaser.
-    sos-term            Write script to terminal with syntax highlighting.
-    sos-md              Convert SOS script to a markdown format with scripts
-                        quoted in markdown syntax.
 
 Extra command line argument could be specified to customize the style of html,
 markdown, and terminal output.
@@ -1296,81 +1294,6 @@ markdown, and terminal output.
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="subcommand-preview">subcommand <code>preview</code><a class="anchor-link" href="#subcommand-preview">&#182;</a></h3>
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">preview</span> <span class="o">-</span><span class="n">h</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos preview [-h] [-s {table,scatterplot,png}] [-r [HOST]] [-c CONFIG]
-                   [-v {0,1,2,3,4}]
-                   [items [items ...]]
-
-Preview files, sos variables, or expressions in the side panel, or notebook if
-side panel is not opened, unless options --panel or --notebook is specified.
-
-positional arguments:
-  items                 Filename, variable name, or expression. Wildcard
-                        characters such as &#39;*&#39; and &#39;?&#39; are allowed for
-                        filenames.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -s {table,scatterplot,png}, --style {table,scatterplot,png}
-                        Option for preview file or variable, which by default
-                        is &#34;table&#34; for Pandas DataFrame. The %preview magic
-                        also accepts arbitrary additional keyword arguments,
-                        which would be interpreted by individual style.
-                        Passing &#39;-h&#39; with &#39;--style&#39; would display the usage
-                        information of particular style.
-  -r [HOST], --host [HOST]
-                        Preview files on specified remote host, which should
-                        be defined under key host of sos configuration files
-                        (preferrably in ~/.sos/hosts.yml). If this option is
-                        specified without value, SoS will list all configured
-                        queues and exit.
-  -c CONFIG, --config CONFIG
-                        A configuration file with host definitions, in case
-                        the definitions are not defined in global sos
-                        config.yml files.
-  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
-                        Output error (0), warning (1), info (2), debug (3) and
-                        trace (4) information to standard output (default to
-                        2).
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1535,196 +1458,6 @@ optional arguments:
                         actually removing them.
   -y, --yes             Remove files without confirmation, suitable for batch
                         removal of files.
-  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
-                        Output error (0), warning (1), info (2), debug (3) and
-                        trace (4) information to standard output (default to
-                        2).
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Please refer to the tutorial on <a href="../tutorials/Project_Management.html">Project Management</a> for details about this command.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="subcommand-pack">subcommand <code>pack</code><a class="anchor-link" href="#subcommand-pack">&#182;</a></h3>
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">pack</span> <span class="o">-</span><span class="n">h</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos pack [-h] [-o OUTPUT] [-i [INCLUDE [INCLUDE ...]]]
-                [-e [EXCLUDE [EXCLUDE ...]]] [-a] [-m MESSAGE] [-n] [-y]
-                [-v {0,1,2,3,4}]
-                [session]
-
-Collect sos scripts, all input, output, and tracked intermediate files related
-to a workflow run and bundle them into a single archive. The archive can be
-examined (without unpacking) with command &#34;sos show&#34; and be unpacked with
-command &#34;sos unpack&#34;. This command does not include files outside of the
-current working directory unless they are specified by option --include, or
---all.
-
-positional arguments:
-  session               ID of the session to be saved, which can be any number
-                        of digits as long as it can uniquely determine a
-                        workflow session. This parameter can be ignored if
-                        only one session is available.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o OUTPUT, --output OUTPUT
-                        Output file, which can be a file with extension &#34;.sar&#34;
-                        (the extension will be be automatically appended if
-                        needed), or &#34;-&#34; for standard output (default).
-  -i [INCLUDE [INCLUDE ...]], --include [INCLUDE [INCLUDE ...]]
-                        Additional files or directories to be incldued in the
-                        archive. SoS will archive all files under specified
-                        directories, including hidden directories such as
-                        &#34;.git&#34;. Option --exclude could be used to exclude
-                        these files.
-  -e [EXCLUDE [EXCLUDE ...]], --exclude [EXCLUDE [EXCLUDE ...]]
-                        Files that should be excluded from archive. The
-                        parameter should be one or more patterns that match
-                        the whole path (e.g. &#34;output/*.log&#34; or file or
-                        directory names such as &#34;tmp&#34; or &#34;*.bam&#34;.
-  -a, --all             Include all tracked files even if they reside outside
-                        of the current working directory.
-  -m MESSAGE, --message MESSAGE
-                        A short message to be included into the archive.
-                        Because the message would be lost during unpacking, it
-                        is highly recommended that you create a README file
-                        and include it with option --include.
-  -n, --dryrun          List files to be included and total file size without
-                        actually archiving them
-  -y, --yes             Overwrite output file if it already exists
-  -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
-                        Output error (0), warning (1), info (2), debug (3) and
-                        trace (4) information to standard output (default to
-                        2).
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-	</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Please refer to the tutorial on <a href="../tutorials/Project_Management.html">Project Management</a> for details about this command.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="subcommand-unpack">subcommand <code>unpack</code><a class="anchor-link" href="#subcommand-unpack">&#182;</a></h3>
-</div>
-</div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">unpack</span> <span class="o">-</span><span class="n">h</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos unpack [-h] [-d DEST] [-s] [-l] [-e] [-n] [-y] [-v {0,1,2,3,4}]
-                  archive [files [files ...]]
-
-Unpack a sos archive to a specified directory. For security reasons, files
-that were outside of the project directory would be extracted in this
-directory unless option -e is specified.
-
-positional arguments:
-  archive               SoS archive saved by command sos pack
-  files                 An optional list of files to be processed, which can
-                        be exact filenames or patterns (e.g. &#34;*.bam&#34;). No
-                        runtime information will be extracted if this option
-                        is specified.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DEST, --dest DEST  Directory where a sos archive would be unpacked.
-                        Default to current directory.
-  -s, --script          If specified, extract sos script(s) related to the
-                        workflow to the current or specified directory (option
-                        --dest), regardless of their original locations in the
-                        filesystem. Note that sos scripts are not extracted by
-                        default because they are usually external and it is
-                        dangerous to overwrite existing scripts with archived
-                        ones.
-  -l, --list            List content of the archive instead of extracting it.
-                        The names, uncompressed file sizes and modification
-                        dates and times of the specified files are printed,
-                        along with totals for all files specified.
-  -e, --external        Extract files outside of the project to their external
-                        destinations. This option can be dangerous because it
-                        can overwrite system files silently if accompanied
-                        with option -y.
-  -n, --no              Do not overwrite existing files without promoting
-                        users.
-  -y, --yes             Overwrite existing files without promoting users. This
-                        option can be dangerous to use. Note that SoS checks
-                        file signature and ignores existing files that are
-                        identical to those in the archive.
   -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
                         Output error (0), warning (1), info (2), debug (3) and
                         trace (4) information to standard output (default to
