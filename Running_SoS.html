@@ -144,7 +144,8 @@ server</a> from which you can open our sample notebooks and create your own note
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Windows systems lack native support for some of the tools that SoS uses, the best way to use SoS under windows is to use a Linux subsystem. You could enable <a href="https://msdn.microsoft.com/en-us/commandline/wsl/about">Linux subsystem for windows</a> if you have a Windows 10 system with Developer Mode enabled, or use one of the Linux subsystems such as <a href="https://www.cygwin.com/">Cygwin</a>, <a href="http://www.mingw.org/">MinGW</a>, or <a href="http://www.msys2.org/">MSYS2</a>. We generally recommend the use of MSYS2 because of its pacman package manage system.</p>
+<p>Windows systems lack native support for some of the tools that SoS uses and it is generally more difficult to set up Jupyter kernels for different languages. We therefore do not recommend the use of SoS and SoS Notebook under windows for novice users.</p>
+<p>The best way to use SoS under windows is to use a Linux subsystem. You could enable <a href="https://msdn.microsoft.com/en-us/commandline/wsl/about">Linux subsystem for windows</a> if you have a Windows 10 system with Developer Mode enabled, or use one of the Linux subsystems such as <a href="https://www.cygwin.com/">Cygwin</a>, <a href="http://www.mingw.org/">MinGW</a>, or <a href="http://www.msys2.org/">MSYS2</a>. We generally recommend the use of MSYS2 because of its pacman package manage system.</p>
 <p>To install MSYS2,</p>
 <ul>
 <li>Install MSYS2 from <a href="http://www.msys2.org/">MSYS2 homepage</a></li>
@@ -323,7 +324,10 @@ python -m octave_kernel.install</code></pre>
 <p>If you still have Python 2.x installed on your system and would like to use it with SoS, you will need to</p>
 <ul>
 <li>Place executable <code>python2</code> or <code>python2.7</code> in your <code>$PATH</code> and use action <code>python2</code> for python2 scripts.</li>
-<li>Install python2 kernel following directions <a href="http://ipython.readthedocs.io/en/stable/install/kernel_install.html">here</a>. Most likely you should be using commands<div class="highlight"><pre><span></span>conda create -n ipykernel_py2 <span class="nv">python</span><span class="o">=</span><span class="m">2</span> ipykernel
+<li>Install python2 kernel following directions <a href="http://ipython.readthedocs.io/en/stable/install/kernel_install.html">here</a>. Baiscally, if you have an existing installation of Python 2, you can run commands <div class="highlight"><pre><span></span>python2 -m pip install ipykernel
+  python2 -m ipykernel install --user
+</pre></div>
+to install <code>ipykernel</code> kernel. Otherwise you can install python 2 and all needed packages in a separate conda environment using commands<div class="highlight"><pre><span></span>conda create -n ipykernel_py2 <span class="nv">python</span><span class="o">=</span><span class="m">2</span> ipykernel
 <span class="nb">source</span> activate ipykernel_py2    <span class="c1"># On Windows, remove the word &#39;source&#39;</span>
 python -m ipykernel install --user
 </pre></div>
@@ -442,7 +446,7 @@ default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Running-SoS-in-command-line">Running SoS in command line<a class="anchor-link" href="#Running-SoS-in-command-line">&#182;</a></h1>
+<h1 id="Running-SoS-workflow-engine">Running SoS workflow engine<a class="anchor-link" href="#Running-SoS-workflow-engine">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -475,7 +479,7 @@ default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Running-SoS-interactively">Running SoS interactively<a class="anchor-link" href="#Running-SoS-interactively">&#182;</a></h1>
+<h1 id="Running-SoS-Notebook">Running SoS Notebook<a class="anchor-link" href="#Running-SoS-Notebook">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -483,7 +487,7 @@ default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To use SoS interactively with Jupyter, you need to first verify if the sos kernel is properly installed, by checking if <code>sos</code> is listed in the output of command</p>
+<p>To use SoS Notebook with Jupyter, you need to first verify if the sos kernel is properly installed, by checking if <code>sos</code> is listed in the output of command</p>
 
 <pre><code>% jupyter kernelspec list</code></pre>
 <p>Then you can start a Jupyter server with commnad</p>
@@ -508,16 +512,16 @@ default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code
 <pre><code>jupyter notebook --generate-config</code></pre>
 <p>and modify it with lines such as</p>
 <div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span>
-<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;sha1:bcd259ccf...&lt;your hashed password here&gt;&#39;</span>
+<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;sha1:...&lt;your hashed password here&gt;&#39;</span>
 <span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">open_browser</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="mi">9999</span>
+<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="mi">8888</span>
 </pre></div>
 <p>Then, after you start your notebook server using command</p>
 
 <pre><code>% jupyter notebook</code></pre>
 <p>You should be able to access it remotely with URL</p>
 
-<pre><code>http://url-or-ip-of-notebook-server:9999/</code></pre>
+<pre><code>http://url-or-ip-of-notebook-server:8888/</code></pre>
 
 </div>
 </div>
