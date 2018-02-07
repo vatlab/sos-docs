@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_sparql {}
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_sas {}
 
 </style>
 <body>
@@ -387,7 +387,7 @@ optional arguments:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>capture</code> magic is executed after the evaluation of the current cell (in SoS or any subkernel), capture the output of the cell (either <code>stdout</code> or a file specified by <code>--from</code>), parse it as <code>text</code>, <code>json</code>, <code>csv</code>, or <code>tsv</code>, and save the result to specified variable (<code>--to</code>) as text, Python dictionary, or <code>Pandas</code> <code>DataFrame</code>.</p>
+<p>The <code>capture</code> magic is executed after the evaluation of the current cell (in SoS or any subkernel), capture the output of the cell (either <code>stdout</code> or a file specified by <code>--from</code>), parse it as <code>text</code>, <code>json</code>, <code>csv</code>, or <code>tsv</code>, and save (<code>--to</code>) or append (<code>--append</code>) the result to specified variable  as text, Python dictionary, or <code>Pandas</code> <code>DataFrame</code>.</p>
 
 </div>
 </div>
@@ -414,7 +414,7 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %capture [-h] [-f SOURCE] -t VAR [{text,json,csv,tsv}]
+<pre>usage: %capture [-h] [-f SOURCE] (-t VAR | -a VAR) [{text,json,csv,tsv}]
 
 Capture output (stdout) or output file from a subkernel as variable in SoS
 
@@ -423,7 +423,8 @@ positional arguments:
                         captured content will be saved plain text. Otherwise
                         SoS will try to parse the text as json, csv (comma
                         separated text), tsv (tab separated text), and store
-                        dictionary or Pandas DataFrame to the variable.
+                        text (from text), Pandas DataFrame (from csv or tsv),
+                        dict or other types (from json) to the variable.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -432,6 +433,14 @@ optional arguments:
                         standard output
   -t VAR, --to VAR      Name of variable to which the captured content will be
                         saved
+  -a VAR, --append VAR  Name of variable to which the captured content will be
+                        appended. This option is equivalent to --to if VAR
+                        does not exist. If VAR exists and is of the same type
+                        of new content (str or dict or DataFrame), the new
+                        content will be appended to VAR if VAR is of str (str
+                        concatenation), dict (dict update), or DataFrame
+                        (DataFrame.append) types. If VAR is of list type, the
+                        new content will be appended to the end of the list.
 </pre>
 </div>
 </div>
@@ -452,7 +461,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="o">--</span><span class="n">to</span> <span class="n">R_out</span>
@@ -498,7 +507,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">R_out</span>
@@ -514,7 +523,7 @@ optional arguments:
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[8]:</div>
+<div class="prompt output_prompt">Out[3]:</div>
 
 
 

@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_sparql {}.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }
+ .lan_SoS {}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_sparql {}.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_sas {}
 
 </style>
 <body>
@@ -5048,7 +5048,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Magic <code>capture</code> captures output from a subkernel, parse, and save the result to a variable in SoS. The output can be standard output, or a file created by the subkernel.</p>
+<p>Magic <code>capture</code> captures output from a cell, parse, and save or append the result to a variable in SoS. The output of the cell (namely the input to magic <code>%capture</code>) can be standard output, or a file created by the cell.</p>
 <p>By default, the <code>%capture</code> magic captures the standard output from a cell and save it to specified variable:</p>
 
 </div>
@@ -5090,7 +5090,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">r_var</span>
@@ -5106,7 +5106,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[21]:</div>
+<div class="prompt output_prompt">Out[2]:</div>
 
 
 
@@ -5134,7 +5134,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="o">--</span><span class="n">to</span> <span class="n">bash_var</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">a.txt</span>
@@ -5150,7 +5150,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">bash_var</span>
@@ -5166,7 +5166,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[27]:</div>
+<div class="prompt output_prompt">Out[4]:</div>
 
 
 
@@ -5203,7 +5203,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="n">csv</span> <span class="o">--</span><span class="n">to</span> <span class="n">table</span>
@@ -5239,7 +5239,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">table</span>
@@ -5255,7 +5255,7 @@ print(f'A filename "somefile" is passed ')</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[31]:</div>
+<div class="prompt output_prompt">Out[14]:</div>
 
 
 
@@ -5405,6 +5405,334 @@ print(f'A filename "somefile" is passed ')</code></pre>
      &#39;value&#39;: &#39;http://www.w3.org/2002/07/owl#sameAs&#39;}}],
   &#39;distinct&#39;: False,
   &#39;ordered&#39;: True}}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to option <code>--to</code>, the <code>%capture</code> magic can also append cell output to an existing variable using paramter <code>--append</code>. How newly captured data is appended to the existing variable depends on type of existing and new data. Basically,</p>
+<ol>
+<li>If the variable does not exist, <code>--append</code> is equivalent to <code>--to</code>.</li>
+<li>If the existing variable is a list, the new data is appended to the list.</li>
+<li>If the new data has the same type with the existing one, the new data will be appended to existing variable. That it to say, strings are appended to existing string, dictionaries are merged to existing dictionaries, and rows of data frames are appended to existing data frame.</li>
+</ol>
+<p>For example, we already have a variable <code>table</code></p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">table</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[15]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="n">csv</span> <span class="o">--</span><span class="n">append</span> <span class="n">table</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;a,b</span><span class="se">\n</span><span class="s1">5,6</span><span class="se">\n</span><span class="s1">7,8&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a,b
+5,6
+7,8
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">table</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[17]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>5</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7</td>
+      <td>8</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like to collect results from multiple cells, you can create a list and use it to capture them</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="o">--</span><span class="n">append</span> <span class="n">results</span>
+<span class="kn">sh:</span>
+  <span class="n">echo</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">sh</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>result from sh
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">capture</span> <span class="o">--</span><span class="n">append</span> <span class="n">results</span>
+<span class="kn">python:</span>
+   <span class="k">print</span><span class="p">(</span><span class="s1">&#39;result from python&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>result from python
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">results</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[22]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;result from sh\r\n&#39;, &#39;result from python\r\n&#39;]</pre>
 </div>
 
 </div>
