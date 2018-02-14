@@ -12,7 +12,7 @@
 
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
-[lasso_1, ridge_1: shared = {'data_files': '_output'}]
+[lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
 # Simulate sparse data-sets
 depends: R_library("MASS")
 parameter: N = (40, 200) # training and testing samples
@@ -69,13 +69,12 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 depends: sos_variable('data_files')
-print(data_files)
 parameter: replicates = list(zip(*(iter(data_files),) * 2))
 input: group_by = 2, group_with = 'replicates', concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
 R: expand = "${ }"
   b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${_replicates:r}, header = F)[,-1]) %*% b
+  Ytruth = as.matrix(read.csv(${_replicates[1]:r}, header = F)[,-1]) %*% b
   Ypred = scan(${_input[0]:r})
   prediction_mse = mean((Ytruth - Ypred)^2)
   betahat = scan(${_input[1]:r})
@@ -90,8 +89,8 @@ sos_run('lasso')
 depends: executable("pandoc")
 input: dynamic("*.mse.csv")
 import numpy as np
-ridge_summary = np.mean(np.matrix([sum([x.strip().split() for x in open(f).readlines()], []) for f in input if 'ridge' in f], dtype = float).T, axis = 1).tolist()
-lasso_summary = np.mean(np.matrix([sum([x.strip().split() for x in open(f).readlines()], []) for f in input if 'lasso' in f], dtype = float).T, axis = 1).tolist()
+ridge_summary = np.mean(np.matrix([sum([x.strip().split() for x in open(f).readlines()], []) for f in _input if 'ridge' in f], dtype = float).T, axis = 1).tolist()
+lasso_summary = np.mean(np.matrix([sum([x.strip().split() for x in open(f).readlines()], []) for f in _input if 'lasso' in f], dtype = float).T, axis = 1).tolist()
 
 report: output = "report.md", expand = "${ }"
 
