@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_django_extensions {}.lan_jupyter3_python_3 {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_javascript {}
 
 </style>
 <body>
@@ -1077,7 +1077,7 @@ run:
   server:
     job_template: <span class="p">|</span>
       <span class="c1">#!/bin/bash</span>
-      <span class="c1">#PBS -N {job_name</span>
+      <span class="c1">#PBS -N {task}</span>
       <span class="c1">#PBS -l nodes=1:ppn={cores}</span>
       <span class="c1">#PBS -l walltime={walltime}</span>
       <span class="c1">#PBS -l mem={mem//10**6}MB</span>
@@ -1096,7 +1096,6 @@ run:
 <p>The template will be interpolated with the following information</p>
 <ul>
 <li><code>task</code>: task id</li>
-<li><code>job_name</code>: Interpolated value of runtime option <code>name</code>, or task id if <code>name</code> is not provided. For example, <code>name='{step_name}_{_index}'</code> would assign names with step name and index to submitted jobs.</li>
 <li><code>nodes</code>, <code>cores</code>, <code>walltime</code>, <code>mem</code>: resource task options</li>
 <li><code>cur_dir</code>:  current project directory, which will be translated to path in remote host if the task is executed remotely</li>
 <li><code>verbosity</code> and <code>sig_mode</code>: sos run mode.</li>
@@ -1308,7 +1307,7 @@ run:
         wait_for_task: false
         job_template: |
             #!/bin/bash
-            #BSUB -J {job_name}
+            #BSUB -J {task}
             #BSUB -q {'short' if int(walltime.split(':')[0]) &lt; 24 else 'long'}
             #BSUB -n {cores}
             #BSUB -M {mem//10**9}G
@@ -1361,9 +1360,9 @@ run:
       #SBATCH --nodes=1
       #SBATCH --ntasks-per-node={cores}
       #SBATCH --mem-per-cpu={mem_per_cpu}
-      #SBATCH --job-name={job_name}
-      #SBATCH --output={cur_dir}/.sos/{job_name}.out
-      #SBATCH --error={cur_dir}/.sos/{job_name}.err
+      #SBATCH --job-name={task}
+      #SBATCH --output={cur_dir}/.sos/{task}.out
+      #SBATCH --error={cur_dir}/.sos/{task}.err
       cd {cur_dir}
       mkdir -p .sos
       sos execute {task} -v {verbosity} -s {sig_mode} {'--dryrun' if run_mode == 'dryrun' else ''}
@@ -2439,7 +2438,7 @@ sos execute [tasks] [-q queue]</code></pre>
     status_check_interval: 30
     job_template: |
       #!/bin/bash
-      #PBS -N {job_name}
+      #PBS -N {task}
       #PBS -l nodes=1:ppn={cores}
       #PBS -l walltime={walltime}
       #PBS -l mem={mem//1000000}GB
