@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_bash {}.lan_imatlab {}.lan_julia-0.6 {}.lan_octave {}.lan_sparql {}
 
 </style>
 <body>
@@ -4906,7 +4906,142 @@ touch test.vcf
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this example, SoS first look for a step that can produce <code>test.vcf</code> and found the <code>call</code> step through pattern <code>{filename}.vcf</code>. It turns out that this step requires an existing input file <code>test.bam</code> but a missing dependent file <code>test.bam.bai</code>, so it continues to check the workflow to identify step <code>index</code> that generates <code>test.bam.bai</code> from <code>test.bam</code>. With all dependencies met, as illustrated by the DAG (Direct Acyclic Graph) of this workflow, two steps, <code>index</code> and <code>call</code> are executed to produce the output <code>test.vcf</code>. Please refer to a <a href="../tutorials/Auxiliary_Steps.ipynb">tutorial on auxiliary steps</a> for details.</p>
+<p>In this example, SoS first look for a step that can produce <code>test.vcf</code> and found the <code>call</code> step through pattern <code>{filename}.vcf</code>. It turns out that this step requires an existing input file <code>test.bam</code> but a missing dependent file <code>test.bam.bai</code>, so it continues to check the workflow to identify step <code>index</code> that generates <code>test.bam.bai</code> from <code>test.bam</code>. With all dependencies met, as illustrated by the DAG (Direct Acyclic Graph) of this workflow, two steps, <code>index</code> and <code>call</code> are executed to produce the output <code>test.vcf</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As a convenience feature, any workflow step with explicit simple <code>output</code> statement can be used as an auxiliary step so that the step can be triggered from its output. Here <strong>simple output statement</strong> means output statements like <code>output: 'file.txt'</code> and <code>output: 'file1.txt', 'file2.txt'</code> that does not rely on external variables (e.g. not derived from <code>_input</code>) and without any option.</p>
+<p>For example, the following simple workflow can be executed with workflow name <code>step</code>,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">%</span><span class="n">run</span> <span class="n">step</span>
+
+<span class="p">[</span><span class="n">step</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+  <span class="n">echo</span> <span class="s2">&quot;SOMETHING&quot;</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> a.txt (10 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>SOMETHING
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and it can also be executed with expected target <code>-t a.txt</code>, because the <code>step</code> automatically <code>provides</code> <code>a.txt</code> because <code>output: 'a.txt'</code> is a simple output statement.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="p">[</span><span class="n">step</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
+
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+  <span class="n">echo</span> <span class="s2">&quot;SOMETHING&quot;</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> a.txt (10 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>SOMETHING
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Makefile-style workflow can be used to construct very complex workflows. Please refer to a <a href="../tutorials/Auxiliary_Steps.ipynb">tutorial on auxiliary steps</a> for details.</p>
 
 </div>
 </div>

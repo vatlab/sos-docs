@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset='utf-8'>
- <title>LP_Make.sos</title>
+ <title>LP_Make_ST.sos</title>
 <meta http-equiv="content-type" content="text/html; charset=None">
 
 <style type="text/css">
@@ -467,7 +467,7 @@ body {
         <img src="http://vatlab.github.io/SOS/img/sos_icon.svg" alt="sos_icon">
         </a>
 
-        <span class="user-mention"><a href="LP_Make.sos">LP_Make.sos</a></span>
+        <span class="user-mention"><a href="LP_Make_ST.sos">LP_Make_ST.sos</a></span>
       </div>
       </div>
 
@@ -476,7 +476,7 @@ body {
   <div class="file-header">
 
   <div class="file-info">
-      <a href="LP_Make.sos" class="commit-tease-sha">LP_Make.sos</a>
+      <a href="LP_Make_ST.sos" class="commit-tease-sha">LP_Make_ST.sos</a>
       <span class="file-info-divider"></span>
     4.4 KiB
   </div>
@@ -518,48 +518,55 @@ body {
 <tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>11</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># This script is written in a &quot;backward&quot; flavor</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>12</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># aka the &quot;Make Style&quot;</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>12</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># aka the &quot;Make Style&quot;, demonstrating dynamic input, grouped output</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>13</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span> 
-</pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>14</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>13</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># and step dependencies.</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>15
-16
-17</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">ridge_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;data_{x+1}.ridge.mse.csv&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
-<span class="n">lasso_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;data_{x+1}.lasso.mse.csv&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>14</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>15</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>16
+17
+18
+19</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="nb">id</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<span class="n">ridge_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;data_{x}.ridge.mse.csv&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">]</span>
+<span class="n">lasso_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;data_{x}.lasso.mse.csv&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">]</span>
  
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>18</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">simulation</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data_{id}.train.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;data_{id}.test.csv&quot;</span><span class="p">]]</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>20</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">simulation</span><span class="p">]</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>19</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Simulate sparse data-sets</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>21</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Simulate sparse data-sets</span>
 </pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>20
-21
-22
-23</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;MASS&quot;</span><span class="p">)</span>
+</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;MASS&quot;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="n">N</span> <span class="o">=</span> <span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="c1"># training and testing samples</span>
 <span class="kn">parameter:</span> <span class="n">rstd</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;data_{id}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{id}.test.csv&quot;</span>
+<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span> 
+<span class="kn">output:</span> <span class="p">[(</span><span class="n">f</span><span class="s2">&quot;data_{x}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>24</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>27</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>25
-26
-27
-28
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>28
 29
 30
 31
 32
 33
-34</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span><span class="kp">set.seed</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>id<span class="p">})</span>
+34
+35
+36
+37</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span><span class="kp">set.seed</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_id<span class="p">})</span>
 N <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span>N<span class="p">)</span><span class="o">:</span><span class="p">,}))</span>
 p <span class="o">=</span> <span class="kp">length</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,}))</span>
 X <span class="o">=</span> MASS<span class="o">::</span>mvrnorm<span class="p">(</span>n <span class="o">=</span> N<span class="p">,</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> p<span class="p">),</span> <span class="m">0.5</span><span class="o">^</span><span class="kp">abs</span><span class="p">(</span><span class="kp">outer</span><span class="p">(</span><span class="m">1</span><span class="o">:</span>p<span class="p">,</span> <span class="m">1</span><span class="o">:</span>p<span class="p">,</span> FUN <span class="o">=</span> <span class="s">&quot;-&quot;</span><span class="p">)))</span>
@@ -571,33 +578,35 @@ write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">
  
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>35</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">ridge</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data_{id}.ridge.predicted.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;data_{id}.ridge.coef.csv&quot;</span><span class="p">]]</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>38</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">ridge</span><span class="p">]</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>36</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Ridge regression model implemented in R</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>39</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Ridge regression model implemented in R</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>37</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Build predictor via cross-validation and make prediction</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>40</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Build predictor via cross-validation and make prediction</span>
 </pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>38
-39
-40</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;data_{id}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{id}.test.csv&quot;</span><span class="p">,</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;glmnet&quot;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;data_{id}.ridge.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{id}.ridge.coef.csv&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>41</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>42
+</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>41
+42
 43
-44
-45
-46
+44</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;glmnet&quot;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">paths</span><span class="p">([(</span><span class="n">f</span><span class="s2">&quot;data_{x}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="p">[(</span><span class="n">f</span><span class="s2">&quot;data_{x}.ridge.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.ridge.coef.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>45</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>46
 47
 48
-49</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>train <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_depends<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
-test <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_depends<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+49
+50
+51
+52
+53</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>train <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+test <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 model <span class="o">=</span> glmnet<span class="o">::</span>cv.glmnet<span class="p">(</span><span class="kp">as.matrix</span><span class="p">(</span>train<span class="p">[,</span><span class="m">-1</span><span class="p">]),</span> train<span class="p">[,</span><span class="m">1</span><span class="p">],</span> family <span class="o">=</span> <span class="s">&quot;gaussian&quot;</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0</span><span class="p">,</span> nfolds <span class="o">=</span> <span class="o">$</span><span class="p">{</span>nfolds<span class="p">},</span> intercept <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 betahat <span class="o">=</span> <span class="kp">as.vector</span><span class="p">(</span>coef<span class="p">(</span>model<span class="p">,</span> s <span class="o">=</span> <span class="s">&quot;lambda.min&quot;</span><span class="p">)[</span><span class="m">-1</span><span class="p">])</span>
 Ypred <span class="o">=</span> predict<span class="p">(</span>model<span class="p">,</span> <span class="kp">as.matrix</span><span class="p">(</span>test<span class="p">[,</span><span class="m">-1</span><span class="p">]),</span> s <span class="o">=</span> <span class="s">&quot;lambda.min&quot;</span><span class="p">)</span>
@@ -606,36 +615,38 @@ write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="
  
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>50</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">lasso</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data_{id}.lasso.predicted.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;data_{id}.lasso.coef.csv&quot;</span><span class="p">]]</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>54</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">lasso</span><span class="p">]</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>51</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># LASSO model implemented in Python</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>55</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># LASSO model implemented in Python</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>52</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Build predictor via cross-validation and make prediction</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>56</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Build predictor via cross-validation and make prediction</span>
 </pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>53
-54
-55</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;data_{id}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{id}.test.csv&quot;</span><span class="p">,</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s2">&quot;sklearn&quot;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;data_{id}.lasso.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{id}.lasso.coef.csv&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>56</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>57
+</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>57
 58
 59
-60
-61
-62
+60</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s2">&quot;sklearn&quot;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">paths</span><span class="p">([(</span><span class="n">f</span><span class="s2">&quot;data_{x}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="p">[(</span><span class="n">f</span><span class="s2">&quot;data_{x}.lasso.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.lasso.coef.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>61</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>62
 63
 64
-65</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+65
+66
+67
+68
+69
+70</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LassoCV</span>
-<span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_depends</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
-<span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_depends</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">cv</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">nfolds</span><span class="p">},</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">Ypred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span>
 <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">Ypred</span><span class="p">)</span>
@@ -643,85 +654,86 @@ write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="
  
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>66</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">evaluation</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="s1">&#39;data_{id}.{method}.mse.csv&#39;</span><span class="p">]</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>71</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">evaluation_core</span><span class="p">]</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>67</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Evaluate predictors by calculating mean squared error</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>72</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Evaluate predictors by calculating mean squared error</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>68</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># of prediction vs truth (first line of output)</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>73</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># of prediction vs truth (first line of output)</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>69</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># and of betahat vs truth (2nd line of output)</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>74</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># and of betahat vs truth (2nd line of output)</span>
 </pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>70
-71</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;data_{id}.test.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{id}.{method}.predicted.csv&quot;</span><span class="p">,</span>
-         <span class="n">f</span><span class="s2">&quot;data_{id}.{method}.coef.csv&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>72</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>73
-74
-75
+</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>75
 76
 77
-78
-79
-80</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,})</span>
-Ytruth <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_depends<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)[,</span><span class="m">-1</span><span class="p">])</span> <span class="o">%*%</span> b
-Ypred <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_depends<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">})</span>
+78</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">input_files</span> <span class="o">=</span> <span class="nb">list</span>
+<span class="kn">parameter:</span> <span class="n">output_files</span> <span class="o">=</span> <span class="nb">list</span>
+<span class="kn">input:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">input_files</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">output_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>79</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>80
+81
+82
+83
+84
+85
+86
+87</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,})</span>
+Ytruth <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)[,</span><span class="m">-1</span><span class="p">])</span> <span class="o">%*%</span> b
+Ypred <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">})</span>
 prediction_mse <span class="o">=</span> <span class="kp">mean</span><span class="p">((</span>Ytruth <span class="o">-</span> Ypred<span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
-betahat <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_depends<span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="o">:</span>r<span class="p">})</span>
+betahat <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="o">:</span>r<span class="p">})</span>
 estimation_mse <span class="o">=</span> <span class="kp">mean</span><span class="p">((</span>betahat <span class="o">-</span> b<span class="p">)</span> <span class="o">^</span> <span class="m">2</span><span class="p">)</span>
 <span class="kp">cat</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span>prediction_mse<span class="p">,</span> estimation_mse<span class="p">),</span> file <span class="o">=</span> <span class="o">$</span><span class="p">{</span>_output<span class="o">:</span>r<span class="p">})</span>
  
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>81</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">get</span><span class="o">-</span><span class="n">pandoc</span><span class="o">-</span><span class="n">css</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="s1">&#39;pandoc.css&#39;</span><span class="p">]</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>88</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">evaluation_lasso</span><span class="p">]</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>82</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">download:</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>89</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">),</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;lasso&#39;</span><span class="p">)</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>83
-84</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>https://raw.githubusercontent.com/vatlab/sos-docs/master/css/pandoc.css
- 
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>90</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">input_files</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([(</span><span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.lasso.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.lasso.coef.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>85</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>86</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">ridge_result</span><span class="p">,</span> <span class="n">lasso_result</span><span class="p">,</span> <span class="s2">&quot;pandoc.css&quot;</span><span class="p">,</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;pandoc&#39;</span><span class="p">)</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>87
-88
-89
-90</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="n">ridge_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="nb">sum</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()],</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ridge_result</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="n">lasso_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="nb">sum</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()],</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lasso_result</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
- 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>91</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">report:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;report.md&quot;</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>91</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">output:</span> <span class="n">lasso_result</span> 
 </pre></div>
 </td></tr>
 <tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>92
-93
-94
-95
-96
-97</pre></div></td><td class="code"><div class="source blob-code sos-report"><pre><span></span> 
-| Method | Avg. Estimation Error | Avg. Prediction Error |
-|:------:|:-------:|:-------:|
-| LASSO | ${lasso_summary[1]} | ${lasso_summary[0]} |
-| Ridge | ${ridge_summary[1]} | ${ridge_summary[0]} |
+93</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">sos_run</span><span class="p">(</span><span class="s2">&quot;evaluation_core&quot;</span><span class="p">,</span> <span class="n">input_files</span> <span class="o">=</span> <span class="n">input_files</span><span class="p">,</span> <span class="n">output_files</span> <span class="o">=</span> <span class="n">lasso_result</span><span class="p">)</span>
  
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>98</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">pandoc:</span> <span class="nb">input</span> <span class="o">=</span> <span class="s2">&quot;report.md&quot;</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;report.html&quot;</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;{input:q} --css pandoc.css --output {output:q}&#39;</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>94</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">evaluation_ridge</span><span class="p">]</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>95</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">),</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;ridge&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>96</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">input_files</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([(</span><span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.ridge.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.ridge.coef.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>97</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">output:</span> <span class="n">ridge_result</span> 
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>98
+99</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">sos_run</span><span class="p">(</span><span class="s2">&quot;evaluation_core&quot;</span><span class="p">,</span> <span class="n">input_files</span> <span class="o">=</span> <span class="n">input_files</span><span class="p">,</span> <span class="n">output_files</span> <span class="o">=</span> <span class="n">ridge_result</span><span class="p">)</span>
+ 
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>100</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>101
+102</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;evaluation_lasso&#39;</span><span class="p">),</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;evaluation_ridge&#39;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">lasso_result</span><span class="p">,</span> <span class="n">ridge_result</span>
 </pre></div>
 </td></tr>
 </table>

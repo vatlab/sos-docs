@@ -9,20 +9,23 @@
 # using Lasso and Ridge regression
 # and summarizes their prediction performance
 # This script is written in a "backward" flavor
-# aka the "Make Style"
+# aka the "Make Style", demonstrating dynamic input, grouped output
+# and step dependencies.
 
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
-ridge_result = [f'data_{x+1}.ridge.mse.csv' for x in range(5)]
-lasso_result = [f'data_{x+1}.lasso.mse.csv' for x in range(5)]
+id = [x+1 for x in range(5)]
+ridge_result = [f'data_{x}.ridge.mse.csv' for x in id]
+lasso_result = [f'data_{x}.lasso.mse.csv' for x in id]
 
-[simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
+[simulation]
 # Simulate sparse data-sets
 depends: R_library("MASS")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
-output: f"data_{id}.train.csv", f"data_{id}.test.csv"
+input: for_each = 'id', concurrent = True 
+output: [(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id], group_by = 2
 R: expand = "${ }"
-  set.seed(${id})
+  set.seed(${_id})
   N = sum(c(${paths(N):,}))
   p = length(c(${paths(beta):,}))
   X = MASS::mvrnorm(n = N, rep(0, p), 0.5^abs(outer(1:p, 1:p, FUN = "-")))
@@ -32,67 +35,68 @@ R: expand = "${ }"
   write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[ridge: provides = ["data_{id}.ridge.predicted.csv", "data_{id}.ridge.coef.csv"]]
+[ridge]
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 parameter: nfolds = 5
-depends: f"data_{id}.train.csv", f"data_{id}.test.csv", R_library("glmnet")
-output: f"data_{id}.ridge.predicted.csv", f"data_{id}.ridge.coef.csv"
+depends: sos_step('simulation'), R_library("glmnet")
+input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2, concurrent = True
+output: [(f"data_{x}.ridge.predicted.csv", f"data_{x}.ridge.coef.csv") for x in id], group_by = 2
 R: expand = "${ }"
-  train = read.csv(${_depends[0]:r}, header = F)
-  test = read.csv(${_depends[1]:r}, header = F)
+  train = read.csv(${_input[0]:r}, header = F)
+  test = read.csv(${_input[1]:r}, header = F)
   model = glmnet::cv.glmnet(as.matrix(train[,-1]), train[,1], family = "gaussian", alpha = 0, nfolds = ${nfolds}, intercept = F)
   betahat = as.vector(coef(model, s = "lambda.min")[-1])
   Ypred = predict(model, as.matrix(test[,-1]), s = "lambda.min")
   write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[lasso: provides = ["data_{id}.lasso.predicted.csv", "data_{id}.lasso.coef.csv"]]
+[lasso]
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 parameter: nfolds = 5
-depends: f"data_{id}.train.csv", f"data_{id}.test.csv", Py_Module("sklearn")
-output: f"data_{id}.lasso.predicted.csv", f"data_{id}.lasso.coef.csv"
+depends: sos_step('simulation'), Py_Module("sklearn")
+input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2, concurrent = True
+output: [(f"data_{x}.lasso.predicted.csv", f"data_{x}.lasso.coef.csv") for x in id], group_by = 2
 python: expand = "${ }"
   import numpy as np
   from sklearn.linear_model import LassoCV
-  train = np.genfromtxt(${_depends[0]:r}, delimiter = ",")
-  test = np.genfromtxt(${_depends[1]:r}, delimiter = ",")
+  train = np.genfromtxt(${_input[0]:r}, delimiter = ",")
+  test = np.genfromtxt(${_input[1]:r}, delimiter = ",")
   model = LassoCV(cv = ${nfolds}, fit_intercept = False).fit(train[:,1:], train[:,1])
   Ypred = model.predict(test[:,1:])
   np.savetxt(${_output[0]:r}, Ypred)
   np.savetxt(${_output[1]:r}, model.coef_)
 
-[evaluation: provides = 'data_{id}.{method}.mse.csv']
+[evaluation_core]
 # Evaluate predictors by calculating mean squared error
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
-depends: f"data_{id}.test.csv", f"data_{id}.{method}.predicted.csv",
-         f"data_{id}.{method}.coef.csv"
+parameter: input_files = list
+parameter: output_files = list
+input: dynamic(input_files), group_by = 3, concurrent = True
+output: output_files, group_by = 1
 R: expand = "${ }"
   b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${_depends[0]:r}, header = F)[,-1]) %*% b
-  Ypred = scan(${_depends[1]:r})
+  Ytruth = as.matrix(read.csv(${_input[0]:r}, header = F)[,-1]) %*% b
+  Ypred = scan(${_input[1]:r})
   prediction_mse = mean((Ytruth - Ypred)^2)
-  betahat = scan(${_depends[2]:r})
+  betahat = scan(${_input[2]:r})
   estimation_mse = mean((betahat - b) ^ 2)
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
 
-[get-pandoc-css: provides = 'pandoc.css']
-download:
-  https://raw.githubusercontent.com/vatlab/sos-docs/master/css/pandoc.css
+[evaluation_lasso]
+depends: sos_step('simulation'), sos_step('lasso')
+input_files = paths([(f"data_{x}.test.csv", f"data_{x}.lasso.predicted.csv", f"data_{x}.lasso.coef.csv") for x in id])
+output: lasso_result 
+sos_run("evaluation_core", input_files = input_files, output_files = lasso_result)
+
+[evaluation_ridge]
+depends: sos_step('simulation'), sos_step('ridge')
+input_files = paths([(f"data_{x}.test.csv", f"data_{x}.ridge.predicted.csv", f"data_{x}.ridge.coef.csv") for x in id])
+output: ridge_result 
+sos_run("evaluation_core", input_files = input_files, output_files = ridge_result)
 
 [default]
-depends: ridge_result, lasso_result, "pandoc.css", executable('pandoc')
-import numpy as np
-ridge_summary = np.mean(np.matrix([sum([x.strip().split() for x in open(f).readlines()], []) for f in ridge_result], dtype = float).T, axis = 1).tolist()
-lasso_summary = np.mean(np.matrix([sum([x.strip().split() for x in open(f).readlines()], []) for f in lasso_result], dtype = float).T, axis = 1).tolist()
-
-report: expand = "${ }", output = "report.md"
-
-| Method | Avg. Estimation Error | Avg. Prediction Error |
-|:------:|:-------:|:-------:|
-| LASSO | ${lasso_summary[1]} | ${lasso_summary[0]} |
-| Ridge | ${ridge_summary[1]} | ${ridge_summary[0]} |
-
-pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pandoc.css --output {output:q}'
+depends: sos_step('evaluation_lasso'), sos_step('evaluation_ridge')
+output: lasso_result, ridge_result

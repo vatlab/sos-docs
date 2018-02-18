@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_sas {}
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_javascript {}
 
 </style>
 <body>
@@ -244,6 +244,197 @@ $( document ).ready(function(){
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>SoS steps are building blocks of SoS workflows. Although the input and output can be more general, each step typically has its <strong>input</strong>, <strong>output</strong>, and <strong>dependents</strong> files, it executes a <strong>step process</strong> that consists of one or more Python statements and SoS actions (special python functions). Part or all the step process, called <strong>tasks</strong>, can be executed and monitored externally.</p>
 <p><img src="../media/sos_step.png" alt="sos_step"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-variables">Step variables<a class="anchor-link" href="#Step-variables">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS defines multiple variables during the execution of a step. The first type of variables provides information about the step, which includes</p>
+<ul>
+<li><strong><code>step_name</code></strong>: name of the step</li>
+<li><strong><code>step_id</code></strong>: Hash ID of the step, which is determined by the content of the step</li>
+<li><strong><code>workflow_id</code></strong>: Hash ID of the workflow in which the step is defined. It would be the ID of the nested workflow if the workflow is nested.</li>
+<li><strong><code>master_id</code></strong>: Hash ID of the entire workflow, regardless if the step is defined in a nested workflow.</li>
+</ul>
+<p>For example, in the following example, two steps have different step names, step IDs, and workflow IDs because <code>nested</code> is a nested workflow, but they share the same <code>master_id</code>, which equals to <code>workflow_id</code> of the outermost workflow.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
+<span class="p">[</span><span class="n">nested</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: step name={step_name}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: step id={step_id}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: workflow id={workflow_id}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: master id={master_id}&#39;</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">default</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: step name={step_name}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: step id={step_id}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: workflow id={workflow_id}&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: master id={master_id}&#39;</span><span class="p">)</span>
+<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;nested&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Workflow 1663b815c3bed9f2: step name=default_0
+Workflow 1663b815c3bed9f2: step id=950015e2ddfc10d4
+Workflow 1663b815c3bed9f2: workflow id=1663b815c3bed9f2
+Workflow 1663b815c3bed9f2: master id=1663b815c3bed9f2
+Workflow fecfb67fda2f92df: step name=nested_0
+Workflow fecfb67fda2f92df: step id=74bf81da4f5098aa
+Workflow fecfb67fda2f92df: workflow id=fecfb67fda2f92df
+Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These variables can be useful, for example, to save runtime information, as in the example of</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">default_10</span><span class="o">.</span><span class="n">log</span>
+<span class="o">%</span><span class="n">run</span> 
+
+<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">step_name</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">log</span><span class="p">:</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Step specific log message saved in {step_name}.log&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> default_10.log (49 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Step specific log message saved in default_10.log</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If a section defines multiple steps, the step variables can be used to define (slightly) different steps according to which step is executing. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="n">human</span>
+
+<span class="p">[</span><span class="n">human_10</span><span class="p">,</span> <span class="n">mouse_10</span><span class="p">]</span>
+<span class="k">if</span> <span class="s1">&#39;human&#39;</span> <span class="ow">in</span> <span class="n">step_name</span><span class="p">:</span>
+   <span class="k">print</span><span class="p">(</span><span class="s2">&quot;I am dealing with human&quot;</span><span class="p">)</span>
+<span class="kn">else:</span>
+   <span class="k">print</span><span class="p">(</span><span class="s2">&quot;I am dealing with mouse&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I am dealing with human
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The second type of variables are step input, output, and dependent targets. They are of type <code>sos_targets</code> and will be explained later.</p>
 
 </div>
 </div>

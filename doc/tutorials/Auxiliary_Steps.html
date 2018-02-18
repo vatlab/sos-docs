@@ -225,7 +225,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_django_extensions {}.lan_jupyter3_python_3 {}
+ .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_bash {}.lan_imatlab {}.lan_julia-0.6 {}.lan_octave {}.lan_sparql {}
 
 </style>
 <body>
@@ -259,7 +259,7 @@ $( document ).ready(function(){
 <span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
      <span class="n">samtools</span> <span class="n">index</span> <span class="p">{</span><span class="nb">input</span><span class="p">}</span>
 </pre></div>
-<p>Such a step is characterized by a <strong><code>provides</code></strong> option (or a <strong><code>shared</code></strong> option that will be discussed later) and is called an auxiliary step. In this particular case, if <code>bamfile="AS123.bam"</code>, the requested dependent file would be <code>AS123.bam.bai</code>. Through the matching mechanism of option <code>provides</code>, the <code>index_bam</code> step would be executed with variables <code>sample="AS123"</code> and <code>output=["AS123.bam.bai"]</code>.</p>
+<p>Such a step is characterized by a <strong><code>provides</code></strong> option (or a step with simple <code>output</code> statement, or a <strong><code>shared</code></strong> option that will be discussed later) and is called an auxiliary step. In this particular case, if <code>bamfile="AS123.bam"</code>, the requested dependent file would be <code>AS123.bam.bai</code>. Through the matching mechanism of option <code>provides</code>, the <code>index_bam</code> step would be executed with variables <code>sample="AS123"</code> and <code>output=["AS123.bam.bai"]</code>.</p>
 
 </div>
 </div>
@@ -282,6 +282,212 @@ $( document ).ready(function(){
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Automatic-auxiliary-step">Automatic auxiliary step<a class="anchor-link" href="#Automatic-auxiliary-step">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because we jump into more complex pattern based auxiliary steps, it is worth mentioning that any step with a simple <code>output</code> statement can be triggered with the specified <code>output</code>, making it a simple auxiliary step without an explicit <code>provides</code> option. That is to say, when you have a regular step with a statement that specifies one or more file names (or other targets), without using any other variables such as <code>_input</code>, it can be triggered by the output.</p>
+<p>For example, the following workflow has a single step that generates an output file <code>a.md</code>. It can be triggered by specifying the name of the workflow</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
+<span class="o">%</span><span class="n">run</span> <span class="n">report</span>
+
+<span class="p">[</span><span class="n">report</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.md&#39;</span>
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="n">_output</span>
+  <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
+  <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> a.md (19 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ul>
+<li>item 1</li>
+<li>item 2</li>
+</ul>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or be triggered by the use of the <code>-t</code> (target) option</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
+<span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
+
+<span class="p">[</span><span class="n">report</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s1">&#39;a.md&#39;</span>
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="n">_output</span>
+  <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
+  <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> a.md (19 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ul>
+<li>item 1</li>
+<li>item 2</li>
+</ul>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>which is more or less equivalent to the following "pure" auxiliary step with a <code>provides</code> option (explained below) but is actually more flexible in that it can also be triggered by workflow name.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
+<span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
+
+<span class="p">[</span><span class="n">report</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;a.md&#39;</span><span class="p">]</span>
+<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="n">_output</span>
+  <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
+  <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> a.md (19 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ul>
+<li>item 1</li>
+<li>item 2</li>
+</ul>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
