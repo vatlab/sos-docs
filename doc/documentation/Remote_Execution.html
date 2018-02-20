@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }
+ .lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Octave .input_prompt { background-color: #dff8fb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_javascript {}
 
 </style>
 <body>
@@ -1048,6 +1048,74 @@ run:
         wait_on_task: false
         paths:
             home: /home/username</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Process-configuration">Process configuration<a class="anchor-link" href="#Process-configuration">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>process</code> task engine is the default task engine that execute tasks without any spooling mechanism. It by default execute command <code>sos execute task</code> with appropriate verbosity level, run mode and signature mode. However, a <code>job_template</code> is allowed to create a shell script to execute the task.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="job_template"><strong><code>job_template</code></strong><a class="anchor-link" href="#job_template">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>job_template</code> is a template of a shell script that will be executed by the process task engine. The template will be interpolated with</p>
+<ul>
+<li><code>task</code>: task ID</li>
+<li><code>verbosity</code>, <code>sig_mode</code>, and <code>run_mode</code>: execution mode of task.</li>
+<li><code>nodes</code>, <code>cores</code>, <code>mem</code>, and <code>walltime</code> as defined by corresponding task options. These are rarely useful in process engines.</li>
+</ul>
+<p>So whereas a default <code>job_template</code> is equivalent to</p>
+
+<pre><code>    job_template: |
+      sos execute {task} -v {verbosity} -s {sig_mode} \
+        {'--dryrun' if run_mode == 'dryrun' else ''}</code></pre>
+<p>You can customize this script with thing like</p>
+
+<pre><code>    job_template: |
+      export PATH=/my/additional/path:$PATH
+      sos execute {task} -v {verbosity} -s {sig_mode} \
+        {'--dryrun' if run_mode == 'dryrun' else ''}</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="batch_size"><strong><code>batch_size</code></strong><a class="anchor-link" href="#batch_size">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This option is related to how process queue handles multiple tasks. Simply put, if there are 100 tasks and <code>max_running_jobs=4</code>, SoS would assign <code>25</code> tasks to each job so that each job would execute <code>25</code> tasks sequentially.</p>
+<p>Process queue has a default <code>batch_size</code> of <code>1000</code> which should work well for most cases. However, if your tasks vary greatly in runtime, there is a chance that some long-running jobs would be stacked into a single job so that this job will take much longer to execute than others. In this case you can adjust <code>batch_size</code> to a small number to submit tasks in a finer scale.</p>
 
 </div>
 </div>
