@@ -11835,7 +11835,7 @@ table tr th :last-child, table tr td :last-child {
 
 .sos_dataframe tr:hover {
     background-color: #e6f2ff;
-}.lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_javascript {}.lan_julia-0.6 {}.lan_python2 {}.lan_python3 {}.lan_sas {}</style>
+}.lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }</style>
 
 
 
@@ -11919,12 +11919,14 @@ function sortDataFrame(id, n, dtype) {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="eQTL-discovery-pipeline-for-the-GTEx-Consortium:-RNA-seq-preprocessing">eQTL discovery pipeline for the GTEx Consortium: RNA-seq preprocessing<a class="anchor-link" href="#eQTL-discovery-pipeline-for-the-GTEx-Consortium:-RNA-seq-preprocessing">&#182;</a></h1><p>This notebook converts the RNA-seq data processing workflow of <a href="https://github.com/broadinstitute/gtex-pipeline/tree/63b13b8ced25cf8ab8e7a26f40a495e523630a9b/qtl">eQTL discovery pipeline for the GTEx Consortium</a> (version July 31, 2017), originally written in Python, R and Common Workflow Language (CWL) into a single, self-contained SoS script.</p>
+<h1 id="eQTL-discovery-pipeline-for-the-GTEx-Consortium:-RNA-seq-preprocessing">eQTL discovery pipeline for the GTEx Consortium: RNA-seq preprocessing<a class="anchor-link" href="#eQTL-discovery-pipeline-for-the-GTEx-Consortium:-RNA-seq-preprocessing">&#182;</a></h1><p>This notebook converts the RNA-seq data processing workflow of <a href="https://github.com/broadinstitute/gtex-pipeline/tree/63b13b8ced25cf8ab8e7a26f40a495e523630a9b/qtl">eQTL discovery pipeline for the GTEx Consortium</a> (version July 31, 2017), originally written in Python, R and <a href="https://software.broadinstitute.org/wdl/">WDL</a> into a <strong>single, self-contained SoS script with narratives</strong>.</p>
 <p>The workflow perform two analysis on RNA-seq data:</p>
 <ul>
 <li>Quantile normalization</li>
 <li>PEER factor anlaysis</li>
 </ul>
+<p>A fair comparison between two workflow systems would assume readers not familiar with either system. The <a href="https://software.broadinstitute.org/wdl/">WDL</a> system is developed by Broad institute. Its syntax particularly focuses on human readability, and has recently became a <a href="https://software.broadinstitute.org/wdl/blog?id=10509">github official language</a>.</p>
+<p>Caution that this example aims to demonstrate migrating workflows written in another workflow system to SoS, for readers to compare between them code organization, readibility, syntax and interface to remote computing environment. The data involved are private thus cannot be provided. However, readers interested in actually running this example for their own analysis can edit <code>[global]</code> section to input their own examples and execute the pipeline. We are happy to provide support with it <a href="https://github.com/vatlab/sos-docs/issues">on github</a>.</p>
 
 </div>
 </div>
@@ -11944,11 +11946,11 @@ function sortDataFrame(id, n, dtype) {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
-<span class="n">rna_rpkm</span> <span class="o">=</span> <span class="s2">&quot;~/Documents/GTEx/gtex7/rna-seq/GTEx_Data_2016-01-15_v7_RNA-seq_RNA-SeQCv1.1.8_gene_rpkm.gct.gz&quot;</span>
-<span class="n">rna_cnts</span> <span class="o">=</span> <span class="s2">&quot;~/Documents/GTEx/gtex7/rna-seq/GTEx_Data_2016-01-15_v7_RNA-seq_RNA-SeQCv1.1.8_gene_reads.gct.gz&quot;</span>
-<span class="n">genotype</span> <span class="o">=</span> <span class="s2">&quot;~/Documents/GTEx/gtex7/variant_calls/GTEx_Analysis_2016-01-15_v7_WholeGenomeSeq_635Ind_PASS_AB02_GQ20_HETX_MISS15_PLINKQC.PIR.vcf.gz&quot;</span>
-<span class="n">sample_attr</span> <span class="o">=</span> <span class="s2">&quot;~/Documents/GTEx/gtex7/sample_annotations/GTEx_Analysis_2016-01-15_v7_SampleAttributesDS.txt&quot;</span>
-<span class="n">cwd</span> <span class="o">=</span> <span class="s2">&quot;~/Documents/GTEx&quot;</span>
+<span class="n">rna_rpkm</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx/gtex7/rna-seq/GTEx_Data_2016-01-15_v7_RNA-seq_RNA-SeQCv1.1.8_gene_rpkm.gct.gz&quot;</span><span class="p">)</span>
+<span class="n">rna_cnts</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx/gtex7/rna-seq/GTEx_Data_2016-01-15_v7_RNA-seq_RNA-SeQCv1.1.8_gene_reads.gct.gz&quot;</span><span class="p">)</span>
+<span class="n">genotype</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx/gtex7/variant_calls/GTEx_Analysis_2016-01-15_v7_WholeGenomeSeq_635Ind_PASS_AB02_GQ20_HETX_MISS15_PLINKQC.PIR.vcf.gz&quot;</span><span class="p">)</span>
+<span class="n">sample_attr</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx/gtex7/sample_annotations/GTEx_Analysis_2016-01-15_v7_SampleAttributesDS.txt&quot;</span><span class="p">)</span>
+<span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11975,7 +11977,7 @@ function sortDataFrame(id, n, dtype) {
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">RNASeq_to_HDF5</span><span class="p">]</span>
 <span class="c1"># Convert RNASeq data to HDF5</span>
 <span class="kn">parameter:</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;np.uint32&#39;</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{input[0]:nb}.hdf5&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input[0]:nb}.hdf5&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
 <span class="kn">python:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
     <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
@@ -11999,12 +12001,12 @@ function sortDataFrame(id, n, dtype) {
                 <span class="n">sample_dict</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">((</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;[\W\d]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sample_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
     <span class="c1">#</span>
-    <span class="n">data</span><span class="p">,</span> <span class="n">sample</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">dtype</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">dtype</span><span class="p">})</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">sample</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">dtype</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">dtype</span><span class="p">})</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">sample</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">}</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">}):</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">k</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">k</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12027,6 +12029,7 @@ function sortDataFrame(id, n, dtype) {
 </li>
 </ol>
 <p>It results in 4 <strong>analysis ready expression data files</strong> in HDF5 format of different versions / organizations of the same information: emperical quantile normalized and standard normal quantile normalized, saved as flat tables or grouped by tissues. Additionally 2 original Count and RPKM files are converted to HDF5 format grouped by tissues.</p>
+<p>Notice that the implementation is memory intensive. As a result we use <code>task</code> to specifically configure the required resource on a cluster system (<code>uchicago_cluster</code>) that is required to run it. See <a href="https://vatlab.github.io/sos-docs/doc/documentation/Remote_Execution.html">remote tasks</a> for more details on remote computer configurations.</p>
 <p>See code chunk below for an implementation.</p>
 
 </div>
@@ -12044,13 +12047,13 @@ function sortDataFrame(id, n, dtype) {
 <span class="kn">parameter:</span> <span class="n">read_cutoff</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="kn">parameter:</span> <span class="n">sample_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="kn">input:</span> <span class="n">rna_rpkm</span><span class="p">,</span> <span class="n">rna_cnts</span><span class="p">,</span> <span class="n">genotype</span><span class="p">,</span> <span class="n">sample_attr</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.qnorm.h5&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.h5&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">),</span>
-        <span class="s2">&quot;{cwd:a}/rna_processed/{input[0]:nnb}.h5&quot;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;mstephens&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;20:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;90G&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.h5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">),</span>
+        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;uchicago_cluster&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;20:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;90G&quot;</span>
 <span class="kn">python:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
 
     <span class="c1"># Adopted by Gao Wang from:</span>
@@ -12189,12 +12192,12 @@ function sortDataFrame(id, n, dtype) {
 
     <span class="k">class</span> <span class="nc">Environment</span><span class="p">:</span>
         <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">expression_gct</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">ar</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">counts_gct</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="err">!</span><span class="n">ar</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="err">!</span><span class="n">ar</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="err">!</span><span class="n">ar</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">nnbr</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">dr</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">expression_gct</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">ar</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">counts_gct</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">ar</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">ar</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span><span class="n">ar</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">nnbr</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">dr</span><span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expression_threshold</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">rpkm_cutoff</span><span class="p">}</span> 
             <span class="bp">self</span><span class="o">.</span><span class="n">count_threshold</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">read_cutoff</span><span class="p">}</span> 
             <span class="bp">self</span><span class="o">.</span><span class="n">min_samples</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">sample_cutoff</span><span class="p">}</span>
@@ -12279,7 +12282,7 @@ function sortDataFrame(id, n, dtype) {
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">rnaseq_2</span><span class="p">]</span>
 <span class="c1"># PEER analysis</span>
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">)</span>
-<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;h5ls {input[2]} | awk &#39;{print $1}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;h5ls {_input[2]} | awk &#39;{print $1}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tissues&#39;</span><span class="p">]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_covariates.txt&quot;</span><span class="p">,</span> 
         <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_alpha.txt&quot;</span><span class="p">,</span> 
@@ -12292,7 +12295,7 @@ function sortDataFrame(id, n, dtype) {
     <span class="n">epsprior_b</span><span class="o">=</span><span class="mi">10</span>
     <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span>
     <span class="n">use_genes</span> <span class="o">=</span> <span class="mi">10000</span>
-    <span class="n">expr</span><span class="o">.</span><span class="n">h5</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">}</span>
+    <span class="n">expr</span><span class="o">.</span><span class="n">h5</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">r</span><span class="p">}</span>
 
     <span class="n">library</span><span class="p">(</span><span class="n">peer</span><span class="p">,</span> <span class="n">quietly</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>  <span class="c1"># https://github.com/PMBio/peer</span>
     <span class="n">library</span><span class="p">(</span><span class="n">rhdf5</span><span class="p">,</span> <span class="n">quietly</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
@@ -12344,7 +12347,7 @@ function sortDataFrame(id, n, dtype) {
     <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;done.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># run PEER</span>
-    <span class="n">cat</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;PEER: estimating hidden confounders (&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s2">&quot; for tissue &quot;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_tissues</span><span class="err">!</span><span class="n">r</span><span class="p">}</span> <span class="p">,</span> <span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">cat</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;PEER: estimating hidden confounders (&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s2">&quot; for tissue &quot;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_tissues</span><span class="p">:</span><span class="n">r</span><span class="p">}</span> <span class="p">,</span> <span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
     <span class="n">model</span> <span class="o">&lt;-</span> <span class="n">PEER</span><span class="p">()</span>
     <span class="n">invisible</span><span class="p">(</span><span class="n">PEER_setNk</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
     <span class="n">invisible</span><span class="p">(</span><span class="n">PEER_setPhenoMean</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">M</span><span class="p">))</span>
@@ -12373,9 +12376,9 @@ function sortDataFrame(id, n, dtype) {
 
     <span class="c1"># write results</span>
     <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;PEER: writing results ... &quot;</span><span class="p">)</span>
-    <span class="n">WriteTable</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>  <span class="c1"># format(X, digits=6)</span>
-    <span class="n">WriteTable</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>
-    <span class="n">WriteTable</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+    <span class="n">WriteTable</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>  <span class="c1"># format(X, digits=6)</span>
+    <span class="n">WriteTable</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+    <span class="n">WriteTable</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>
     <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;done.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 

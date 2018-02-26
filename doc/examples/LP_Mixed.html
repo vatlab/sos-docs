@@ -478,7 +478,7 @@ body {
   <div class="file-info">
       <a href="LP_Mixed.sos" class="commit-tease-sha">LP_Mixed.sos</a>
       <span class="file-info-divider"></span>
-    3.3 KiB
+    3.4 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -546,11 +546,11 @@ body {
 24</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;MASS&quot;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="n">N</span> <span class="o">=</span> <span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="c1"># training and testing samples</span>
 <span class="kn">parameter:</span> <span class="n">rstd</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="kn">output:</span> <span class="s2">&quot;data_${id}.train.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;data_${id}.test.csv&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;data_{id}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{id}.test.csv&quot;</span>
 <span class="kn">task:</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>25</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>25</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
 </pre></div>
 </td></tr>
 <tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>26
@@ -563,14 +563,14 @@ body {
 33
 34
 35</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span><span class="kp">set.seed</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>id<span class="p">})</span>
-N <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>N<span class="o">!</span><span class="p">,}))</span>
-p <span class="o">=</span> <span class="kp">length</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span><span class="kp">beta</span><span class="o">!</span><span class="p">,}))</span>
+N <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span>N<span class="p">)</span><span class="o">:</span><span class="p">,}))</span>
+p <span class="o">=</span> <span class="kp">length</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,}))</span>
 X <span class="o">=</span> MASS<span class="o">::</span>mvrnorm<span class="p">(</span>n <span class="o">=</span> N<span class="p">,</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> p<span class="p">),</span> <span class="m">0.5</span><span class="o">^</span><span class="kp">abs</span><span class="p">(</span><span class="kp">outer</span><span class="p">(</span><span class="m">1</span><span class="o">:</span>p<span class="p">,</span> <span class="m">1</span><span class="o">:</span>p<span class="p">,</span> FUN <span class="o">=</span> <span class="s">&quot;-&quot;</span><span class="p">)))</span>
-Y <span class="o">=</span> X <span class="o">%*%</span> <span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span><span class="kp">beta</span><span class="o">!</span><span class="p">,})</span> <span class="o">+</span> rnorm<span class="p">(</span>N<span class="p">,</span> mean <span class="o">=</span> <span class="m">0</span><span class="p">,</span> sd <span class="o">=</span> <span class="o">$</span><span class="p">{</span>rstd<span class="p">})</span>
+Y <span class="o">=</span> X <span class="o">%*%</span> <span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,})</span> <span class="o">+</span> rnorm<span class="p">(</span>N<span class="p">,</span> mean <span class="o">=</span> <span class="m">0</span><span class="p">,</span> sd <span class="o">=</span> <span class="o">$</span><span class="p">{</span>rstd<span class="p">})</span>
 Xtrain <span class="o">=</span> X<span class="p">[</span><span class="m">1</span><span class="o">:$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]},];</span> Xtest <span class="o">=</span> X<span class="p">[(</span><span class="o">$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}</span><span class="m">+1</span><span class="p">)</span><span class="o">:</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}</span><span class="o">+$</span><span class="p">{</span>N<span class="p">[</span><span class="m">1</span><span class="p">]}),]</span>
 Ytrain <span class="o">=</span> Y<span class="p">[</span><span class="m">1</span><span class="o">:$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}];</span> Ytest <span class="o">=</span> Y<span class="p">[(</span><span class="o">$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}</span><span class="m">+1</span><span class="p">)</span><span class="o">:</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}</span><span class="o">+$</span><span class="p">{</span>N<span class="p">[</span><span class="m">1</span><span class="p">]})]</span>
-write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>Ytrain<span class="p">,</span> Xtrain<span class="p">),</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">!</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
-write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>Ytest<span class="p">,</span> Xtest<span class="p">),</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">!</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
+write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>Ytrain<span class="p">,</span> Xtrain<span class="p">),</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
+write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>Ytest<span class="p">,</span> Xtest<span class="p">),</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
  
 </pre></div>
 </td></tr>
@@ -587,11 +587,11 @@ write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">
 41
 42</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="kn">input:</span> <span class="n">data_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="kn">output:</span> <span class="s2">&quot;${_input[0]!nn}.ridge.predicted.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;${_input[0]!nn}.ridge.coef.csv&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input[0]:nn}.ridge.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{_input[0]:nn}.ridge.coef.csv&quot;</span>
 <span class="kn">task:</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>43</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>43</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
 </pre></div>
 </td></tr>
 <tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>44
@@ -601,13 +601,13 @@ write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">
 48
 49
 50
-51</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>train <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">!</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
-test <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">!</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+51</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>train <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+test <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 model <span class="o">=</span> glmnet<span class="o">::</span>cv.glmnet<span class="p">(</span><span class="kp">as.matrix</span><span class="p">(</span>train<span class="p">[,</span><span class="m">-1</span><span class="p">]),</span> train<span class="p">[,</span><span class="m">1</span><span class="p">],</span> family <span class="o">=</span> <span class="s">&quot;gaussian&quot;</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0</span><span class="p">,</span> nfolds <span class="o">=</span> <span class="o">$</span><span class="p">{</span>nfolds<span class="p">},</span> intercept <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 betahat <span class="o">=</span> <span class="kp">as.vector</span><span class="p">(</span>coef<span class="p">(</span>model<span class="p">,</span> s <span class="o">=</span> <span class="s">&quot;lambda.min&quot;</span><span class="p">)[</span><span class="m">-1</span><span class="p">])</span>
 Ypred <span class="o">=</span> predict<span class="p">(</span>model<span class="p">,</span> <span class="kp">as.matrix</span><span class="p">(</span>test<span class="p">[,</span><span class="m">-1</span><span class="p">]),</span> s <span class="o">=</span> <span class="s">&quot;lambda.min&quot;</span><span class="p">)</span>
-write.table<span class="p">(</span>Ypred<span class="p">,</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">!</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
-write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">!</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
+write.table<span class="p">(</span>Ypred<span class="p">,</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
+write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
  
 </pre></div>
 </td></tr>
@@ -624,11 +624,11 @@ write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="
 57
 58</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="kn">input:</span> <span class="n">data_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="kn">output:</span> <span class="s2">&quot;${_input[0]!nn}.lasso.predicted.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;${_input[0]!nn}.lasso.coef.csv&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input[0]:nn}.lasso.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{_input[0]:nn}.lasso.coef.csv&quot;</span>
 <span class="kn">task:</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>59</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>59</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
 </pre></div>
 </td></tr>
 <tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>60
@@ -641,12 +641,12 @@ write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="
 67
 68</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LassoCV</span>
-<span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
-<span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">cv</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">nfolds</span><span class="p">},</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">Ypred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span>
-<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">Ypred</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">Ypred</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
  
 </pre></div>
 </td></tr>
@@ -665,10 +665,10 @@ write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="
 74
 75</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">data_files</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">group_with</span> <span class="o">=</span> <span class="s2">&quot;data_files&quot;</span>
-<span class="kn">output:</span> <span class="s2">&quot;${_input[0]!nn}.mse.csv&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input[0]:nn}.mse.csv&quot;</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>76</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>76</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
 </pre></div>
 </td></tr>
 <tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>77
@@ -678,13 +678,13 @@ write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="
 81
 82
 83
-84</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span><span class="kp">beta</span><span class="o">!</span><span class="p">,})</span>
-Ytruth <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_data_files<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">!</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)[,</span><span class="m">-1</span><span class="p">])</span> <span class="o">%*%</span> b
-Ypred <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">!</span>r<span class="p">})</span>
+84</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,})</span>
+Ytruth <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>path<span class="p">(</span>_data_files<span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)[,</span><span class="m">-1</span><span class="p">])</span> <span class="o">%*%</span> b
+Ypred <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">})</span>
 prediction_mse <span class="o">=</span> <span class="kp">mean</span><span class="p">((</span>Ytruth <span class="o">-</span> Ypred<span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
-betahat <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">!</span>r<span class="p">})</span>
+betahat <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">})</span>
 estimation_mse <span class="o">=</span> <span class="kp">mean</span><span class="p">((</span>betahat <span class="o">-</span> b<span class="p">)</span> <span class="o">^</span> <span class="m">2</span><span class="p">)</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span>prediction_mse<span class="p">,</span> estimation_mse<span class="p">),</span> file <span class="o">=</span> <span class="o">$</span><span class="p">{</span>_output<span class="o">!</span>r<span class="p">})</span>
+<span class="kp">cat</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span>prediction_mse<span class="p">,</span> estimation_mse<span class="p">),</span> file <span class="o">=</span> <span class="o">$</span><span class="p">{</span>_output<span class="o">:</span>r<span class="p">})</span>
  
 </pre></div>
 </td></tr>
