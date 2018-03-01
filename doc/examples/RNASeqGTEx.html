@@ -11835,7 +11835,7 @@ table tr th :last-child, table tr td :last-child {
 
 .sos_dataframe tr:hover {
     background-color: #e6f2ff;
-}.lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }</style>
+}.lan_SoS {}.lan_ir {}.lan_python3 {}</style>
 
 
 
@@ -11925,7 +11925,7 @@ function sortDataFrame(id, n, dtype) {
 <li>Quantile normalization</li>
 <li>PEER factor anlaysis</li>
 </ul>
-<p>A fair comparison between two workflow systems would assume readers not familiar with either system. The <a href="https://software.broadinstitute.org/wdl/">WDL</a> system is developed by Broad institute. Its syntax particularly focuses on human readability, and has recently became a <a href="https://software.broadinstitute.org/wdl/blog?id=10509">github official language</a>.</p>
+<p>The <a href="https://software.broadinstitute.org/wdl/">WDL</a> system is developed by Broad institute. Its syntax particularly focuses on human readability, and has recently became a <a href="https://software.broadinstitute.org/wdl/blog?id=10509">github official language</a>.</p>
 <p>Caution that this example aims to demonstrate migrating workflows written in another workflow system to SoS, for readers to compare between them code organization, readibility, syntax and interface to remote computing environment. The data involved are private thus cannot be provided. However, these data will become available in the future at <a href="https://gtexportal.org/home/">https://gtexportal.org/home/</a>. In the mean time, readers interested in adopting this example for their own analysis can edit <code>[global]</code> section to input their own examples and execute the pipeline. We are happy to provide support with it <a href="https://github.com/vatlab/sos-docs/issues">on github</a>.</p>
 
 </div>
@@ -11966,10 +11966,10 @@ function sortDataFrame(id, n, dtype) {
 <p>Please note that here we have specified paths to pre-existing directories in the <code>[global]</code> section, with <code>parameter</code> keyword. This setup allows users to configure all paths in one places for a “default” run, and optionally can configure them from command-line or <code>%sosrun</code> magic. To elaborate, for example:</p>
 
 <pre><code>[global]
-parameter: cwd = path(‘~/Documents/GTEx’)</code></pre>
+parameter: cwd = path('~/Documents/GTEx')</code></pre>
 <p>can be override by command argument <code>--cwd /path/to/new/dir</code>. An alternative implementation is to use configuration file, eg, create a file called <code>config.yml</code> and write:</p>
 
-<pre><code>cwd: path(‘~/Documents/GTEx’)</code></pre>
+<pre><code>cwd: path('~/Documents/GTEx')</code></pre>
 <p>and execute with <code>%sosrun -c config.yml</code>. The downside is that a <code>config.yml</code> file will have to be maintained.</p>
 
 </div>
@@ -12064,11 +12064,11 @@ parameter: cwd = path(‘~/Documents/GTEx’)</code></pre>
 <span class="kn">parameter:</span> <span class="n">sample_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="kn">input:</span> <span class="n">rna_rpkm</span><span class="p">,</span> <span class="n">rna_cnts</span><span class="p">,</span> <span class="n">genotype</span><span class="p">,</span> <span class="n">sample_attr</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.h5&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">),</span>
-        <span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span>
+        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> 
+        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> 
+        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.h5&quot;</span><span class="p">,</span>
+        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">),</span>
+        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;uchicago_cluster&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;20:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;90G&quot;</span>
 <span class="kn">python:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
 
@@ -12264,7 +12264,7 @@ parameter: cwd = path(‘~/Documents/GTEx’)</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">peer</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s2">&quot;R_peer_source_1.3.tgz&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/R_peer_source_1.3.tgz&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
 <span class="kn">download:</span>
     <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">downloads</span><span class="o">/</span><span class="n">PMBio</span><span class="o">/</span><span class="n">peer</span><span class="o">/</span><span class="n">R_peer_source_1</span><span class="o">.</span><span class="mf">3.</span><span class="n">tgz</span>
@@ -12298,7 +12298,7 @@ parameter: cwd = path(‘~/Documents/GTEx’)</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">rnaseq_2</span><span class="p">]</span>
 <span class="c1"># PEER analysis</span>
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">)</span>
-<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;h5ls {_input[2]} | awk &#39;{print $1}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
+<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;h5ls {_input[2]} | awk &#39;{{print $1}}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tissues&#39;</span><span class="p">]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_covariates.txt&quot;</span><span class="p">,</span> 
         <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_alpha.txt&quot;</span><span class="p">,</span> 
