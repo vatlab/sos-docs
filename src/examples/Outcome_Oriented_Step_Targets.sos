@@ -8,22 +8,24 @@
 # This script fits linear models
 # using Lasso and Ridge regression
 # and summarizes their prediction performance
-# This script is written in a "mixed" style that
-# takes advantage of both "forward" and "backward" style
-# workflows
+# This script is written in a "backward" flavor
+# aka the "Make Style", demonstrating dynamic input, grouped output
+# and step dependencies.
 
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
-data_files = [("data_{}.train.csv".format(x + 1), "data_{}.test.csv".format(x + 1)) for x in range(5)]
+id = [x+1 for x in range(5)]
+ridge_result = [f'data_{x}.ridge.mse.csv' for x in id]
+lasso_result = [f'data_{x}.lasso.mse.csv' for x in id]
 
-[simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
+[simulation]
 # Simulate sparse data-sets
 depends: R_library("MASS")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
-output: f"data_{id}.train.csv", f"data_{id}.test.csv"
-task:
+input: for_each = 'id', concurrent = True 
+output: [(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id], group_by = 2
 R: expand = "${ }"
-  set.seed(${id})
+  set.seed(${_id})
   N = sum(c(${paths(N):,}))
   p = length(c(${paths(beta):,}))
   X = MASS::mvrnorm(n = N, rep(0, p), 0.5^abs(outer(1:p, 1:p, FUN = "-")))
@@ -33,13 +35,13 @@ R: expand = "${ }"
   write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[ridge_1 (model fitting)]
+[ridge]
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 parameter: nfolds = 5
-input: data_files, group_by = 2
-output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
-task:
+depends: sos_step('simulation'), R_library("glmnet")
+input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2, concurrent = True
+output: [(f"data_{x}.ridge.predicted.csv", f"data_{x}.ridge.coef.csv") for x in id], group_by = 2
 R: expand = "${ }"
   train = read.csv(${_input[0]:r}, header = F)
   test = read.csv(${_input[1]:r}, header = F)
@@ -49,13 +51,13 @@ R: expand = "${ }"
   write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[lasso_1 (model fitting)]
+[lasso]
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 parameter: nfolds = 5
-input: data_files, group_by = 2
-output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
-task:
+depends: sos_step('simulation'), Py_Module("sklearn")
+input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2, concurrent = True
+output: [(f"data_{x}.lasso.predicted.csv", f"data_{x}.lasso.coef.csv") for x in id], group_by = 2
 python: expand = "${ }"
   import numpy as np
   from sklearn.linear_model import LassoCV
@@ -66,22 +68,35 @@ python: expand = "${ }"
   np.savetxt(${_output[0]:r}, Ypred)
   np.savetxt(${_output[1]:r}, model.coef_)
 
-[ridge_2, lasso_2 (evaluate)]
+[evaluation_core]
 # Evaluate predictors by calculating mean squared error
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
-depends: data_files
-input: group_by = 2, group_with = "data_files"
-output: f"{_input[0]:nn}.mse.csv"
+parameter: input_files = list
+parameter: output_files = list
+input: dynamic(input_files), group_by = 3, concurrent = True
+output: output_files, group_by = 1
 R: expand = "${ }"
   b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${path(_data_files[1]):r}, header = F)[,-1]) %*% b
-  Ypred = scan(${_input[0]:r})
+  Ytruth = as.matrix(read.csv(${_input[0]:r}, header = F)[,-1]) %*% b
+  Ypred = scan(${_input[1]:r})
   prediction_mse = mean((Ytruth - Ypred)^2)
-  betahat = scan(${_input[1]:r})
+  betahat = scan(${_input[2]:r})
   estimation_mse = mean((betahat - b) ^ 2)
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
- 
+
+[evaluation_lasso]
+depends: sos_step('simulation'), sos_step('lasso')
+input_files = paths([(f"data_{x}.test.csv", f"data_{x}.lasso.predicted.csv", f"data_{x}.lasso.coef.csv") for x in id])
+output: lasso_result 
+sos_run("evaluation_core", input_files = input_files, output_files = lasso_result)
+
+[evaluation_ridge]
+depends: sos_step('simulation'), sos_step('ridge')
+input_files = paths([(f"data_{x}.test.csv", f"data_{x}.ridge.predicted.csv", f"data_{x}.ridge.coef.csv") for x in id])
+output: ridge_result 
+sos_run("evaluation_core", input_files = input_files, output_files = ridge_result)
+
 [default]
-sos_run('ridge')
-sos_run('lasso')
+depends: sos_step('evaluation_lasso'), sos_step('evaluation_ridge')
+output: lasso_result, ridge_result
