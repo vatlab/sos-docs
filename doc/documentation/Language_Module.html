@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_django_extensions {}.lan_jupyter3_python_3 {}
+ 
 
 </style>
 <body>
@@ -288,7 +288,7 @@ b = [1, 2]</code></pre>
 <p>To support a new language, you will need to write a Python package that defines a class, say <code>mylanguage</code>, that should provide the following class attributes:</p>
 <ol>
 <li><code>supported_kernels</code>: a dictionary of language and names of the kernels that the language supports, such as <code>{'R': ['ir']}</code>. If multiple kernels are supported, SoS will look for a kernel with matched name in the order that is specified (e.g. <code>{'JavaScript': ['ijavascript', 'inodejs']}</code>). Multiple languages can be specified if a language module supports multiple languages (e.g. <code>Matlab</code> and <code>Octave</code>).</li>
-<li><code>background_color</code>: a name or <code>#XXXXXX</code> value for a color that will be used in the prompt area of cells that are executed by the subkernel. An empty string can be used for using default notebook color.</li>
+<li><code>background_color</code>: a name or <code>#XXXXXX</code> value for a color that will be used in the prompt area of cells that are executed by the subkernel. An empty string can be used for using default notebook color. If the language module defines multiple languages, a dictionary <code>{language: color}</code> can be used to specify different colors for supported languages.</li>
 <li><code>options</code>: A Python dictionary with options that will be passed to the frontend. Currently two options <code>variable_pattern</code> and <code>assignment_pattern</code> are supported. Both options should be regular expressions in JS style. <ul>
 <li>Option <code>variable_pattern</code> is used to identify if a statement is a simple variable (nothing else). If this option is defined and the input text (if executed at the side panel) matches the pattern, SoS will prepend <code>%preview</code> to the code. This option is useful only when <code>%preview var</code> displays more information than <code>var</code>.</li>
 <li>Option <code>assignment_pattern</code> is used to identify if a statement is an assignment operation. If this option is defined and the input text matches the pattern, SoS will prepend <code>%preview var</code> to the code where <code>var</code> should be the first matched portion of the pattern (use <code>( )</code>). This mechanism allows SoS to automatically display result of an assignment when you step through the code.</li>

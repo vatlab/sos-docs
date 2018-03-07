@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_bash {}.lan_imatlab {}.lan_julia-0.6 {}.lan_octave {}.lan_sparql {}
+ .lan_SoS {}
 
 </style>
 <body>
@@ -427,7 +427,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>path</code> type handles the manipulation of file and directory names. It is derived from Python <a href="https://docs.python.org/3/library/pathlib.html">pathlib.Path</a> so you can use any of the properties and functions defined for this class. For example,</p>
+<p>The <code>path</code> type handles the manipulation of file and directory names. It is derived from Python <a href="https://docs.python.org/3/library/pathlib.html">pathlib.Path</a> but <strong>it automatically expands user from path starting with <code>~</code></strong>. For example,</p>
 
 </div>
 </div>
@@ -453,7 +453,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="kp">name</span>
 </pre></div>
 
 </div>
@@ -472,7 +472,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>path(&#39;/Users/bpeng1/sos-docs/src/documentation/SoS_Syntax.ipynb&#39;)</pre>
+<pre>&#39;SoS_Syntax.ipynb&#39;</pre>
 </div>
 
 </div>
@@ -488,7 +488,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="kp">name</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parent</span>
 </pre></div>
 
 </div>
@@ -507,7 +507,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;SoS_Syntax.ipynb&#39;</pre>
+<pre>path(&#39;/Users/bpeng1/sos-docs/src/documentation&#39;)</pre>
 </div>
 
 </div>
@@ -523,7 +523,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parent</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;something.txt&#39;</span>
 </pre></div>
 
 </div>
@@ -542,7 +542,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>path(&#39;~/sos-docs/src/documentation&#39;)</pre>
+<pre>path(&#39;/Users/bpeng1/sos-docs/src/documentation/something.txt&#39;)</pre>
 </div>
 
 </div>
@@ -558,7 +558,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;something.txt&#39;</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">suffix</span>
 </pre></div>
 
 </div>
@@ -577,7 +577,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>path(&#39;~/sos-docs/src/documentation/something.txt&#39;)</pre>
+<pre>&#39;.ipynb&#39;</pre>
 </div>
 
 </div>
@@ -593,7 +593,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">suffix</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parts</span>
 </pre></div>
 
 </div>
@@ -612,7 +612,13 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;.ipynb&#39;</pre>
+<pre>(&#39;/&#39;,
+ &#39;Users&#39;,
+ &#39;bpeng1&#39;,
+ &#39;sos-docs&#39;,
+ &#39;src&#39;,
+ &#39;documentation&#39;,
+ &#39;SoS_Syntax.ipynb&#39;)</pre>
 </div>
 
 </div>
@@ -628,7 +634,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">parts</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -647,7 +653,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(&#39;~&#39;, &#39;sos-docs&#39;, &#39;src&#39;, &#39;documentation&#39;, &#39;SoS_Syntax.ipynb&#39;)</pre>
+<pre>True</pre>
 </div>
 
 </div>
@@ -663,7 +669,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -698,7 +704,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s1">&#39;SoS_Syntax.html&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -717,7 +723,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>False</pre>
+<pre>path(&#39;/Users/bpeng1/sos-docs/src/documentation/SoS_Syntax.html&#39;)</pre>
 </div>
 
 </div>
@@ -733,7 +739,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s1">&#39;SoS_Syntax.html&#39;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.html&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -752,42 +758,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>path(&#39;~/sos-docs/src/documentation/SoS_Syntax.html&#39;)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.html&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[11]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>path(&#39;~/sos-docs/src/documentation/SoS_Syntax.html&#39;)</pre>
+<pre>path(&#39;/Users/bpeng1/sos-docs/src/documentation/SoS_Syntax.html&#39;)</pre>
 </div>
 
 </div>
@@ -809,7 +780,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">f</span><span class="s2">&quot;Hello My name is {p.name}&quot;</span>
@@ -825,7 +796,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[12]:</div>
+<div class="prompt output_prompt">Out[11]:</div>
 
 
 
@@ -853,7 +824,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">expanduser</span><span class="p">())</span>
@@ -869,13 +840,13 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[13]:</div>
+<div class="prompt output_prompt">Out[12]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>170846</pre>
+<pre>172748</pre>
 </div>
 
 </div>
@@ -888,7 +859,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -904,7 +875,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[14]:</div>
+<div class="prompt output_prompt">Out[13]:</div>
 
 
 
@@ -941,7 +912,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">)</span>
@@ -965,7 +936,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span>
@@ -981,7 +952,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[16]:</div>
+<div class="prompt output_prompt">Out[15]:</div>
 
 
 
@@ -1009,7 +980,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">/</span> <span class="s1">&#39;.tmp&#39;</span>
@@ -1025,7 +996,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[17]:</div>
+<div class="prompt output_prompt">Out[16]:</div>
 
 
 
@@ -1053,7 +1024,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;/path/to/&#39;</span><span class="p">)</span>
@@ -1069,7 +1040,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[18]:</div>
+<div class="prompt output_prompt">Out[17]:</div>
 
 
 
@@ -1097,7 +1068,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;/path/to/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;a.txt&#39;</span>
@@ -1113,7 +1084,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[19]:</div>
+<div class="prompt output_prompt">Out[18]:</div>
 
 
 
@@ -1141,7 +1112,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;/path/to&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;dir&quot;</span> <span class="o">/</span> <span class="s2">&quot;filename&quot;</span> <span class="o">+</span> <span class="s2">&quot;.ext&quot;</span>
@@ -1157,7 +1128,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[20]:</div>
+<div class="prompt output_prompt">Out[19]:</div>
 
 
 
@@ -1199,15 +1170,15 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <tr>
 <td style="text-align:left"><code>a</code></td>
 <td style="text-align:left">absolute path</td>
-<td style="text-align:left"><code>abspath(expanduser())</code></td>
-<td style="text-align:left"><code>~/SoS/test.sos</code></td>
+<td style="text-align:left"><code>abspath()</code></td>
+<td style="text-align:left"><code>{home}/SoS/test.sos</code></td>
 <td style="text-align:left"><code>/path/to/user/SoS/test.sos</code></td>
 </tr>
 <tr>
 <td style="text-align:left"><code>b</code></td>
 <td style="text-align:left">base filename</td>
 <td style="text-align:left"><code>basename())</code></td>
-<td style="text-align:left"><code>~/SoS/test.sos</code></td>
+<td style="text-align:left"><code>{home}/SoS/test.sos</code></td>
 <td style="text-align:left"><code>test.sos</code></td>
 </tr>
 <tr>
@@ -1227,7 +1198,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <tr>
 <td style="text-align:left"><code>l</code></td>
 <td style="text-align:left">expand link</td>
-<td style="text-align:left"><code>realpath(expanduser())</code></td>
+<td style="text-align:left"><code>realpath()</code></td>
 <td style="text-align:left"><code>~/SoS/test.sos</code></td>
 <td style="text-align:left"><code>/realpath/to/test.sos</code></td>
 </tr>
@@ -1236,7 +1207,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <td style="text-align:left">remove extension</td>
 <td style="text-align:left"><code>splitext()[0]</code></td>
 <td style="text-align:left"><code>~/SoS/test.sos</code></td>
-<td style="text-align:left"><code>~/SoS/test</code></td>
+<td style="text-align:left"><code>{home}/SoS/test</code></td>
 </tr>
 <tr>
 <td style="text-align:left"><code>p</code></td>
@@ -1272,13 +1243,6 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <td style="text-align:left"><code>.resolve()</code></td>
 <td style="text-align:left"><code>remote('a.txt')</code></td>
 <td style="text-align:left"><code>a.txt</code></td>
-</tr>
-<tr>
-<td style="text-align:left"><code>u</code></td>
-<td style="text-align:left">expand user</td>
-<td style="text-align:left"><code>expanduser()</code></td>
-<td style="text-align:left"><code>~/SoS/test.sos</code></td>
-<td style="text-align:left"><code>/path/to/user/SoS/test.sos</code></td>
 </tr>
 <tr>
 <td style="text-align:left"><code>x</code></td>
@@ -1339,7 +1303,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> name: str of length 25</div>
+<div class="sos_hint">> name: str of length 37</div>
 </div>
 
 </div>
@@ -1352,7 +1316,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea ">
-<pre>&#39;~/sos/examples/update_toc&#39;</pre>
+<pre>&#39;/Users/bpeng1/sos/examples/update_toc&#39;</pre>
 </div>
 
 </div>
@@ -1599,7 +1563,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;                     ~/sos/examples/update_toc.sos&#39;</pre>
+<pre>&#39;         /Users/bpeng1/sos/examples/update_toc.sos&#39;</pre>
 </div>
 
 </div>

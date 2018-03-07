@@ -223,7 +223,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_SoS {}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }
+ .lan_SoS {}.lan_SoS {}
 
 </style>
 <body>
@@ -472,7 +472,64 @@ print(&#39;I just slept {:.2f} seconds&#39;.format(time.time() - st))
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Action option <code>active</code> is used to activate or inactivate an action in an input loop. Basically, when a loop is defined by <code>for_each</code> or <code>group_by</code> options of <code>input:</code> statement, an action after input would be repeated for each input group. The <code>action</code> parameter accepts an integer, either a non-negative number, a negative number (counting backward), a sequence of indexes, or a slice object, for which the action would be active.</p>
+<p>Action option <code>active</code> is used to activate or inactivate an action in an input loop. It accept either a condition that returns a boolean variable (<code>True</code> or <code>False</code>), or one or more integers, or slices that corresponds to indexes of active input groups.</p>
+<p>The first usage allows you to execute an action only if certain condition is met, so</p>
+
+<pre><code>if cond:
+  action(param)</code></pre>
+<p>is equivalent to</p>
+
+<pre><code>action(param, active=cond)</code></pre>
+<p>or</p>
+
+<pre><code>action: active=cond
+  param</code></pre>
+<p>in script format. For example, the following action will only be executed if <code>a.txt</code> exists</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">echo</span> <span class="s2">&quot;something&quot;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="kn">sh:</span> <span class="kp">active</span><span class="o">=</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+  <span class="n">echo</span> <span class="sb">`wc a.txt`</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1 1 10 a.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For the second usage, when a loop is defined by <code>for_each</code> or <code>group_by</code> options of <code>input:</code> statement, an action after input would be repeated for each input group. The <code>active</code> parameter accepts an integer, either a non-negative number, a negative number (counting backward), a sequence of indexes, or a slice object, for which the action would be active.</p>
 <p>For example, for an input loop that loops through a sequence of numbers, the first action <code>run</code> is executed for all groups, the second action is executed for even number of groups, the last action is executed for the last step.</p>
 
 </div>
