@@ -431,6 +431,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <ol>
 <li>automatically expands user from path starting with <code>~</code></li>
 <li>allows you to extend <code>path</code> with a <code>+</code> operation</li>
+<li>has a special <code>zap</code> operation to replace (large) files with their signatures</li>
 <li>accepts a list of format options to easily format path in different formats</li>
 </ol>
 <p>Let us start from the first feature:</p>
@@ -1145,7 +1146,16 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The third difference is that <code>path</code> <strong>accepts a list of format options to easily format path in different formats</strong>:</p>
+<p>The third addition of the <code>path</code> type is <strong>a <code>zap()</code> function that removes the file and creates a <code>{filename}.zapped</code> file with file signatures</strong>. This <code>.zapped</code> file is considered to be "existent" by the runtime signature system so that a workflow step will not be repeated of some of its input or output files are zapped, unless the actually files are needed. An example of this usage will be given later.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The last difference is that <code>path</code> <strong>accepts a list of format options to easily format path in different formats</strong>:</p>
 
 </div>
 </div>
@@ -1188,7 +1198,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <tr>
 <td style="text-align:left"><code>d</code></td>
 <td style="text-align:left">directory name</td>
-<td style="text-align:left"><code>dirname())</code></td>
+<td style="text-align:left"><code>dirname()</code> or <code>'.'</code></td>
 <td style="text-align:left"><code>/path/to/test.sos</code></td>
 <td style="text-align:left"><code>/path/to</code></td>
 </tr>
@@ -2357,6 +2367,15 @@ c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p><code>paths</code> has a <code>zap()</code> function and will zap all files in <code>paths</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="File-target-(file_target)-">File target (<code>file_target</code>) <a id="File_target_file_target" /><a class="anchor-link" href="#File-target-(file_target)-">&#182;</a></h3>
 </div>
 </div>
@@ -2541,6 +2560,28 @@ _input=&#39;SoS_Magics.ipynb&#39;
 <pre><code>_input = sos_targets('SoS_Syntax.ipynb')
 _input = sos_targets('SoS_Magics.ipynb')</code></pre>
 <p>respectively. Because <code>_input</code> contains only one element, it is not necessary to use <code>_input[0]</code> in the script.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>sos_targets</code> accepts the <code>zap()</code> function which simply zap all file targets in ths list. This technique is usually used to remove large intermediate files during the execution of the workflow. For example, if you have a workflow that downloads and processs large files, you can do something like</p>
+
+<pre><code>[download: provides='{file}.fastq']
+download: expand=True
+    http://some_url/{file}.fastq
+
+[default]
+input: [f'{x}.fastq' for x in range(1000)], group_by=1
+output: _input.with_suffix('.bam')
+sh: expand=True
+   process _input to _output
+
+_input.zap()</code></pre>
+<p>In this example, 1000 <code>fastq</code> files are downloaded and processed, but the input files are zapped  after they are processed. Although the files have been removed, re-running the workflow will not download and process the files again because the downloaded files still considered to exist by SoS.</p>
 
 </div>
 </div>
