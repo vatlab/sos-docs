@@ -185,6 +185,22 @@ server</a> from which you can open our sample notebooks and create your own note
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>To use a language in <code>SoS</code>, your system should have the corresponding interpreters (<code>bash</code>, <code>python</code>, <code>julia</code>) and Jupyter kernel (e.g. <code>ir</code> for <code>R</code>, <code>ijavascript</code> for <code>JavaScript</code>) installed. The installation process varies from language to language, and can be quite troublesome depending on language and operating system. In general, before installing a <code>SoS</code> language module, you should</p>
+<ol>
+<li>Verify the accessibility of an interpreter by executing the interpreter from a command line (e.g. run <code>julia</code> to check if <code>julia</code> is installed.</li>
+<li>Verify if the corresponding kernel is installed correctly by running 
+<pre><code>jupyter kernelspec list</code></pre>
+</li>
+<li>Start Jupyter, create a notebook with the kernel and check if you can use the kernel correctly.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3><img src="img/Bash.png" style="width:32pt;height:32pt;margin-right:15pt;">Bash</h3>
 
 </div>
@@ -194,14 +210,11 @@ server</a> from which you can open our sample notebooks and create your own note
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Install Bash Jupyter kernel using command</p>
-
-<pre><code>pip install bash_kernel
-python -m bash_kernel.install</code></pre>
-<p>or following instructions from <a href="https://github.com/takluyver/bash_kernel">Jupyter Bash Kernel homepage</a>. You then need to install the <code>sos-bash</code> module to connect the kernel to SoS</p>
+<p>Install <a href="https://github.com/takluyver/bash_kernel">Jupyter Bash Kernel homepage</a> for Jupyter, 
+then install the <code>sos-bash</code> module to connect the kernel to <code>SoS</code></p>
 
 <pre><code>pip install sos-bash</code></pre>
-<p>Understandably, it can be tricky to use bash under windows.</p>
+<p>Understandably, it can be tricky to use <code>Bash</code> under windows.</p>
 
 </div>
 </div>
@@ -219,13 +232,8 @@ python -m bash_kernel.install</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Although there appears to be several Jupyter Kernels, SoS is only tested with the <a href="https://github.com/n-riesco/ijavascript">iJavaScript kernel</a>. To use this kernel, you will need to have <code>node.js</code>, <code>npm</code> installed, run</p>
-
-<pre><code>npm install -g ijavascript</code></pre>
-<p>and then install the kernelspec with command</p>
-
-<pre><code>ijsinstall</code></pre>
-<p>After you verify that <code>ijavascript</code> is working (e.g. can start a new notebook with this kernel), you will need to install the <code>sos-javascript</code> module with command</p>
+<p>Although there appears to be several Jupyter Kernels, SoS is only tested with the <a href="https://github.com/n-riesco/ijavascript">iJavaScript kernel</a>. To use this kernel, please follow <a href="https://github.com/n-riesco/ijavascript">iJavaScript kernel homepage</a> to install <code>iJavaScript kernel</code>.</p>
+<p>Then you will need to install the <code>sos-javascript</code> module with command</p>
 
 <pre><code>pip install sos-javascript</code></pre>
 
@@ -245,10 +253,9 @@ python -m bash_kernel.install</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>After <a href="https://julialang.org/downloads/">installing Julia</a>, you will need to start Julia and install <a href="https://github.com/JuliaLang/IJulia.jl">iJulia</a> and <a href="https://github.com/JuliaStats/Feather.jl">feather.jl</a> with commands</p>
+<p>Start <code>Julia</code> and install <a href="https://github.com/JuliaLang/IJulia.jl">iJulia</a> by following <a href="https://github.com/JuliaLang/IJulia.jl">iJulia Kernel homepage</a>. After that, install <a href="https://github.com/JuliaStats/Feather.jl">feather.jl</a>, <a href="https://github.com/JuliaData/DataFrames.jl">DataFrames.jl</a> and <a href="https://github.com/davidavdav/NamedArrays.jl">NamedArrays.jl</a> with commands</p>
 
 <pre><code>ENV["JUPYTER"] = "/path/to/jupyter"
-Pkg.add("IJulia")
 Pkg.add("Feather")
 Pkg.add("DataFrames")
 Pkg.add("NamedArrays")</code></pre>
@@ -273,22 +280,15 @@ Pkg.add("NamedArrays")</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Because SoS requires Python 3.6 and only MATLAB version 2017b+ supports this version of Python, you will need to have a working version of MATLAB 2017b or later installed on your system. Then, you will need to install <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html">matlab engine for Python</a>, which 
+<p>Because <code>SoS</code> requires <code>Python 3.6</code> and only <code>MATLAB</code> version 2017b+ supports this version of <code>Python</code>, you will need to have a working version of <code>MATLAB 2017b</code> or later installed on your system. Then, you will need to install <a href="https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html">matlab engine for Python</a>, which 
 typically involves the execution of command <code>python setup.py install</code>  under <code>matlabroot\extern\engines\python</code>.</p>
-<p>Because of <a href="https://mathworksservicerequest.secure.force.com/apex/cp_case_detail?cc=us&amp;id=5000Z00000tgPA0">a bug with usage statistics collection in MATLAB 2017b</a>, you will need to turn off MATLAB's usage statistics collection system before you use MATLAB 2017b with SoS. To resolve this issue, You can opt-out of usage statistics collection by using the following steps: On the <code>Home</code> tab, in the <code>Environment</code> section, click <code>Preferences</code>, then select <code>MATLAB</code> &gt; <code>General</code> in the <code>Preferences</code> window. Uncheck the box <code>Improve MATLAB by sending user experience information to MathWorks</code>.</p>
-<p>There are two different implementations of MATLAB kernels for Jupyter <a href="https://github.com/Calysto/matlab_kernel"><code>matlab_kernel</code></a> and <a href="https://github.com/imatlab/imatlab">imatlab</a>. Because of <a href="https://github.com/vatlab/sos-matlab/issues/2">a bug with <code>matlab_kernel</code></a>, you should install the <code>imatlab</code> kernel using the following commands</p>
-
-<pre><code>pip install imatlab
-python -mimatlab install --user</code></pre>
-<p>where the <code>--user</code> flag is not required if you have administrator rights to your Python installation. After the installation of <code>imatlab</code>, you can use command</p>
-
-<pre><code>jupyter kernelspec list</code></pre>
-<p>to verify if you have a working matlab kernel for Jupyter, and you can try to use the MATLAB kernel in Jupyter by itself (not through SoS).</p>
-<p>Finally, install the SoS language module for MATLAB with the following command</p>
+<p>Because of <a href="https://mathworksservicerequest.secure.force.com/apex/cp_case_detail?cc=us&amp;id=5000Z00000tgPA0">a bug with usage statistics collection in MATLAB 2017b</a>, you will need to turn off MATLAB's usage statistics collection system before you use <code>MATLAB 2017b</code> with <code>SoS</code>. To resolve this issue, You can opt-out of usage statistics collection by using the following steps: On the <code>Home</code> tab, in the <code>Environment</code> section, click <code>Preferences</code>, then select <code>MATLAB</code> &gt; <code>General</code> in the <code>Preferences</code> window. Uncheck the box <code>Improve MATLAB by sending user experience information to MathWorks</code>.</p>
+<p>There are two different implementations of <code>MATLAB</code> kernels for Jupyter <a href="https://github.com/Calysto/matlab_kernel"><code>matlab_kernel</code></a> and <a href="https://github.com/imatlab/imatlab">imatlab</a>. Because of <a href="https://github.com/vatlab/sos-matlab/issues/2">a bug with <code>matlab_kernel</code></a>, you should install the <code>imatlab</code> kernel. To install this kernel by following <a href="https://github.com/imatlab/imatlab">imatlab homepage</a>.</p>
+<p>Next, install the <code>SoS</code> language module for <code>MATLAB</code> with the following command</p>
 
 <pre><code>pip install sos-matlab</code></pre>
 <p>An option <code>--upgrade</code> can be used to make sure you have the latest version of <code>sos-matlab</code> installed.</p>
-<p>Because MATLAB is among the most difficult languages to configure, we have recorded a video <a href="https://youtu.be/t9ohJZnuanc">Using MATLAB with SoS Notebook</a> with detailed instructions on how to configure SoS Notebook to work with MATLAB.</p>
+<p>Because <code>MATLAB</code> is among the most difficult languages to configure, we have recorded a video <a href="https://youtu.be/t9ohJZnuanc">Using MATLAB with SoS Notebook</a> with detailed instructions on how to configure SoS Notebook to work with MATLAB.</p>
 <div class="container">
     <div class="row">
         <div class="col-sm-3">
@@ -314,17 +314,14 @@ python -mimatlab install --user</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>After installing <a href="https://www.gnu.org/software/octave/">GNU Octave</a>, you can install the <a href="https://github.com/Calysto/octave_kernel">octave kernel</a> with the following commands</p>
-
-<pre><code>pip install octave_kernel
-python -m octave_kernel.install</code></pre>
+<p>Install the <a href="https://github.com/Calysto/octave_kernel">octave kernel</a> by following <a href="https://github.com/Calysto/octave_kernel">octave kernel homepage</a>.</p>
 <p>For transferring Python's DataFrame and its equivalences in other languages, you will need to install the <a href="https://octave.sourceforge.io/dataframe/index.html">dataframe</a> package using the following command:</p>
 
 <pre><code>octave --eval 'pkg install -forge dataframe'</code></pre>
 <p>You then need to install the <code>sos-matlab</code> module with command</p>
 
 <pre><code>pip install sos-matlab</code></pre>
-<p>to add Octave support to <code>SoS</code>.</p>
+<p>to add <code>Octave</code> support to <code>SoS</code>.</p>
 
 </div>
 </div>
@@ -342,22 +339,15 @@ python -m octave_kernel.install</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you still have Python 2.x installed on your system and would like to use it with SoS, you will need to</p>
+<p>If you still have Python 2.x installed on your system and would like to use it with <code>SoS</code>, you will need to</p>
 <ul>
 <li>Place executable <code>python2</code> or <code>python2.7</code> in your <code>$PATH</code> and use action <code>python2</code> for python2 scripts.</li>
-<li>Install python2 kernel following directions <a href="http://ipython.readthedocs.io/en/stable/install/kernel_install.html">here</a>. Baiscally, if you have an existing installation of Python 2, you can run commands <div class="highlight"><pre><span></span>python2 -m pip install ipykernel
-  python2 -m ipykernel install --user
-</pre></div>
-to install <code>ipykernel</code> kernel. Otherwise you can install python 2 and all needed packages in a separate conda environment using commands<div class="highlight"><pre><span></span>conda create -n ipykernel_py2 <span class="nv">python</span><span class="o">=</span><span class="m">2</span> ipykernel
-<span class="nb">source</span> activate ipykernel_py2    <span class="c1"># On Windows, remove the word &#39;source&#39;</span>
-python -m ipykernel install --user
-</pre></div>
-</li>
+<li>Install python2 kernel following directions <a href="http://ipython.readthedocs.io/en/stable/install/kernel_install.html">here</a>. </li>
 </ul>
 <p>You then need to install the <code>sos-python</code> module with command</p>
 
 <pre><code>pip install sos-python</code></pre>
-<p>to add Python2 support to <code>SoS</code>.</p>
+<p>to add <code>Python2</code> support to <code>SoS</code>.</p>
 
 </div>
 </div>
@@ -375,7 +365,7 @@ python -m ipykernel install --user
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Jupyter comes with working Python3 kernel so you only need to install the <code>sos-python</code> module with command</p>
+<p>Jupyter comes with working <code>Python3</code> kernel so you only need to install the <code>sos-python</code> module with command</p>
 
 <pre><code>pip install sos-python</code></pre>
 
@@ -395,27 +385,26 @@ python -m ipykernel install --user
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To use R with SoS, you will need to install the following components:</p>
+<p>To use <code>R</code> with <code>SoS</code>, you will need to install the following components:</p>
 <ul>
-<li><a href="https://www.r-project.org/">R</a> version 3.2 or later.</li>
 <li><a href="https://github.com/IRkernel/IRkernel">IRKernel</a> kernel for Jupyter.</li>
 <li>R <a href="https://cran.r-project.org/web/packages/feather/index.html">feather</a> library.</li>
 <li>Python <a href="https://github.com/wesm/feather">feather-format</a> module, which can be installed with command
 <pre><code> conda install -c conda-forge feather-format</code></pre>
 </li>
 </ul>
-<p>If you have a working R installation, you can install <code>irkernel</code> and <code>feather</code> in R with commands</p>
+<p>If you have a working <code>R</code> installation, you can install <code>irkernel</code> and <code>feather</code> in <code>R</code> with commands</p>
 
 <pre><code>install.packages('devtools')
 devtools::install_github('IRkernel/IRkernel')
 IRkernel::installspec()
 install.packages('feather')</code></pre>
-<p>If you are using anaconda and do not have R installed, you can install R and required packages using commands</p>
+<p>If you are using anaconda and do not have <code>R</code> installed, you can install <code>R</code> and required packages using commands</p>
 
 <pre><code>conda install -c r r-essentials r-feather
 conda install -c conda-forge feather-format</code></pre>
 <p>although there have been several issues with recent versions of conda (e.g. (<a href="https://github.com/ContinuumIO/anaconda-issues/issues/777">libgcc_s_seh-1.dll under windows</a> and <a href="https://github.com/ContinuumIO/anaconda-issues/issues/6312">missing libreadline under mac</a>).</p>
-<p>After you verify that the <code>ir</code> kernel works (e.g. can start a notebook with <code>ir</code> kernel, you will need to install the <code>sos-r</code> module to enable <code>R</code> support with SoS:</p>
+<p>After you verify that the <code>ir</code> kernel works (e.g. can start a notebook with <code>ir</code> kernel, you will need to install the <code>sos-r</code> module to enable <code>R</code> support with <code>SoS</code>:</p>
 
 <pre><code>pip install sos-r</code></pre>
 
@@ -435,16 +424,7 @@ conda install -c conda-forge feather-format</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>With a local or remote SAS installation of version 9.4 or higher, you will first need to install <code>sas-kernel</code> <a href="https://github.com/sassoftware/sas_kernel">homepage</a> and connect it to SAS. If you have a local installation of SAS, the config file (e.g. <code>~/anaconda3/lib/python3.6/site-packages/saspy/sascfg.py</code>) should look similar to</p>
-
-<pre><code>SAS_config_names=['default']
-SAS_config_options = {'lock_down': True}
-default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code></pre>
-<p>For more complicated cases, you would have to configure your SAS connection as instructed in the <a href="https://sassoftware.github.io/saspy/install.html">saspy manual</a>.</p>
-<p>After installation of <code>sas-kernel</code>, you can check if the kernel is properly installed by checking the output of command</p>
-
-<pre><code>jupyter kernelspec list</code></pre>
-<p>and use the <code>SAS</code> kernel with jupyter notebook.</p>
+<p>With a local or remote <code>SAS</code> installation of version 9.4 or higher, you will first need to install <code>sas-kernel</code> <a href="https://github.com/sassoftware/sas_kernel">homepage</a> and connect it to <code>SAS</code>. To use this kernel, please follow <a href="https://github.com/sassoftware/sas_kernel">sas kernel homepage</a> to install <code>sas kernel</code>.</p>
 <p>You can then install the <code>sos-sas</code> module with command</p>
 
 <pre><code>pip install sos-sas</code></pre>
@@ -453,6 +433,12 @@ default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code
 <ol>
 <li>You will need SAS version 9.4 or higher to use <code>sas_kernel</code>, and as of July 2017, <code>sas_kernel</code> only supports Linux system, so Windows and MacOSX systems are not supported.</li>
 <li>The SAS Unversity Edition runs a jupyter server inside a Virtual Machine without ssh access. Although you can use this version to learn SAS and Jupyter, it is not possible to use it with SoS.</li>
+</ol>
+<p><strong>Note for Windows Users:</strong></p>
+<ol>
+<li>Please follow the guideline for <a href="https://sassoftware.github.io/saspy/install.html#configuration">configuration</a>. The integrated object method (IOM) connection method is the only option for Windows. </li>
+<li>The paths of <code>classpath</code> in sascfg.py (sascfg_personal.py) might need to be updated manually. </li>
+<li>In sascfg.py (sascfg_personal.py), please change <code>SAS_config_names</code> to a list only containing one option that you want to use. You cannot choose the <code>SAS_config_names</code> in <code>sos_notebook</code>. For example, if winlocal is your choice, then simply change the code to <code>SAS_config_names = ['winlocal']</code>. </li>
 </ol>
 
 </div>
@@ -471,12 +457,9 @@ default  = {'saspath'  : '/usr/local/data/SASHome/SASFoundation/9.4/sas' }</code
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>After installing <a href="https://www.npmjs.com/"><code>npm</code></a>, <a href="https://www.typescriptlang.org/"><code>typescript</code></a>, you should install the <a href="https://github.com/nearbydelta/itypescript">iTypeScript kernel</a> with commands</p>
-
-<pre><code>npm install -g itypescript
-its --ts-install=local</code></pre>
+<p>After installing <a href="https://www.npmjs.com/"><code>npm</code></a>, <a href="https://www.typescriptlang.org/"><code>typescript</code></a>, you should install the <a href="https://github.com/nearbydelta/itypescript">iTypeScript kernel</a>. To use this kernel, please follow <a href="https://github.com/nearbydelta/itypescript">iTypeScript kernel homepage</a> to install <code>iTypeScript kernel</code>.</p>
 <p>(use <code>sudo</code> if needed, check <a href="https://github.com/nearbydelta/itypescript">iTypeScript website</a> for details).</p>
-<p>After you verify that <code>iTypeScript</code> is working (e.g. can start a new notebook with this kernel), you will need to install the <code>sos-javascript</code> module with command</p>
+<p>Afterwards, you will need to install the <code>sos-javascript</code> module with command</p>
 
 <pre><code>pip install sos-javascript</code></pre>
 <p>to connect <code>iTypeScript</code> to <code>SoS</code>. Note that <code>typescript</code> and <code>javascript</code> share the same language module.</p>
