@@ -259,7 +259,10 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Please follow the instructions in <a href="https://vatlab.github.io/sos-docs/#runningsos">Running SoS</a> to install <code>sos</code>, <code>sos-notebook</code>, and relevant language modules. After the installation of <code>sos-notebook</code>, you should be able to see <code>sos</code> from the output of:</p>
+<p>Please follow the instructions in <a href="https://vatlab.github.io/sos-docs/#runningsos">Running SoS</a> to install <code>sos</code>, <code>sos-notebook</code>, and relevant language modules. After the installation of <code>sos-notebook</code>, you should install the sos kernel to Jupyter with command</p>
+<div class="highlight"><pre><span></span>% python -m sos_notebook.install
+</pre></div>
+<p><code>sos</code> should then appear in the output of:</p>
 
 </div>
 </div>
@@ -480,6 +483,90 @@ $( document ).ready(function(){
 'This is cool !'
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to other Jupyter kernels, SoS defines a number of <em>magics</em>, which are special commands that start with character <code>%</code>. For example, expression <code>{2**4}</code> in the following code cell is expanded by magic <code>%expand</code> before it is passed to the underlying R kernel.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_R">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="n">cat</span><span class="p">(</span><span class="s2">&quot;The value of expression &#39;2**4&#39; in Python is {2**4}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The value of expression &#39;2**4&#39; in Python is 16</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A note of caution is that because the underlying kernels also accepts their own magics, SoS magics in subkernel cells must start from the first lines. The following code will send <code>%expand</code> to the underlying Python3 kernel and cause an error. SoS cells are not affected by this restriction so you can put magics, new lines, even comments before actual cell content.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Python3">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>UsageError: Line magic function `%expand` not found.
+</pre>
+</div>
 </div>
 
 </div>
@@ -4141,7 +4228,7 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In addition to shortcuts defined by Jupyter (e.g. <code>Ctrl-Enter</code> to evaluate a cell and <code>Shift-Enter</code> to evaluate a cell and move next), the SoS kernel defines the following shortcuts</p>
 <ol>
-<li><code>Ctrl-Shift-Enter</code> This shortcut <strong>send selected text or current line if there is no selection to the panel cell for evaluation</strong>, using the kernel of the current cell. This effectively allows you to evaluate content of a cell line by line.</li>
+<li><code>Ctrl-Shift-Enter</code> This shortcut <strong>send current line or selected text to the panel cell for evaluation</strong>. This effectively allows you to evaluate content of a cell line by line. This shortcut works for both code and markdown cells. The panel cell will switch to the kernel of the sending cell if the sending cell is a code cell. </li>
 <li><code>Ctrl-Shift-t</code> executes magic <code>%toc</code> that <strong>displays the table of content of the current notebook</strong> in the side panel, allowing you to easily navigate within a (long) notebook.</li>
 <li><code>Ctrl-Shift-O</code> (output) <strong>toggles a code cell tag <code>show_output</code></strong> and mark the output with a gray bar to the right of the output area, or toggle a markdown cell tag <code>hide_output</code>. The tags will be rendered accordingly in HTML reports generated using sos templates.</li>
 <li><code>Ctrl-Shift-v</code> (paste-table) If you have a table copied from external sources such as HTML page or excel file and if you are inside of a markdown cell, this shortcut <strong>pastes table as markdown code to the current cell</strong>. This allows easy copy of tables to SoS notebook.</li>
@@ -4484,6 +4571,137 @@ print(f'A filename "somefile" is passed ')</code></pre>
 <pre>SoS filename somefile, Python 3 filename: &#34;myfile&#34;
 </pre>
 </div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Markdown-cell-and-markdown-kernel">Markdown cell and markdown kernel<a class="anchor-link" href="#Markdown-cell-and-markdown-kernel">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can include headers, lists, figures, tables in your Jupyter notebook using markdown cells. These markdown cells are rendered by Jupyter itself and do not interact with the kernels. Consequently, it is not possible to pass information (e.g. results from analysis) to markdown cells to generate dynamic output. In contrast, RStudio/RMarkdown has long allowed the inclusion of expressions in markdown texts.</p>
+<p>To overcome this problem, you can install a markdown kernel with commands</p>
+
+<pre><code>pip install markdown-kernel
+python -m markdown.kernel install</code></pre>
+<p>and write markdown code in code cells with a markdown kernel.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_markdown">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">Hello</span><span class="p">,</span> <span class="n">this</span> <span class="ow">is</span> <span class="n">a</span> <span class="o">**</span><span class="n">code</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">markdown</span> <span class="n">kernel</span><span class="o">**</span><span class="p">,</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">markdown</span> <span class="n">cell</span><span class="o">.</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<p>Hello, this is a <strong>code cell in markdown kernel</strong>, not a markdown cell.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The significance of the markdown kernel is that you can pass information from SoS to it through the <code>%expand</code> magic. For example, suppose you have defined a function to calculate Fibonacci sequence,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">def</span> <span class="nf">fibo</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+   <span class="k">return</span> <span class="n">n</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="p">(</span><span class="n">fibo</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fibo</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can write use it in Python expressions as follows:</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_markdown">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
+<span class="n">The</span> <span class="n">Fibonacci</span> <span class="n">sequence</span> <span class="n">has</span> <span class="n">value</span> <span class="p">{</span><span class="n">fibo</span><span class="p">(</span><span class="mi">1</span><span class="p">)}</span> <span class="n">when</span> <span class="sb">`n=1`</span> <span class="ow">and</span> <span class="p">{</span><span class="n">fibo</span><span class="p">(</span><span class="mi">10</span><span class="p">)}</span>
+<span class="n">when</span> <span class="sb">`n=10`</span><span class="p">,</span> <span class="n">which</span> <span class="n">can</span> <span class="n">be</span> <span class="n">calculated</span> <span class="n">recursively</span> <span class="n">by</span>
+<span class="sb">`fibo(10)=fibo(9) + fib(8)={fibo(9)}+{fibo(8)}`</span><span class="p">,</span> <span class="ow">and</span> <span class="n">so</span> <span class="n">on</span><span class="o">.</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<p>The Fibonacci sequence has value 1 when <code>n=1</code> and 55
+when <code>n=10</code>, which can be calculated recursively by
+<code>fibo(10)=fibo(9) + fib(8)=34+21</code>, and so on.</p>
+
+</div>
+
 </div>
 
 </div>
