@@ -1014,7 +1014,7 @@ file3 file4
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is very important to understand that the <code>group_by</code> option does not change <code>{input}</code>. It creates a looping variable <code>{_input}</code> that changes with each input group. To demonstrate more acceptable values, the following example uses <code>sos_run</code> action to execute this a step with different grouping method.</p>
+<p>It is very important to understand that the <code>group_by</code> option does not change <code>{input}</code>. It creates a looping variable <code>{_input}</code> that changes with each substep. To demonstrate more acceptable values, the following example uses <code>sos_run</code> action to execute this a step with different grouping method.</p>
 
 </div>
 </div>
@@ -1535,7 +1535,7 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Option <code>paired_with</code> pairs variables with step input (variable <code>step_input</code>) so that corresponding information is available for input groups (<code>_input</code>). For example,</p>
+<p>Option <code>paired_with</code> pairs variables with step input (variable <code>step_input</code>) so that corresponding information is available for substeps (<code>_input</code>). For example,</p>
 
 </div>
 </div>
@@ -1753,7 +1753,7 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Similar to option <code>paired_with</code> that associate variables to input files, you could associate items of a sequence with each input group. This option is applied after <code>group_by</code> and before <code>for_each</code>, which means the length of the sequence should equal to the number of input groups. and the variables will be the same for each <code>for_each</code> loop. Also similar to option <code>paired_with</code>, option <code>group_with</code> can take a string (name of variable) or a dictionary.</p>
+<p>Similar to option <code>paired_with</code> that associate variables to input files, you could associate items of a sequence with each substep. This option is applied after <code>group_by</code> and before <code>for_each</code>, which means the length of the sequence should equal to the number of substeps. and the variables will be the same for each <code>for_each</code> loop. Also similar to option <code>paired_with</code>, option <code>group_with</code> can take a string (name of variable) or a dictionary.</p>
 <p>Using the above example, you can assign a label for each group by passing name of a sequence variable</p>
 
 </div>
@@ -1979,7 +1979,7 @@ b-processed-10.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Input groups of a step are by default executed sequentially with potential dependencies. For example,</p>
+<p>Substeps of a step are by default executed sequentially with potential dependencies. For example,</p>
 
 </div>
 </div>
@@ -2027,7 +2027,7 @@ sum is 6 at index 3
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>However, if input groups are independent, you can use option <code>concurrent=True</code> to execute input groups in parallel. As you can see from the following example, all input groups starts with <code>sum=0</code> and are executed in parallel.</p>
+<p>However, if substeps are independent, you can use option <code>concurrent=True</code> to execute substeps in parallel. As you can see from the following example, all substeps starts with <code>sum=0</code> and are executed in parallel.</p>
 
 </div>
 </div>
@@ -2125,7 +2125,7 @@ steps have been completed.</p>
  and variable <code>_paired</code> is paired with <code>_input</code> in each loop if <code>paired_with='paired'</code></li>
 <li>Option <code>pattern</code> extract variables from filenames in <code>input</code>. Variable <code>extracted</code> is paired with <code>input</code>
  and variable <code>_extracted</code> is paired with <code>_input</code> in each loop if <code>extract='{extracted}_other_part'</code>.</li>
-<li>Option <code>skip</code> optionally skip all or part of the input groups.</li>
+<li>Option <code>skip</code> optionally skip all or part of the substeps.</li>
 </ol>
 <p>The differences between looped and non-loop steps are sumarized in the following figure</p>
 <p><img src="../media/step_loop.jpg" alt="step_loop"></p>
@@ -2173,9 +2173,9 @@ steps have been completed.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Step process could be repeated multiple times with <strong>input groups</strong> defined by options <code>for_each</code> or <code>group_by</code>. Whereas <code>input</code> represents the complete set of input files, each input group has its own input files stored in variable <code>_input</code>.</p>
-<p>When there is no input group, <code>output</code> and <code>_output</code> are the same. Otherwise, the <code>output:</code> statement produces <code>_output</code> for each input group, and <code>_output</code> for all input groups form <code>output</code> after the completion of all input groups.</p>
-<p>For example, the following step accepts one or more bam files and index them using command <code>samtools index</code>. The input files are passed one by one and output from each input group is determined by <code>_input</code>.</p>
+<p>Step process could be repeated multiple times with <strong>substeps</strong> defined by options <code>for_each</code> or <code>group_by</code>. Whereas <code>input</code> represents the complete set of input files, each substep has its own input files stored in variable <code>_input</code>.</p>
+<p>When there is no substep, <code>output</code> and <code>_output</code> are the same. Otherwise, the <code>output:</code> statement produces <code>_output</code> for each substep, and <code>_output</code> for all substeps form <code>output</code> after the completion of all substeps.</p>
+<p>For example, the following step accepts one or more bam files and index them using command <code>samtools index</code>. The input files are passed one by one and output from each substep is determined by <code>_input</code>.</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="kn">input:</span>
     <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span>
@@ -2185,7 +2185,7 @@ steps have been completed.</p>
 
 <span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
 </pre></div>
-<p>The use of variable <code>output</code> in this scenario is discouraged because <code>output</code>, as the collection of all <code>_output</code> increases with each input group.</p>
+<p>The use of variable <code>output</code> in this scenario is discouraged because <code>output</code>, as the collection of all <code>_output</code> increases with each substep.</p>
 
 </div>
 </div>
@@ -2194,7 +2194,7 @@ steps have been completed.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Specifying output of the entire step when there are multiple input groups can lead to error. For example,</p>
+<p>Specifying output of the entire step when there are multiple substeps can lead to error. For example,</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="kn">input:</span>
     <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
@@ -2205,7 +2205,7 @@ steps have been completed.</p>
 <span class="kn">task:</span>
 <span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
 </pre></div>
-<p>will fail because tasks in this step produce the same set of output files (equal <code>_output</code> for all input groups), and none of the task produces all specified output files.</p>
+<p>will fail because tasks in this step produce the same set of output files (equal <code>_output</code> for all substeps), and none of the task produces all specified output files.</p>
 
 </div>
 </div>
@@ -2222,7 +2222,7 @@ steps have been completed.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As we have explained above, <code>_output</code> of an input group should be determined from <code>_input</code>. However, there are cases that <code>input</code> and <code>output</code> are pre-determined and it is not easy to derive <code>_output</code> from <code>_input</code>. In this case, option <code>group_by</code> could be used to divide specified outputs for each input group.</p>
+<p>As we have explained above, <code>_output</code> of an substep should be determined from <code>_input</code>. However, there are cases that <code>input</code> and <code>output</code> are pre-determined and it is not easy to derive <code>_output</code> from <code>_input</code>. In this case, option <code>group_by</code> could be used to divide specified outputs for each substep.</p>
 <p>For example, the above example would work with a <code>group_by</code> output option</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="kn">input:</span>
