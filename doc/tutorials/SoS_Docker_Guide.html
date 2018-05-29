@@ -225,7 +225,7 @@ $( document ).ready(function(){
     });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
 
- .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #00ff80 !important }.lan_Python2 .input_prompt { background-color: #F6FAEA !important }.lan_rik_local_remote {}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_Python3 .input_prompt { background-color: #EAFAF1 !important }.lan_SoS {}
+ .lan_SoS {}
 
 </style>
 <body>
@@ -244,7 +244,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="What-is-docker-and-why-it-is-helpful">What is docker and why it is helpful<a class="anchor-link" href="#What-is-docker-and-why-it-is-helpful">&#182;</a></h2>
+<h2 id="General-introduction">General introduction<a class="anchor-link" href="#General-introduction">&#182;</a></h2><h3 id="What-is-docker-and-why-it-is-helpful">What is docker and why it is helpful<a class="anchor-link" href="#What-is-docker-and-why-it-is-helpful">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -271,7 +271,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Installing-and-configuring-docker">Installing and configuring docker<a class="anchor-link" href="#Installing-and-configuring-docker">&#182;</a></h2><p>Docker is relatively new and is evolving very fast. It is crucial for you to install the latest version from <a href="https://www.docker.com/">docker website</a>. This website provides very detailed step by step instruction and you should have no problem installing docker on your machine.</p>
+<h3 id="Installing-and-configuring-docker">Installing and configuring docker<a class="anchor-link" href="#Installing-and-configuring-docker">&#182;</a></h3><p>Docker is relatively new and is evolving very fast. It is crucial for you to install the latest version from <a href="https://www.docker.com/">docker website</a>. This website provides very detailed step by step instruction and you should have no problem installing docker on your machine.</p>
 <p>After installation, you should be able to start a docker terminal and run command</p>
 <div class="highlight"><pre><span></span>$ docker run hello-world
 </pre></div>
@@ -284,17 +284,18 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Running-a-workflow-with-docker">Running a workflow with docker<a class="anchor-link" href="#Running-a-workflow-with-docker">&#182;</a></h2><p>Running a docker-based workflow is easy because SoS will automatically download docker images and execute scripts inside docker container. Anyway, before you start any workflow running docker, it is a good idea to check if your docker daemon is running by</p>
+<h2 id="Running-a-script-inside-docker">Running a script inside docker<a class="anchor-link" href="#Running-a-script-inside-docker">&#182;</a></h2><p>Running a docker-based workflow is easy because SoS will automatically download docker images and execute scripts inside docker container. Anyway, before you start any workflow running docker, it is a good idea to check if your docker daemon is running by</p>
 
 </div>
 </div>
-</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">docker</span> <span class="n">ps</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>docker ps
 </pre></div>
 
 </div>
@@ -311,7 +312,8 @@ $( document ).ready(function(){
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+<pre>CONTAINER ID        IMAGE               COMMAND               CREATED             STATUS              PORTS                   NAMES
+3a8fec17646e        eg_sshd             &#34;/usr/sbin/sshd -D&#34;   3 days ago          Up 3 days           0.0.0.0:32768-&gt;22/tcp   test_sos
 </pre>
 </div>
 </div>
@@ -320,22 +322,32 @@ $( document ).ready(function(){
 </div>
 
 </div>
+  </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, suppose you do not have ruby installed locally and would like to run a ruby script, you can execute it inside a <code>ruby</code> container. Here we set option to <code>-v2</code> to demonstrate the actual command executed by SoS.</p>
+<h3 id="How-SoS-works-with-docker">How SoS works with docker<a class="anchor-link" href="#How-SoS-works-with-docker">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose you do not have ruby installed locally and would like to run a ruby script, you can execute it inside a <code>ruby</code> container.</p>
 
 </div>
 </div>
-</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">v2</span>
-<span class="kn">ruby:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ruby&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">run</span>
+<span class="n">ruby</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ruby&#39;</span>
     <span class="n">line1</span> <span class="o">=</span> <span class="s2">&quot;Cats are smarter than dogs&quot;</span><span class="p">;</span>
     <span class="n">line2</span> <span class="o">=</span> <span class="s2">&quot;Dogs also like meat&quot;</span><span class="p">;</span>
 
@@ -360,9 +372,432 @@ $( document ).ready(function(){
 <div class="prompt"></div>
 
 
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you run the script with option <code>-v3</code>, you would see a line showing the actual <code>docker run</code> command executed by SoS. The command would look similar to</p>
+
+<pre><code>docker run --rm   -v /Users:/Users -v /tmp:/tmp 
+    -v /tmp/path/to/docker_run_30258.rb:/var/lib/sos/docker_run_30258.rb
+    -t -P 
+    -w=/Users/bpeng1/sos/sos-docs/src/tutorials
+    -u 12345:54321    ruby
+    ruby /var/lib/sos/docker_run_30258.rb</code></pre>
+<p>Basically, SoS downloads a docker image called <code>ruby</code> and runs command <code>docker run</code> to execte the specified script, with the following options</p>
+<ul>
+<li><code>--rm</code> Automatically remove the container when it exits</li>
+<li><code>-v /Users:/Users</code> <code>-v /tmp:/tmp</code> maps local directories <code>/Users</code> and <code>/tmp</code> to the docker image so that these directories can be accessed from within the docker image.</li>
+<li><code>-v /tmp/path/to/docker_run_30258.rb:/var/lib/sos/docker_run_30258.rb</code> maps a temporary script (<code>/Users/bpeng1/sos/sos-docs/src/tutorials/tmp2zviq3qh/docker_run_30258.rb</code> to the docker image.</li>
+<li><code>-t</code> Allocate a pseudo-tty</li>
+<li><code>-P</code> Publish all exposed ports to the host interfaces</li>
+<li><code>-w=/Users/bpeng1/sos/sos-docs/src/tutorials</code> Set working directory to current working directory</li>
+<li><code>-u 12345:54321</code> Use the host user-id and group-id inside docker so that files created by docker (on shared volumes) could be accessible from outside of docker.</li>
+<li><code>ruby</code> name of the docker image</li>
+<li><code>ruby</code> name of the interpreter for the script</li>
+<li><code>/var/lib/sos/docker_run_30258.rb</code> the script inside of docker</li>
+</ul>
+<p>The details of these options could be found at the <a href="https://docs.docker.com/engine/reference/run/">docker run manual</a>. They are chosen by the default to work with a majority of the scenarios but can fail for some docker images, in which case you will need to use SoS action parameters to customized the way the images are executed. These parameters include general <a href="https://vatlab.github.io/sos-docs/doc/documentation/Targets_and_Actions.html#Action-options-12">action parameters</a> and <a href="https://vatlab.github.io/sos-docs/doc/documentation/Targets_and_Actions.html#docker_image">parameters that are specific to <code>docker_image</code></a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Building-docker-image-on-the-fly">Building docker-image on-the-fly<a class="anchor-link" href="#Building-docker-image-on-the-fly">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Building a docker image is usually done outside of SoS if you are maintaining a collection of docker containers to be shared by your workflows, your groups, or everyone. However, if you need to create a docker image on-the-fly or would like to embed the Dockerfile inside a SoS script, you can use the <code>docker_build</code> action to build a docker container.</p>
+<p>For example, you can build simple image</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">docker_build</span><span class="p">:</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;test_docker&#39;</span>
+  <span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mf">14.04</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and use the image</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;test_docker&#39;</span>
+  <span class="n">ls</span> <span class="o">/</span><span class="n">usr</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This tutorial will build a series of simple docker images to demonstrate the use of various options.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Customized-or-image-default-working-directory-(workdir-and-docker_workdir)">Customized or image-default working directory (<code>workdir</code> and <code>docker_workdir</code>)<a class="anchor-link" href="#Customized-or-image-default-working-directory-(workdir-and-docker_workdir)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS by default sets the current working directory of the docker image to the working directory of the host system, essentially adding <code>-w $(pwd)</code> to the command line. For example, with the following docker image, the <code>pwd</code> of the script is the current working directory on the host machine.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span>
+  <span class="n">echo</span> <span class="err">`</span><span class="n">pwd</span><span class="err">`</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since the action option <code>workdir</code> can change the working directory of the script, you can use this option to change the script of the working directory of the docker image as well. For example,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span><span class="p">,</span> <span class="n">workdir</span><span class="o">=</span><span class="s1">&#39;..&#39;</span>
+  <span class="n">echo</span> <span class="err">`</span><span class="n">pwd</span><span class="err">`</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This default behavior is convenient when you use commands in a docker machine to process input files on your host machine but it has a few caveats:</p>
+<ol>
+<li>The current working directory might not be accessible to the docker image.</li>
+<li>The docker machine might have its own <code>WORKDIR</code> for the command to work.</li>
+<li>You might want to specify another working directory inside of docker.</li>
+</ol>
+<p>The first problem is solved by SoS' attemp to map current working directory to the docker image and will be discussed in the next section. The second and third problem can be addressed by another option <code>docker_workdir</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>docker_workdir</code>, if specified, overrides <code>workdir</code> and allows the use of default or customized working directory inside of docker image. When <code>docker_workdir</code> is set to <code>None</code>, no <code>-w</code> option will be passed to the docker image and the default <code>WORKDIR</code> will be used. Otherwise an absolute path inside the docker image can be specified.</p>
+<p>For example, the following customized docker image has a <code>WORKDIR</code> set to <code>/usr</code>. It is working directory is set to host working directory by default, to <code>/usr</code> with <code>docker_workdir=None</code>, and <code>/home/random_user</code> with <code>docker_workdir='/home/random_user'</code>.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">docker_build</span><span class="p">:</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span>
+  <span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mf">14.04</span>
+  <span class="n">WORKDIR</span> <span class="o">/</span><span class="n">usr</span>
+
+<span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span>
+  <span class="n">echo</span> <span class="err">`</span><span class="n">pwd</span><span class="err">`</span>
+  
+<span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span><span class="p">,</span> <span class="n">docker_workdir</span><span class="o">=</span><span class="kc">None</span>
+  <span class="n">echo</span> <span class="err">`</span><span class="n">pwd</span><span class="err">`</span>
+  
+<span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span><span class="p">,</span> <span class="n">docker_workdir</span><span class="o">=</span><span class="s1">&#39;/home/random_user&#39;</span>
+  <span class="n">echo</span> <span class="err">`</span><span class="n">pwd</span><span class="err">`</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/Users/bpeng1/sos/sos-docs/src/tutorials
+/usr
+/home/random_user
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note the directory is relative to the docker file system so it does not have to exist on the host system. Docker also creates the <code>docker_workdir</code> if it does not exist so you do not have to create the directory in advance.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sharing-of-input-and-output-files-(volumes)">Sharing of input and output files (<code>volumes</code>)<a class="anchor-link" href="#Sharing-of-input-and-output-files-(volumes)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because the working directory of the docker image is set by default to the current working directory, you can apply a command inside a docker image to files in the current working directory, and create files on it as well.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>sh: docker_image='ubuntu:14.04'
+  wc -l SoS_Docker_Guide.ipynb &gt; docker_wc.txt</p>
+<p>sh:
+  cat docker_wc.txt</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This works because SoS automatically shares the home directory  (<code>/Users</code> for mac and <code>/home</code> for Linux) and current working directory (if not under <code>$HOME</code>) of the host system to the docker image. Because the docker image can only "see" file systems shared by command <code>docker run</code>, your script will fail in the following scenarios:</p>
+<ul>
+<li>Your input files or output files are on a separate file system (not under <code>/home</code> and <code>$(pwd)</code>.</li>
+<li>You cannot share home or current working directory to docker image because of possible side effects.</li>
+</ul>
+<p>For example, if your script writes something to a mobile harddrive, the script could execute successfully on the host system</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sh</span><span class="p">:</span>
+  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>but fail in a docker image because the image cannot see the <code>/Volumes</code> file system</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span>
+  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO: Running <span class="ansi-green-fg">interactive_0</span>: 
-INFO: docker run --rm   -v /Users:/Users -v /tmp:/tmp -v /Users/bpeng1/SOS/doc/pending/tmp8k4kemrk/docker_run_19836.rb:/var/lib/sos/docker_run_19836.rb    -t -P -w=/Users/bpeng1/SOS/doc/pending     ruby ruby /var/lib/sos/docker_run_19836.rb
+<pre>Executing script in docker returns an error (exitcode=2).
+The script has been saved to /Users/bpeng1/sos/sos-docs/src/tutorials/.sos/docker_run_39643.sh. To reproduce the error please run:
+``docker run --rm   -v /Users:/Users -v /tmp:/tmp -v /Users/bpeng1/sos/sos-docs/src/tutorials/.sos/docker_run_39643.sh:/var/lib/sos/docker_run_39643.sh    -t -P -w=/Users/bpeng1/sos/sos-docs/src/tutorials -u 1985961928:895809667    ubuntu:14.04 /bin/sh /var/lib/sos/docker_run_39643.sh``
 </pre>
 </div>
 </div>
@@ -375,51 +810,162 @@ INFO: docker run --rm   -v /Users:/Users -v /tmp:/tmp -v /Users/bpeng1/SOS/doc/p
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Building-a-docker-image">Building a docker image<a class="anchor-link" href="#Building-a-docker-image">&#182;</a></h2><p>Building a docker image is usually done outside of SoS if you are maintaining a collection of docker containers to be shared by your workflows, your groups, or everyone. However, if you need to create a docker image on-the-fly or would like to embed the Dockerfile inside a SoS script, you can use the <code>docker_build</code> action to build a docker container.</p>
-<p>For example, you can build a container for MISO as follows:</p>
+<p>The problem could be solved by specifying <code>/Volumes</code> in option <code>volumes</code>. This parameter</p>
+<ol>
+<li>By default maps <code>/Users</code> to <code>/Users</code> (mac), <code>/home</code> to <code>/home</code>.</li>
+<li>If specified, share only user-specified file systems. In this case you can specify different path names from host and docker file systems (e.g. <code>/Users:/home</code>)</li>
+</ol>
+<p>Current working directory is always mapped if it is not under default or specified directories.</p>
+<div class="alert alert-info">
+<strong>Note:</strong>
+If docker is implemented as a virtual machine, the file systems that are available to docker will be limited by the shared file systems of the virtual machine. 
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, if you would like to read input files from or write output files to another file system, you can add it to option <code>volumes</code></p>
 
-<pre><code>[miso_build]
-# building miso from a Dockerfile
-docker_build: tag='mdabioinfo/miso:latest'
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span><span class="p">,</span> <span class="n">volumes</span><span class="o">=</span><span class="s1">&#39;/Volumes&#39;</span>
+  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
 
-    ############################################################
-    # Dockerfile to build MISO container images
-    # Based on Anaconda python
-    ############################################################
+<span class="n">sh</span><span class="p">:</span>
+  <span class="n">cat</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
+</pre></div>
 
-    # Set the base image to anaconda Python 2.7 (miso does not support python 3)
-    FROM continuumio/anaconda
+</div>
+</div>
+</div>
 
-    # File Author / Maintainer
-    MAINTAINER Bo Peng &lt;bpeng@mdanderson.org&gt;
+<div class="output_wrapper">
+<div class="output">
 
-    # Update the repository sources list
-    RUN apt-get update
 
-    # Install compiler and python stuff, samtools and git
-    RUN apt-get install --yes \
-     build-essential \
-     gcc-multilib \
-     gfortran \ 
-     apt-utils \
-     libblas3 \ 
-     liblapack3 \
-     libc6 \
-     cython \ 
-     samtools \
-     libbam-dev \
-     bedtools \
-     wget \
-     zlib1g-dev \ 
-     tar \
-     gzip
+<div class="output_area">
 
-    WORKDIR /usr/local
-    RUN pip install misopy</code></pre>
-<p>Command</p>
+<div class="prompt"></div>
 
-<pre><code>sos run script miso_build</code></pre>
-<p>would build a docker image <code>mdabioinfo/miso:latest</code> that can be used by other SoS steps.</p>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1236 SoS_Docker_Guide.ipynb
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this case SoS only shared <code>/Volumes</code> to <code>/Volumes</code> and <code>$(PWD)</code> (current working directory) to <code>$(PWD)</code>. <code>$HOME</code> is no longer shared, which can be a good thing because sharing of home directory to docker host can cause unexpected conflicts between docker and host systems. For example, your <code>.R</code> directory, when mapped to a docker image, might change the behavior of the <code>R</code> command inside docker.</p>
+<p>Finally, if you have to share your home directory to the docker image but do not want to expose your host settings to the image, you can map your local volumes under different names. For example, the following script maps current working directory as <code>/input</code> and destination directory as <code>/output</code> to the docker image.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sh</span><span class="p">:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span><span class="p">,</span> <span class="n">volumes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;~:/input&#39;</span><span class="p">,</span> <span class="s1">&#39;/Volumes:/output&#39;</span><span class="p">]</span>
+  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">sos</span><span class="o">/</span><span class="n">sos</span><span class="o">-</span><span class="n">docs</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">tutorials</span><span class="o">/</span><span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">Mobile</span>
+
+<span class="n">sh</span><span class="p">:</span>
+  <span class="n">cat</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1249 /input/sos/sos-docs/src/tutorials/SoS_Docker_Guide.ipynb
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+  </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Customize-user-and-group-ID-(user)">Customize user and group ID (<code>user</code>)<a class="anchor-link" href="#Customize-user-and-group-ID-(user)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">TODO</span><span class="p">:</span> <span class="n">explain</span> <span class="n">uid</span> <span class="ow">and</span> <span class="n">gid</span><span class="o">.</span> <span class="n">Use</span> <span class="n">of</span> <span class="err">`</span><span class="o">--</span><span class="n">user</span> <span class="n">uid</span><span class="err">`</span> <span class="ow">and</span> <span class="err">`</span><span class="o">--</span><span class="n">user</span> <span class="n">uid</span><span class="p">:</span><span class="n">gid</span><span class="err">`</span><span class="o">.</span>
+<span class="n">Use</span> <span class="err">`</span><span class="o">--</span><span class="n">user</span> <span class="kc">None</span><span class="err">`</span> <span class="n">to</span> <span class="n">stop</span> <span class="n">sending</span> <span class="n">host</span> <span class="n">uid</span><span class="o">/</span><span class="n">gid</span> <span class="n">to</span> <span class="n">docker</span><span class="o">.</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">docker_build</span><span class="p">:</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span>
+  <span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mf">14.04</span>
+  <span class="n">USER</span> <span class="o">/</span><span class="n">blah</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Docker-images-with-entry_point">Docker images with <code>entry_point</code><a class="anchor-link" href="#Docker-images-with-entry_point">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Some docker image has an <code>entry_point</code> which determines the command that will be executed when the image is executed. If we run the script directly, our "command" (e.g. <code>ruby /var/lib/sos/docker_run_30258.rb</code> will be appended to the <code>entry_point</code> and will not be executed properly.</p>
 
 </div>
 </div>
@@ -428,22 +974,665 @@ docker_build: tag='mdabioinfo/miso:latest'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Writing-a-workflow-with-docker-support">Writing a workflow with docker support<a class="anchor-link" href="#Writing-a-workflow-with-docker-support">&#182;</a></h2><p>Writing a workflow with docker support is a bit more complicated because you will need to understand a few concepts of docker, so reading through the <a href="https://docs.docker.com/engine/reference/run/">docker run manual</a> should be helpful. The most important concept is <strong>Volumes</strong>, whch is how the host directories are mounted to a docker container so that the command executed inside the container can access (and change) files on the host machine. SoS helps the use of docker by</p>
-<ul>
-<li>Automatically mounts <code>/tmp</code> to <code>/tmp</code> </li>
-<li>Automatically mounts <code>/Users</code> to <code>/Users</code> under MacOS X</li>
-<li>Automatically mounts user script inside docker and execute it as <code>/var/lib/sos/xxxxx</code></li>
-</ul>
-<p>so that step <code>input</code> and <code>output</code> are almost always identical inside and outside of docker.</p>
-<p>To use existing public docker container, you will need to specify its tag using option <code>docker_image</code>. For example, to use <code>compbio/ngseasy-fastqc</code> container to run <code>fastqc</code>, instead of installing <code>fastqc</code> locally, you can do</p>
+<p>For example, docker image <a href="https://hub.docker.com/r/dceoy/gatk/~/dockerfile/"><code>dceoy/gatk</code></a> has an entry point</p>
 
-<pre><code>[MISO_1]
-run:     docker_image='compbio/ngseasy-fastqc:1.0-r001'
-    fastqc ${input} -o /tmp</code></pre>
-<p>(More to follow)</p>
+<pre><code>["java", "-jar", "/usr/local/src/gatk/build/libs/gatk.jar"]</code></pre>
+<p>and does not accept any additional interpreter. What we really need to do is to append "arguments" to this pre-specified command.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall that action <code>script</code> does not have a default interpreter, and option <code>args</code> can be used to construct a command line, we can use this docker image in the format of</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">script</span><span class="p">:</span> <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;Print Reads -h&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;dceoy/gatk&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO: docker pull dceoy/gatk
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-intense-fg ansi-bold">USAGE:  </span><span class="ansi-green-intense-fg ansi-bold">&lt;program name&gt;</span><span class="ansi-red-intense-fg ansi-bold"> [-h]
+
+</span><span class="ansi-red-intense-fg ansi-bold">Available Programs:
+</span><span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Base Calling:                                    Tools that process sequencing machine data, e.g. Illumina base calls, and detect sequencing level attributes, e.g. adapters</span>
+<span class="ansi-green-fg">    CheckIlluminaDirectory (Picard)              </span><span class="ansi-cyan-fg">Asserts the validity for specified Illumina basecalling data.  </span>
+<span class="ansi-green-fg">    CollectIlluminaBasecallingMetrics (Picard)   </span><span class="ansi-cyan-fg">Collects Illumina Basecalling metrics for a sequencing run.  </span>
+<span class="ansi-green-fg">    CollectIlluminaLaneMetrics (Picard)          </span><span class="ansi-cyan-fg">Collects Illumina lane metrics for the given BaseCalling analysis directory.  </span>
+<span class="ansi-green-fg">    ExtractIlluminaBarcodes (Picard)             </span><span class="ansi-cyan-fg">Tool determines the barcode for each read in an Illumina lane.  </span>
+<span class="ansi-green-fg">    IlluminaBasecallsToFastq (Picard)            </span><span class="ansi-cyan-fg">Generate FASTQ file(s) from Illumina basecall read data.  </span>
+<span class="ansi-green-fg">    IlluminaBasecallsToSam (Picard)              </span><span class="ansi-cyan-fg">Transforms raw Illumina sequencing data into an unmapped SAM or BAM file.</span>
+<span class="ansi-green-fg">    MarkIlluminaAdapters (Picard)                </span><span class="ansi-cyan-fg">Reads a SAM or BAM file and rewrites it with new adapter-trimming tags.  </span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Copy Number Variant Discovery:                   Tools that analyze read coverage to detect copy number variants.</span>
+<span class="ansi-green-fg">    AnnotateIntervals                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Annotates intervals with GC content</span>
+<span class="ansi-green-fg">    CallCopyRatioSegments                        </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Calls copy-ratio segments as amplified, deleted, or copy-number neutral</span>
+<span class="ansi-green-fg">    CombineSegmentBreakpoints                    </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Combine the breakpoints of two segment files and annotate the resulting intervals with chosen columns from each file.</span>
+<span class="ansi-green-fg">    CreateReadCountPanelOfNormals                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Creates a panel of normals for read-count denoising</span>
+<span class="ansi-green-fg">    DenoiseReadCounts                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Denoises read counts to produce denoised copy ratios</span>
+<span class="ansi-green-fg">    DetermineGermlineContigPloidy                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Determines the baseline contig ploidy for germline samples given counts data</span>
+<span class="ansi-green-fg">    GermlineCNVCaller                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Calls copy-number variants in germline samples given their counts and the output of DetermineGermlineContigPloidy</span>
+<span class="ansi-green-fg">    ModelSegments                                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Models segmented copy ratios from denoised read counts and segmented minor-allele fractions from allelic counts</span>
+<span class="ansi-green-fg">    PlotDenoisedCopyRatios                       </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Creates plots of denoised copy ratios</span>
+<span class="ansi-green-fg">    PlotModeledSegments                          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Creates plots of denoised and segmented copy-ratio and minor-allele-fraction estimates</span>
+<span class="ansi-green-fg">    PostprocessGermlineCNVCalls                  </span><span class="ansi-cyan-fg">Create a VCF given the output of GermlineCNVCaller.</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Coverage Analysis:                               Tools that count coverage, e.g. depth per allele</span>
+<span class="ansi-green-fg">    ASEReadCounter                               </span><span class="ansi-cyan-fg">Generates table of filtered base counts at het sites for allele specific expression</span>
+<span class="ansi-green-fg">    CollectAllelicCounts                         </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects reference and alternate allele counts at specified sites</span>
+<span class="ansi-green-fg">    CollectFragmentCounts                        </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects fragment counts at specified intervals</span>
+<span class="ansi-green-fg">    CountBases                                   </span><span class="ansi-cyan-fg">Count bases in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    CountBasesSpark                              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Counts bases in the input SAM/BAM</span>
+<span class="ansi-green-fg">    CountReads                                   </span><span class="ansi-cyan-fg">Count reads in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    CountReadsSpark                              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Counts reads in the input SAM/BAM</span>
+<span class="ansi-green-fg">    GetPileupSummaries                           </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Tabulates pileup metrics for inferring contamination</span>
+<span class="ansi-green-fg">    Pileup                                       </span><span class="ansi-cyan-fg">Prints read alignments in samtools pileup format</span>
+<span class="ansi-green-fg">    PileupSpark                                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Prints read alignments in samtools pileup format</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Diagnostics and Quality Control:                 Tools that collect sequencing quality related and comparative metrics</span>
+<span class="ansi-green-fg">    AccumulateVariantCallingMetrics (Picard)     </span><span class="ansi-cyan-fg">Combines multiple Variant Calling Metrics files into a single file</span>
+<span class="ansi-green-fg">    AnalyzeCovariates                            </span><span class="ansi-cyan-fg">Evaluate and compare base quality score recalibration (BQSR) tables</span>
+<span class="ansi-green-fg">    BamIndexStats (Picard)                       </span><span class="ansi-cyan-fg">Generate index statistics from a BAM file</span>
+<span class="ansi-green-fg">    CalcMetadataSpark                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Collects read metrics relevant to structural variant discovery</span>
+<span class="ansi-green-fg">    CalculateContamination                       </span><span class="ansi-cyan-fg">Calculate the fraction of reads coming from cross-sample contamination</span>
+<span class="ansi-green-fg">    CalculateReadGroupChecksum (Picard)          </span><span class="ansi-cyan-fg">Creates a hash code based on the read groups (RG).  </span>
+<span class="ansi-green-fg">    CheckFingerprint (Picard)                    </span><span class="ansi-cyan-fg">Computes a fingerprint from the supplied input (SAM/BAM or VCF) file and compares it to the provided genotypes</span>
+<span class="ansi-green-fg">    CheckPileup                                  </span><span class="ansi-cyan-fg">Compare GATK&#39;s internal pileup to a reference Samtools mpileup</span>
+<span class="ansi-green-fg">    CheckTerminatorBlock (Picard)                </span><span class="ansi-cyan-fg">Asserts the provided gzip file&#39;s (e.g., BAM) last block is well-formed; RC 100 otherwise</span>
+<span class="ansi-green-fg">    ClusterCrosscheckMetrics (Picard)            </span><span class="ansi-cyan-fg">Clusters the results of a CrosscheckFingerprints run by LOD score</span>
+<span class="ansi-green-fg">    CollectAlignmentSummaryMetrics (Picard)      </span><span class="ansi-cyan-fg">&lt;b&gt;Produces a summary of alignment metrics from a SAM or BAM file.&lt;/b&gt;  </span>
+<span class="ansi-green-fg">    CollectBaseDistributionByCycle (Picard)      </span><span class="ansi-cyan-fg">Chart the nucleotide distribution per cycle in a SAM or BAM file</span>
+<span class="ansi-green-fg">    CollectBaseDistributionByCycleSpark          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects base distribution per cycle in SAM/BAM/CRAM file(s).</span>
+<span class="ansi-green-fg">    CollectGcBiasMetrics (Picard)                </span><span class="ansi-cyan-fg">Collect metrics regarding GC bias. </span>
+<span class="ansi-green-fg">    CollectHiSeqXPfFailMetrics (Picard)          </span><span class="ansi-cyan-fg">Classify PF-Failing reads in a HiSeqX Illumina Basecalling directory into various categories.</span>
+<span class="ansi-green-fg">    CollectHsMetrics (Picard)                    </span><span class="ansi-cyan-fg">Collects hybrid-selection (HS) metrics for a SAM or BAM file.  </span>
+<span class="ansi-green-fg">    CollectIndependentReplicateMetrics (Picard)  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Experimental) Estimates the rate of independent replication of reads within a bam.</span>
+<span class="ansi-green-fg">    CollectInsertSizeMetrics (Picard)            </span><span class="ansi-cyan-fg">Collect metrics about the insert size distribution of a paired-end library.</span>
+<span class="ansi-green-fg">    CollectInsertSizeMetricsSpark                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects insert size distribution information on alignment data</span>
+<span class="ansi-green-fg">    CollectJumpingLibraryMetrics (Picard)        </span><span class="ansi-cyan-fg">Collect jumping library metrics. </span>
+<span class="ansi-green-fg">    CollectMultipleMetrics (Picard)              </span><span class="ansi-cyan-fg">Collect multiple classes of metrics.  </span>
+<span class="ansi-green-fg">    CollectMultipleMetricsSpark                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Runs multiple metrics collection modules for a given alignment file</span>
+<span class="ansi-green-fg">    CollectOxoGMetrics (Picard)                  </span><span class="ansi-cyan-fg">Collect metrics to assess oxidative artifacts.</span>
+<span class="ansi-green-fg">    CollectQualityYieldMetrics (Picard)          </span><span class="ansi-cyan-fg">Collect metrics about reads that pass quality thresholds and Illumina-specific filters.  </span>
+<span class="ansi-green-fg">    CollectQualityYieldMetricsSpark              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects quality yield metrics from SAM/BAM/CRAM file(s).</span>
+<span class="ansi-green-fg">    CollectRawWgsMetrics (Picard)                </span><span class="ansi-cyan-fg">Collect whole genome sequencing-related metrics.  </span>
+<span class="ansi-green-fg">    CollectRnaSeqMetrics (Picard)                </span><span class="ansi-cyan-fg">Produces RNA alignment metrics for a SAM or BAM file.  </span>
+<span class="ansi-green-fg">    CollectRrbsMetrics (Picard)                  </span><span class="ansi-cyan-fg">&lt;b&gt;Collects metrics from reduced representation bisulfite sequencing (Rrbs) data.&lt;/b&gt;  </span>
+<span class="ansi-green-fg">    CollectSequencingArtifactMetrics (Picard)    </span><span class="ansi-cyan-fg">Collect metrics to quantify single-base sequencing artifacts.  </span>
+<span class="ansi-green-fg">    CollectTargetedPcrMetrics (Picard)           </span><span class="ansi-cyan-fg">Calculate PCR-related metrics from targeted sequencing data. </span>
+<span class="ansi-green-fg">    CollectVariantCallingMetrics (Picard)        </span><span class="ansi-cyan-fg">Collects per-sample and aggregate (spanning all samples) metrics from the provided VCF file</span>
+<span class="ansi-green-fg">    CollectWgsMetrics (Picard)                   </span><span class="ansi-cyan-fg">Collect metrics about coverage and performance of whole genome sequencing (WGS) experiments.</span>
+<span class="ansi-green-fg">    CollectWgsMetricsWithNonZeroCoverage (Picard)</span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Experimental) Collect metrics about coverage and performance of whole genome sequencing (WGS) experiments.  </span>
+<span class="ansi-green-fg">    CompareBaseQualities                         </span><span class="ansi-cyan-fg">Compares the base qualities of two SAM/BAM/CRAM files</span>
+<span class="ansi-green-fg">    CompareDuplicatesSpark                       </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Determine if two potentially identical BAMs have the same duplicate reads</span>
+<span class="ansi-green-fg">    CompareMetrics (Picard)                      </span><span class="ansi-cyan-fg">Compare two metrics files.</span>
+<span class="ansi-green-fg">    CompareSAMs (Picard)                         </span><span class="ansi-cyan-fg">Compare two input &#34;.sam&#34; or &#34;.bam&#34; files.  </span>
+<span class="ansi-green-fg">    ConvertSequencingArtifactToOxoG (Picard)     </span><span class="ansi-cyan-fg">Extract OxoG metrics from generalized artifacts metrics.  </span>
+<span class="ansi-green-fg">    CrosscheckFingerprints (Picard)              </span><span class="ansi-cyan-fg">Checks that all data in the input files appear to have come from the same individual</span>
+<span class="ansi-green-fg">    CrosscheckReadGroupFingerprints (Picard)     </span><span class="ansi-cyan-fg">DEPRECATED: USE CrosscheckFingerprints. Checks if all read groups appear to come from the same individual.</span>
+<span class="ansi-green-fg">    EstimateLibraryComplexity (Picard)           </span><span class="ansi-cyan-fg">Estimates the numbers of unique molecules in a sequencing library.  </span>
+<span class="ansi-green-fg">    EstimateLibraryComplexityGATK                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Estimate library complexity from the sequence of read pairs</span>
+<span class="ansi-green-fg">    FlagStat                                     </span><span class="ansi-cyan-fg">Accumulate flag statistics given a BAM file</span>
+<span class="ansi-green-fg">    FlagStatSpark                                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Spark tool to accumulate flag statistics</span>
+<span class="ansi-green-fg">    GetSampleName                                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Emit a single sample name</span>
+<span class="ansi-green-fg">    MeanQualityByCycle (Picard)                  </span><span class="ansi-cyan-fg">Collect mean quality by cycle.</span>
+<span class="ansi-green-fg">    MeanQualityByCycleSpark                      </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">MeanQualityByCycle on Spark</span>
+<span class="ansi-green-fg">    QualityScoreDistribution (Picard)            </span><span class="ansi-cyan-fg">Chart the distribution of quality scores.  </span>
+<span class="ansi-green-fg">    QualityScoreDistributionSpark                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">QualityScoreDistribution on Spark</span>
+<span class="ansi-green-fg">    ValidateSamFile (Picard)                     </span><span class="ansi-cyan-fg">Validates a SAM or BAM file.</span>
+<span class="ansi-green-fg">    ViewSam (Picard)                             </span><span class="ansi-cyan-fg">Prints a SAM or BAM file to the screen</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Intervals Manipulation:                          Tools that process genomic intervals in various formats</span>
+<span class="ansi-green-fg">    BedToIntervalList (Picard)                   </span><span class="ansi-cyan-fg">Converts a BED file to a Picard Interval List.  </span>
+<span class="ansi-green-fg">    IntervalListToBed (Picard)                   </span><span class="ansi-cyan-fg">Converts an Picard IntervalList file to a BED file.</span>
+<span class="ansi-green-fg">    IntervalListTools (Picard)                   </span><span class="ansi-cyan-fg">A tool for performing various IntervalList manipulations</span>
+<span class="ansi-green-fg">    LiftOverIntervalList (Picard)                </span><span class="ansi-cyan-fg">Lifts over an interval list from one reference build to another. </span>
+<span class="ansi-green-fg">    PreprocessIntervals                          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Prepares bins for coverage collection</span>
+<span class="ansi-green-fg">    SplitIntervals                               </span><span class="ansi-cyan-fg">Split intervals into sub-interval files.</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Metagenomics:                                    Tools that perform metagenomic analysis, e.g. microbial community composition and pathogen detection</span>
+<span class="ansi-green-fg">    PathSeqBuildKmers                            </span><span class="ansi-cyan-fg">Builds set of host reference k-mers</span>
+<span class="ansi-green-fg">    PathSeqBuildReferenceTaxonomy                </span><span class="ansi-cyan-fg">Builds a taxonomy datafile of the microbe reference</span>
+<span class="ansi-green-fg">    PathSeqBwaSpark                              </span><span class="ansi-cyan-fg">Step 2: Aligns reads to the microbe reference</span>
+<span class="ansi-green-fg">    PathSeqFilterSpark                           </span><span class="ansi-cyan-fg">Step 1: Filters low quality, low complexity, duplicate, and host reads</span>
+<span class="ansi-green-fg">    PathSeqPipelineSpark                         </span><span class="ansi-cyan-fg">Combined tool that performs all steps: read filtering, microbe reference alignment, and abundance scoring</span>
+<span class="ansi-green-fg">    PathSeqScoreSpark                            </span><span class="ansi-cyan-fg">Step 3: Classifies pathogen-aligned reads and generates abundance scores</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Other:                                           Miscellaneous tools, e.g. those that aid in data streaming</span>
+<span class="ansi-green-fg">    CreateHadoopBamSplittingIndex                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Create a Hadoop BAM splitting index</span>
+<span class="ansi-green-fg">    FifoBuffer (Picard)                          </span><span class="ansi-cyan-fg">Provides a large, FIFO buffer that can be used to buffer input and output streams between programs.</span>
+<span class="ansi-green-fg">    GatherBQSRReports                            </span><span class="ansi-cyan-fg">Gathers scattered BQSR recalibration reports into a single file</span>
+<span class="ansi-green-fg">    GatherTranches                               </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Gathers scattered VQSLOD tranches into a single file</span>
+<span class="ansi-green-fg">    IndexFeatureFile                             </span><span class="ansi-cyan-fg">Creates an index for a feature file, e.g. VCF or BED file.</span>
+<span class="ansi-green-fg">    ParallelCopyGCSDirectoryIntoHDFSSpark        </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Parallel copy a file or directory from Google Cloud Storage into the HDFS file system used by Spark</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Read Data Manipulation:                          Tools that manipulate read data in SAM, BAM or CRAM format</span>
+<span class="ansi-green-fg">    AddCommentsToBam (Picard)                    </span><span class="ansi-cyan-fg">Adds comments to the header of a BAM file.</span>
+<span class="ansi-green-fg">    AddOrReplaceReadGroups (Picard)              </span><span class="ansi-cyan-fg">Assigns all the reads in a file to a single new read-group.</span>
+<span class="ansi-green-fg">    ApplyBQSR                                    </span><span class="ansi-cyan-fg">Apply base quality score recalibration</span>
+<span class="ansi-green-fg">    ApplyBQSRSpark                               </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Apply base quality score recalibration on Spark</span>
+<span class="ansi-green-fg">    BQSRPipelineSpark                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Both steps of BQSR (BaseRecalibrator and ApplyBQSR) on Spark</span>
+<span class="ansi-green-fg">    BamToBfq (Picard)                            </span><span class="ansi-cyan-fg">Converts a BAM file into a BFQ (binary fastq formatted) file</span>
+<span class="ansi-green-fg">    BaseRecalibrator                             </span><span class="ansi-cyan-fg">Generates recalibration table for Base Quality Score Recalibration (BQSR)</span>
+<span class="ansi-green-fg">    BaseRecalibratorSpark                        </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Generate recalibration table for Base Quality Score Recalibration (BQSR) on Spark</span>
+<span class="ansi-green-fg">    BaseRecalibratorSparkSharded                 </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">BaseRecalibrator on Spark (experimental sharded implementation)</span>
+<span class="ansi-green-fg">    BuildBamIndex (Picard)                       </span><span class="ansi-cyan-fg">Generates a BAM index &#34;.bai&#34; file.  </span>
+<span class="ansi-green-fg">    BwaAndMarkDuplicatesPipelineSpark            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Takes name-sorted file and runs BWA and MarkDuplicates.</span>
+<span class="ansi-green-fg">    BwaSpark                                     </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">BWA on Spark</span>
+<span class="ansi-green-fg">    CleanSam (Picard)                            </span><span class="ansi-cyan-fg">Cleans the provided SAM/BAM, soft-clipping beyond-end-of-reference alignments and setting MAPQ to 0 for unmapped reads</span>
+<span class="ansi-green-fg">    ClipReads                                    </span><span class="ansi-cyan-fg">Clip reads in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    ConvertHeaderlessHadoopBamShardToBam         </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Convert a headerless BAM shard into a readable BAM</span>
+<span class="ansi-green-fg">    DownsampleSam (Picard)                       </span><span class="ansi-cyan-fg">Downsample a SAM or BAM file.</span>
+<span class="ansi-green-fg">    ExtractOriginalAlignmentRecordsByNameSpark   </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Subsets reads by name</span>
+<span class="ansi-green-fg">    FastqToSam (Picard)                          </span><span class="ansi-cyan-fg">Converts a FASTQ file to an unaligned BAM or SAM file</span>
+<span class="ansi-green-fg">    FilterSamReads (Picard)                      </span><span class="ansi-cyan-fg">Subsets reads from a SAM or BAM file by applying one of several filters.</span>
+<span class="ansi-green-fg">    FixMateInformation (Picard)                  </span><span class="ansi-cyan-fg">Verify mate-pair information between mates and fix if needed.</span>
+<span class="ansi-green-fg">    FixMisencodedBaseQualityReads                </span><span class="ansi-cyan-fg">Fix Illumina base quality scores in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    GatherBamFiles (Picard)                      </span><span class="ansi-cyan-fg">Concatenate efficiently BAM files that resulted from a scattered parallel analysis</span>
+<span class="ansi-green-fg">    LeftAlignIndels                              </span><span class="ansi-cyan-fg">Left-aligns indels from reads in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    MarkDuplicates (Picard)                      </span><span class="ansi-cyan-fg">Identifies duplicate reads.  </span>
+<span class="ansi-green-fg">    MarkDuplicatesGATK                           </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Examines aligned records in the supplied SAM/BAM/CRAM file to locate duplicate molecules.</span>
+<span class="ansi-green-fg">    MarkDuplicatesSpark                          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">MarkDuplicates on Spark</span>
+<span class="ansi-green-fg">    MarkDuplicatesWithMateCigar (Picard)         </span><span class="ansi-cyan-fg">Identifies duplicate reads, accounting for mate CIGAR.  </span>
+<span class="ansi-green-fg">    MergeBamAlignment (Picard)                   </span><span class="ansi-cyan-fg">Merge alignment data from a SAM or BAM with data in an unmapped BAM file.  </span>
+<span class="ansi-green-fg">    MergeSamFiles (Picard)                       </span><span class="ansi-cyan-fg">Merges multiple SAM and/or BAM files into a single file.  </span>
+<span class="ansi-green-fg">    PositionBasedDownsampleSam (Picard)          </span><span class="ansi-cyan-fg">Downsample a SAM or BAM file to retain a subset of the reads based on the reads location in each tile in the flowcell.</span>
+<span class="ansi-green-fg">    PrintReads                                   </span><span class="ansi-cyan-fg">Print reads in the SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    PrintReadsSpark                              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">PrintReads on Spark</span>
+<span class="ansi-green-fg">    ReorderSam (Picard)                          </span><span class="ansi-cyan-fg">Reorders reads in a SAM or BAM file to match ordering in a second reference file.</span>
+<span class="ansi-green-fg">    ReplaceSamHeader (Picard)                    </span><span class="ansi-cyan-fg">Replaces the SAMFileHeader in a SAM or BAM file.  </span>
+<span class="ansi-green-fg">    RevertBaseQualityScores                      </span><span class="ansi-cyan-fg">Revert Quality Scores in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    RevertOriginalBaseQualitiesAndAddMateCigar (Picard)</span><span class="ansi-cyan-fg">Reverts the original base qualities and adds the mate cigar tag to read-group BAMs</span>
+<span class="ansi-green-fg">    RevertSam (Picard)                           </span><span class="ansi-cyan-fg">Reverts SAM or BAM files to a previous state.  </span>
+<span class="ansi-green-fg">    SamFormatConverter (Picard)                  </span><span class="ansi-cyan-fg">Convert a BAM file to a SAM file, or a SAM to a BAM</span>
+<span class="ansi-green-fg">    SamToFastq (Picard)                          </span><span class="ansi-cyan-fg">Converts a SAM or BAM file to FASTQ.</span>
+<span class="ansi-green-fg">    SetNmAndUqTags (Picard)                      </span><span class="ansi-cyan-fg">DEPRECATED: Use SetNmMdAndUqTags instead.</span>
+<span class="ansi-green-fg">    SetNmMdAndUqTags (Picard)                    </span><span class="ansi-cyan-fg">Fixes the NM, MD, and UQ tags in a SAM file </span>
+<span class="ansi-green-fg">    SimpleMarkDuplicatesWithMateCigar (Picard)   </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Experimental) Examines aligned records in the supplied SAM or BAM file to locate duplicate molecules.</span>
+<span class="ansi-green-fg">    SortSam (Picard)                             </span><span class="ansi-cyan-fg">Sorts a SAM or BAM file</span>
+<span class="ansi-green-fg">    SortSamSpark                                 </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">SortSam on Spark (works on SAM/BAM/CRAM)</span>
+<span class="ansi-green-fg">    SplitNCigarReads                             </span><span class="ansi-cyan-fg">Split Reads with N in Cigar</span>
+<span class="ansi-green-fg">    SplitReads                                   </span><span class="ansi-cyan-fg">Outputs reads from a SAM/BAM/CRAM by read group, sample and library name</span>
+<span class="ansi-green-fg">    SplitSamByLibrary (Picard)                   </span><span class="ansi-cyan-fg">Splits a SAM or BAM file into individual files by library</span>
+<span class="ansi-green-fg">    SplitSamByNumberOfReads (Picard)             </span><span class="ansi-cyan-fg">Splits a SAM or BAM file to multiple BAMs.</span>
+<span class="ansi-green-fg">    UmiAwareMarkDuplicatesWithMateCigar (Picard) </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Identifies duplicate reads using information from read positions and UMIs. </span>
+<span class="ansi-green-fg">    UnmarkDuplicates                             </span><span class="ansi-cyan-fg">Clears the 0x400 duplicate SAM flag</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Reference:                                       Tools that analyze and manipulate FASTA format references</span>
+<span class="ansi-green-fg">    BaitDesigner (Picard)                        </span><span class="ansi-cyan-fg">Designs oligonucleotide baits for hybrid selection reactions.</span>
+<span class="ansi-green-fg">    BwaMemIndexImageCreator                      </span><span class="ansi-cyan-fg">Create a BWA-MEM index image file for use with GATK BWA tools</span>
+<span class="ansi-green-fg">    CreateSequenceDictionary (Picard)            </span><span class="ansi-cyan-fg">Creates a sequence dictionary for a reference sequence.  </span>
+<span class="ansi-green-fg">    ExtractSequences (Picard)                    </span><span class="ansi-cyan-fg">Subsets intervals from a reference sequence to a new FASTA file.</span>
+<span class="ansi-green-fg">    FindBadGenomicKmersSpark                     </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Identifies sequences that occur at high frequency in a reference</span>
+<span class="ansi-green-fg">    NonNFastaSize (Picard)                       </span><span class="ansi-cyan-fg">Counts the number of non-N bases in a fasta file.</span>
+<span class="ansi-green-fg">    NormalizeFasta (Picard)                      </span><span class="ansi-cyan-fg">Normalizes lines of sequence in a FASTA file to be of the same length.</span>
+<span class="ansi-green-fg">    ScatterIntervalsByNs (Picard)                </span><span class="ansi-cyan-fg">Writes an interval list created by splitting a reference at Ns.</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Short Variant Discovery:                         Tools that perform variant calling and genotyping for short variants (SNPs, SNVs and Indels)</span>
+<span class="ansi-green-fg">    CombineGVCFs                                 </span><span class="ansi-cyan-fg">Merges one or more HaplotypeCaller GVCF files into a single GVCF with appropriate annotations</span>
+<span class="ansi-green-fg">    GenomicsDBImport                             </span><span class="ansi-cyan-fg">Import VCFs to GenomicsDB</span>
+<span class="ansi-green-fg">    GenotypeGVCFs                                </span><span class="ansi-cyan-fg">Perform joint genotyping on one or more samples pre-called with HaplotypeCaller</span>
+<span class="ansi-green-fg">    HaplotypeCaller                              </span><span class="ansi-cyan-fg">Call germline SNPs and indels via local re-assembly of haplotypes</span>
+<span class="ansi-green-fg">    HaplotypeCallerSpark                         </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">HaplotypeCaller on Spark</span>
+<span class="ansi-green-fg">    Mutect2                                      </span><span class="ansi-cyan-fg">Call somatic SNVs and indels via local assembly of haplotypes</span>
+<span class="ansi-green-fg">    ReadsPipelineSpark                           </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Takes unaligned or aligned reads and runs BWA (if specified), MarkDuplicates, BQSR, and HaplotypeCaller to generate a VCF file of variants</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Structural Variant Discovery:                    Tools that detect structural variants        </span>
+<span class="ansi-green-fg">    DiscoverVariantsFromContigAlignmentsSAMSpark </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Examines aligned contigs from local assemblies and calls structural variants</span>
+<span class="ansi-green-fg">    ExtractSVEvidenceSpark                       </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Extracts evidence of structural variations from reads</span>
+<span class="ansi-green-fg">    FindBreakpointEvidenceSpark                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Produces local assemblies of genomic regions that may harbor structural variants</span>
+<span class="ansi-green-fg">    StructuralVariationDiscoveryPipelineSpark    </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Runs the structural variation discovery workflow on a single sample</span>
+<span class="ansi-green-fg">    SvDiscoverFromLocalAssemblyContigAlignmentsSpark    </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Examines aligned contigs from local assemblies and calls structural variants or their breakpoints</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Variant Evaluation and Refinement:               Tools that evaluate and refine variant calls, e.g. with annotations not offered by the engine</span>
+<span class="ansi-green-fg">    AnnotatePairOrientation                      </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(EXPERIMENTAL) Annotate a non-M2 VCF (using the associated tumor bam) with pair orientation fields (e.g. F1R2 ).</span>
+<span class="ansi-green-fg">    AnnotateVcfWithBamDepth                      </span><span class="ansi-cyan-fg">(Internal) Annotate a vcf with a bam&#39;s read depth at each variant locus</span>
+<span class="ansi-green-fg">    AnnotateVcfWithExpectedAlleleFraction        </span><span class="ansi-cyan-fg">(Internal) Annotate a vcf with expected allele fractions in pooled sequencing</span>
+<span class="ansi-green-fg">    CalculateGenotypePosteriors                  </span><span class="ansi-cyan-fg">Calculate genotype posterior probabilities given family and/or known population genotypes</span>
+<span class="ansi-green-fg">    CalculateMixingFractions                     </span><span class="ansi-cyan-fg">(Internal) Calculate proportions of different samples in a pooled bam</span>
+<span class="ansi-green-fg">    Concordance                                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Evaluate concordance of an input VCF against a validated truth VCF</span>
+<span class="ansi-green-fg">    CountFalsePositives                          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Count PASS variants</span>
+<span class="ansi-green-fg">    CountVariants                                </span><span class="ansi-cyan-fg">Counts variant records in a VCF file, regardless of filter status.</span>
+<span class="ansi-green-fg">    CountVariantsSpark                           </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">CountVariants on Spark</span>
+<span class="ansi-green-fg">    FindMendelianViolations (Picard)             </span><span class="ansi-cyan-fg">Finds mendelian violations of all types within a VCF</span>
+<span class="ansi-green-fg">    Funcotator                                   </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Functional Annotator</span>
+<span class="ansi-green-fg">    GenotypeConcordance (Picard)                 </span><span class="ansi-cyan-fg">Calculates the concordance between genotype data of one samples in each of two VCFs - one  being considered the truth (or reference) the other being the call.  The concordance is broken into separate results sections for SNPs and indels.  Statistics are reported in three different files.</span>
+<span class="ansi-green-fg">    NeuralNetInference                           </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Apply 1d Convolutional Neural Net to filter annotated variants</span>
+<span class="ansi-green-fg">    ValidateBasicSomaticShortMutations           </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Check the variants in a VCF against a tumor-normal pair of bams representing the same samples, though not the ones from the actual calls.</span>
+<span class="ansi-green-fg">    ValidateVariants                             </span><span class="ansi-cyan-fg">Validate VCF</span>
+<span class="ansi-green-fg">    VariantsToTable                              </span><span class="ansi-cyan-fg">Extract fields from a VCF file to a tab-delimited table</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Variant Filtering:                               Tools that filter variants by annotating the FILTER column</span>
+<span class="ansi-green-fg">    ApplyVQSR                                    </span><span class="ansi-cyan-fg"> Apply a score cutoff to filter variants based on a recalibration table</span>
+<span class="ansi-green-fg">    CreateSomaticPanelOfNormals                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Make a panel of normals for use with Mutect2</span>
+<span class="ansi-green-fg">    FilterByOrientationBias                      </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Filter Mutect2 somatic variant calls using orientation bias</span>
+<span class="ansi-green-fg">    FilterMutectCalls                            </span><span class="ansi-cyan-fg">Filter somatic SNVs and indels called by Mutect2</span>
+<span class="ansi-green-fg">    FilterVcf (Picard)                           </span><span class="ansi-cyan-fg">Hard filters a VCF.</span>
+<span class="ansi-green-fg">    VariantFiltration                            </span><span class="ansi-cyan-fg">Filter variant calls based on INFO and/or FORMAT annotations</span>
+<span class="ansi-green-fg">    VariantRecalibrator                          </span><span class="ansi-cyan-fg">Build a recalibration model to score variant quality for filtering purposes</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Variant Manipulation:                            Tools that manipulate variant call format (VCF) data</span>
+<span class="ansi-green-fg">    FixVcfHeader (Picard)                        </span><span class="ansi-cyan-fg">Replaces or fixes a VCF header.</span>
+<span class="ansi-green-fg">    GatherVcfs (Picard)                          </span><span class="ansi-cyan-fg">Gathers multiple VCF files from a scatter operation into a single VCF file</span>
+<span class="ansi-green-fg">    GatherVcfsCloud                              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Gathers multiple VCF files from a scatter operation into a single VCF file</span>
+<span class="ansi-green-fg">    LiftoverVcf (Picard)                         </span><span class="ansi-cyan-fg">Lifts over a VCF file from one reference build to another.  </span>
+<span class="ansi-green-fg">    MakeSitesOnlyVcf (Picard)                    </span><span class="ansi-cyan-fg">Creates a VCF that contains all the site-level information for all records in the input VCF but no genotype information.</span>
+<span class="ansi-green-fg">    MergeVcfs (Picard)                           </span><span class="ansi-cyan-fg">Combines multiple variant files into a single variant file</span>
+<span class="ansi-green-fg">    PrintVariantsSpark                           </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Prints out variants from the input VCF.</span>
+<span class="ansi-green-fg">    RemoveNearbyIndels                           </span><span class="ansi-cyan-fg">(Internal) Remove indels from the VCF file that are close to each other.</span>
+<span class="ansi-green-fg">    RenameSampleInVcf (Picard)                   </span><span class="ansi-cyan-fg">Renames a sample within a VCF or BCF.</span>
+<span class="ansi-green-fg">    SelectVariants                               </span><span class="ansi-cyan-fg">Select a subset of variants from a VCF file</span>
+<span class="ansi-green-fg">    SortVcf (Picard)                             </span><span class="ansi-cyan-fg">Sorts one or more VCF files.  </span>
+<span class="ansi-green-fg">    SplitVcfs (Picard)                           </span><span class="ansi-cyan-fg">Splits SNPs and INDELs into separate files.  </span>
+<span class="ansi-green-fg">    UpdateVCFSequenceDictionary                  </span><span class="ansi-cyan-fg">Updates the sequence dictionary in a variant file.</span>
+<span class="ansi-green-fg">    UpdateVcfSequenceDictionary (Picard)         </span><span class="ansi-cyan-fg">Takes a VCF and a second file that contains a sequence dictionary and updates the VCF with the new sequence dictionary.</span>
+<span class="ansi-green-fg">    VariantAnnotator                             </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Tool for adding annotations to VCF files</span>
+<span class="ansi-green-fg">    VcfFormatConverter (Picard)                  </span><span class="ansi-cyan-fg">Converts VCF to BCF or BCF to VCF.  </span>
+<span class="ansi-green-fg">    VcfToIntervalList (Picard)                   </span><span class="ansi-cyan-fg">Converts a VCF or BCF file to a Picard Interval List</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span>
+***********************************************************************
+
+A USER ERROR has occurred: &#39;Print&#39; is not a valid command.
+Did you mean one of these?
+        PrintReads        PrintVariantsSpark        PrintReadsSpark
+
+***********************************************************************
+Set the system property GATK_STACKTRACE_ON_USER_EXCEPTION (--java-options &#39;-DGATK_STACKTRACE_ON_USER_EXCEPTION=true&#39;) to print the stack trace.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Executing script in docker returns an error (exitcode=2).
+The script has been saved to /Users/bpeng1/sos/sos-docs/src/tutorials/.sos/docker_run_30258.sh. To reproduce the error please run:
+``docker run --rm   -v /Users:/Users -v /tmp:/tmp -v /Users/bpeng1/sos/sos-docs/src/tutorials/.sos/docker_run_30258.sh:/var/lib/sos/docker_run_30258.sh    -t -P -w=/Users/bpeng1/sos/sos-docs/src/tutorials -u 1985961928:895809667    dceoy/gatk  Print Reads -h``
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>which essentially passes <code>Print Reads -h</code> to the image and executes command</p>
+
+<pre><code>java -jar /usr/local/src/gatk/build/libs/gatk.jar Print Reads -h</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the command line is long, you can use another trick, that is to say, to use <code>{script}</code> in <code>args</code> for scripts of the action. For example, the aforementioned command can be specified as</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">script</span><span class="p">:</span> <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{script}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;dceoy/gatk&#39;</span>
+  <span class="n">Print</span> <span class="n">Reads</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-intense-fg ansi-bold">USAGE:  </span><span class="ansi-green-intense-fg ansi-bold">&lt;program name&gt;</span><span class="ansi-red-intense-fg ansi-bold"> [-h]
+
+</span><span class="ansi-red-intense-fg ansi-bold">Available Programs:
+</span><span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Base Calling:                                    Tools that process sequencing machine data, e.g. Illumina base calls, and detect sequencing level attributes, e.g. adapters</span>
+<span class="ansi-green-fg">    CheckIlluminaDirectory (Picard)              </span><span class="ansi-cyan-fg">Asserts the validity for specified Illumina basecalling data.  </span>
+<span class="ansi-green-fg">    CollectIlluminaBasecallingMetrics (Picard)   </span><span class="ansi-cyan-fg">Collects Illumina Basecalling metrics for a sequencing run.  </span>
+<span class="ansi-green-fg">    CollectIlluminaLaneMetrics (Picard)          </span><span class="ansi-cyan-fg">Collects Illumina lane metrics for the given BaseCalling analysis directory.  </span>
+<span class="ansi-green-fg">    ExtractIlluminaBarcodes (Picard)             </span><span class="ansi-cyan-fg">Tool determines the barcode for each read in an Illumina lane.  </span>
+<span class="ansi-green-fg">    IlluminaBasecallsToFastq (Picard)            </span><span class="ansi-cyan-fg">Generate FASTQ file(s) from Illumina basecall read data.  </span>
+<span class="ansi-green-fg">    IlluminaBasecallsToSam (Picard)              </span><span class="ansi-cyan-fg">Transforms raw Illumina sequencing data into an unmapped SAM or BAM file.</span>
+<span class="ansi-green-fg">    MarkIlluminaAdapters (Picard)                </span><span class="ansi-cyan-fg">Reads a SAM or BAM file and rewrites it with new adapter-trimming tags.  </span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Copy Number Variant Discovery:                   Tools that analyze read coverage to detect copy number variants.</span>
+<span class="ansi-green-fg">    AnnotateIntervals                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Annotates intervals with GC content</span>
+<span class="ansi-green-fg">    CallCopyRatioSegments                        </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Calls copy-ratio segments as amplified, deleted, or copy-number neutral</span>
+<span class="ansi-green-fg">    CombineSegmentBreakpoints                    </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Combine the breakpoints of two segment files and annotate the resulting intervals with chosen columns from each file.</span>
+<span class="ansi-green-fg">    CreateReadCountPanelOfNormals                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Creates a panel of normals for read-count denoising</span>
+<span class="ansi-green-fg">    DenoiseReadCounts                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Denoises read counts to produce denoised copy ratios</span>
+<span class="ansi-green-fg">    DetermineGermlineContigPloidy                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Determines the baseline contig ploidy for germline samples given counts data</span>
+<span class="ansi-green-fg">    GermlineCNVCaller                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Calls copy-number variants in germline samples given their counts and the output of DetermineGermlineContigPloidy</span>
+<span class="ansi-green-fg">    ModelSegments                                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Models segmented copy ratios from denoised read counts and segmented minor-allele fractions from allelic counts</span>
+<span class="ansi-green-fg">    PlotDenoisedCopyRatios                       </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Creates plots of denoised copy ratios</span>
+<span class="ansi-green-fg">    PlotModeledSegments                          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Creates plots of denoised and segmented copy-ratio and minor-allele-fraction estimates</span>
+<span class="ansi-green-fg">    PostprocessGermlineCNVCalls                  </span><span class="ansi-cyan-fg">Create a VCF given the output of GermlineCNVCaller.</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Coverage Analysis:                               Tools that count coverage, e.g. depth per allele</span>
+<span class="ansi-green-fg">    ASEReadCounter                               </span><span class="ansi-cyan-fg">Generates table of filtered base counts at het sites for allele specific expression</span>
+<span class="ansi-green-fg">    CollectAllelicCounts                         </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects reference and alternate allele counts at specified sites</span>
+<span class="ansi-green-fg">    CollectFragmentCounts                        </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects fragment counts at specified intervals</span>
+<span class="ansi-green-fg">    CountBases                                   </span><span class="ansi-cyan-fg">Count bases in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    CountBasesSpark                              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Counts bases in the input SAM/BAM</span>
+<span class="ansi-green-fg">    CountReads                                   </span><span class="ansi-cyan-fg">Count reads in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    CountReadsSpark                              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Counts reads in the input SAM/BAM</span>
+<span class="ansi-green-fg">    GetPileupSummaries                           </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Tabulates pileup metrics for inferring contamination</span>
+<span class="ansi-green-fg">    Pileup                                       </span><span class="ansi-cyan-fg">Prints read alignments in samtools pileup format</span>
+<span class="ansi-green-fg">    PileupSpark                                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Prints read alignments in samtools pileup format</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Diagnostics and Quality Control:                 Tools that collect sequencing quality related and comparative metrics</span>
+<span class="ansi-green-fg">    AccumulateVariantCallingMetrics (Picard)     </span><span class="ansi-cyan-fg">Combines multiple Variant Calling Metrics files into a single file</span>
+<span class="ansi-green-fg">    AnalyzeCovariates                            </span><span class="ansi-cyan-fg">Evaluate and compare base quality score recalibration (BQSR) tables</span>
+<span class="ansi-green-fg">    BamIndexStats (Picard)                       </span><span class="ansi-cyan-fg">Generate index statistics from a BAM file</span>
+<span class="ansi-green-fg">    CalcMetadataSpark                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Collects read metrics relevant to structural variant discovery</span>
+<span class="ansi-green-fg">    CalculateContamination                       </span><span class="ansi-cyan-fg">Calculate the fraction of reads coming from cross-sample contamination</span>
+<span class="ansi-green-fg">    CalculateReadGroupChecksum (Picard)          </span><span class="ansi-cyan-fg">Creates a hash code based on the read groups (RG).  </span>
+<span class="ansi-green-fg">    CheckFingerprint (Picard)                    </span><span class="ansi-cyan-fg">Computes a fingerprint from the supplied input (SAM/BAM or VCF) file and compares it to the provided genotypes</span>
+<span class="ansi-green-fg">    CheckPileup                                  </span><span class="ansi-cyan-fg">Compare GATK&#39;s internal pileup to a reference Samtools mpileup</span>
+<span class="ansi-green-fg">    CheckTerminatorBlock (Picard)                </span><span class="ansi-cyan-fg">Asserts the provided gzip file&#39;s (e.g., BAM) last block is well-formed; RC 100 otherwise</span>
+<span class="ansi-green-fg">    ClusterCrosscheckMetrics (Picard)            </span><span class="ansi-cyan-fg">Clusters the results of a CrosscheckFingerprints run by LOD score</span>
+<span class="ansi-green-fg">    CollectAlignmentSummaryMetrics (Picard)      </span><span class="ansi-cyan-fg">&lt;b&gt;Produces a summary of alignment metrics from a SAM or BAM file.&lt;/b&gt;  </span>
+<span class="ansi-green-fg">    CollectBaseDistributionByCycle (Picard)      </span><span class="ansi-cyan-fg">Chart the nucleotide distribution per cycle in a SAM or BAM file</span>
+<span class="ansi-green-fg">    CollectBaseDistributionByCycleSpark          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects base distribution per cycle in SAM/BAM/CRAM file(s).</span>
+<span class="ansi-green-fg">    CollectGcBiasMetrics (Picard)                </span><span class="ansi-cyan-fg">Collect metrics regarding GC bias. </span>
+<span class="ansi-green-fg">    CollectHiSeqXPfFailMetrics (Picard)          </span><span class="ansi-cyan-fg">Classify PF-Failing reads in a HiSeqX Illumina Basecalling directory into various categories.</span>
+<span class="ansi-green-fg">    CollectHsMetrics (Picard)                    </span><span class="ansi-cyan-fg">Collects hybrid-selection (HS) metrics for a SAM or BAM file.  </span>
+<span class="ansi-green-fg">    CollectIndependentReplicateMetrics (Picard)  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Experimental) Estimates the rate of independent replication of reads within a bam.</span>
+<span class="ansi-green-fg">    CollectInsertSizeMetrics (Picard)            </span><span class="ansi-cyan-fg">Collect metrics about the insert size distribution of a paired-end library.</span>
+<span class="ansi-green-fg">    CollectInsertSizeMetricsSpark                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects insert size distribution information on alignment data</span>
+<span class="ansi-green-fg">    CollectJumpingLibraryMetrics (Picard)        </span><span class="ansi-cyan-fg">Collect jumping library metrics. </span>
+<span class="ansi-green-fg">    CollectMultipleMetrics (Picard)              </span><span class="ansi-cyan-fg">Collect multiple classes of metrics.  </span>
+<span class="ansi-green-fg">    CollectMultipleMetricsSpark                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Runs multiple metrics collection modules for a given alignment file</span>
+<span class="ansi-green-fg">    CollectOxoGMetrics (Picard)                  </span><span class="ansi-cyan-fg">Collect metrics to assess oxidative artifacts.</span>
+<span class="ansi-green-fg">    CollectQualityYieldMetrics (Picard)          </span><span class="ansi-cyan-fg">Collect metrics about reads that pass quality thresholds and Illumina-specific filters.  </span>
+<span class="ansi-green-fg">    CollectQualityYieldMetricsSpark              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Collects quality yield metrics from SAM/BAM/CRAM file(s).</span>
+<span class="ansi-green-fg">    CollectRawWgsMetrics (Picard)                </span><span class="ansi-cyan-fg">Collect whole genome sequencing-related metrics.  </span>
+<span class="ansi-green-fg">    CollectRnaSeqMetrics (Picard)                </span><span class="ansi-cyan-fg">Produces RNA alignment metrics for a SAM or BAM file.  </span>
+<span class="ansi-green-fg">    CollectRrbsMetrics (Picard)                  </span><span class="ansi-cyan-fg">&lt;b&gt;Collects metrics from reduced representation bisulfite sequencing (Rrbs) data.&lt;/b&gt;  </span>
+<span class="ansi-green-fg">    CollectSequencingArtifactMetrics (Picard)    </span><span class="ansi-cyan-fg">Collect metrics to quantify single-base sequencing artifacts.  </span>
+<span class="ansi-green-fg">    CollectTargetedPcrMetrics (Picard)           </span><span class="ansi-cyan-fg">Calculate PCR-related metrics from targeted sequencing data. </span>
+<span class="ansi-green-fg">    CollectVariantCallingMetrics (Picard)        </span><span class="ansi-cyan-fg">Collects per-sample and aggregate (spanning all samples) metrics from the provided VCF file</span>
+<span class="ansi-green-fg">    CollectWgsMetrics (Picard)                   </span><span class="ansi-cyan-fg">Collect metrics about coverage and performance of whole genome sequencing (WGS) experiments.</span>
+<span class="ansi-green-fg">    CollectWgsMetricsWithNonZeroCoverage (Picard)</span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Experimental) Collect metrics about coverage and performance of whole genome sequencing (WGS) experiments.  </span>
+<span class="ansi-green-fg">    CompareBaseQualities                         </span><span class="ansi-cyan-fg">Compares the base qualities of two SAM/BAM/CRAM files</span>
+<span class="ansi-green-fg">    CompareDuplicatesSpark                       </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Determine if two potentially identical BAMs have the same duplicate reads</span>
+<span class="ansi-green-fg">    CompareMetrics (Picard)                      </span><span class="ansi-cyan-fg">Compare two metrics files.</span>
+<span class="ansi-green-fg">    CompareSAMs (Picard)                         </span><span class="ansi-cyan-fg">Compare two input &#34;.sam&#34; or &#34;.bam&#34; files.  </span>
+<span class="ansi-green-fg">    ConvertSequencingArtifactToOxoG (Picard)     </span><span class="ansi-cyan-fg">Extract OxoG metrics from generalized artifacts metrics.  </span>
+<span class="ansi-green-fg">    CrosscheckFingerprints (Picard)              </span><span class="ansi-cyan-fg">Checks that all data in the input files appear to have come from the same individual</span>
+<span class="ansi-green-fg">    CrosscheckReadGroupFingerprints (Picard)     </span><span class="ansi-cyan-fg">DEPRECATED: USE CrosscheckFingerprints. Checks if all read groups appear to come from the same individual.</span>
+<span class="ansi-green-fg">    EstimateLibraryComplexity (Picard)           </span><span class="ansi-cyan-fg">Estimates the numbers of unique molecules in a sequencing library.  </span>
+<span class="ansi-green-fg">    EstimateLibraryComplexityGATK                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Estimate library complexity from the sequence of read pairs</span>
+<span class="ansi-green-fg">    FlagStat                                     </span><span class="ansi-cyan-fg">Accumulate flag statistics given a BAM file</span>
+<span class="ansi-green-fg">    FlagStatSpark                                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Spark tool to accumulate flag statistics</span>
+<span class="ansi-green-fg">    GetSampleName                                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Emit a single sample name</span>
+<span class="ansi-green-fg">    MeanQualityByCycle (Picard)                  </span><span class="ansi-cyan-fg">Collect mean quality by cycle.</span>
+<span class="ansi-green-fg">    MeanQualityByCycleSpark                      </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">MeanQualityByCycle on Spark</span>
+<span class="ansi-green-fg">    QualityScoreDistribution (Picard)            </span><span class="ansi-cyan-fg">Chart the distribution of quality scores.  </span>
+<span class="ansi-green-fg">    QualityScoreDistributionSpark                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">QualityScoreDistribution on Spark</span>
+<span class="ansi-green-fg">    ValidateSamFile (Picard)                     </span><span class="ansi-cyan-fg">Validates a SAM or BAM file.</span>
+<span class="ansi-green-fg">    ViewSam (Picard)                             </span><span class="ansi-cyan-fg">Prints a SAM or BAM file to the screen</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Intervals Manipulation:                          Tools that process genomic intervals in various formats</span>
+<span class="ansi-green-fg">    BedToIntervalList (Picard)                   </span><span class="ansi-cyan-fg">Converts a BED file to a Picard Interval List.  </span>
+<span class="ansi-green-fg">    IntervalListToBed (Picard)                   </span><span class="ansi-cyan-fg">Converts an Picard IntervalList file to a BED file.</span>
+<span class="ansi-green-fg">    IntervalListTools (Picard)                   </span><span class="ansi-cyan-fg">A tool for performing various IntervalList manipulations</span>
+<span class="ansi-green-fg">    LiftOverIntervalList (Picard)                </span><span class="ansi-cyan-fg">Lifts over an interval list from one reference build to another. </span>
+<span class="ansi-green-fg">    PreprocessIntervals                          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Prepares bins for coverage collection</span>
+<span class="ansi-green-fg">    SplitIntervals                               </span><span class="ansi-cyan-fg">Split intervals into sub-interval files.</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Metagenomics:                                    Tools that perform metagenomic analysis, e.g. microbial community composition and pathogen detection</span>
+<span class="ansi-green-fg">    PathSeqBuildKmers                            </span><span class="ansi-cyan-fg">Builds set of host reference k-mers</span>
+<span class="ansi-green-fg">    PathSeqBuildReferenceTaxonomy                </span><span class="ansi-cyan-fg">Builds a taxonomy datafile of the microbe reference</span>
+<span class="ansi-green-fg">    PathSeqBwaSpark                              </span><span class="ansi-cyan-fg">Step 2: Aligns reads to the microbe reference</span>
+<span class="ansi-green-fg">    PathSeqFilterSpark                           </span><span class="ansi-cyan-fg">Step 1: Filters low quality, low complexity, duplicate, and host reads</span>
+<span class="ansi-green-fg">    PathSeqPipelineSpark                         </span><span class="ansi-cyan-fg">Combined tool that performs all steps: read filtering, microbe reference alignment, and abundance scoring</span>
+<span class="ansi-green-fg">    PathSeqScoreSpark                            </span><span class="ansi-cyan-fg">Step 3: Classifies pathogen-aligned reads and generates abundance scores</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Other:                                           Miscellaneous tools, e.g. those that aid in data streaming</span>
+<span class="ansi-green-fg">    CreateHadoopBamSplittingIndex                </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Create a Hadoop BAM splitting index</span>
+<span class="ansi-green-fg">    FifoBuffer (Picard)                          </span><span class="ansi-cyan-fg">Provides a large, FIFO buffer that can be used to buffer input and output streams between programs.</span>
+<span class="ansi-green-fg">    GatherBQSRReports                            </span><span class="ansi-cyan-fg">Gathers scattered BQSR recalibration reports into a single file</span>
+<span class="ansi-green-fg">    GatherTranches                               </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Gathers scattered VQSLOD tranches into a single file</span>
+<span class="ansi-green-fg">    IndexFeatureFile                             </span><span class="ansi-cyan-fg">Creates an index for a feature file, e.g. VCF or BED file.</span>
+<span class="ansi-green-fg">    ParallelCopyGCSDirectoryIntoHDFSSpark        </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Parallel copy a file or directory from Google Cloud Storage into the HDFS file system used by Spark</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Read Data Manipulation:                          Tools that manipulate read data in SAM, BAM or CRAM format</span>
+<span class="ansi-green-fg">    AddCommentsToBam (Picard)                    </span><span class="ansi-cyan-fg">Adds comments to the header of a BAM file.</span>
+<span class="ansi-green-fg">    AddOrReplaceReadGroups (Picard)              </span><span class="ansi-cyan-fg">Assigns all the reads in a file to a single new read-group.</span>
+<span class="ansi-green-fg">    ApplyBQSR                                    </span><span class="ansi-cyan-fg">Apply base quality score recalibration</span>
+<span class="ansi-green-fg">    ApplyBQSRSpark                               </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Apply base quality score recalibration on Spark</span>
+<span class="ansi-green-fg">    BQSRPipelineSpark                            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Both steps of BQSR (BaseRecalibrator and ApplyBQSR) on Spark</span>
+<span class="ansi-green-fg">    BamToBfq (Picard)                            </span><span class="ansi-cyan-fg">Converts a BAM file into a BFQ (binary fastq formatted) file</span>
+<span class="ansi-green-fg">    BaseRecalibrator                             </span><span class="ansi-cyan-fg">Generates recalibration table for Base Quality Score Recalibration (BQSR)</span>
+<span class="ansi-green-fg">    BaseRecalibratorSpark                        </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Generate recalibration table for Base Quality Score Recalibration (BQSR) on Spark</span>
+<span class="ansi-green-fg">    BaseRecalibratorSparkSharded                 </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">BaseRecalibrator on Spark (experimental sharded implementation)</span>
+<span class="ansi-green-fg">    BuildBamIndex (Picard)                       </span><span class="ansi-cyan-fg">Generates a BAM index &#34;.bai&#34; file.  </span>
+<span class="ansi-green-fg">    BwaAndMarkDuplicatesPipelineSpark            </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Takes name-sorted file and runs BWA and MarkDuplicates.</span>
+<span class="ansi-green-fg">    BwaSpark                                     </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">BWA on Spark</span>
+<span class="ansi-green-fg">    CleanSam (Picard)                            </span><span class="ansi-cyan-fg">Cleans the provided SAM/BAM, soft-clipping beyond-end-of-reference alignments and setting MAPQ to 0 for unmapped reads</span>
+<span class="ansi-green-fg">    ClipReads                                    </span><span class="ansi-cyan-fg">Clip reads in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    ConvertHeaderlessHadoopBamShardToBam         </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Convert a headerless BAM shard into a readable BAM</span>
+<span class="ansi-green-fg">    DownsampleSam (Picard)                       </span><span class="ansi-cyan-fg">Downsample a SAM or BAM file.</span>
+<span class="ansi-green-fg">    ExtractOriginalAlignmentRecordsByNameSpark   </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Subsets reads by name</span>
+<span class="ansi-green-fg">    FastqToSam (Picard)                          </span><span class="ansi-cyan-fg">Converts a FASTQ file to an unaligned BAM or SAM file</span>
+<span class="ansi-green-fg">    FilterSamReads (Picard)                      </span><span class="ansi-cyan-fg">Subsets reads from a SAM or BAM file by applying one of several filters.</span>
+<span class="ansi-green-fg">    FixMateInformation (Picard)                  </span><span class="ansi-cyan-fg">Verify mate-pair information between mates and fix if needed.</span>
+<span class="ansi-green-fg">    FixMisencodedBaseQualityReads                </span><span class="ansi-cyan-fg">Fix Illumina base quality scores in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    GatherBamFiles (Picard)                      </span><span class="ansi-cyan-fg">Concatenate efficiently BAM files that resulted from a scattered parallel analysis</span>
+<span class="ansi-green-fg">    LeftAlignIndels                              </span><span class="ansi-cyan-fg">Left-aligns indels from reads in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    MarkDuplicates (Picard)                      </span><span class="ansi-cyan-fg">Identifies duplicate reads.  </span>
+<span class="ansi-green-fg">    MarkDuplicatesGATK                           </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Examines aligned records in the supplied SAM/BAM/CRAM file to locate duplicate molecules.</span>
+<span class="ansi-green-fg">    MarkDuplicatesSpark                          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">MarkDuplicates on Spark</span>
+<span class="ansi-green-fg">    MarkDuplicatesWithMateCigar (Picard)         </span><span class="ansi-cyan-fg">Identifies duplicate reads, accounting for mate CIGAR.  </span>
+<span class="ansi-green-fg">    MergeBamAlignment (Picard)                   </span><span class="ansi-cyan-fg">Merge alignment data from a SAM or BAM with data in an unmapped BAM file.  </span>
+<span class="ansi-green-fg">    MergeSamFiles (Picard)                       </span><span class="ansi-cyan-fg">Merges multiple SAM and/or BAM files into a single file.  </span>
+<span class="ansi-green-fg">    PositionBasedDownsampleSam (Picard)          </span><span class="ansi-cyan-fg">Downsample a SAM or BAM file to retain a subset of the reads based on the reads location in each tile in the flowcell.</span>
+<span class="ansi-green-fg">    PrintReads                                   </span><span class="ansi-cyan-fg">Print reads in the SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    PrintReadsSpark                              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">PrintReads on Spark</span>
+<span class="ansi-green-fg">    ReorderSam (Picard)                          </span><span class="ansi-cyan-fg">Reorders reads in a SAM or BAM file to match ordering in a second reference file.</span>
+<span class="ansi-green-fg">    ReplaceSamHeader (Picard)                    </span><span class="ansi-cyan-fg">Replaces the SAMFileHeader in a SAM or BAM file.  </span>
+<span class="ansi-green-fg">    RevertBaseQualityScores                      </span><span class="ansi-cyan-fg">Revert Quality Scores in a SAM/BAM/CRAM file</span>
+<span class="ansi-green-fg">    RevertOriginalBaseQualitiesAndAddMateCigar (Picard)</span><span class="ansi-cyan-fg">Reverts the original base qualities and adds the mate cigar tag to read-group BAMs</span>
+<span class="ansi-green-fg">    RevertSam (Picard)                           </span><span class="ansi-cyan-fg">Reverts SAM or BAM files to a previous state.  </span>
+<span class="ansi-green-fg">    SamFormatConverter (Picard)                  </span><span class="ansi-cyan-fg">Convert a BAM file to a SAM file, or a SAM to a BAM</span>
+<span class="ansi-green-fg">    SamToFastq (Picard)                          </span><span class="ansi-cyan-fg">Converts a SAM or BAM file to FASTQ.</span>
+<span class="ansi-green-fg">    SetNmAndUqTags (Picard)                      </span><span class="ansi-cyan-fg">DEPRECATED: Use SetNmMdAndUqTags instead.</span>
+<span class="ansi-green-fg">    SetNmMdAndUqTags (Picard)                    </span><span class="ansi-cyan-fg">Fixes the NM, MD, and UQ tags in a SAM file </span>
+<span class="ansi-green-fg">    SimpleMarkDuplicatesWithMateCigar (Picard)   </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Experimental) Examines aligned records in the supplied SAM or BAM file to locate duplicate molecules.</span>
+<span class="ansi-green-fg">    SortSam (Picard)                             </span><span class="ansi-cyan-fg">Sorts a SAM or BAM file</span>
+<span class="ansi-green-fg">    SortSamSpark                                 </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">SortSam on Spark (works on SAM/BAM/CRAM)</span>
+<span class="ansi-green-fg">    SplitNCigarReads                             </span><span class="ansi-cyan-fg">Split Reads with N in Cigar</span>
+<span class="ansi-green-fg">    SplitReads                                   </span><span class="ansi-cyan-fg">Outputs reads from a SAM/BAM/CRAM by read group, sample and library name</span>
+<span class="ansi-green-fg">    SplitSamByLibrary (Picard)                   </span><span class="ansi-cyan-fg">Splits a SAM or BAM file into individual files by library</span>
+<span class="ansi-green-fg">    SplitSamByNumberOfReads (Picard)             </span><span class="ansi-cyan-fg">Splits a SAM or BAM file to multiple BAMs.</span>
+<span class="ansi-green-fg">    UmiAwareMarkDuplicatesWithMateCigar (Picard) </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Identifies duplicate reads using information from read positions and UMIs. </span>
+<span class="ansi-green-fg">    UnmarkDuplicates                             </span><span class="ansi-cyan-fg">Clears the 0x400 duplicate SAM flag</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Reference:                                       Tools that analyze and manipulate FASTA format references</span>
+<span class="ansi-green-fg">    BaitDesigner (Picard)                        </span><span class="ansi-cyan-fg">Designs oligonucleotide baits for hybrid selection reactions.</span>
+<span class="ansi-green-fg">    BwaMemIndexImageCreator                      </span><span class="ansi-cyan-fg">Create a BWA-MEM index image file for use with GATK BWA tools</span>
+<span class="ansi-green-fg">    CreateSequenceDictionary (Picard)            </span><span class="ansi-cyan-fg">Creates a sequence dictionary for a reference sequence.  </span>
+<span class="ansi-green-fg">    ExtractSequences (Picard)                    </span><span class="ansi-cyan-fg">Subsets intervals from a reference sequence to a new FASTA file.</span>
+<span class="ansi-green-fg">    FindBadGenomicKmersSpark                     </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Identifies sequences that occur at high frequency in a reference</span>
+<span class="ansi-green-fg">    NonNFastaSize (Picard)                       </span><span class="ansi-cyan-fg">Counts the number of non-N bases in a fasta file.</span>
+<span class="ansi-green-fg">    NormalizeFasta (Picard)                      </span><span class="ansi-cyan-fg">Normalizes lines of sequence in a FASTA file to be of the same length.</span>
+<span class="ansi-green-fg">    ScatterIntervalsByNs (Picard)                </span><span class="ansi-cyan-fg">Writes an interval list created by splitting a reference at Ns.</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Short Variant Discovery:                         Tools that perform variant calling and genotyping for short variants (SNPs, SNVs and Indels)</span>
+<span class="ansi-green-fg">    CombineGVCFs                                 </span><span class="ansi-cyan-fg">Merges one or more HaplotypeCaller GVCF files into a single GVCF with appropriate annotations</span>
+<span class="ansi-green-fg">    GenomicsDBImport                             </span><span class="ansi-cyan-fg">Import VCFs to GenomicsDB</span>
+<span class="ansi-green-fg">    GenotypeGVCFs                                </span><span class="ansi-cyan-fg">Perform joint genotyping on one or more samples pre-called with HaplotypeCaller</span>
+<span class="ansi-green-fg">    HaplotypeCaller                              </span><span class="ansi-cyan-fg">Call germline SNPs and indels via local re-assembly of haplotypes</span>
+<span class="ansi-green-fg">    HaplotypeCallerSpark                         </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">HaplotypeCaller on Spark</span>
+<span class="ansi-green-fg">    Mutect2                                      </span><span class="ansi-cyan-fg">Call somatic SNVs and indels via local assembly of haplotypes</span>
+<span class="ansi-green-fg">    ReadsPipelineSpark                           </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Takes unaligned or aligned reads and runs BWA (if specified), MarkDuplicates, BQSR, and HaplotypeCaller to generate a VCF file of variants</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Structural Variant Discovery:                    Tools that detect structural variants        </span>
+<span class="ansi-green-fg">    DiscoverVariantsFromContigAlignmentsSAMSpark </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Examines aligned contigs from local assemblies and calls structural variants</span>
+<span class="ansi-green-fg">    ExtractSVEvidenceSpark                       </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Extracts evidence of structural variations from reads</span>
+<span class="ansi-green-fg">    FindBreakpointEvidenceSpark                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Produces local assemblies of genomic regions that may harbor structural variants</span>
+<span class="ansi-green-fg">    StructuralVariationDiscoveryPipelineSpark    </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Runs the structural variation discovery workflow on a single sample</span>
+<span class="ansi-green-fg">    SvDiscoverFromLocalAssemblyContigAlignmentsSpark    </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(Internal) Examines aligned contigs from local assemblies and calls structural variants or their breakpoints</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Variant Evaluation and Refinement:               Tools that evaluate and refine variant calls, e.g. with annotations not offered by the engine</span>
+<span class="ansi-green-fg">    AnnotatePairOrientation                      </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">(EXPERIMENTAL) Annotate a non-M2 VCF (using the associated tumor bam) with pair orientation fields (e.g. F1R2 ).</span>
+<span class="ansi-green-fg">    AnnotateVcfWithBamDepth                      </span><span class="ansi-cyan-fg">(Internal) Annotate a vcf with a bam&#39;s read depth at each variant locus</span>
+<span class="ansi-green-fg">    AnnotateVcfWithExpectedAlleleFraction        </span><span class="ansi-cyan-fg">(Internal) Annotate a vcf with expected allele fractions in pooled sequencing</span>
+<span class="ansi-green-fg">    CalculateGenotypePosteriors                  </span><span class="ansi-cyan-fg">Calculate genotype posterior probabilities given family and/or known population genotypes</span>
+<span class="ansi-green-fg">    CalculateMixingFractions                     </span><span class="ansi-cyan-fg">(Internal) Calculate proportions of different samples in a pooled bam</span>
+<span class="ansi-green-fg">    Concordance                                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Evaluate concordance of an input VCF against a validated truth VCF</span>
+<span class="ansi-green-fg">    CountFalsePositives                          </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Count PASS variants</span>
+<span class="ansi-green-fg">    CountVariants                                </span><span class="ansi-cyan-fg">Counts variant records in a VCF file, regardless of filter status.</span>
+<span class="ansi-green-fg">    CountVariantsSpark                           </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">CountVariants on Spark</span>
+<span class="ansi-green-fg">    FindMendelianViolations (Picard)             </span><span class="ansi-cyan-fg">Finds mendelian violations of all types within a VCF</span>
+<span class="ansi-green-fg">    Funcotator                                   </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Functional Annotator</span>
+<span class="ansi-green-fg">    GenotypeConcordance (Picard)                 </span><span class="ansi-cyan-fg">Calculates the concordance between genotype data of one samples in each of two VCFs - one  being considered the truth (or reference) the other being the call.  The concordance is broken into separate results sections for SNPs and indels.  Statistics are reported in three different files.</span>
+<span class="ansi-green-fg">    NeuralNetInference                           </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Apply 1d Convolutional Neural Net to filter annotated variants</span>
+<span class="ansi-green-fg">    ValidateBasicSomaticShortMutations           </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Check the variants in a VCF against a tumor-normal pair of bams representing the same samples, though not the ones from the actual calls.</span>
+<span class="ansi-green-fg">    ValidateVariants                             </span><span class="ansi-cyan-fg">Validate VCF</span>
+<span class="ansi-green-fg">    VariantsToTable                              </span><span class="ansi-cyan-fg">Extract fields from a VCF file to a tab-delimited table</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Variant Filtering:                               Tools that filter variants by annotating the FILTER column</span>
+<span class="ansi-green-fg">    ApplyVQSR                                    </span><span class="ansi-cyan-fg"> Apply a score cutoff to filter variants based on a recalibration table</span>
+<span class="ansi-green-fg">    CreateSomaticPanelOfNormals                  </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Make a panel of normals for use with Mutect2</span>
+<span class="ansi-green-fg">    FilterByOrientationBias                      </span><span class="ansi-red-fg">(EXPERIMENTAL Tool) </span><span class="ansi-cyan-fg">Filter Mutect2 somatic variant calls using orientation bias</span>
+<span class="ansi-green-fg">    FilterMutectCalls                            </span><span class="ansi-cyan-fg">Filter somatic SNVs and indels called by Mutect2</span>
+<span class="ansi-green-fg">    FilterVcf (Picard)                           </span><span class="ansi-cyan-fg">Hard filters a VCF.</span>
+<span class="ansi-green-fg">    VariantFiltration                            </span><span class="ansi-cyan-fg">Filter variant calls based on INFO and/or FORMAT annotations</span>
+<span class="ansi-green-fg">    VariantRecalibrator                          </span><span class="ansi-cyan-fg">Build a recalibration model to score variant quality for filtering purposes</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span><span class="ansi-red-fg">Variant Manipulation:                            Tools that manipulate variant call format (VCF) data</span>
+<span class="ansi-green-fg">    FixVcfHeader (Picard)                        </span><span class="ansi-cyan-fg">Replaces or fixes a VCF header.</span>
+<span class="ansi-green-fg">    GatherVcfs (Picard)                          </span><span class="ansi-cyan-fg">Gathers multiple VCF files from a scatter operation into a single VCF file</span>
+<span class="ansi-green-fg">    GatherVcfsCloud                              </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Gathers multiple VCF files from a scatter operation into a single VCF file</span>
+<span class="ansi-green-fg">    LiftoverVcf (Picard)                         </span><span class="ansi-cyan-fg">Lifts over a VCF file from one reference build to another.  </span>
+<span class="ansi-green-fg">    MakeSitesOnlyVcf (Picard)                    </span><span class="ansi-cyan-fg">Creates a VCF that contains all the site-level information for all records in the input VCF but no genotype information.</span>
+<span class="ansi-green-fg">    MergeVcfs (Picard)                           </span><span class="ansi-cyan-fg">Combines multiple variant files into a single variant file</span>
+<span class="ansi-green-fg">    PrintVariantsSpark                           </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Prints out variants from the input VCF.</span>
+<span class="ansi-green-fg">    RemoveNearbyIndels                           </span><span class="ansi-cyan-fg">(Internal) Remove indels from the VCF file that are close to each other.</span>
+<span class="ansi-green-fg">    RenameSampleInVcf (Picard)                   </span><span class="ansi-cyan-fg">Renames a sample within a VCF or BCF.</span>
+<span class="ansi-green-fg">    SelectVariants                               </span><span class="ansi-cyan-fg">Select a subset of variants from a VCF file</span>
+<span class="ansi-green-fg">    SortVcf (Picard)                             </span><span class="ansi-cyan-fg">Sorts one or more VCF files.  </span>
+<span class="ansi-green-fg">    SplitVcfs (Picard)                           </span><span class="ansi-cyan-fg">Splits SNPs and INDELs into separate files.  </span>
+<span class="ansi-green-fg">    UpdateVCFSequenceDictionary                  </span><span class="ansi-cyan-fg">Updates the sequence dictionary in a variant file.</span>
+<span class="ansi-green-fg">    UpdateVcfSequenceDictionary (Picard)         </span><span class="ansi-cyan-fg">Takes a VCF and a second file that contains a sequence dictionary and updates the VCF with the new sequence dictionary.</span>
+<span class="ansi-green-fg">    VariantAnnotator                             </span><span class="ansi-red-fg">(BETA Tool) </span><span class="ansi-cyan-fg">Tool for adding annotations to VCF files</span>
+<span class="ansi-green-fg">    VcfFormatConverter (Picard)                  </span><span class="ansi-cyan-fg">Converts VCF to BCF or BCF to VCF.  </span>
+<span class="ansi-green-fg">    VcfToIntervalList (Picard)                   </span><span class="ansi-cyan-fg">Converts a VCF or BCF file to a Picard Interval List</span>
+
+<span class="ansi-white-fg">--------------------------------------------------------------------------------------
+</span>
+***********************************************************************
+
+A USER ERROR has occurred: &#39;Print&#39; is not a valid command.
+Did you mean one of these?
+        PrintReads        PrintVariantsSpark        PrintReadsSpark
+
+***********************************************************************
+Set the system property GATK_STACKTRACE_ON_USER_EXCEPTION (--java-options &#39;-DGATK_STACKTRACE_ON_USER_EXCEPTION=true&#39;) to print the stack trace.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Executing script in docker returns an error (exitcode=2).
+The script has been saved to /Users/bpeng1/sos/sos-docs/src/tutorials/.sos/docker_run_30258.sh. To reproduce the error please run:
+``docker run --rm   -v /Users:/Users -v /tmp:/tmp -v /Users/bpeng1/sos/sos-docs/src/tutorials/.sos/docker_run_30258.sh:/var/lib/sos/docker_run_30258.sh    -t -P -w=/Users/bpeng1/sos/sos-docs/src/tutorials -u 1985961928:895809667    dceoy/gatk  Print Reads -h
+``
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -451,6 +1640,7 @@ run:     docker_image='compbio/ngseasy-fastqc:1.0-r001'
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Limitations">Limitations<a class="anchor-link" href="#Limitations">&#182;</a></h2><ul>
 <li>Virtual Box virtual machine does not support symbolic link so running <code>ln -s</code> inside a docker machine under Mac will cause a strange error message <code>Read-only file system</code>.</li>
+<li>Killing a sos task or sos process will not terminate scripts that are executed by the docker daemon.</li>
 </ul>
 
 </div>
