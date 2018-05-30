@@ -382,7 +382,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Building-docker-image-on-the-fly">Building docker-image on-the-fly<a class="anchor-link" href="#Building-docker-image-on-the-fly">&#182;</a></h3>
+<h3 id="Building-docker-image-(action-docker_build)">Building docker-image (action <code>docker_build</code>)<a class="anchor-link" href="#Building-docker-image-(action-docker_build)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -488,7 +488,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Customized-or-image-default-working-directory-(workdir-and-docker_workdir)">Customized or image-default working directory (<code>workdir</code> and <code>docker_workdir</code>)<a class="anchor-link" href="#Customized-or-image-default-working-directory-(workdir-and-docker_workdir)">&#182;</a></h3>
+<h3 id="Customized-working-directory-(workdir-and-docker_workdir)">Customized working directory (<code>workdir</code> and <code>docker_workdir</code>)<a class="anchor-link" href="#Customized-working-directory-(workdir-and-docker_workdir)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -714,7 +714,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This works because SoS automatically shares the home directory  (<code>/Users</code> for mac and <code>/home</code> for Linux) and current working directory (if not under <code>$HOME</code>) of the host system to the docker image. Because the docker image can only "see" file systems shared by command <code>docker run</code>, your script will fail if your input files or output files are not under current working directory.</p>
+<p>This works because SoS automatically shares the current working directory of the host system to the docker image. Because the docker image can only "see" file systems shared by command <code>docker run</code>, your script will fail if your input files or output files are not under current working directory.</p>
 
 </div>
 </div>
@@ -817,7 +817,7 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Consequently, if you would like to read input files from or write output files to another file system, you can add the paths to option <code>volumes</code></p>
+<p>Consequently, if you would like to read input files from or write output files to another volume, you can add the paths to option <code>volumes</code></p>
 
 </div>
 </div>
@@ -863,7 +863,7 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As another common technique, some users prefer using "standard directories" as input and output directories of a script so that the scripts are more portable. For example, the following script maps source directory as <code>/input</code> and destination directory as <code>/output</code> and use <code>/input</code> and <code>/output</code> in the docker image:</p>
+<p>As another commonly used technique, some users prefer using "standard directories" as input and output directories of a script so that the scripts are more portable. For example, the following script maps source directory as <code>/input</code> and destination directory as <code>/output</code> and use <code>/input</code> and <code>/output</code> in the docker image:</p>
 
 </div>
 </div>
@@ -910,8 +910,8 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Finally, as a word of caution, although it is tempting to share common directories (e.g. <code>/home</code> or <code>/Users</code>) to the docker image, sharing of extra directories can cause unexpected problems. For example, a docker image might contain a useful <code>/Users</code> and sharing host <code>/Users</code> will override the directory inside docker.</p>
-<p>Moreover, sharing <code>$HOME</code> will expose a lot of user settings (e.g. <code>.R</code>, <code>.sos</code>) to the docker image and might affect how the docker image runs. If you really need to expose a home directory to a docker image, you might want to expose it as a different directory inside of docker. For example, the following script shared home directory as <code>/data</code> inside docker so that it does not interfere with the home directory of the docker image.</p>
+<p>Finally, as a word of caution, although it is tempting to share common directories (e.g. <code>/home</code>, <code>/Users</code>, <code>/Volumes</code> etc) to the docker image, sharing of extra directories can cause unexpected problems. For example, a docker image might contain a useful <code>/Users</code> directory and sharing host <code>/Users</code> will override the directory inside docker.</p>
+<p>Furthermore, sharing <code>$HOME</code> will expose a lot of user settings (e.g. settings under <code>~/.R</code>, <code>~/.sos</code>) to the docker image and might affect how the docker image runs. If you really need to expose a home directory to a docker image, you might want to expose it as a different directory inside of docker. For example, the following script shared home directory as <code>/data</code> inside docker so that it does not interfere with the home directory of the docker image.</p>
 
 </div>
 </div>
@@ -1012,7 +1012,7 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Docker-images-with-entry_point">Docker images with <code>entry_point</code><a class="anchor-link" href="#Docker-images-with-entry_point">&#182;</a></h3>
+<h3 id="Docker-images-with-ENTRYPOINT">Docker images with <code>ENTRYPOINT</code><a class="anchor-link" href="#Docker-images-with-ENTRYPOINT">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -1020,11 +1020,11 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Some docker image has an entry point which determines the command that will be executed when the image is executed. If we run the script directly, our "command" (e.g. <code>ruby /var/lib/sos/docker_run_30258.rb</code> will be appended to the entry point and will not be executed properly. Examples of such images include <a href="https://hub.docker.com/r/dceoy/gatk/~/dockerfile/"><code>dceoy/gatk</code></a>, which has an entry point</p>
+<p>Some docker images have an entry point which determines the command that will be executed when the image is executed. When such images are executed, parameters passed from command line will be appended to <code>ENTRYPOINT</code> so our usually way of specifying an interpreter (e.g. <code>ruby</code>) and a script will not work. If we run the script directly, our "command" (e.g. <code>ruby /var/lib/sos/docker_run_30258.rb</code> will be appended to the entry point and will not be executed properly. Examples of such images include <a href="https://hub.docker.com/r/dceoy/gatk/~/dockerfile/"><code>dceoy/gatk</code></a>, which has an entry point</p>
 
 <pre><code>["java", "-jar", "/usr/local/src/gatk/build/libs/gatk.jar"]</code></pre>
 <p>and does not accept any additional interpreter. What we really need to do is to append "arguments" to this pre-specified command.</p>
-<p>For example, the <code>test_docker_ls</code> image has an <code>ENTRYPOINT ["ls"]</code></p>
+<p>For example, the <code>test_docker_ls</code> image has an <code>ENTRYPOINT</code> with command <code>ls</code>.</p>
 
 </div>
 </div>
@@ -1070,7 +1070,7 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>which is expected to be used directly with optional parameter and without an interpreter.</p>
+<p>The image is expected to be executed directly with optional parameter and without an interpreter (e.g. <code>docker run test_docker_ls</code>).</p>
 
 </div>
 </div>
@@ -1079,7 +1079,7 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Recall that action <code>script</code> does not have a default interpreter, and option <code>args</code> can be used to construct a command line, we can use this docker image in the format of</p>
+<p>Because action <code>script</code> does not have a default interpreter, and option <code>args</code> can be used to construct a command line, we can use docker images with <code>ENTRYPOINT</code> in the format of</p>
 
 </div>
 </div>
