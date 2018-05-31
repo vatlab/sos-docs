@@ -3315,7 +3315,8 @@ parameter: var_name = default_value</code></pre>
 
 </div>
 </div>
-</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[58]:</div>
@@ -3358,6 +3359,7 @@ ArgumentError: argument --cutoff: invalid int value: &#39;zero&#39;
 </div>
 
 </div>
+	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3462,7 +3464,8 @@ ArgumentError: argument --cutoff: invalid int value: &#39;zero&#39;
 
 </div>
 </div>
-</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[61]:</div>
@@ -3504,7 +3507,8 @@ ArgumentError: Argument cutoff of type str is required
 </div>
 </div>
 
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+</div>
+	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -5236,6 +5240,227 @@ call_20
 >
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Comments-and-help-message">Comments and help message<a class="anchor-link" href="#Comments-and-help-message">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you have a sos script in either <code>.sos</code> or <code>.ipynb</code> format, you can use command</p>
+
+<pre><code>sos run script -h</code></pre>
+<p>to get the help information of the script. Because this feature is not available within SoS notebook (because <code>%sos -h</code> and <code>%sosrun -h</code> will only show help message for the magics, not the script), let us create a script</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;work_play.sos&#39;</span>
+  <span class="c1">#!/usr/bin/env sos-runner</span>
+  <span class="c1">#fileformat=SOS1.0</span>
+  <span class="c1">#</span>
+  <span class="c1"># Author: Bo Peng</span>
+
+  <span class="c1"># This is a workflow for the demonstration of the use of</span>
+  <span class="c1"># comments in SoS script</span>
+  
+  <span class="c1"># This is some other comment</span>
+
+  <span class="c1"># Friend to work or play with</span>
+  <span class="n">parameter</span><span class="p">:</span> <span class="n">friend</span><span class="o">=</span><span class="nb">str</span>
+
+
+  <span class="c1"># This is step 10 workflow work</span>
+  <span class="c1"># that generates an output</span>
+  <span class="p">[</span><span class="n">work_10</span><span class="p">]</span>
+  <span class="n">output</span><span class="p">:</span> <span class="s1">&#39;output.txt&#39;</span>
+  <span class="c1"># comment for code, not included in help message</span>
+  <span class="n">sh</span><span class="p">:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+      <span class="n">echo</span> <span class="s2">&quot;Working with {friend} to generating {_output}&quot;</span>
+      <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+
+
+  <span class="c1"># This is workflow play</span>
+  <span class="p">[</span><span class="n">play</span><span class="p">]</span>
+  <span class="c1"># game to play</span>
+  <span class="n">parameter</span><span class="p">:</span> <span class="n">game</span> <span class="o">=</span> <span class="s1">&#39;chess&#39;</span>
+  <span class="n">sh</span><span class="p">:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="n">playing</span> <span class="p">{</span><span class="n">game</span><span class="p">}</span> <span class="k">with</span> <span class="p">{</span><span class="n">friend</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>report</code> magic writes the script to specified file <code>work_play.sos</code>. If we execute the script with <code>-h</code> option, the following help message will be displayed. As you can see</p>
+<ol>
+<li>The second comment block is the description of the script. This is where you introduce the purpose of the workflows.</li>
+<li>Comments immediately before section header and <code>parameter:</code> definitions decome the descriptions of the sections and parameters.</li>
+</ol>
+<p>Other comments are ignored and will not be displayed in the help message. In particular, the first comment is reserved for shebang line (<code>#!/usr/bin/env sos-runer</code>) and other information such as revision log.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">run</span> <span class="n">work_play</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos run work_play [workflow_name | -t targets] [options] [workflow_options]
+  workflow_name:        Single or combined workflows defined in this script
+  targets:              One or more targets to generate
+  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
+  workflow_options:     Double-hyphen workflow-specific parameters
+
+This is a workflow for the demonstration of the use of
+comments in SoS script
+
+Workflows:
+  work
+  play
+
+Global Workflow Options:
+  --friend VAL (as str, required)
+                        Friend to work or play with
+
+Provided Targets
+  output.txt
+
+Sections
+  work_10:              This is step 10 workflow work that generates an output
+  play:                 This is workflow play
+    Workflow Options:
+      --game chess
+                        This is workflow play game to play
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The help message lists the workflows and targets available in the script, and global and section specific parameters. For example, according to the message, you can execute a workflow <code>play</code> with a global required parameter <code>friend</code> and workflow specific parameter <code>game</code>,</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">run</span> <span class="n">work_play</span> <span class="n">play</span> <span class="o">--</span><span class="n">friend</span> <span class="n">Joe</span> <span class="o">--</span><span class="n">game</span> <span class="s1">&#39;chinese chess&#39;</span> <span class="o">-</span><span class="n">v1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I am playing chinese chess with Joe
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+	</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or you can execute the workflow to generate specified target</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">run</span> <span class="n">work_play</span> <span class="o">-</span><span class="n">t</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">friend</span> <span class="n">Joe</span> <span class="o">-</span><span class="n">v1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Working with Joe to generating output.txt
+</pre>
+</div>
 </div>
 
 </div>
