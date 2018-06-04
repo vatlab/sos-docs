@@ -282,7 +282,7 @@ $( document ).ready(function(){
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos [-h] [--version]
-           {run,resume,dryrun,status,push,pull,preview,execute,kill,purge,config,convert,remove}
+           {install,run,resume,dryrun,status,push,pull,execute,kill,purge,config,convert,remove}
            ...
 
 A workflow system for the execution of commands and scripts in different
@@ -293,7 +293,7 @@ optional arguments:
   --version             show program&#39;s version number and exit
 
 subcommands:
-  {run,resume,dryrun,status,push,pull,preview,execute,kill,purge,config,convert,remove}
+  {install,run,resume,dryrun,status,push,pull,execute,kill,purge,config,convert,remove}
     run                 Execute default or specified workflow in script
     resume              Resume the execution of a suspended workflow
     dryrun              Execute workflow in dryrun mode
@@ -301,7 +301,7 @@ subcommands:
     push                Push local files or directory to a remote host
     pull                Pull files or directories from remote host to local
                         host
-    preview             Preview files on local or remote host
+    remote              Listing and testing remote configurations
     execute             Execute a packages task
     kill                Stop the execution of running task
     purge               Remove local or remote tasks
@@ -399,7 +399,7 @@ Use &#39;sos cmd -h&#39; for details about each subcommand. Please contact Bo Pe
 <pre>usage: sos run [-h] [-j JOBS] [-J EXTERNAL_JOBS] [-c CONFIG_FILE]
                [-t FILE [FILE ...]] [-b [BIN_DIR [BIN_DIR ...]]] [-q [QUEUE]]
                [-w] [-W] [-r [HOST]] [-n] [-s SIGMODE] [-d [DAG]]
-               [-v {0,1,2,3,4}]
+               [-p [REPORT]] [-v {0,1,2,3,4}]
                SCRIPT [WORKFLOW]
 
 Execute default or specified workflow defined in script
@@ -427,9 +427,9 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -j JOBS               Maximum number of worker processes for the execution
-                        of steps in a workflow and input groups in a step
-                        (with input option concurrent), default to half of
-                        number of CPUs
+                        of steps in a workflow and substeps in a step (with
+                        input option concurrent), default to half of number of
+                        CPUs
   -J EXTERNAL_JOBS      Maximum number of externally running tasks. This
                         option overrides option &#34;max_running_jobs&#34; of a task
                         queue (option -q) so that you can, for example, submit
@@ -468,9 +468,7 @@ optional arguments:
                         basically copy the workflow to remote host and invoke
                         sos command there. No path translation and
                         input/output file synchronization will be performed
-                        before or after the execution of the workflow. If this
-                        option is specified without value, SoS will list all
-                        configured queues and exit.
+                        before or after the execution of the workflow.
 
 Run mode options:
   Control how sos scirpt is executed.
@@ -493,12 +491,19 @@ Output options:
   Output of workflow
 
   -d [DAG]              Output Direct Acyclic Graph (DAGs) in graphiviz .dot
-                        format. An exntesion of &#34;.dot&#34; would be added
-                        automatically. Because DAG could change during the
-                        execution of workflow, multiple DAGs could be outputed
-                        with names $FILE_1.dot, $FILE_2.dot. If this option is
-                        specified without a name, the DAG would be wrritten to
-                        the standard output.
+                        format. Because DAG and status of nodes will change
+                        during the execution of workflow, multiple DAGs will
+                        be written to the specified file with names
+                        {workflow}_1, {workflow}_2 etc. The dot file would be
+                        named {script_name}_{timestamp}.dot unless a separate
+                        filename is specified.
+  -p [REPORT]           Output a report that summarizes the execution of the
+                        workflow after the completion of the execution. This
+                        includes command line, steps executed, tasks executed,
+                        CPU/memory of tasks, and DAG if option -d is also
+                        specified. The report will by be named
+                        {script_name}_{timestamp}.html unless a separate
+                        filename is specified.
   -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
                         trace (4) information to standard output (default to
                         2).
@@ -559,7 +564,7 @@ specified in the script. Single value parameters should be passed using option
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos resume [-h] [-s] [-w] [-W] [-v {0,1,2,3,4}] [-j JOBS]
-                  [-J EXTERNAL_JOBS] [-r [__REMOTE__]]
+                  [-J EXTERNAL_JOBS] [-r __REMOTE__]
                   [workflow_id]
 
 Resume the execution or list status of suspended workflows
@@ -593,7 +598,7 @@ optional arguments:
                         option overrides option &#34;max_running_jobs&#34; of a task
                         queue (option -q) so that you can, for example, submit
                         one job at a time (with -J 1) to test the task queue.
-  -r [__REMOTE__]       Resume workflow that was executed on remote host (sos
+  -r __REMOTE__         Resume workflow that was executed on remote host (sos
                         run with option -r)
 </pre>
 </div>
@@ -740,7 +745,7 @@ specified in the script. Single value parameters should be passed using option
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">remote</span> <span class="o">-</span><span class="n">h</span>
@@ -760,16 +765,20 @@ specified in the script. Single value parameters should be passed using option
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos remote [-h] [-c CONFIG] [-v {0,1,2,3,4}]
-                  {test,status,list} [hosts [hosts ...]]
+<pre>usage: sos remote [-h] [-c CONFIG] [-p PASSWORD] [-v {0,1,2,3,4}]
+                  {list,status,setup,test} [hosts [hosts ...]]
 
 Listing and testing remote configurations
 
 positional arguments:
-  {test,status,list}    List, check status, or test configuration of all or
-                        specified remote hosts
-  hosts                 Hosts to be checked or tested. All hosts will be
-                        included if unspecified.
+  {list,status,setup,test}
+                        List, check status, setup, or test configuration of
+                        all or specified remote hosts
+  hosts                 Hosts to be checked or tested. All hosts defined in
+                        SoS configurations will be included if unspecified. As
+                        a special case for &#34;sos remote setup&#34;, an address is
+                        acceptable even if it is defined in configuration
+                        file.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -777,6 +786,13 @@ optional arguments:
                         A configuration file with host definitions, in case
                         the definitions are not defined in global sos
                         config.yml files.
+  -p PASSWORD, --password PASSWORD
+                        Password used to copy public key to remote hosts. You
+                        will be prompted for a password if a password is
+                        needed and is not passed from command line. The same
+                        password will be used for all specified hosts so you
+                        will need to use separate setup commands for hosts
+                        with different passwords.
   -v {0,1,2,3,4}, --verbosity {0,1,2,3,4}
                         Output error (0), warning (1), info (2), debug (3) and
                         trace (4) information to standard output (default to
@@ -800,7 +816,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">execute</span> <span class="o">-</span><span class="n">h</span>
@@ -820,7 +836,7 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos execute [-h] [-s SIGMODE] [-v {0,1,2,3,4}] [-n] [-q [QUEUE]]
+<pre>usage: sos execute [-h] [-s SIGMODE] [-v {0,1,2,3,4}] [-n] [-q QUEUE]
                    [-c CONFIG] [-w]
                    tasks [tasks ...]
 
@@ -847,14 +863,13 @@ optional arguments:
                         2).
   -n, --dryrun          Dryrun mode, which will cause actions to print scripts
                         instead of executing them.
-  -q [QUEUE], --queue [QUEUE]
+  -q QUEUE, --queue QUEUE
                         Check the status of job on specified tasks queue or
                         remote host if the tasks . The queue can be defined in
                         global or local sos configuration file, or a file
                         specified by option --config. A host is assumed to be
                         a remote machine with process type if no configuration
-                        is found. If this option is specified without value,
-                        SoS will list all configured queues and exit.
+                        is found.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
                         the definitions are not defined in global sos
@@ -883,7 +898,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">status</span> <span class="o">-</span><span class="n">h</span>
@@ -903,7 +918,7 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos status [-h] [-q [QUEUE]] [-c CONFIG] [-v {0,1,2,3,4}]
+<pre>usage: sos status [-h] [-q QUEUE] [-c CONFIG] [-v {0,1,2,3,4}]
                   [-t [TAGS [TAGS ...]]] [-s [STATUS [STATUS ...]]]
                   [--age AGE] [--html]
                   [tasks [tasks ...]]
@@ -918,14 +933,13 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -q [QUEUE], --queue [QUEUE]
+  -q QUEUE, --queue QUEUE
                         Check the status of job on specified tasks queue or
                         remote host if the tasks . The queue can be defined in
                         global or local sos configuration file, or a file
                         specified by option --config. A host is assumed to be
                         a remote machine with process type if no configuration
-                        is found. If this option is specified without value,
-                        SoS will list all configured queues and exit.
+                        is found.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
                         the definitions are not defined in global sos
@@ -966,7 +980,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">kill</span> <span class="o">-</span><span class="n">h</span>
@@ -986,7 +1000,7 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos kill [-h] [-a] [-q [QUEUE]] [-t [TAGS [TAGS ...]]] [-c CONFIG]
+<pre>usage: sos kill [-h] [-a] [-q QUEUE] [-t [TAGS [TAGS ...]]] [-c CONFIG]
                 [-v {0,1,2,3,4}]
                 [tasks [tasks ...]]
 
@@ -1000,14 +1014,13 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -a, --all             Kill all tasks in local or specified remote task queue
-  -q [QUEUE], --queue [QUEUE]
+  -q QUEUE, --queue QUEUE
                         Kill jobs on specified tasks queue or remote host if
                         the tasks . The queue can be defined in global or
                         local sos configuration file, or a file specified by
                         option --config. A host is assumed to be a remote
                         machine with process type if no configuration is
-                        found. If this option is specified without value, SoS
-                        will list all configured queues and exit.
+                        found.
   -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
                         Only kill tasks with one of the specified tags.
   -c CONFIG, --config CONFIG
@@ -1038,7 +1051,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">purge</span> <span class="o">-</span><span class="n">h</span>
@@ -1059,7 +1072,7 @@ optional arguments:
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>usage: sos purge [-h] [-a] [--age AGE] [-s STATUS [STATUS ...]]
-                 [-t [TAGS [TAGS ...]]] [-q [QUEUE]] [-c CONFIG]
+                 [-t [TAGS [TAGS ...]]] [-q QUEUE] [-c CONFIG]
                  [-v {0,1,2,3,4}]
                  [tasks [tasks ...]]
 
@@ -1090,14 +1103,13 @@ optional arguments:
                         can be specified.
   -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
                         Only remove tasks with one of the specified tags.
-  -q [QUEUE], --queue [QUEUE]
+  -q QUEUE, --queue QUEUE
                         Remove tasks on specified tasks queue or remote host
                         if the tasks . The queue can be defined in global or
                         local sos configuration file, or a file specified by
                         option --config. A host is assumed to be a remote
                         machine with process type if no configuration is
-                        found. If this option is specified without value, SoS
-                        will list all configured queues and exit.
+                        found.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
                         the definitions are not defined in global sos
@@ -1125,7 +1137,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">pull</span> <span class="o">-</span><span class="n">h</span>
@@ -1145,8 +1157,7 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos pull [-h] [-f [HOST]] [-c CONFIG] [-v {0,1,2,3,4}]
-                items [items ...]
+<pre>usage: sos pull [-h] [-f HOST] [-c CONFIG] [-v {0,1,2,3,4}] items [items ...]
 
 Pull files or directories from remote host to local host
 
@@ -1159,9 +1170,9 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -f [HOST], --from [HOST]
-                        Remote host to which the files will be sent. SoS will
-                        list all configured queues and exit
+  -f HOST, --from HOST  Remote host to which the files will be sent, which
+                        should be one of the hosts defined in sos
+                        configuration files.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
                         the definitions are not defined in global sos
@@ -1190,7 +1201,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">push</span> <span class="o">-</span><span class="n">h</span>
@@ -1210,8 +1221,7 @@ optional arguments:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos push [-h] [-t [HOST]] [-c CONFIG] [-v {0,1,2,3,4}]
-                items [items ...]
+<pre>usage: sos push [-h] [-t HOST] [-c CONFIG] [-v {0,1,2,3,4}] items [items ...]
 
 Push local files or directory to a remote host
 
@@ -1223,9 +1233,9 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -t [HOST], --to [HOST]
-                        Remote host to which the files will be sent. SoS will
-                        list all configured queues and exit
+  -t HOST, --to HOST    Remote host to which the files will be sent, which
+                        should be one of the hosts defined in sos
+                        configuration files.
   -c CONFIG, --config CONFIG
                         A configuration file with host definitions, in case
                         the definitions are not defined in global sos
@@ -1262,7 +1272,7 @@ optional arguments:
 	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="o">-</span><span class="n">h</span>
