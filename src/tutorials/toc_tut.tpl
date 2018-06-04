@@ -72,7 +72,7 @@ function filterDataFrame(id) {
             }
             if (!matched)
                 tr[i].style.display = "none";
-        } 
+        }
     }
 }
 
@@ -83,18 +83,18 @@ function sortDataFrame(id, n, dtype) {
     var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
 
     if (dtype === 'numeric') {
-        var fn = function(a, b) { 
+        var fn = function(a, b) {
             return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
         }
     } else {
         var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim());
             return c > 0 ? 1 : (c < 0 ? -1 : 0) }
     }
     var isSorted = function(array, fn) {
         if (array.length < 2)
             return 1;
-        var direction = fn(array[0], array[1]); 
+        var direction = fn(array[0], array[1]);
         for (var i = 1; i < array.length - 1; ++i) {
             var d = fn(array[i], array[i+1]);
             if (d == 0)
@@ -124,12 +124,12 @@ function sortDataFrame(id, n, dtype) {
 $( document ).ready(function(){
 
             var cfg={'threshold':{{ nb.get('metadata', {}).get('toc', {}).get('threshold', '3') }},     // depth of toc (number of levels)
-             // 'number_sections': {{ 'true' if nb.get('metadata', {}).get('toc', {}).get('number_sections', False) else 'false' }},  
+             // 'number_sections': {{ 'true' if nb.get('metadata', {}).get('toc', {}).get('number_sections', False) else 'false' }},
              'number_sections': false,  // sections numbering
              'toc_cell': false,          // useless here
              'toc_window_display': true, // display the toc window
              "toc_section_display": "block", // display toc contents in the window
-             // 'sideBar':{{ 'true' if nb.get('metadata', {}).get('toc', {}).get('sideBar', False) else 'false' }},      
+             // 'sideBar':{{ 'true' if nb.get('metadata', {}).get('toc', {}).get('sideBar', False) else 'false' }},
              'sideBar':true,       // sidebar or floating window
              'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
             }
@@ -153,12 +153,12 @@ $( document ).ready(function(){
 
             var file=tutorialsDict[$("h1:first").attr("id")];
             var path="http://vatlab.github.io/sos-docs"
-            $("#toc-level0 a").css("color","#126dce");
+            // $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
-            
+
             var tuts=tutorials;
             var pos=tutorials.indexOf(file);
-        
+
             for (var a=pos;a>=0;a--){
                   var name=tuts[a]
                   $('<li><a href="'+path+'/doc/tutorials/'+name+'.html">'+name.replace(/_/g," ")
@@ -181,10 +181,10 @@ $( document ).ready(function(){
 
             // $(".toc #toc-level0").append('<li id="indexHome"><a href="'+path+'/index.html"><b>Home<b></a></li>');
             // var home=$("#toc-level0 #indexHome");
-          
+
             // home.insertBefore("#toc-level0 li:eq(0)");
 
-            
+
             // $(".number_sections-btn").hide();
             // $(".toc_cell_sections-btn".hide();
 
@@ -200,7 +200,7 @@ $( document ).ready(function(){
  {% for item in nb['metadata'].get('sos',{}).get('kernels',{}) %}
 
 {%- if item[2] -%}
-.lan_{{item[0]}} .input_prompt { background-color: {{item[3]}} !important }  
+.lan_{{item[0]}} .input_prompt { background-color: {{item[3]}} !important }
 
 {%- else -%}
 .lan_{{item[0]}} {}
