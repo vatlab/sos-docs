@@ -244,38 +244,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="General-introduction">General introduction<a class="anchor-link" href="#General-introduction">&#182;</a></h2><h3 id="What-is-docker-and-why-it-is-helpful">What is docker and why it is helpful<a class="anchor-link" href="#What-is-docker-and-why-it-is-helpful">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This is a big question to answer but in essence you can think docker containers as virtual machines with applications but without the bulky OS part, or applications with stripped down OSes. Docker containers are much more lightweight than virtual machines because all docker containers share the same core OS and related containers (e.g. different applications derived from the same CentOS or Ubuntu OS) share the same base container. Please refer to the <a href="https://www.docker.com/">docker website</a> for details about docker. I have found it helpful to watch a few youtube videos on docker.</p>
-<p>The reason why docker is very helpful in building (bioinformatics) workflows are that</p>
-<ol>
-<li><p>Applications are encapsulated in docker containers so that they do not interfere with the underlying OS, and with other applications. For example, we can run a workflow with applications that based on different versions of Python2 and Python 3 without having to install them locally and calling the correct version of Python, because all applications use the specific version of Python and required libraries and tools inside their own containers.</p>
-</li>
-<li><p>Workflows will be more stable and reproducible because unlike, for example, a local installation of Python that can be affected by other software and upgrades of python, Docker containers are stable and will not change.</p>
-</li>
-<li><p>The same docker containers can be executed on different OS (e.g. various version of Linux, MacOSX etc) so your workflow built on a Mac OS workstation can be executed on a cluster environment.</p>
-</li>
-</ol>
-<p>There are of course some complexity in the use of docker but SoS has made it extremely easy to use docker in your workflows.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Installing-and-configuring-docker">Installing and configuring docker<a class="anchor-link" href="#Installing-and-configuring-docker">&#182;</a></h3><p>Docker is relatively new and is evolving very fast. It is crucial for you to install the latest version from <a href="https://www.docker.com/">docker website</a>. This website provides very detailed step by step instruction and you should have no problem installing docker on your machine.</p>
-<p>After installation, you should be able to start a docker terminal and run command</p>
-<div class="highlight"><pre><span></span>$ docker run hello-world
-</pre></div>
-<p>as suggested by the documentation. Depending on the different versions of docker (e.g. docker under windows), docker might be run under a virtual machine. It is very important to understand that <strong>the configuration (e.g. RAM, CPU) of docker machines are different from the host machines</strong> so your docker machine might be restricuted to, for example, 1 CPU, 1G of RAM, which is insufficient for any serious work. You will most likely need to re-configure your docker virtual machine (e.g. from VirtualBox app locate a machine named <code>default</code>).</p>
+<p>Before you run any script inside docker, please check if docker is installed by running command <code>docker</code>. You can install docker by yourself if you have root privilege. The <a href="https://docs.docker.com/">docker website</a> has detailed instructions on installing docker on different operating systems.</p>
 
 </div>
 </div>
@@ -292,15 +261,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="How-SoS-works-with-docker">How SoS works with docker<a class="anchor-link" href="#How-SoS-works-with-docker">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS executes scripts inside docker by calling command <code>docker run</code> with appropriate parameters. Suppose you do not have ruby installed locally and would like to run a ruby script, you can execute it inside a <code>ruby</code> container.</p>
+<p>SoS executes scripts inside docker by calling command <code>docker run</code> with appropriate parameters. Suppose you do not have ruby installed locally and would like to run a ruby script, you can execute it inside a <code>ruby</code> container by specifying the docker image to use:</p>
 
 </div>
 </div>
@@ -352,7 +313,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The actual <code>docker run</code> command executed by SoS could be shown with option <code>-v3</code> to the <code>%run</code> command, and would look similar to</p>
+<p>The actual <code>docker run</code> command executed by SoS can be shown with option <code>-v3</code> (set verbosity to <code>DEBUG</code>) to the <code>%run</code> command, and would look similar to</p>
 
 <pre><code>docker run --rm  
     -v $(pwd):$(pwd)
@@ -373,7 +334,7 @@ $( document ).ready(function(){
 <li><code>ruby</code> name of the docker image</li>
 <li><code>ruby /var/lib/sos/docker_run_30258.rb</code> command that execute the script.</li>
 </ul>
-<p>The details of these options could be found at the <a href="https://docs.docker.com/engine/reference/run/">docker run manual</a>. They are chosen by the default to work with a majority of the scenarios but can fail for some docker images, in which case you will need to use SoS action parameters to customized how the images are executed. These parameters include general <a href="https://vatlab.github.io/sos-docs/doc/documentation/Targets_and_Actions.html#Action-options-12">action parameters</a> and <a href="https://vatlab.github.io/sos-docs/doc/documentation/Targets_and_Actions.html#docker_image">parameters that are specific to <code>docker_image</code></a>.</p>
+<p>The details of these options could be found at the <a href="https://docs.docker.com/engine/reference/run/">docker run manual</a>. They are chosen by the default to work with a majority of the scenarios but can fail for some docker images, in which case you will have to use additional options to customized how the images are executed. This tutorial demonstrates the use of options for some common scenarios but please refer to the SoS documentation on <a href="https://vatlab.github.io/sos-docs/doc/documentation/Targets_and_Actions.html#Action-options-12">general action options</a> and <a href="https://vatlab.github.io/sos-docs/doc/documentation/Targets_and_Actions.html#docker_image">options that are specific to <code>docker_image</code></a>.</p>
 
 </div>
 </div>
@@ -382,7 +343,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Building-docker-image-(action-docker_build)">Building docker-image (action <code>docker_build</code>)<a class="anchor-link" href="#Building-docker-image-(action-docker_build)">&#182;</a></h3>
+<h2 id="Building-docker-image-(action-docker_build)">Building docker-image (action <code>docker_build</code>)<a class="anchor-link" href="#Building-docker-image-(action-docker_build)">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -488,7 +449,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Customized-working-directory-(workdir-and-docker_workdir)">Customized working directory (<code>workdir</code> and <code>docker_workdir</code>)<a class="anchor-link" href="#Customized-working-directory-(workdir-and-docker_workdir)">&#182;</a></h3>
+<h2 id="Customized-working-directory-(workdir-and-docker_workdir)">Customized working directory (<code>workdir</code> and <code>docker_workdir</code>)<a class="anchor-link" href="#Customized-working-directory-(workdir-and-docker_workdir)">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -660,7 +621,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Sharing-of-input-and-output-files-(volumes)">Sharing of input and output files (<code>volumes</code>)<a class="anchor-link" href="#Sharing-of-input-and-output-files-(volumes)">&#182;</a></h3>
+<h2 id="Sharing-of-input-and-output-files-(volumes)">Sharing of input and output files (<code>volumes</code>)<a class="anchor-link" href="#Sharing-of-input-and-output-files-(volumes)">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -668,7 +629,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Because the working directory of the docker image is set by default to the current working directory, you can apply a command inside a docker image to files in the current working directory, and create files in it as well.</p>
+<p>Because the working directory of the docker image is set by default to the current working directory, you can apply a command inside a docker image to work on files in the current working directory, and create files in it as well.</p>
 
 </div>
 </div>
@@ -752,7 +713,8 @@ $( document ).ready(function(){
 
 </div>
 </div>
-</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+	
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
@@ -799,6 +761,7 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 
 </div>
+  </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -910,7 +873,7 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Finally, as a word of caution, although it is tempting to share common directories (e.g. <code>/home</code>, <code>/Users</code>, <code>/Volumes</code> etc) to the docker image, sharing of extra directories can cause unexpected problems. For example, a docker image might contain a useful <code>/Users</code> directory and sharing host <code>/Users</code> will override the directory inside docker.</p>
+<p>Although it is tempting to share common directories (e.g. <code>/home</code>, <code>/Users</code>, <code>/Volumes</code> etc) to the docker image, sharing of extra directories can cause unexpected problems. For example, a docker image might contain a useful <code>/Users</code> directory and sharing host <code>/Users</code> will override the directory inside docker.</p>
 <p>Furthermore, sharing <code>$HOME</code> will expose a lot of user settings (e.g. settings under <code>~/.R</code>, <code>~/.sos</code>) to the docker image and might affect how the docker image runs. If you really need to expose a home directory to a docker image, you might want to expose it as a different directory inside of docker. For example, the following script shared home directory as <code>/data</code> inside docker so that it does not interfere with the home directory of the docker image.</p>
 
 </div>
@@ -956,7 +919,7 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Customize-user-and-group-ID-(user)">Customize user and group ID (<code>user</code>)<a class="anchor-link" href="#Customize-user-and-group-ID-(user)">&#182;</a></h3>
+<h2 id="Customize-user-and-group-ID-(user)">Customize user and group ID (<code>user</code>)<a class="anchor-link" href="#Customize-user-and-group-ID-(user)">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -1012,7 +975,7 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Docker-images-with-ENTRYPOINT">Docker images with <code>ENTRYPOINT</code><a class="anchor-link" href="#Docker-images-with-ENTRYPOINT">&#182;</a></h3>
+<h2 id="Docker-images-with-ENTRYPOINT">Docker images with <code>ENTRYPOINT</code><a class="anchor-link" href="#Docker-images-with-ENTRYPOINT">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -1175,9 +1138,21 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Limitations">Limitations<a class="anchor-link" href="#Limitations">&#182;</a></h2><ul>
-<li>Virtual Box virtual machine does not support symbolic link so running <code>ln -s</code> inside a docker machine under Mac will cause a strange error message <code>Read-only file system</code>.</li>
-<li>Killing a sos task or sos process will not terminate scripts that are executed by the docker daemon.</li>
+<h2 id="Common-problems">Common problems<a class="anchor-link" href="#Common-problems">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><p>If you are using Docker Toolbox instead of Docker for Mac on a Mac, the docker image will be executed inside a VirtualBox virtual machine, which has its own shared directories, allocated CPUs and memories. It is therefore possible that your docker image will run out of memory even when your system has plenty of RAM left. Re-configure your docker VM if this happens.</p>
+</li>
+<li><p>Symbolic links are different from OS to OS so creating symbolic links inside docker might fail with strange error messages such as "Read-only file system". Even if you can create symbolic links inside docker, the created links might not be accessible from the host machine.</p>
+</li>
+<li><p>Killing a sos task or sos process will not terminate scripts that are executed by the docker daemon. They will have to be killed explicitly using docker commands.</p>
+</li>
 </ul>
 
 </div>
