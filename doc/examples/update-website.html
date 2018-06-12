@@ -274,7 +274,7 @@ tr.subworkflow.step-row {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               130 lines
+               132 lines
                <span class="file-info-divider"></span>
                3.8 kB
             </div>
@@ -294,6 +294,7 @@ output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
 	cd ../src/documentation
+    rm -f ${_output:a}
 	sos convert ${_input:a} ${_output:a}  --template toc_doc
   	perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output:a}
 
@@ -304,6 +305,7 @@ output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
 	cd ../src/tutorials
+    rm -f ${_output:a}
 	sos convert ${_input:a} ${_output:a}  --template toc_tut
   	perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output:a}
 
@@ -418,7 +420,7 @@ run: workdir='..', expand=True
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
          </a>
          &nbsp;
-         <a href="https://vatlab.github.io/sos-docs/">SoS Workflow Engine</a> version <samp>0.9.14.9</samp>
+         <a href="https://vatlab.github.io/sos-docs/">SoS Workflow Engine</a> version <samp>0.9.14.10</samp>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
