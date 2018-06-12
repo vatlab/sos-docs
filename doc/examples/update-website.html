@@ -276,7 +276,7 @@ tr.subworkflow.step-row {
             <div class="fileinfo">
                132 lines
                <span class="file-info-divider"></span>
-               3.8 kB
+               3.9 kB
             </div>
          </div>
          <div class="filecontent">
@@ -285,7 +285,7 @@ tr.subworkflow.step-row {
 
 [getFileNames]
 run: 
-	python findnames.py ..
+    python findnames.py ..
 
 [convert-documentation]
 input:  '../src/documentation/*.ipynb', group_by=1
@@ -293,10 +293,10 @@ depends: '../src/documentation/toc_doc.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
-	cd ../src/documentation
+    cd ../src/documentation
     rm -f ${_output:a}
-	sos convert ${_input:a} ${_output:a}  --template toc_doc
-  	perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output:a}
+    sos convert ${_input:a} ${_output:a}  --template toc_doc
+      perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output:a}
 
 [convert-tutorials]
 input:  '../src/tutorials/*.ipynb', group_by=1
@@ -304,54 +304,54 @@ depends: '../src/tutorials/toc_tut.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
-	cd ../src/tutorials
+    cd ../src/tutorials
     rm -f ${_output:a}
-	sos convert ${_input:a} ${_output:a}  --template toc_tut
-  	perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output:a}
+    sos convert ${_input:a} ${_output:a}  --template toc_tut
+      perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output:a}
 
 [convert-homepage]
 input:  '../src/homepage/*.ipynb', group_by=1
 output: f"../{_input:bn}.html"
 
 run: expand=True
-	cd ../src/tutorials
-	sos convert {_input:a} {_output:a} --template basic
+    cd ../src/tutorials
+    sos convert {_input:a} {_output:a} --template basic
 
 [convert-example-scripts]
 input:  '../src/examples/*.sos', 'update-website', group_by=1
 output: f"../doc/examples/{_input:bn}.html"
 
 run: workdir='../doc/examples', expand=True
-	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --raw {_input:b} --lineno --style default
+    cp {_input:a} .
+    sos convert {_input:b} {_output:b} --raw {_input:b} --lineno --style default
 
 [convert-example-notebooks]
 input:  '../src/examples/*.ipynb', group_by=1
 output: f"../doc/examples/{_input:bn}.html"
 
 run: workdir='../doc/examples', expand=True
-	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --template sos-full
+    cp {_input:a} .
+    sos convert {_input:b} {_output:b} --template sos-full
 
 [convert-example-report]
 input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/RNASeqDE.ipynb', 
-	'../src/examples/RNASeqGTEx.ipynb', group_by=1
+    '../src/examples/RNASeqGTEx.ipynb', group_by=1
 output: f"../doc/examples/{_input:bn}_report.html"
 
 run: workdir='../doc/examples', expand=True
-	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --template sos-report
+    cp {_input:a} .
+    sos convert {_input:b} {_output:b} --template sos-report
 
 [convert-large-examples]
 input:  '../src/examples/*/*.sos', group_by=1
 output: f"../doc/examples/{_input:db}/{_input:bn}.html"
 
 run: workdir='../doc/examples', expand=True
-	[ -d {_input:db} ] || mkdir {_input:db}
-	cp {_input:a} {_input:db}
-	cp {_input:da}/README.md {_input:db}
-	cd {_input:db}
-	sos convert {_input:b} {_output:b} --raw {_input:b}
+    [ -d {_input:db} ] || mkdir {_input:db}
+    cp {_input:a} {_input:db}
+    cp {_input:da}/README.md {_input:db}
+    cd {_input:db}
+    sos convert {_input:b} {_output:b} --raw {_input:b}
 
 [index-site]
 input: '../*.html', '../doc/documentation/*.html',
@@ -366,10 +366,10 @@ run:
 input: '../src/documentation/*.ipynb', group_by=1
 
 run: expand=True
-	# convert ipynb to sos
-	sos convert {_input:a} {_input:bn}.sos
-	# then from sos to ipynb with execution
-	sos convert {_input:bn}.sos {_input:b} --execute
+    # convert ipynb to sos
+    sos convert {_input:a} {_input:bn}.sos
+    # then from sos to ipynb with execution
+    sos convert {_input:bn}.sos {_input:b} --execute
 
 [check-link]
 
@@ -409,9 +409,9 @@ sos_run('index-site')
 parameter: msg = "Update website"
 
 run: workdir='..', expand=True
-	git add --all doc/documentation doc/tutorials doc/examples doc/media tipuesearch/*.js *.html
-	git commit --no-verify -m '{msg}' || true
-	git push --no-verify || true
+    git add --all doc/documentation doc/tutorials doc/examples doc/media tipuesearch/*.js *.html
+    git commit --no-verify -m '{msg}' || true
+    git push --no-verify || true
 </textarea>
          </div>
       </div>
