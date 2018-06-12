@@ -1,18 +1,8 @@
-<!-- Global Site Tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments)};
-  gtag('js', new Date());
-
-  gtag('config', 'UA-107286198-1');
-</script>
-
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>File_Conversion</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<title>File_Conversion</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
 
@@ -22,7 +12,6 @@
 
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -47,145 +36,160 @@
     </script>
     <!-- End of mathjax configuration --></head>
 
+
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments)};
+   gtag('js', new Date());
+   
+   gtag('config', 'UA-107286198-1');
+</script>
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+  
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
 <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
 <style>  /* defined here in case the main.css below cannot be loaded */
-.lev1 {margin-left: 80px}
-.lev2 {margin-left: 100px}
-.lev3 {margin-left: 120px}
-.lev4 {margin-left: 140px}
-.lev5 {margin-left: 160px}
-.lev6 {margin-left: 180px}
+   .lev1 {margin-left: 80px}
+   .lev2 {margin-left: 100px}
+   .lev3 {margin-left: 120px}
+   .lev4 {margin-left: 140px}
+   .lev5 {margin-left: 160px}
+   .lev6 {margin-left: 180px}
+   .cm-sos-interpolated {
+  background-color: #EDD5F3;
+}
+.cm-sos-sigil {
+  background-color: #EDD5F3;
+}
 </style>
-
 <link rel="stylesheet" type="text/css" href="../../css/jt.css">
 <link rel="stylesheet" type="text/css" href="../../css/toc2.css">
-
 <script src="../../js/doc_toc.js"></script>
-
- <script src="../../js/docs.js"></script>
-
+<script src="../../js/docs.js"></script>
 <script>
-    MathJax.Hub.Config({
-        "HTML-CSS": {
-            preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
-            styles: {
-                scale: 110,
-                ".MathJax_Display": {
-                    "font-size": "110%",
-                }
-            }
-        }
-    });
+   MathJax.Hub.Config({
+       "HTML-CSS": {
+           preferredFont: "TeX",
+           availableFonts: ["STIX","TeX"],
+           styles: {
+               scale: 110,
+               ".MathJax_Display": {
+                   "font-size": "110%",
+               }
+           }
+       }
+   });
 </script>
-
 <script>
-
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        }
-    }
-}
-
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-
-    if (dtype === 'numeric') {
-        var fn = function(a, b) {
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim());
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]);
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-
-    var sorted = isSorted(tr, fn);
-
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-
-
-$( document ).ready(function(){
-
-            var cfg={'threshold':4,     // depth of toc (number of levels)
-             // 'number_sections': true,
-             'number_sections': false,  // sections numbering
-             'toc_cell': false,          // useless here
-             'toc_window_display': true, // display the toc window
-             "toc_section_display": "block", // display toc contents in the window
-             // 'sideBar':true,
-             'sideBar':true,       // sidebar or floating window
-             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
-            }
-
-            var st={};                  // some variables used in the script
-            st.rendering_toc_cell = false;
-            st.config_loaded = false;
-            st.extension_initialized=false;
-            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-            st.nbcontainer_width = $('#notebook-container').css('width')
-            st.oldTocHeight = undefined
-            st.cell_toc = undefined;
-            st.toc_index=0;
-
-            // fire the main function with these parameters
-
-
-            table_of_contents(cfg,st);
-
-
-            var file=tutorialsDict[$("h1:first").attr("id")];
-            var path="http://vatlab.github.io/sos-docs"
+   function filterDataFrame(id) {
+       var input = document.getElementById("search_" + id);
+       var filter = input.value.toUpperCase();
+       var table = document.getElementById("dataframe_" + id);
+       var tr = table.getElementsByTagName("tr");
+   
+       // Loop through all table rows, and hide those who don't match the search query
+       for (var i = 1; i < tr.length; i++) {
+           for (var j = 0; j < tr[i].cells.length; ++j) {
+               var matched = false;
+               if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                   tr[i].style.display = "";
+                   matched = true
+                   break;
+               }
+               if (!matched)
+                   tr[i].style.display = "none";
+           } 
+       }
+   }
+   
+   function sortDataFrame(id, n, dtype) {
+       var table = document.getElementById("dataframe_" + id);
+   
+       var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+       var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+   
+       if (dtype === 'numeric') {
+           var fn = function(a, b) { 
+               return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+           }
+       } else {
+           var fn = function(a, b) {
+               var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+               return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+       }
+       var isSorted = function(array, fn) {
+           if (array.length < 2)
+               return 1;
+           var direction = fn(array[0], array[1]); 
+           for (var i = 1; i < array.length - 1; ++i) {
+               var d = fn(array[i], array[i+1]);
+               if (d == 0)
+                   continue;
+               else if (direction == 0)
+                   direction = d;
+               else if (direction != d)
+                   return 0;
+               }
+           return direction;
+       }
+   
+       var sorted = isSorted(tr, fn);
+   
+       if (sorted == 1 || sorted == -1) {
+           // if sorted already, reverse it
+           for(var i = tr.length - 1; i >= 0; --i)
+               tb.appendChild(tr[i]); // append each row in order
+       } else {
+           tr = tr.sort(fn);
+           for(var i = 0; i < tr.length; ++i)
+               tb.appendChild(tr[i]); // append each row in order
+       }
+   }
+   
+   $( document ).ready(function(){
+   
+               var cfg={'threshold':4,     // depth of toc (number of levels)
+                // 'number_sections': true,  // sections numbering
+                'number_sections': false, 
+                'toc_cell': false,          // useless here
+                'toc_window_display': true, // display the toc window
+                "toc_section_display": "block", // display toc contents in the window
+                // 'sideBar':true,      
+                'sideBar':true,       // sidebar or floating window
+                'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+               }
+   
+               var st={};                  // some variables used in the script
+               st.rendering_toc_cell = false;
+               st.config_loaded = false;
+               st.extension_initialized=false;
+               st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+               st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+               st.nbcontainer_width = $('#notebook-container').css('width')
+               st.oldTocHeight = undefined
+               st.cell_toc = undefined;
+               st.toc_index=0;
+   
+               // fire the main function with these parameters
+   
+   
+   
+               table_of_contents(cfg,st);
+               var file=tutorialsDict[$("h1:first").attr("id")];
+               var path="http://vatlab.github.io/sos-docs"
             // $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
 
@@ -219,15 +223,14 @@ $( document ).ready(function(){
 
 
             // $(".number_sections-btn").hide();
-            // $(".toc_cell_sections-btn".hide();
-
-
-    });
+            // $(".toc_cell_sections-btn".hide();   
+   
+       });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
-
- .lan_SoS {}
-
+   .lan_SoS {}
 </style>
+
+
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -249,17 +252,16 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="o">-</span><span class="n">h</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">!sos convert -h</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -330,7 +332,8 @@ markdown, and terminal output.
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -363,17 +366,16 @@ markdown, and terminal output.
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="n">myscript</span><span class="o">.</span><span class="n">sos</span> <span class="o">--</span><span class="n">to</span> <span class="n">html</span> <span class="o">-</span><span class="n">h</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">!sos convert myscript.sos --to html -h</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -412,7 +414,8 @@ optional arguments:
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -430,17 +433,16 @@ optional arguments:
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">convert</span> <span class="o">../</span><span class="n">examples</span><span class="o">/</span><span class="n">update_toc</span><span class="o">.</span><span class="n">sos</span> <span class="n">update_toc</span><span class="o">.</span><span class="n">html</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">!sos convert ../examples/update_toc.sos update_toc.html</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -462,7 +464,8 @@ optional arguments:
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -617,6 +620,39 @@ optional arguments:
     </div>
   </div>
 </body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+	  <script src="../../js/sos-mode.js"> </script>
+      <script>
+		   function highlight_cells(cells, i, interval) {
+			  setTimeout(function() {
+				var editor = CodeMirror.fromTextArea(cells[i], {
+		           lineNumbers: false,
+				   styleActiveLine: true,
+		           matchBrackets: true,
+				   readOnly: true,
+		           mode: 'sos',
+				   base_mode: cells[i].name,
+		         });
+				$(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>" 
+					+ cells[i].name + "</option></select>");
+		      if (i < cells.length)
+			    highlight_cells(cells, i + 1, interval);
+			}, interval);
+		  }
+
+	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      </script>
+
+
 
  
 

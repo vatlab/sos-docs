@@ -1,18 +1,8 @@
-<!-- Global Site Tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments)};
-  gtag('js', new Date());
-
-  gtag('config', 'UA-107286198-1');
-</script>
-
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Targets_and_Actions</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<title>Targets_and_Actions</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
 
@@ -22,7 +12,6 @@
 
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -48,184 +37,199 @@
     <!-- End of mathjax configuration --></head>
 
 
- <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
-<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
-
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
-<style>  /* defined here in case the main.css below cannot be loaded */
-.lev1 {margin-left: 80px}
-.lev2 {margin-left: 100px}
-.lev3 {margin-left: 120px}
-.lev4 {margin-left: 140px}
-.lev5 {margin-left: 160px}
-.lev6 {margin-left: 180px}
-</style>
-
-<link rel="stylesheet" type="text/css" href="../../css/jt.css">
-<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
-
-<script src="../../js/doc_toc.js"></script>
-
- <script src="../../js/docs.js"></script>
-
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
 <script>
-    MathJax.Hub.Config({
-        "HTML-CSS": {
-            preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
-            styles: {
-                scale: 110,
-                ".MathJax_Display": {
-                    "font-size": "110%",
-                }
-            }
-        }
-    });
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments)};
+   gtag('js', new Date());
+   
+   gtag('config', 'UA-107286198-1');
 </script>
 
-<script>
 
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        } 
-    }
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+  
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<style>  /* defined here in case the main.css below cannot be loaded */
+   .lev1 {margin-left: 80px}
+   .lev2 {margin-left: 100px}
+   .lev3 {margin-left: 120px}
+   .lev4 {margin-left: 140px}
+   .lev5 {margin-left: 160px}
+   .lev6 {margin-left: 180px}
+   .cm-sos-interpolated {
+  background-color: #EDD5F3;
 }
-
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-
-    if (dtype === 'numeric') {
-        var fn = function(a, b) { 
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]); 
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-
-    var sorted = isSorted(tr, fn);
-
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
+.cm-sos-sigil {
+  background-color: #EDD5F3;
 }
-
-$( document ).ready(function(){
-
-            var cfg={'threshold':4,     // depth of toc (number of levels)
-             // 'number_sections': true,  // sections numbering
-             'number_sections': false, 
-             'toc_cell': false,          // useless here
-             'toc_window_display': true, // display the toc window
-             "toc_section_display": "block", // display toc contents in the window
-             // 'sideBar':true,      
-             'sideBar':true,       // sidebar or floating window
-             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
-            }
-
-            var st={};                  // some variables used in the script
-            st.rendering_toc_cell = false;
-            st.config_loaded = false;
-            st.extension_initialized=false;
-            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-            st.nbcontainer_width = $('#notebook-container').css('width')
-            st.oldTocHeight = undefined
-            st.cell_toc = undefined;
-            st.toc_index=0;
-
-            // fire the main function with these parameters
-
-
-
-            table_of_contents(cfg,st);
-
-            var file=documentationDict[$("h1:first").attr("id")];
-            var path="http://vatlab.github.io/sos-docs"
-            $("#toc-level0 a").css("color","#126dce");
-            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
-            var docs=documentation;
-            var pos=documentation.indexOf(file);
-        
-            for (var a=pos;a>=0;a--){
-                  var name=docs[a]
-                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
-                   + '&nbsp ' + '<i class="fa ' +
-                      (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' +'</a></li>').insertBefore("#toc-level0 li:eq(0)");
-            }
-            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
-
-
-            for (var a=pos+1;a<docs.length;a++){
-                  var name=docs[a]
-                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
-                    + '&nbsp' + '<i class="fa fa-caret-right"></i>' +'</a></li>');
-            }
-
-            // var docs=documentation
-            // for (var a =0;a<docs.length;a++){
-            //       var name =docs[a];
-            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
-            // }
-            // var home=$("#toc-level0 #indexHome");
-          
-            // home.insertBefore("#toc-level0 li:eq(0)");
-
-            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
-            // $("#toc").attr("style","max-height:938px")
-
-
-    });
-</script><style>  /* defined here in case the main.css below cannot be loaded */
-
- .lan_SoS {}.lan_SoS {}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_python3 {}
-
 </style>
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+<script src="../../js/doc_toc.js"></script>
+<script src="../../js/docs.js"></script>
+<script>
+   MathJax.Hub.Config({
+       "HTML-CSS": {
+           preferredFont: "TeX",
+           availableFonts: ["STIX","TeX"],
+           styles: {
+               scale: 110,
+               ".MathJax_Display": {
+                   "font-size": "110%",
+               }
+           }
+       }
+   });
+</script>
+<script>
+   function filterDataFrame(id) {
+       var input = document.getElementById("search_" + id);
+       var filter = input.value.toUpperCase();
+       var table = document.getElementById("dataframe_" + id);
+       var tr = table.getElementsByTagName("tr");
+   
+       // Loop through all table rows, and hide those who don't match the search query
+       for (var i = 1; i < tr.length; i++) {
+           for (var j = 0; j < tr[i].cells.length; ++j) {
+               var matched = false;
+               if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                   tr[i].style.display = "";
+                   matched = true
+                   break;
+               }
+               if (!matched)
+                   tr[i].style.display = "none";
+           } 
+       }
+   }
+   
+   function sortDataFrame(id, n, dtype) {
+       var table = document.getElementById("dataframe_" + id);
+   
+       var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+       var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+   
+       if (dtype === 'numeric') {
+           var fn = function(a, b) { 
+               return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+           }
+       } else {
+           var fn = function(a, b) {
+               var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+               return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+       }
+       var isSorted = function(array, fn) {
+           if (array.length < 2)
+               return 1;
+           var direction = fn(array[0], array[1]); 
+           for (var i = 1; i < array.length - 1; ++i) {
+               var d = fn(array[i], array[i+1]);
+               if (d == 0)
+                   continue;
+               else if (direction == 0)
+                   direction = d;
+               else if (direction != d)
+                   return 0;
+               }
+           return direction;
+       }
+   
+       var sorted = isSorted(tr, fn);
+   
+       if (sorted == 1 || sorted == -1) {
+           // if sorted already, reverse it
+           for(var i = tr.length - 1; i >= 0; --i)
+               tb.appendChild(tr[i]); // append each row in order
+       } else {
+           tr = tr.sort(fn);
+           for(var i = 0; i < tr.length; ++i)
+               tb.appendChild(tr[i]); // append each row in order
+       }
+   }
+   
+   $( document ).ready(function(){
+   
+               var cfg={'threshold':4,     // depth of toc (number of levels)
+                // 'number_sections': true,  // sections numbering
+                'number_sections': false, 
+                'toc_cell': false,          // useless here
+                'toc_window_display': true, // display the toc window
+                "toc_section_display": "block", // display toc contents in the window
+                // 'sideBar':true,      
+                'sideBar':true,       // sidebar or floating window
+                'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+               }
+   
+               var st={};                  // some variables used in the script
+               st.rendering_toc_cell = false;
+               st.config_loaded = false;
+               st.extension_initialized=false;
+               st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+               st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+               st.nbcontainer_width = $('#notebook-container').css('width')
+               st.oldTocHeight = undefined
+               st.cell_toc = undefined;
+               st.toc_index=0;
+   
+               // fire the main function with these parameters
+   
+   
+   
+               table_of_contents(cfg,st);
+   
+               var file=documentationDict[$("h1:first").attr("id")];
+               var path="http://vatlab.github.io/sos-docs"
+               $("#toc-level0 a").css("color","#126dce");
+               $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+               var docs=documentation;
+               var pos=documentation.indexOf(file);
+           
+               for (var a=pos;a>=0;a--){
+                     var name=docs[a]
+                     $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
+                      + '&nbsp ' + '<i class="fa ' +
+                         (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' +'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+               }
+               $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+   
+   
+               for (var a=pos+1;a<docs.length;a++){
+                     var name=docs[a]
+                     $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
+                       + '&nbsp' + '<i class="fa fa-caret-right"></i>' +'</a></li>');
+               }
+   
+               // var docs=documentation
+               // for (var a =0;a<docs.length;a++){
+               //       var name =docs[a];
+               //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+               // }
+               // var home=$("#toc-level0 #indexHome");
+             
+               // home.insertBefore("#toc-level0 li:eq(0)");
+   
+               // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+               // $("#toc").attr("style","max-height:938px")
+   
+   
+       });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+   .lan_SoS {}.lan_SoS {}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_python3 {}
+</style>
+
+
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -256,22 +260,21 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="n">st</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;I just slept {:.2f} seconds&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">st</span><span class="p">))</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+[0]
+import time
+st = time.time()
+time.sleep(1)
+print('I just slept {:.2f} seconds'.format(time.time() - st))</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -293,7 +296,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -303,22 +307,21 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">n</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="n">st</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;I just slept {:.2f} seconds&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">st</span><span class="p">))</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -n
+[0]
+import time
+st = time.time()
+time.sleep(1)
+print('I just slept {:.2f} seconds'.format(time.time() - st))</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -340,7 +343,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -350,23 +354,22 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="kn">python:</span>
-    <span class="kn">import</span> <span class="nn">time</span>
-    <span class="n">st</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;I just slept {:.2f} seconds&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">st</span><span class="p">))</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+[0]
+python:
+    import time
+    st = time.time()
+    time.sleep(1)
+    print('I just slept {:.2f} seconds'.format(time.time() - st))</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -388,7 +391,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -398,23 +402,22 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">n</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="kn">python:</span>
-    <span class="kn">import</span> <span class="nn">time</span>
-    <span class="n">st</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;I just slept {:.2f} seconds&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">st</span><span class="p">))</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -n
+[0]
+python:
+    import time
+    st = time.time()
+    time.sleep(1)
+    print('I just slept {:.2f} seconds'.format(time.time() - st))</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -442,7 +445,8 @@ print(&#39;I just slept {:.2f} seconds&#39;.format(time.time() - st))
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -489,20 +493,20 @@ print(&#39;I just slept {:.2f} seconds&#39;.format(time.time() - st))
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">echo</span> <span class="s2">&quot;something&quot;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">!echo "something" > a.txt
 
-<span class="kn">sh:</span> <span class="kp">active</span><span class="o">=</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;a.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
-  <span class="n">echo</span> <span class="sb">`wc a.txt`</span>
-</pre></div>
+sh: active=path('a.txt').exists()
+  echo `wc a.txt`
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -524,7 +528,8 @@ print(&#39;I just slept {:.2f} seconds&#39;.format(time.time() - st))
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -535,24 +540,23 @@ print(&#39;I just slept {:.2f} seconds&#39;.format(time.time() - st))
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">seq</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="s1">&#39;seq&#39;</span>
-<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="nb">all</span> <span class="n">groups</span> <span class="p">{</span><span class="n">_index</span><span class="p">}</span>
-<span class="kn">run:</span> <span class="kp">active</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="n">even</span> <span class="n">groups</span> <span class="p">{</span><span class="n">_index</span><span class="p">}</span>
-<span class="kn">run:</span> <span class="kp">active</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-   <span class="n">echo</span> <span class="n">I</span> <span class="n">am</span> <span class="kp">active</span> <span class="n">at</span> <span class="n">last</span> <span class="n">group</span> <span class="p">{</span><span class="n">_index</span><span class="p">}</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">seq = range(5)
+input: for_each='seq'
+run: expand=True
+   echo I am active at all groups {_index}
+run: active=slice(None, None, 2), expand=True
+   echo I am active at even groups {_index}
+run: active=-1, expand=True
+   echo I am active at last group {_index}</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -591,7 +595,8 @@ I am active at last group 4
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -610,20 +615,19 @@ I am active at last group 4
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_sos">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
-<span class="kn">run:</span> 
-    <span class="n">This</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">shell</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Step after run&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="sos">%sandbox --expect-error
+run: 
+    This is not shell
+print('Step after run')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -665,7 +669,8 @@ RuntimeError: Failed to execute commmand &#34;/bin/bash -ev /var/folders/ys/gnzk
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -675,19 +680,18 @@ RuntimeError: Failed to execute commmand &#34;/bin/bash -ev /var/folders/ys/gnzk
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">run:</span> <span class="n">allow_error</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">This</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">shell</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Step after run&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">run: allow_error=True
+    This is not shell
+print('Step after run')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -732,7 +736,8 @@ RuntimeError: Failed to execute commmand &#34;/bin/bash -ev /var/folders/ys/gnzk
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -764,22 +769,22 @@ RuntimeError: Failed to execute commmand &#34;/bin/bash -ev /var/folders/ys/gnzk
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">bash:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-n {filename:q}&#39;</span>
-    <span class="n">echo</span> <span class="s2">&quot;-n means running in dryrun mode (only check syntax)&quot;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">bash: args='-n {filename:q}'
+    echo "-n means running in dryrun mode (only check syntax)"</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -789,18 +794,17 @@ RuntimeError: Failed to execute commmand &#34;/bin/bash -ev /var/folders/ys/gnzk
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">python:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-m timeit {script}&#39;</span>
-    <span class="s1">&#39;&quot;-&quot;.join(str(n) for n in range(100))&#39;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">python: args='-m timeit {script}'
+    '"-".join(str(n) for n in range(100))'</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -822,7 +826,8 @@ RuntimeError: Failed to execute commmand &#34;/bin/bash -ev /var/folders/ys/gnzk
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -960,25 +965,24 @@ is executed in a docker image. These options include</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
-<span class="kn">bash:</span>
-    <span class="n">echo</span> <span class="s1">&#39;content of a.txt&#39;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+[10]
+output: 'a.txt'
+bash:
+    echo 'content of a.txt' > a.txt
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="nb">input</span><span class="o">=</span><span class="s1">&#39;a.txt&#39;</span>
-</pre></div>
+[20]
+report: input='a.txt'</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1001,7 +1005,8 @@ is executed in a docker image. These options include</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1011,24 +1016,23 @@ is executed in a docker image. These options include</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">a</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;a.txt&#39;</span><span class="p">]</span>
-<span class="kn">bash:</span>
-    <span class="n">echo</span> <span class="s1">&#39;content of a.txt&#39;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox --expect-error
+%run
+[a: provides='a.txt']
+bash:
+    echo 'content of a.txt' > a.txt
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="nb">input</span><span class="o">=</span><span class="s1">&#39;a.txt&#39;</span>
-</pre></div>
+[20]
+report: input='a.txt'</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1050,7 +1054,8 @@ is executed in a docker image. These options include</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1060,25 +1065,24 @@ is executed in a docker image. These options include</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">a</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;a.txt&#39;</span><span class="p">]</span>
-<span class="kn">bash:</span>
-    <span class="n">echo</span> <span class="s1">&#39;content of a.txt&#39;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+[a: provides='a.txt']
+bash:
+    echo 'content of a.txt' > a.txt
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span>
-<span class="kn">report:</span> <span class="nb">input</span><span class="o">=</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
+[20]
+input: 'a.txt'
+report: input=_input[0]</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1101,7 +1105,8 @@ is executed in a docker image. These options include</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1112,25 +1117,24 @@ is executed in a docker image. These options include</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="c1"># define a function and save to file myfunc.inc</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;myfunc.inc&quot;</span>
-  <span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+# define a function and save to file myfunc.inc
+report: output="myfunc.inc"
+  def myfunc():
+    print("Hello")
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="kn">python:</span> <span class="nb">input</span><span class="o">=</span><span class="s1">&#39;myfunc.inc&#39;</span>
-    <span class="n">myfunc</span><span class="p">()</span>
-</pre></div>
+[1]
+python: input='myfunc.inc'
+    myfunc()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1152,7 +1156,8 @@ is executed in a docker image. These options include</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1170,20 +1175,19 @@ is executed in a docker image. These options include</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">bash:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;non_existing.txt&#39;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox --expect-error
+%run
+[10]
+bash: output='non_existing.txt'</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1205,7 +1209,8 @@ is executed in a docker image. These options include</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1216,25 +1221,25 @@ is executed in a docker image. These options include</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">s</span> <span class="n">default</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -s default
+[10]
+import time, os
+time.sleep(2)
 
-<span class="kn">sh:</span> <span class="nb">input</span><span class="o">=</span><span class="p">[],</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;test.txt&#39;</span>
-   <span class="n">touch</span> <span class="n">test</span><span class="o">.</span><span class="n">txt</span>
+sh: input=[], output='test.txt'
+   touch test.txt
 
-<span class="k">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">))</span>
-</pre></div>
+print(os.path.getmtime('test.txt'))
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1256,7 +1261,8 @@ is executed in a docker image. These options include</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1266,25 +1272,25 @@ is executed in a docker image. These options include</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">s</span> <span class="n">default</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -s default
+[10]
+import time, os
+time.sleep(1)
 
-<span class="kn">sh:</span> <span class="nb">input</span><span class="o">=</span><span class="p">[],</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;test.txt&#39;</span>
-   <span class="n">touch</span> <span class="n">test</span><span class="o">.</span><span class="n">txt</span>
+sh: input=[], output='test.txt'
+   touch test.txt
 
-<span class="k">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">))</span>
-</pre></div>
+print(os.path.getmtime('test.txt'))
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1306,7 +1312,8 @@ is executed in a docker image. These options include</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1342,20 +1349,19 @@ is executed in a docker image. These options include</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">test</span><span class="o">.</span><span class="n">log</span>
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">!rm -f test.log
 
-<span class="kn">sh:</span> <span class="n">stdout</span><span class="o">=</span><span class="s1">&#39;test.log&#39;</span>
-<span class="n">ls</span> <span class="o">*.</span><span class="n">ipynb</span>
-</pre></div>
+sh: stdout='test.log'
+ls *.ipynb</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1376,18 +1382,18 @@ is executed in a docker image. These options include</p>
 </div>
 
 </div>
-	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+</div>
+<div class="cell border-box-sizing code_cell rendered lan_SoS">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">head</span> <span class="o">-</span><span class="mi">2</span> <span class="n">test</span><span class="o">.</span><span class="n">log</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">!head -2 test.log</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1410,7 +1416,8 @@ Language_Module.ipynb
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1461,25 +1468,25 @@ Language_Module.ipynb
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">s</span> <span class="n">force</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -s force
+[10]
+import time, os
+time.sleep(2)
 
-<span class="kn">sh:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;test.txt&#39;</span><span class="p">,</span> <span class="n">tracked</span><span class="o">=</span><span class="bp">True</span>
-   <span class="n">touch</span> <span class="n">test</span><span class="o">.</span><span class="n">txt</span>
+sh: output='test.txt', tracked=True
+   touch test.txt
 
-<span class="k">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">))</span>
-</pre></div>
+print(os.path.getmtime('test.txt'))
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1501,7 +1508,8 @@ Language_Module.ipynb
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1511,25 +1519,25 @@ Language_Module.ipynb
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">s</span> <span class="n">default</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -s default
+[10]
+import time, os
+time.sleep(1)
 
-<span class="kn">sh:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;test.txt&#39;</span><span class="p">,</span> <span class="n">tracked</span><span class="o">=</span><span class="bp">True</span>
-   <span class="n">touch</span> <span class="n">test</span><span class="o">.</span><span class="n">txt</span>
+sh: output='test.txt', tracked=True
+   touch test.txt
 
-<span class="k">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">))</span>
-</pre></div>
+print(os.path.getmtime('test.txt'))
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1562,7 +1570,8 @@ Language_Module.ipynb
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1589,22 +1598,21 @@ Language_Module.ipynb
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">bash:</span> <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;tmp&#39;</span>
-   <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
-<span class="kn">bash:</span>
-    <span class="n">ls</span> <span class="n">tmp</span>
-    <span class="n">rm</span> <span class="n">tmp</span><span class="o">/</span><span class="n">a</span><span class="o">.</span><span class="n">txt</span>
-    <span class="n">rmdir</span> <span class="n">tmp</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">bash: workdir='tmp'
+   touch a.txt
+bash:
+    ls tmp
+    rm tmp/a.txt
+    rmdir tmp</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1626,7 +1634,8 @@ Language_Module.ipynb
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1754,18 +1763,17 @@ Language_Module.ipynb
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">run:</span>
-    <span class="n">echo</span> <span class="s2">&quot;A&quot;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">run:
+    echo "A"</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1788,7 +1796,8 @@ A
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1798,19 +1807,18 @@ A
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span>
-    <span class="n">echoo</span> <span class="s2">&quot;A&quot;</span>
-    <span class="n">echo</span> <span class="s2">&quot;B&quot;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh:
+    echoo "A"
+    echo "B"</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1833,7 +1841,8 @@ B
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1843,9 +1852,11 @@ B
 </div>
 </div>
 </div>
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
+   
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
@@ -1889,6 +1900,7 @@ B
 </div>
 
 </div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1917,19 +1929,18 @@ B
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">run:</span>
-    <span class="c1">#!/usr/bin/env python</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;This is python&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">run:
+    #!/usr/bin/env python
+    print('This is python')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1951,7 +1962,8 @@ B
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1961,25 +1973,24 @@ B
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="c1"># use sigil=None to stop interpolating expressions in script</span>
-<span class="p">[</span><span class="n">sos</span><span class="p">]</span>
-<span class="kn">run:</span>
-    <span class="c1">#!/usr/bin/env sos-runner</span>
-    <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;This is {step_name}&quot;</span><span class="p">)</span>
-    <span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;This is {step_name}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+# use sigil=None to stop interpolating expressions in script
+[sos]
+run:
+    #!/usr/bin/env sos-runner
+    [10]
+    print(f"This is {step_name}")
+    [20]
+    print(f"This is {step_name}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2009,7 +2020,8 @@ INFO: Workflow default (ID=9668068c46c0e2c0) is executed successfully.
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2040,18 +2052,17 @@ INFO: Workflow default (ID=9668068c46c0e2c0) is executed successfully.
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span><span class="s1">&#39;python&#39;</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;HERE&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">script: interpreter='python'
+    print('HERE')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2073,7 +2084,8 @@ INFO: Workflow default (ID=9668068c46c0e2c0) is executed successfully.
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2107,25 +2119,24 @@ INFO: Workflow default (ID=9668068c46c0e2c0) is executed successfully.
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">A</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[26]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+[A]
+print(step_name)
 
-<span class="p">[</span><span class="n">B</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
+[B]
+print(step_name)
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;A + B&#39;</span><span class="p">)</span>
-</pre></div>
+[default]
+sos_run('A + B')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2148,7 +2159,8 @@ B_0
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2158,26 +2170,25 @@ B_0
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span> <span class="n">b</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[27]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+!touch a.txt b.txt
 
-<span class="p">[</span><span class="n">process</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Handling {_input}&quot;</span><span class="p">)</span>
+[process]
+print(f"Handling {_input}")
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b.txt&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;process&#39;</span><span class="p">)</span>
-</pre></div>
+[default]
+input: 'a.txt', 'b.txt', group_by=1
+sos_run('process')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2200,7 +2211,8 @@ Handling b.txt
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2210,25 +2222,24 @@ Handling b.txt
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[28]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
 
-<span class="p">[</span><span class="n">process</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Working with seed {seed}&quot;</span><span class="p">)</span>
+[process]
+print(f"Working with seed {seed}")
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-    <span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;process&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-</pre></div>
+[default]
+for seed in range(5):
+    sos_run('process', seed=seed)</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2254,26 +2265,27 @@ Working with seed 4
 </div>
 
 </div>
-	</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+</div>
+<div class="cell border-box-sizing code_cell rendered lan_SoS">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[29]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
 
-<span class="p">[</span><span class="n">process</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
-<span class="n">result</span> <span class="o">=</span> <span class="mi">100</span>
+[process: shared='result']
+result = 100
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;process&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Result from subworkflow process is {result}&quot;</span><span class="p">)</span>
-</pre></div>
+[default]
+sos_run('process')
+print(f"Result from subworkflow process is {result}")
+    </textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2295,7 +2307,8 @@ Working with seed 4
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2306,26 +2319,25 @@ Working with seed 4
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[30]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">10</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Process with cutoff={cutoff}&quot;</span><span class="p">)</span>
+[default]
+parameter: cutoff=10
+print(f"Process with cutoff={cutoff}")
 
-<span class="p">[</span><span class="n">batch</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-    <span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
-</pre></div>
+[batch]
+for value in range(2, 10, 2):
+    sos_run('default', cutoff=value)</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2347,7 +2359,8 @@ Working with seed 4
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2357,18 +2370,17 @@ Working with seed 4
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">cutoff</span> <span class="mi">4</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%rerun --cutoff 4</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2390,7 +2402,8 @@ Working with seed 4
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2400,18 +2413,17 @@ Working with seed 4
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">rerun</span> <span class="n">batch</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[32]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%rerun batch</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2436,7 +2448,8 @@ Process with cutoff=8
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2446,26 +2459,25 @@ Process with cutoff=8
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span> <span class="n">batch</span>
+<div class="prompt input_prompt">In&nbsp;[33]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run batch
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">10</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Process with cutoff={cutoff}&quot;</span><span class="p">)</span>
+[default]
+parameter: cutoff=10
+print(f"Process with cutoff={cutoff}")
 
-<span class="p">[</span><span class="n">batch</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-    <span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cutoff&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
-</pre></div>
+[batch]
+for value in range(2, 10, 2):
+    sos_run('default', args={'cutoff': value})</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2490,7 +2502,8 @@ Process with cutoff=8
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2533,25 +2546,25 @@ Process with cutoff=8
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[34]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
 
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">Runing</span> <span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
+[10]
+report: expand=True
+    Runing {step_name}
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">Runing</span> <span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
-</pre></div>
+[20]
+report: expand=True
+    Runing {step_name}
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2576,7 +2589,8 @@ Runing default_20
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2586,31 +2600,31 @@ Runing default_20
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<div class="prompt input_prompt">In&nbsp;[35]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
 
-<span class="o">%</span><span class="n">preview</span> <span class="n">report</span><span class="o">.</span><span class="n">txt</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;report.txt&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">Runing</span> <span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
+%preview report.txt
+%run
+[10]
+report: output='report.txt', expand=True
+    Runing {step_name}
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;report.txt&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">Runing</span> <span class="p">{</span><span class="n">step_name</span><span class="p">}</span>
-</pre></div>
+[20]
+report: output='report.txt', expand=True
+    Runing {step_name}</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2620,28 +2634,27 @@ Runing default_20
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[36]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
 
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;out.txt&#39;</span>
-<span class="kn">run:</span>
-   <span class="c1"># run some command and generate a out.txt</span>
-   <span class="n">echo</span> <span class="s2">&quot;* some result &quot;</span> <span class="o">&gt;</span> <span class="n">out</span><span class="o">.</span><span class="n">txt</span>
+[10]
+output: 'out.txt'
+run:
+   # run some command and generate a out.txt
+   echo "* some result " > out.txt
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="nb">input</span><span class="o">=</span><span class="s1">&#39;out.txt&#39;</span>
-<span class="n">Summary</span> <span class="n">Report</span><span class="p">:</span>
-</pre></div>
+[20]
+report: input='out.txt'
+Summary Report:</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2669,7 +2682,8 @@ Summary Report:
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2680,22 +2694,22 @@ Summary Report:
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">run:</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-n {filename:q}&#39;</span>
-      <span class="n">echo</span> <span class="s2">&quot;a&quot;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[37]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">run: args='-n {filename:q}'
+      echo "a"</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2750,19 +2764,18 @@ Summary Report:
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">perl:</span>
-    <span class="n">my</span> <span class="err">$</span><span class="kp">name</span> <span class="o">=</span> <span class="s2">&quot;Brian&quot;</span><span class="p">;</span>
-    <span class="k">print</span> <span class="s2">&quot;Hello, $name!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">perl:
+    my $name = "Brian";
+    print "Hello, $name!\n";</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2784,7 +2797,8 @@ Summary Report:
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2802,24 +2816,23 @@ Summary Report:
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">ruby:</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">8</span> <span class="p">]</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;sam&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mf">98.9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;jill&#39;</span> <span class="p">]</span>
-    <span class="k">print</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="k">print</span> <span class="n">a</span><span class="o">.</span><span class="n">sort</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="mi">57</span> <span class="o">&lt;&lt;</span> <span class="mi">9</span> <span class="o">&lt;&lt;</span> <span class="s1">&#39;phil&#39;</span>
-    <span class="k">print</span> <span class="s2">&quot;A: &quot;</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[39]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">ruby:
+    a = [ 45, 3, 19, 8 ]
+    b = [ 'sam', 'max', 56, 98.9, 3, 10, 'jill' ]
+    print (a + b).join(' '), "\n"
+    print a[2], " ", b[4], " ", b[-2], "\n"
+    print a.sort.join(' '), "\n"
+    a << 57 << 9 << 'phil'
+    print "A: ", a.join(' '), "\n"</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2844,7 +2857,8 @@ A: 45 3 19 8 57 9 phil
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2854,34 +2868,34 @@ A: 45 3 19 8 57 9 phil
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">node:</span>
-    <span class="n">var</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="nb">max</span><span class="p">;</span>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">node:
+    var i, a, b, c, max;
 
-    <span class="nb">max</span> <span class="o">=</span> <span class="mi">1000000000</span><span class="p">;</span>
+    max = 1000000000;
 
-    <span class="n">var</span> <span class="n">d</span> <span class="o">=</span> <span class="n">Date</span><span class="o">.</span><span class="n">now</span><span class="p">();</span>
+    var d = Date.now();
 
-    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">max</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="mi">1234</span> <span class="o">+</span> <span class="mi">5678</span> <span class="o">+</span> <span class="n">i</span><span class="p">;</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="mi">1234</span> <span class="o">*</span> <span class="mi">5678</span> <span class="o">+</span> <span class="n">i</span><span class="p">;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="mi">1234</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">i</span><span class="p">;</span>
-    <span class="p">}</span>
+    for (i = 0; i < max; i++) {
+        a = 1234 + 5678 + i;
+        b = 1234 * 5678 + i;
+        c = 1234 / 2 + i;
+    }
 
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Date</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">d</span><span class="p">);</span>
-</pre></div>
+    console.log(Date.now() - d);</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2900,19 +2914,18 @@ A: 45 3 19 8 57 9 phil
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">pandoc:</span>
-    <span class="c1"># this is header</span>
-    <span class="n">This</span> <span class="ow">is</span> <span class="n">some</span> <span class="n">test</span><span class="p">,</span> <span class="k">with</span> <span class="o">**</span><span class="n">emphasis</span><span class="o">**.</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[41]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">pandoc:
+    # this is header
+    This is some test, with **emphasis**.        </textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2935,7 +2948,8 @@ A: 45 3 19 8 57 9 phil
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2945,23 +2959,22 @@ A: 45 3 19 8 57 9 phil
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="n">out</span><span class="o">.</span><span class="n">html</span>
-<span class="kn">pandoc:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;out.html&#39;</span>
-    <span class="n">Itemize</span>
+<div class="prompt input_prompt">In&nbsp;[42]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview out.html
+pandoc: output='out.html'
+    Itemize
 
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
-</pre></div>
+    * item 1
+    * item 2</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2983,7 +2996,8 @@ A: 45 3 19 8 57 9 phil
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2993,23 +3007,22 @@ A: 45 3 19 8 57 9 phil
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="n">out</span><span class="o">.</span><span class="n">tex</span>
-<span class="kn">pandoc:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;out.tex&#39;</span>
-    <span class="n">Itemize</span>
+<div class="prompt input_prompt">In&nbsp;[43]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview out.tex
+pandoc: output='out.tex'
+    Itemize
 
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
-</pre></div>
+    * item 1
+    * item 2</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3031,7 +3044,8 @@ A: 45 3 19 8 57 9 phil
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3041,23 +3055,22 @@ A: 45 3 19 8 57 9 phil
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="n">out</span><span class="o">.</span><span class="n">html</span>
-<span class="kn">pandoc:</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;out.html&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;{input:q} --output {output:q} -s&#39;</span>
-    <span class="n">Itemize</span>
+<div class="prompt input_prompt">In&nbsp;[44]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview out.html
+pandoc: output='out.html', args='{input:q} --output {output:q} -s'
+    Itemize
 
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
-</pre></div>
+    * item 1
+    * item 2</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3079,7 +3092,8 @@ A: 45 3 19 8 57 9 phil
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3089,31 +3103,32 @@ A: 45 3 19 8 57 9 phil
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="n">out</span><span class="o">.</span><span class="n">html</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;out.md&#39;</span>
-    <span class="n">Itemize</span>
+<div class="prompt input_prompt">In&nbsp;[45]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview out.html
+[10]
+report: output = 'out.md'
+    Itemize
 
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
+    * item 1
+    * item 2
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="n">pandoc</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s1">&#39;out.md&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;out.html&#39;</span><span class="p">)</span>
-</pre></div>
+[20]
+pandoc(input='out.md', output='out.html')
+    </textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3124,39 +3139,39 @@ A: 45 3 19 8 57 9 phil
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="c1">#%sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="n">out</span><span class="o">.</span><span class="n">html</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;out10.md&#39;</span>
-    <span class="n">Itemize</span>
+<div class="prompt input_prompt">In&nbsp;[46]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">#%sandbox
+%preview out.html
+[10]
+report: output = 'out10.md'
+    Itemize
 
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
+    * item 1
+    * item 2
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span> <span class="s1">&#39;out20.md&#39;</span>
-    <span class="n">enumerated</span>
+[20]
+report: output= 'out20.md'
+    enumerated
 
-    <span class="mf">1.</span> <span class="n">item</span> <span class="mi">1</span>
-    <span class="mf">2.</span> <span class="n">item</span> <span class="mi">2</span>
+    1. item 1
+    2. item 2
 
-<span class="p">[</span><span class="mi">30</span><span class="p">]</span>
-<span class="kn">pandoc:</span> <span class="nb">input</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;out10.md&#39;</span><span class="p">,</span> <span class="s1">&#39;out20.md&#39;</span><span class="p">],</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;out.html&#39;</span>
-    <span class="n">Markdown</span> <span class="n">supports</span> <span class="n">both</span> <span class="n">itemized</span> <span class="ow">and</span> <span class="n">enumerated</span>
-</pre></div>
+[30]
+pandoc: input=['out10.md', 'out20.md'], output='out.html'
+    Markdown supports both itemized and enumerated</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3281,26 +3296,25 @@ download([f'{GATK_URL}/{x}' for x in GATK_RESOURCE_FILES], dest=GATK_RESOURCE_DI
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
-<span class="err">!</span><span class="n">echo</span> <span class="s1">&#39;something&#39;</span> <span class="o">&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[47]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+!touch a.txt
+!echo 'something' > b.txt
 
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;*.txt&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
+[10]
+input: '*.txt', group_by=1
 
-<span class="n">stop_if</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">_input</span><span class="p">)</span>
-</pre></div>
+stop_if(os.path.getsize(_input[0]) == 0)
+print(_input)</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3322,7 +3336,8 @@ download([f'{GATK_URL}/{x}' for x in GATK_RESOURCE_FILES], dest=GATK_RESOURCE_DI
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3341,28 +3356,27 @@ download([f'{GATK_URL}/{x}' for x in GATK_RESOURCE_FILES], dest=GATK_RESOURCE_DI
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;idx&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)}</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{idx}.txt&quot;</span>
-<span class="n">stop_if</span><span class="p">(</span><span class="n">idx</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">echo</span> <span class="s2">&quot;Generating {_output}&quot;</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+<div class="prompt input_prompt">In&nbsp;[48]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+[10]
+input: for_each={'idx': range(10)}
+output: f"{idx}.txt"
+stop_if(idx % 2 == 0)
+run: expand=True
+    echo "Generating {_output}"
+    touch {_output}
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Output of last step is {input}&quot;</span><span class="p">)</span>
-</pre></div>
+[20]
+print(f"Output of last step is {input}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3404,7 +3418,8 @@ Output of last step is Undetermined(&#39;&#39;)
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3449,55 +3464,55 @@ Output of last step is Undetermined(&#39;&#39;)
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[49]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="sb">`executable`</span> <span class="n">targets</span> <span class="n">are</span> <span class="n">commands</span> <span class="n">that</span> <span class="n">should</span> <span class="n">be</span> <span class="n">accessible</span> <span class="ow">and</span> <span class="n">executable</span> <span class="n">by</span> <span class="n">SoS</span><span class="o">.</span> <span class="n">These</span> <span class="n">targets</span> <span class="n">are</span> <span class="n">usually</span> <span class="n">listed</span> <span class="ow">in</span> <span class="n">the</span> <span class="sb">`depends`</span> <span class="n">section</span> <span class="n">of</span> <span class="n">a</span> <span class="n">SoS</span> <span class="n">step</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="n">SoS</span> <span class="n">would</span> <span class="n">stop</span> <span class="k">if</span> <span class="n">a</span> <span class="n">command</span> <span class="sb">`fastqc`</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">found</span><span class="o">.</span>
+<div class="prompt input_prompt">In&nbsp;[49]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">`executable` targets are commands that should be accessible and executable by SoS. These targets are usually listed in the `depends` section of a SoS step. For example, SoS would stop if a command `fastqc` is not found.
 
-<span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">input:</span>     <span class="s1">&#39;a.txt&#39;</span>
-<span class="kn">depends:</span>   <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;some_command&#39;</span><span class="p">)</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">some_command</span> <span class="p">{</span><span class="nb">input</span><span class="p">}</span>
+%sandbox --expect-error
+[10]
+input:     'a.txt'
+depends:   executable('some_command')
+sh: expand=True
+    some_command {input}
 
-<span class="sb">`executable`</span> <span class="n">target</span> <span class="n">can</span> <span class="n">also</span> <span class="n">be</span> <span class="n">output</span> <span class="n">of</span> <span class="n">a</span> <span class="n">step</span> <span class="n">but</span> <span class="n">installing</span> <span class="n">executables</span> <span class="n">can</span> <span class="n">be</span> <span class="n">tricky</span> <span class="n">because</span> <span class="n">the</span> <span class="n">commands</span> <span class="n">should</span> <span class="n">be</span> <span class="n">installed</span> <span class="n">to</span> <span class="n">existing</span> <span class="sb">`$PATH`</span> <span class="n">so</span> <span class="n">that</span> <span class="n">they</span> <span class="n">can</span> <span class="n">be</span> <span class="n">immediately</span> <span class="n">accessible</span> <span class="n">by</span> <span class="n">SoS</span><span class="o">.</span> <span class="n">Because</span> <span class="n">SoS</span> <span class="n">automatically</span> <span class="n">adds</span> <span class="sb">`~/.sos/bin`</span> <span class="n">to</span> <span class="sb">`$PATH`</span> <span class="p">(</span><span class="n">option</span> <span class="sb">`-b`</span><span class="p">),</span> <span class="n">an</span> <span class="n">environment</span><span class="o">-</span><span class="n">neutral</span> <span class="n">way</span> <span class="k">for</span> <span class="n">on</span><span class="o">-</span><span class="n">the</span><span class="o">-</span><span class="n">fly</span> <span class="n">installation</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">install</span> <span class="n">commands</span> <span class="n">to</span> <span class="n">this</span> <span class="n">directory</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span>
+`executable` target can also be output of a step but installing executables can be tricky because the commands should be installed to existing `$PATH` so that they can be immediately accessible by SoS. Because SoS automatically adds `~/.sos/bin` to `$PATH` (option `-b`), an environment-neutral way for on-the-fly installation is to install commands to this directory. For example
 
-<span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">lls</span>
+!rm -f ~/.sos/bin/lls
 
-<span class="p">[</span><span class="n">lls</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="n">executable</span><span class="p">(</span><span class="s1">&#39;lls&#39;</span><span class="p">)]</span>
-<span class="kn">sh:</span>
-    <span class="n">echo</span> <span class="s2">&quot;#!/usr/bin/env bash&quot;</span> <span class="o">&gt;</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">lls</span>
-    <span class="n">echo</span> <span class="s2">&quot;echo I am lls&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">lls</span>
-    <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">lls</span>
+[lls: provides=executable('lls')]
+sh:
+    echo "#!/usr/bin/env bash" > ~/.sos/bin/lls
+    echo "echo I am lls" >> ~/.sos/bin/lls
+    chmod +x ~/.sos/bin/lls
 
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;lls&#39;</span><span class="p">)</span>
-<span class="kn">sh:</span>
-    <span class="n">lls</span>
+[10]
+depends: executable('lls')
+sh:
+    lls
 
-<span class="n">creates</span> <span class="n">an</span> <span class="n">executable</span> <span class="n">command</span> <span class="sb">`lls`</span> <span class="n">under</span> <span class="sb">`~/.sos/bin`</span> <span class="n">when</span> <span class="n">this</span> <span class="n">executable</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">exist</span><span class="o">.</span>
+creates an executable command `lls` under `~/.sos/bin` when this executable does not exist.
 
-<span class="n">You</span> <span class="n">can</span> <span class="n">also</span> <span class="n">have</span> <span class="n">finer</span> <span class="n">control</span> <span class="n">over</span> <span class="n">which</span> <span class="n">version</span> <span class="n">of</span> <span class="n">the</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">eligible</span> <span class="n">by</span> <span class="n">checking</span> <span class="n">the</span> <span class="n">output</span> <span class="n">of</span> <span class="n">commands</span><span class="o">.</span> <span class="n">The</span> <span class="n">trick</span> <span class="n">here</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">provide</span> <span class="n">a</span> <span class="n">complete</span> <span class="n">command</span> <span class="ow">and</span> <span class="n">one</span> <span class="ow">or</span> <span class="n">more</span> <span class="n">version</span> <span class="n">strings</span> <span class="k">as</span> <span class="n">the</span> <span class="n">string</span> <span class="n">that</span> <span class="n">should</span> <span class="n">appear</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">output</span> <span class="n">of</span> <span class="n">the</span> <span class="n">command</span><span class="o">.</span>
+You can also have finer control over which version of the command is eligible by checking the output of commands. The trick here is to provide a complete command and one or more version strings as the string that should appear in the output of the command.
 
-<span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="n">command</span> <span class="sb">`perl --version`</span> <span class="ow">is</span> <span class="n">executed</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">following</span> <span class="n">example</span> <span class="n">to</span> <span class="n">check</span> <span class="k">if</span> <span class="n">the</span> <span class="n">output</span> <span class="n">contains</span> <span class="n">string</span> <span class="sb">`5.18`</span><span class="o">.</span> <span class="n">The</span> <span class="n">step</span> <span class="n">would</span> <span class="n">only</span> <span class="n">be</span> <span class="n">executed</span> <span class="k">if</span> <span class="n">the</span> <span class="n">right</span> <span class="n">version</span> <span class="n">exists</span><span class="o">.</span>
+For example, command `perl --version` is executed in the following example to check if the output contains string `5.18`. The step would only be executed if the right version exists.
 
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;perl --version&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;5.18&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+[10]
+depends: executable('perl --version', version='5.18')
+print('ok')
 
-<span class="n">If</span> <span class="n">no</span> <span class="n">verion</span> <span class="n">string</span> <span class="ow">is</span> <span class="n">provided</span><span class="p">,</span> <span class="n">SoS</span> <span class="n">will</span> <span class="n">only</span> <span class="n">check</span> <span class="n">the</span> <span class="n">existence</span> <span class="n">of</span> <span class="n">the</span> <span class="n">command</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">actually</span> <span class="n">execute</span> <span class="n">the</span> <span class="n">command</span><span class="o">.</span>
-</pre></div>
+If no verion string is provided, SoS will only check the existence of the command and not actually execute the command.</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3507,37 +3522,37 @@ Output of last step is Undetermined(&#39;&#39;)
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="p">[</span><span class="n">counts</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;result.txt&#39;</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">as</span> <span class="n">ifile</span><span class="p">:</span>
-    <span class="n">counts</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ifile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<div class="prompt input_prompt">In&nbsp;[50]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+[counts: shared='counts']
+input: 'result.txt'
+with open(input[0]) as ifile:
+    counts = int(ifile.read())
 
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+[10]
 
-<span class="c1"># perform some task and create a file with some statistics</span>
-<span class="kn">output:</span> <span class="s1">&#39;result.txt&#39;</span>
-<span class="kn">run:</span>
-   <span class="n">echo</span> <span class="mi">100</span> <span class="o">&gt;&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">txt</span> 
+# perform some task and create a file with some statistics
+output: 'result.txt'
+run:
+   echo 100 >> result.txt 
 
-<span class="p">[</span><span class="mi">100</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="n">sos_variable</span><span class="p">(</span><span class="s1">&#39;counts&#39;</span><span class="p">)</span>
-<span class="kn">report:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">There</span> <span class="n">are</span> <span class="p">{</span><span class="n">counts</span><span class="p">}</span> <span class="n">objects</span>
-</pre></div>
+[100]
+depends: sos_variable('counts')
+report: expand=True
+    There are {counts} objects</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3570,23 +3585,22 @@ sh:
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">init</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Initialize&quot;</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[51]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+[init]
+print("Initialize")
 
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s2">&quot;init&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;I am {step_name}&quot;</span><span class="p">)</span>
-</pre></div>
+[10]
+depends: sos_step("init")
+print(f"I am {step_name}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3609,7 +3623,8 @@ I am default_10
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3620,28 +3635,28 @@ I am default_10
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[52]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;*.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[52]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox --expect-error
+[10]
+output: '*.txt'
+sh:
+    touch a.txt
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Last output is {input}&#39;</span><span class="p">)</span>
-</pre></div>
+[20]
+print(f'Last output is {input}')</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3651,28 +3666,28 @@ I am default_10
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[53]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="s1">&#39;*.txt&#39;</span><span class="p">)</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[53]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+[10]
+output: dynamic('*.txt')
+sh:
+    touch a.txt
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Last output is {input}&quot;</span><span class="p">)</span>
-</pre></div>
+[20]
+print(f"Last output is {input}")</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3724,17 +3739,16 @@ I am default_10
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[54]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">get_output</span><span class="p">(</span><span class="s1">&#39;which ls&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[54]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">get_output('which ls')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3758,7 +3772,8 @@ I am default_10
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3768,17 +3783,16 @@ I am default_10
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">get_output</span><span class="p">(</span><span class="s1">&#39;which ls&#39;</span><span class="p">,</span> <span class="n">show_command</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[55]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">print(get_output('which ls', show_command=True))</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3802,35 +3816,35 @@ I am default_10
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Function--expand_pattern">Function  <code>expand_pattern</code><a class="anchor-link" href="#Function--expand_pattern">&#182;</a></h3><p>Function <code>expand_pattern</code> expands a string to multiple ones using items of variables quoted between <code>{ }</code>. For example,</p>
-<div class="highlight"><pre><span></span><span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{a}_{b}.txt&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="n">output</span><span class="p">:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{a}_{b}.txt&#39;</span><span class="p">)</span>
 </pre></div>
 <p>is equivalent to</p>
-<div class="highlight"><pre><span></span><span class="kn">output:</span> <span class="p">[</span><span class="s1">&#39;{x}_{y}.txt&#39;</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span>
+<div class="highlight"><pre><span></span><span class="n">output</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;{x}_{y}.txt&#39;</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span>
 </pre></div>
 <p>if <code>a</code> and <code>b</code> are sequences of the same length. For example,</p>
 
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kp">name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="s1">&#39;John&#39;</span><span class="p">]</span>
-<span class="n">salary</span> <span class="o">=</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">]</span>
-<span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{name}&#39;s salary is {salary}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[56]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">name = ['Bob', 'John']
+salary = [200, 300]
+expand_pattern("{name}'s salary is {salary}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3854,7 +3868,8 @@ I am default_10
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3864,9 +3879,11 @@ I am default_10
 </div>
 </div>
 </div>
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[57]:</div>
+   
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
@@ -3898,6 +3915,7 @@ I am default_10
 </div>
 
 </div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3907,18 +3925,17 @@ I am default_10
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">salary</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{name}&#39;s salary is {salary}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[58]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">salary = 200
+expand_pattern("{name}'s salary is {salary}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3942,7 +3959,8 @@ I am default_10
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -3960,19 +3978,18 @@ I am default_10
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">v2</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;I am at {step_name}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[59]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -v2
+[0]
+logger.info(f"I am at {step_name}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -3994,7 +4011,8 @@ I am default_10
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -4004,23 +4022,23 @@ I am default_10
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">v1</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;I am at {step_name}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[60]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -v1
+[0]
+logger.info(f"I am at {step_name}")</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -4130,9 +4148,9 @@ such as <code>input</code>, and with <code>result</code> writing directly to the
 </pre></div>
 <p>while</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span>
+<span class="nb">input</span><span class="p">:</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span>
 
-<span class="kn">python:</span>
+<span class="n">python</span><span class="p">:</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="err">!</span><span class="n">r</span><span class="p">})</span> <span class="k">as</span> <span class="n">data</span><span class="p">:</span>
    <span class="n">result</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="err">!</span><span class="n">r</span><span class="p">}</span> <span class="o">+</span> <span class="s1">&#39;.res&#39;</span>
@@ -4180,21 +4198,20 @@ in <code>inspect</code> mode.</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;tabulate&#39;</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
-<span class="n">table</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Sun&quot;</span><span class="p">,</span><span class="mi">696000</span><span class="p">,</span><span class="mi">1989100000</span><span class="p">],[</span><span class="s2">&quot;Earth&quot;</span><span class="p">,</span><span class="mi">6371</span><span class="p">,</span><span class="mf">5973.6</span><span class="p">],</span>
-    <span class="p">[</span><span class="s2">&quot;Moon&quot;</span><span class="p">,</span><span class="mi">1737</span><span class="p">,</span><span class="mf">73.5</span><span class="p">],[</span><span class="s2">&quot;Mars&quot;</span><span class="p">,</span><span class="mi">3390</span><span class="p">,</span><span class="mf">641.85</span><span class="p">]]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[61]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">depends: Py_Module('tabulate')
+from tabulate import tabulate
+table = [["Sun",696000,1989100000],["Earth",6371,5973.6],
+    ["Moon",1737,73.5],["Mars",3390,641.85]]
+print(tabulate(table))</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -4221,7 +4238,8 @@ Mars     3390   641.85
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -4247,21 +4265,20 @@ Mars     3390   641.85
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">R:</span>
-    <span class="n">D</span> <span class="o">&lt;-</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
-    <span class="c1"># Sort on x</span>
-    <span class="n">indexes</span> <span class="o">&lt;-</span> <span class="n">order</span><span class="p">(</span><span class="n">D</span><span class="err">$</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">D</span><span class="p">[</span><span class="n">indexes</span><span class="p">,]</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[62]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">R:
+    D <- data.frame(x=c(1,2,3,1), y=c(7,19,2,2))
+    # Sort on x
+    indexes <- order(D$x)
+    D[indexes,]</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -4287,7 +4304,8 @@ Mars     3390   641.85
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -4306,35 +4324,35 @@ Mars     3390   641.85
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
+<div class="prompt input_prompt">In&nbsp;[63]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
 
-<span class="p">[</span><span class="n">A_10</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;A_10.md&quot;</span>
-    <span class="n">step_10</span>
+[A_10]
+report: output="A_10.md"
+    step_10
 
-<span class="p">[</span><span class="n">A_20</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;A_20.md&quot;</span>
-    <span class="n">Itemize</span>
+[A_20]
+report: output="A_20.md"
+    Itemize
 
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-    <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
+    * item 1
+    * item 2
 
-<span class="p">[</span><span class="n">A_30</span><span class="p">]</span>
-<span class="n">Rmarkdown</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A_10.md&#39;</span><span class="p">,</span> <span class="s1">&#39;A_20.md&#39;</span><span class="p">],</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;out.html&#39;</span><span class="p">)</span>
-</pre></div>
+[A_30]
+Rmarkdown(input=['A_10.md', 'A_20.md'], output='out.html')</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -4352,29 +4370,30 @@ Mars     3390   641.85
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;test.jpg&#39;</span>
-<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;ggplot2&#39;</span><span class="p">)</span>
-<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-  <span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span> 
-  <span class="n">jpeg</span><span class="p">({</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
-  <span class="n">qplot</span><span class="p">(</span><span class="n">Sepal</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">Petal</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">iris</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">Species</span><span class="p">)</span>
-  <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[64]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+[10]
+output: 'test.jpg'
+depends: R_library('ggplot2')
+R: expand=True
+  library(ggplot2) 
+  jpeg({output!r})
+  qplot(Sepal.Length, Petal.Length, data = iris, color = Species)
+  dev.off()
+</textarea>
+
+  </div>
+</div>
+
+</div>
 
 </div>
 </div>
-</div>
 
-</div>
-	</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -4405,6 +4424,39 @@ Mars     3390   641.85
     </div>
   </div>
 </body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+	  <script src="../../js/sos-mode.js"> </script>
+      <script>
+		   function highlight_cells(cells, i, interval) {
+			  setTimeout(function() {
+				var editor = CodeMirror.fromTextArea(cells[i], {
+		           lineNumbers: false,
+				   styleActiveLine: true,
+		           matchBrackets: true,
+				   readOnly: true,
+		           mode: 'sos',
+				   base_mode: cells[i].name,
+		         });
+				$(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>" 
+					+ cells[i].name + "</option></select>");
+		      if (i < cells.length)
+			    highlight_cells(cells, i + 1, interval);
+			}, interval);
+		  }
+
+	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      </script>
+
+
 
  
 

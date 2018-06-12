@@ -1,18 +1,8 @@
-<!-- Global Site Tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments)};
-  gtag('js', new Date());
-
-  gtag('config', 'UA-107286198-1');
-</script>
-
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>SoS_Docker_Guide</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<title>SoS_Docker_Guide</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
 
@@ -22,7 +12,6 @@
 
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -47,145 +36,160 @@
     </script>
     <!-- End of mathjax configuration --></head>
 
+
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments)};
+   gtag('js', new Date());
+   
+   gtag('config', 'UA-107286198-1');
+</script>
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+  
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
 <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
 <style>  /* defined here in case the main.css below cannot be loaded */
-.lev1 {margin-left: 80px}
-.lev2 {margin-left: 100px}
-.lev3 {margin-left: 120px}
-.lev4 {margin-left: 140px}
-.lev5 {margin-left: 160px}
-.lev6 {margin-left: 180px}
+   .lev1 {margin-left: 80px}
+   .lev2 {margin-left: 100px}
+   .lev3 {margin-left: 120px}
+   .lev4 {margin-left: 140px}
+   .lev5 {margin-left: 160px}
+   .lev6 {margin-left: 180px}
+   .cm-sos-interpolated {
+  background-color: #EDD5F3;
+}
+.cm-sos-sigil {
+  background-color: #EDD5F3;
+}
 </style>
-
 <link rel="stylesheet" type="text/css" href="../../css/jt.css">
 <link rel="stylesheet" type="text/css" href="../../css/toc2.css">
-
 <script src="../../js/doc_toc.js"></script>
-
- <script src="../../js/docs.js"></script>
-
+<script src="../../js/docs.js"></script>
 <script>
-    MathJax.Hub.Config({
-        "HTML-CSS": {
-            preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
-            styles: {
-                scale: 110,
-                ".MathJax_Display": {
-                    "font-size": "110%",
-                }
-            }
-        }
-    });
+   MathJax.Hub.Config({
+       "HTML-CSS": {
+           preferredFont: "TeX",
+           availableFonts: ["STIX","TeX"],
+           styles: {
+               scale: 110,
+               ".MathJax_Display": {
+                   "font-size": "110%",
+               }
+           }
+       }
+   });
 </script>
-
 <script>
-
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        }
-    }
-}
-
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-
-    if (dtype === 'numeric') {
-        var fn = function(a, b) {
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim());
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]);
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-
-    var sorted = isSorted(tr, fn);
-
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-
-
-$( document ).ready(function(){
-
-            var cfg={'threshold':3,     // depth of toc (number of levels)
-             // 'number_sections': false,
-             'number_sections': false,  // sections numbering
-             'toc_cell': false,          // useless here
-             'toc_window_display': true, // display the toc window
-             "toc_section_display": "block", // display toc contents in the window
-             // 'sideBar':false,
-             'sideBar':true,       // sidebar or floating window
-             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
-            }
-
-            var st={};                  // some variables used in the script
-            st.rendering_toc_cell = false;
-            st.config_loaded = false;
-            st.extension_initialized=false;
-            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-            st.nbcontainer_width = $('#notebook-container').css('width')
-            st.oldTocHeight = undefined
-            st.cell_toc = undefined;
-            st.toc_index=0;
-
-            // fire the main function with these parameters
-
-
-            table_of_contents(cfg,st);
-
-
-            var file=tutorialsDict[$("h1:first").attr("id")];
-            var path="http://vatlab.github.io/sos-docs"
+   function filterDataFrame(id) {
+       var input = document.getElementById("search_" + id);
+       var filter = input.value.toUpperCase();
+       var table = document.getElementById("dataframe_" + id);
+       var tr = table.getElementsByTagName("tr");
+   
+       // Loop through all table rows, and hide those who don't match the search query
+       for (var i = 1; i < tr.length; i++) {
+           for (var j = 0; j < tr[i].cells.length; ++j) {
+               var matched = false;
+               if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                   tr[i].style.display = "";
+                   matched = true
+                   break;
+               }
+               if (!matched)
+                   tr[i].style.display = "none";
+           } 
+       }
+   }
+   
+   function sortDataFrame(id, n, dtype) {
+       var table = document.getElementById("dataframe_" + id);
+   
+       var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+       var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+   
+       if (dtype === 'numeric') {
+           var fn = function(a, b) { 
+               return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+           }
+       } else {
+           var fn = function(a, b) {
+               var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+               return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+       }
+       var isSorted = function(array, fn) {
+           if (array.length < 2)
+               return 1;
+           var direction = fn(array[0], array[1]); 
+           for (var i = 1; i < array.length - 1; ++i) {
+               var d = fn(array[i], array[i+1]);
+               if (d == 0)
+                   continue;
+               else if (direction == 0)
+                   direction = d;
+               else if (direction != d)
+                   return 0;
+               }
+           return direction;
+       }
+   
+       var sorted = isSorted(tr, fn);
+   
+       if (sorted == 1 || sorted == -1) {
+           // if sorted already, reverse it
+           for(var i = tr.length - 1; i >= 0; --i)
+               tb.appendChild(tr[i]); // append each row in order
+       } else {
+           tr = tr.sort(fn);
+           for(var i = 0; i < tr.length; ++i)
+               tb.appendChild(tr[i]); // append each row in order
+       }
+   }
+   
+   $( document ).ready(function(){
+   
+               var cfg={'threshold':3,     // depth of toc (number of levels)
+                // 'number_sections': false,  // sections numbering
+                'number_sections': false, 
+                'toc_cell': false,          // useless here
+                'toc_window_display': true, // display the toc window
+                "toc_section_display": "block", // display toc contents in the window
+                // 'sideBar':false,      
+                'sideBar':true,       // sidebar or floating window
+                'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+               }
+   
+               var st={};                  // some variables used in the script
+               st.rendering_toc_cell = false;
+               st.config_loaded = false;
+               st.extension_initialized=false;
+               st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+               st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+               st.nbcontainer_width = $('#notebook-container').css('width')
+               st.oldTocHeight = undefined
+               st.cell_toc = undefined;
+               st.toc_index=0;
+   
+               // fire the main function with these parameters
+   
+   
+   
+               table_of_contents(cfg,st);
+               var file=tutorialsDict[$("h1:first").attr("id")];
+               var path="http://vatlab.github.io/sos-docs"
             // $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
 
@@ -219,15 +223,14 @@ $( document ).ready(function(){
 
 
             // $(".number_sections-btn").hide();
-            // $(".toc_cell_sections-btn".hide();
-
-
-    });
+            // $(".toc_cell_sections-btn".hide();   
+   
+       });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
-
- .lan_SoS {}
-
+   .lan_SoS {}
 </style>
+
+
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -266,27 +269,26 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="kn">ruby:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ruby&#39;</span>
-    <span class="n">line1</span> <span class="o">=</span> <span class="s2">&quot;Cats are smarter than dogs&quot;</span><span class="p">;</span>
-    <span class="n">line2</span> <span class="o">=</span> <span class="s2">&quot;Dogs also like meat&quot;</span><span class="p">;</span>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+ruby: docker_image='ruby'
+    line1 = "Cats are smarter than dogs";
+    line2 = "Dogs also like meat";
 
-    <span class="k">if</span> <span class="p">(</span> <span class="n">line1</span> <span class="o">=~</span> <span class="o">/</span><span class="n">Cats</span><span class="p">(</span><span class="o">.*</span><span class="p">)</span><span class="o">/</span> <span class="p">)</span>
-      <span class="n">puts</span> <span class="s2">&quot;Line1 contains Cats&quot;</span>
-    <span class="n">end</span>
-    <span class="k">if</span> <span class="p">(</span> <span class="n">line2</span> <span class="o">=~</span> <span class="o">/</span><span class="n">Cats</span><span class="p">(</span><span class="o">.*</span><span class="p">)</span><span class="o">/</span> <span class="p">)</span>
-      <span class="n">puts</span> <span class="s2">&quot;Line2 contains  Dogs&quot;</span>
-    <span class="n">end</span>
-</pre></div>
+    if ( line1 =~ /Cats(.*)/ )
+      puts "Line1 contains Cats"
+    end
+    if ( line2 =~ /Cats(.*)/ )
+      puts "Line2 contains  Dogs"
+    end</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -308,7 +310,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -357,18 +360,18 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">docker_build:</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;test_docker&#39;</span>
-  <span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mf">14.04</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">docker_build: tag='test_docker'
+  FROM ubuntu:14.04
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -392,7 +395,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -402,18 +406,17 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;test_docker&#39;</span>
-  <span class="n">ls</span> <span class="o">/</span><span class="n">usr</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh: docker_image='test_docker'
+  ls /usr</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -435,7 +438,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -462,18 +466,17 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span>
-  <span class="n">echo</span> <span class="sb">`pwd`</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04'
+  echo `pwd`</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -495,7 +498,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -505,18 +509,17 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span><span class="p">,</span> <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;..&#39;</span>
-  <span class="n">echo</span> <span class="sb">`pwd`</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04', workdir='..'
+  echo `pwd`</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -538,7 +541,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -562,28 +566,27 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">docker_build:</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span>
-  <span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mf">14.04</span>
-  <span class="n">WORKDIR</span> <span class="o">/</span><span class="n">usr</span>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">docker_build: tag='test_docker_workdir'
+  FROM ubuntu:14.04
+  WORKDIR /usr
 
-<span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span>
-  <span class="n">echo</span> <span class="sb">`pwd`</span>
+sh: docker_image='test_docker_workdir'
+  echo `pwd`
   
-<span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span><span class="p">,</span> <span class="n">docker_workdir</span><span class="o">=</span><span class="bp">None</span>
-  <span class="n">echo</span> <span class="sb">`pwd`</span>
+sh: docker_image='test_docker_workdir', docker_workdir=None
+  echo `pwd`
   
-<span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span><span class="p">,</span> <span class="n">docker_workdir</span><span class="o">=</span><span class="s1">&#39;/home/random_user&#39;</span>
-  <span class="n">echo</span> <span class="sb">`pwd`</span>
-</pre></div>
+sh: docker_image='test_docker_workdir', docker_workdir='/home/random_user'
+  echo `pwd`</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -607,7 +610,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -634,21 +638,20 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span>
-  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="n">docker_wc</span><span class="o">.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04'
+  wc -l SoS_Docker_Guide.ipynb > docker_wc.txt
   
-<span class="kn">sh:</span>
-  <span class="n">cat</span> <span class="n">docker_wc</span><span class="o">.</span><span class="n">txt</span>
-</pre></div>
+sh:
+  cat docker_wc.txt</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -670,7 +673,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -689,22 +693,22 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span>
-  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh:
+  wc -l SoS_Docker_Guide.ipynb > /Volumes/Mobile</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -714,19 +718,18 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
-<span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span>
-  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox --expect-error
+sh: docker_image='ubuntu:14.04'
+  wc -l SoS_Docker_Guide.ipynb > /Volumes/Mobile</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -761,7 +764,8 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -785,21 +789,20 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span><span class="p">,</span> <span class="n">volumes</span><span class="o">=</span><span class="s1">&#39;/Volumes&#39;</span>
-  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04', volumes='/Volumes'
+  wc -l SoS_Docker_Guide.ipynb > /Volumes/Mobile
 
-<span class="kn">sh:</span>
-  <span class="n">cat</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
-</pre></div>
+sh:
+  cat /Volumes/Mobile</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -821,7 +824,8 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -831,22 +835,21 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span><span class="p">,</span>
-  <span class="n">volumes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;~/sos/sos-docs/src/tutorials:/input&#39;</span><span class="p">,</span> <span class="s1">&#39;/Volumes:/output&#39;</span><span class="p">]</span>
-  <span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">Mobile</span>
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04',
+  volumes=['~/sos/sos-docs/src/tutorials:/input', '/Volumes:/output']
+  wc -l /input/SoS_Docker_Guide.ipynb > /output/Mobile
 
-<span class="kn">sh:</span>
-  <span class="n">cat</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">Mobile</span>
-</pre></div>
+sh:
+  cat /Volumes/Mobile</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -868,7 +871,8 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -879,19 +883,18 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">sh:</span> <span class="n">docker_image</span><span class="o">=</span><span class="s1">&#39;ubuntu:14.04&#39;</span><span class="p">,</span> <span class="n">volumes</span><span class="o">=</span><span class="s1">&#39;~:/data&#39;</span>
-  <span class="n">ls</span> <span class="o">~</span> <span class="o">|</span> <span class="n">wc</span> <span class="o">-</span><span class="n">l</span>
-  <span class="n">ls</span> <span class="o">/</span><span class="n">data</span> <span class="o">|</span> <span class="n">wc</span> <span class="o">-</span><span class="n">l</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04', volumes='~:/data'
+  ls ~ | wc -l
+  ls /data | wc -l</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -914,7 +917,8 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -934,19 +938,18 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">docker_build:</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;test_docker_workdir&#39;</span>
-  <span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mf">14.04</span>
-  <span class="n">USER</span> <span class="n">blah</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">docker_build: tag='test_docker_workdir'
+  FROM ubuntu:14.04
+  USER blah</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -970,7 +973,8 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -992,19 +996,18 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">docker_build:</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;test_docker_ls&#39;</span>
-  <span class="n">FROM</span> <span class="n">ubuntu</span><span class="p">:</span><span class="mf">14.04</span>
-  <span class="n">ENTRYPOINT</span> <span class="p">[</span><span class="s2">&quot;ls&quot;</span><span class="p">]</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">docker_build: tag='test_docker_ls'
+  FROM ubuntu:14.04
+  ENTRYPOINT ["ls"]</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1028,7 +1031,8 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1047,17 +1051,16 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">script:</span> <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;-l SoS_Docker_Guide.ipynb&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;test_docker_ls&#39;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">script: args = '-l SoS_Docker_Guide.ipynb', docker_image = 'test_docker_ls'</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1079,7 +1082,8 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1100,18 +1104,17 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">script:</span> <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;{script}&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;test_docker_ls&#39;</span>
-  <span class="o">-</span><span class="n">l</span> <span class="n">SoS_Docker_Guide</span><span class="o">.</span><span class="n">ipynb</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">script: args = '{script}', docker_image = 'test_docker_ls'
+  -l SoS_Docker_Guide.ipynb</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1133,7 +1136,8 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1161,6 +1165,39 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
     </div>
   </div>
 </body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+	  <script src="../../js/sos-mode.js"> </script>
+      <script>
+		   function highlight_cells(cells, i, interval) {
+			  setTimeout(function() {
+				var editor = CodeMirror.fromTextArea(cells[i], {
+		           lineNumbers: false,
+				   styleActiveLine: true,
+		           matchBrackets: true,
+				   readOnly: true,
+		           mode: 'sos',
+				   base_mode: cells[i].name,
+		         });
+				$(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>" 
+					+ cells[i].name + "</option></select>");
+		      if (i < cells.length)
+			    highlight_cells(cells, i + 1, interval);
+			}, interval);
+		  }
+
+	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      </script>
+
+
 
  
 

@@ -1,363 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.css" />
+      <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+      <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/theme/default.css">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+      <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet" type="text/css">
+      <title></title>
+      <style type="text/css">
+         body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #000;
+  background-color: #fff;
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-    <meta charset='utf-8'>
- <title>Outcome_Oriented_Step_Targets.sos</title>
-<meta http-equiv="content-type" content="text/html; charset=None">
+  margin: 0 0 50px;
+  /* bottom = footer height */
+  padding: 25px;
+}
 
-<style type="text/css">
 html {
-  font-family: sans-serif;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
+  position: relative;
+  min-height: 100%;
 }
 
-body {
-  margin: 0;
+footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 25px;
+  background-color: #f5f5f5;
+  overflow: hidden;
 }
 
-a {
-  background-color: transparent;
-  -webkit-text-decoration-skip: objects;
+.code {
+  font-family: monotone;
+}
+h1, h2, h3, h4, h5 {
+ font-family: "Source Sans Pro", sans-serif;
+}
+.h1:first-child,
+.h2:first-child,
+.h3:first-child,
+.h4:first-child,
+.h5:first-child,
+.h6:first-child {
+ margin-top: 0.2em;
 }
 
-a:active,
-a:hover {
-  outline-width: 0;
+.h1 {
+ color: #126dce;
+ font-size: 220%;
+ text-align: center;
+ font-weight: lighter;
+}
+.h2 {
+ text-align: left;
+ font-size: 170%;
+ color: #126dce;
+ font-style: normal;
+ font-weight: lighter;
+}
+.h3 {
+ font-size: 150%;
+ color: #126dce;
+ font-weight: lighter;
+ text-decoration: italic;
+ font-style: normal;
+}
+.h4 {
+ font-size: 120%;
+ color: #126dce;
+ font-weight: underline;
+ font-style: normal;
 }
 
-img {
-  border-style: none;
-}
-
-pre {
-  font-family: monospace, monospace;
-  font-size: 1em;
-}
-
-button::-moz-focus-inner,
-[type="button"]::-moz-focus-inner,
-[type="reset"]::-moz-focus-inner,
-[type="submit"]::-moz-focus-inner {
-  border-style: none;
-  padding: 0;
-}
-
-button:-moz-focusring,
-[type="button"]:-moz-focusring,
-[type="reset"]:-moz-focusring,
-[type="submit"]:-moz-focusring {
-  outline: 1px dotted ButtonText;
-}
 
 table {
-  border-spacing: 0;
+  /* margin-left: auto; */
+  margin-right: auto;
+  border: none;
   border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
 }
-
+tr,
+th,
 td {
-  padding: 0;
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+td,
+th {
+  text-align: left;
+  vertical-align: middle;
+  padding: 4px;
+  display: table-cell;
+}
+th {
+  font-weight: bold;
+}
+* + table {
+  margin-top: 1em;
 }
 
-* {
-  box-sizing: border-box;
+tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
 }
 
-body {
-  font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  color: #333;
-  background-color: #fff;
+img.dag-image {
+  max-width: 80%;
+}
+
+.timeline-col {
+  width : 300px;
+  text-align: center;
+}
+
+.timeline-cell {
+  display: flex;
+  width: 100%;
+  height: 1em;
+  margin: 0px;
+	overflow: hidden;
+}
+.timeline-before {
+  float: left;
+	background-color: #FEF9E7;
+  height: 1em;
+  margin: 0px;
+}
+.timeline-during {
+  float: left;
+	background-color: green;
+	min-width: 1px;
+  height: 1em;
+  margin: 0px;
+}
+.timeline-after {
+  float: left;
+	background-color: #FEF9E7;
+  height: 1em;
+  margin: 0px;
+}
+
+.master_workflow th {
+  font-weight: bold;
+}
+
+.subworkflow th {
+  font-style: normal;
+}
+
+.dropdown-menu li
+{
+  padding-left: 5px;
+  padding-right: 100px;
+  white-space: nowrap;
+  font-size: small;
+  font-family: monospace;
+}
+
+.dropdown-menu > li > .filesize {
+  position: absolute;
+  right: 5px;
 }
 
 a {
-  color: #4078c0;
   text-decoration: none;
 }
 
-a:hover,
-a:active {
-  text-decoration: underline;
+a:link, a:visited {
+  color: black;
 }
 
-pre {
-  margin-top: 0;
-  margin-bottom: 0;
-  font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
-}
-
-.container {
-  width: 980px;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-.container::before {
-  display: table;
-  content: "";
-}
-
-.container::after {
-  display: table;
-  clear: both;
-  content: "";
-}
-
-.right {
-  float: right !important;
-}
-
-::-moz-placeholder {
-  color: #999;
-}
-
-:-ms-input-placeholder {
-  color: #999;
-}
-
-::placeholder {
-  color: #999;
-}
-
-.form-select::-ms-expand {
-  opacity: 0;
-}
-
-.avatar {
-  display: inline-block;
-  overflow: hidden;
-  line-height: 1;
-  vertical-align: middle;
-  border-radius: 3px;
-}
-
-.commit-tease {
-  position: relative;
-  padding: 10px;
-  margin-bottom: -1px;
-  line-height: 20px;
-  color: #68777d;
-  background-color: #f2f9fc;
-  border: 1px solid #c9e6f2;
-  border-radius: 3px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.commit-tease .message {
-  color: inherit;
-}
-
-.commit-tease .avatar {
-  margin-top: -1px;
-}
-
-.commit-tease-sha {
-  display: inline-block;
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  color: #445055;
-}
-
-.full-commit .btn-outline:not(:disabled):hover {
-  color: #4078c0;
-  border: 1px solid #4078c0;
-}
-
-.blob-wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
-}
-
-.blob-num {
-  width: 1%;
-  min-width: 50px;
-  padding-right: 10px;
-  padding-left: 10px;
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  font-size: 12px;
-  line-height: 18px;
-  color: rgba(0,0,0,0.3);
-  text-align: right;
-  white-space: nowrap;
-  vertical-align: bottom;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  border: solid #eee;
-  border-width: 0 1px 0 0;
-}
-
-.blob-num:hover {
-  color: rgba(0,0,0,0.6);
-}
-
-.blob-num::before {
-  content: attr(data-line-number);
-}
-
-.blob-code {
-  position: relative;
-  padding-right: 10px;
-  padding-left: 10px;
-  vertical-align: top;
-  white-space: nowrap;
-}
-
-.sos-comment {
-  /* background: #f7f7f7; */
-}
-.sos-report {
-  background: #FAFAD2;
-  padding-top: 5px;
-}
-.sos-header {
-  margin-top: 5px;
-  margin-bottom: 0px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  background-color: #ddd;
-  /* border-bottom-color: #dde4e6; */
-  color: darkblue;
-  border-top-style: solid;
-
-}
-.sos-directive {
-  padding-top: 5px;
-  /* background-color: #fff9ea; */
-  border-color: #f1c0c0;
-}
-.sos-statement {
-  padding-top: 5px;
-  /* background-color: #f2f9fc; */
-}
-.sos-error {
-  /* background: #ffdddd; */
+a:hover {
   color: red;
 }
-.sos-script {
-  position: relative;
-  padding-right: 10px;
-  padding-left: 30px;
-  vertical-align: top;
-  /* background-color: #eff0f1; */
+
+tr.subworkflow.step-row {
+  display: none;
 }
 
-
-.blob-code-inner {
-  overflow: visible;
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  font-size: 12px;
-  color: #333;
-  word-wrap: normal;
-  white-space: pre;
+.filelist {
+  cursor: pointer;
 }
 
-.blob-code-inner::before {
-  content: "";
+.code {
+  color: black!important;
 }
 
-body {
-  min-width: 1020px;
-  word-wrap: break-word;
+#sourcecode {
+  display:none;
 }
 
-.user-mention {
-  font-weight: bold;
-  color: #333;
-  white-space: nowrap;
+.sos-logo img  {
+  height: 2em;
 }
 
-.prose-diff>.markdown-body :not(li.moved).removed {
-  color: #a33;
-  text-decoration: line-through;
-  background: #ffeaea;
+.fa-external-link-alt {
+  color: gray;
+  font-size: 0.5em;
 }
 
-.prose-diff>.markdown-body :not(.github-user-ins):not(li.moved).removed {
-  text-decoration: line-through;
-}
-
-.prose-diff>.markdown-body :not(li.moved).added {
-  background: #eaffea;
-}
-
-.prose-diff>.markdown-body :not(.github-user-del):not(li.moved).added li:not(.moved):not(.github-user-del).added {
-  text-decoration: none;
-}
-
-:checked+.radio-label {
-  position: relative;
-  z-index: 1;
-  border-color: #4078c0;
-}
-
-.select-menu-text-filter input::-moz-placeholder {
-  color: #aaa;
-}
-
-.select-menu-text-filter input:-ms-input-placeholder {
-  color: #aaa;
-}
-
-.select-menu-text-filter input::placeholder {
-  color: #aaa;
-}
-
-.tab-size[data-tab-size="8"] {
-  -moz-tab-size: 8;
-  -o-tab-size: 8;
-  tab-size: 8;
-}
-
-# override source
-.source {
-  background: auto;
-}
 
 .file {
   position: relative;
-  margin-top: 20px;
-  margin-bottom: 15px;
+  margin-top: 16px;
+  margin-bottom: 16px;
   border: 1px solid #ddd;
   border-radius: 3px;
 }
 
-.file-header {
+.file .fileheader {
   padding: 5px 10px;
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #d8d8d8;
+  background-color: #fafbfc;
+  border-bottom: 1px solid #e1e4e8;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
 }
 
-.file-header::before {
-  display: table;
-  content: "";
-}
-
-.file-header::after {
-  display: table;
-  clear: both;
-  content: "";
-}
-
-.file-actions {
-  float: right;
-  padding-top: 3px;
-}
-
-.file-info {
-  float: left;
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+.file .fileinfo {
+  font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
   font-size: 12px;
   line-height: 32px;
 }
 
-.file-info-divider {
+.file .file-info-divider {
   display: inline-block;
   width: 1px;
   height: 18px;
@@ -367,377 +252,720 @@ body {
   background-color: #ddd;
 }
 
-.header-search-input::-ms-clear {
-  display: none;
+.file .filecontent {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
 }
 
-.org-validate-group input::-ms-clear {
-  display: none;
+.file .CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
 }
+      </style>
+   </head>
+   <body>
+      <h2 class='mt-0'>Outcome_Oriented_Step_Targets.sos
+         
+         <a href="Outcome_Oriented_Step_Targets.sos"><i class="fas fa-external-link-alt"></i></a>
+         
+      </h2>
+      <div class="file">
+         <div class="fileheader">
+            <div class="fileinfo">
+               102 lines
+               <span class="file-info-divider"></span>
+               4.5 kB
+            </div>
+         </div>
+         <div class="filecontent">
+            <textarea id="source-code" name="code">#!/usr/bin/env sos-runner
+# fileformat=SOS1.0
+# Author: Gao Wang and Bo Peng
 
+#
+# Linear-model based prediction
+#
+# This script fits linear models
+# using Lasso and Ridge regression
+# and summarizes their prediction performance
+# This script is written in a "backward" flavor
+# aka the "Make Style", demonstrating dynamic input, grouped output
+# and step dependencies.
 
-.source .c { color: #8f5902; font-style: italic } /* Comment */
-.source .err { color: #a40000; border: 1px solid #ef2929 } /* Error */
-.source .g { color: #000000 } /* Generic */
-.source .k { color: #204a87; font-weight: bold } /* Keyword */
-.source .l { color: #000000 } /* Literal */
-.source .n { color: #000000 } /* Name */
-.source .o { color: #ce5c00; font-weight: bold } /* Operator */
-.source .x { color: #000000 } /* Other */
-.source .p { color: #000000; font-weight: bold } /* Punctuation */
-.source .ch { color: #8f5902; font-style: italic } /* Comment.Hashbang */
-.source .cm { color: #8f5902; font-style: italic } /* Comment.Multiline */
-.source .cp { color: #8f5902; font-style: italic } /* Comment.Preproc */
-.source .cpf { color: #8f5902; font-style: italic } /* Comment.PreprocFile */
-.source .c1 { color: #8f5902; font-style: italic } /* Comment.Single */
-.source .cs { color: #8f5902; font-style: italic } /* Comment.Special */
-.source .gd { color: #a40000 } /* Generic.Deleted */
-.source .ge { color: #000000; font-style: italic } /* Generic.Emph */
-.source .gr { color: #ef2929 } /* Generic.Error */
-.source .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.source .gi { color: #00A000 } /* Generic.Inserted */
-.source .go { color: #000000; font-style: italic } /* Generic.Output */
-.source .gp { color: #8f5902 } /* Generic.Prompt */
-.source .gs { color: #000000; font-weight: bold } /* Generic.Strong */
-.source .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.source .gt { color: #a40000; font-weight: bold } /* Generic.Traceback */
-.source .kc { color: #204a87; font-weight: bold } /* Keyword.Constant */
-.source .kd { color: #204a87; font-weight: bold } /* Keyword.Declaration */
-.source .kn { color: #204a87; font-weight: bold } /* Keyword.Namespace */
-.source .kp { color: #204a87; font-weight: bold } /* Keyword.Pseudo */
-.source .kr { color: #204a87; font-weight: bold } /* Keyword.Reserved */
-.source .kt { color: #204a87; font-weight: bold } /* Keyword.Type */
-.source .ld { color: #000000 } /* Literal.Date */
-.source .m { color: #0000cf; font-weight: bold } /* Literal.Number */
-.source .s { color: #4e9a06 } /* Literal.String */
-.source .na { color: #c4a000 } /* Name.Attribute */
-.source .nb { color: #204a87 } /* Name.Builtin */
-.source .nc { color: #000000 } /* Name.Class */
-.source .no { color: #000000 } /* Name.Constant */
-.source .nd { color: #5c35cc; font-weight: bold } /* Name.Decorator */
-.source .ni { color: #ce5c00 } /* Name.Entity */
-.source .ne { color: #cc0000; font-weight: bold } /* Name.Exception */
-.source .nf { color: #000000 } /* Name.Function */
-.source .nl { color: #f57900 } /* Name.Label */
-.source .nn { color: #000000 } /* Name.Namespace */
-.source .nx { color: #000000 } /* Name.Other */
-.source .py { color: #000000 } /* Name.Property */
-.source .nt { color: #204a87; font-weight: bold } /* Name.Tag */
-.source .nv { color: #000000 } /* Name.Variable */
-.source .ow { color: #204a87; font-weight: bold } /* Operator.Word */
-.source .w { color: #f8f8f8; text-decoration: underline } /* Text.Whitespace */
-.source .mb { color: #0000cf; font-weight: bold } /* Literal.Number.Bin */
-.source .mf { color: #0000cf; font-weight: bold } /* Literal.Number.Float */
-.source .mh { color: #0000cf; font-weight: bold } /* Literal.Number.Hex */
-.source .mi { color: #0000cf; font-weight: bold } /* Literal.Number.Integer */
-.source .mo { color: #0000cf; font-weight: bold } /* Literal.Number.Oct */
-.source .sa { color: #4e9a06 } /* Literal.String.Affix */
-.source .sb { color: #4e9a06 } /* Literal.String.Backtick */
-.source .sc { color: #4e9a06 } /* Literal.String.Char */
-.source .dl { color: #4e9a06 } /* Literal.String.Delimiter */
-.source .sd { color: #8f5902; font-style: italic } /* Literal.String.Doc */
-.source .s2 { color: #4e9a06 } /* Literal.String.Double */
-.source .se { color: #4e9a06 } /* Literal.String.Escape */
-.source .sh { color: #4e9a06 } /* Literal.String.Heredoc */
-.source .si { color: #4e9a06 } /* Literal.String.Interpol */
-.source .sx { color: #4e9a06 } /* Literal.String.Other */
-.source .sr { color: #4e9a06 } /* Literal.String.Regex */
-.source .s1 { color: #4e9a06 } /* Literal.String.Single */
-.source .ss { color: #4e9a06 } /* Literal.String.Symbol */
-.source .bp { color: #3465a4 } /* Name.Builtin.Pseudo */
-.source .fm { color: #000000 } /* Name.Function.Magic */
-.source .vc { color: #000000 } /* Name.Variable.Class */
-.source .vg { color: #000000 } /* Name.Variable.Global */
-.source .vi { color: #000000 } /* Name.Variable.Instance */
-.source .vm { color: #000000 } /* Name.Variable.Magic */
-.source .il { color: #0000cf; font-weight: bold } /* Literal.Number.Integer.Long */
- </style>
-</head>
-<body>
+parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
+id = [x+1 for x in range(5)]
+ridge_result = [f'data_{x}.ridge.mse.csv' for x in id]
+lasso_result = [f'data_{x}.lasso.mse.csv' for x in id]
 
+[simulation]
+# Simulate sparse data-sets
+depends: R_library("MASS")
+parameter: N = (40, 200) # training and testing samples
+parameter: rstd = 3
+input: for_each = 'id', concurrent = True 
+output: [(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id], group_by = 2
+R: expand = "${ }"
+  set.seed(${_id})
+  N = sum(c(${paths(N):,}))
+  p = length(c(${paths(beta):,}))
+  X = MASS::mvrnorm(n = N, rep(0, p), 0.5^abs(outer(1:p, 1:p, FUN = "-")))
+  Y = X %*% c(${paths(beta):,}) + rnorm(N, mean = 0, sd = ${rstd})
+  Xtrain = X[1:${N[0]},]; Xtest = X[(${N[0]}+1):(${N[0]}+${N[1]}),]
+  Ytrain = Y[1:${N[0]}]; Ytest = Y[(${N[0]}+1):(${N[0]}+${N[1]})]
+  write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
+  write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
+[ridge]
+# Ridge regression model implemented in R
+# Build predictor via cross-validation and make prediction
+parameter: nfolds = 5
+depends: sos_step('simulation'), R_library("glmnet")
+input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2, concurrent = True
+output: [(f"data_{x}.ridge.predicted.csv", f"data_{x}.ridge.coef.csv") for x in id], group_by = 2
+R: expand = "${ }"
+  train = read.csv(${_input[0]:r}, header = F)
+  test = read.csv(${_input[1]:r}, header = F)
+  model = glmnet::cv.glmnet(as.matrix(train[,-1]), train[,1], family = "gaussian", alpha = 0, nfolds = ${nfolds}, intercept = F)
+  betahat = as.vector(coef(model, s = "lambda.min")[-1])
+  Ypred = predict(model, as.matrix(test[,-1]), s = "lambda.min")
+  write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
+  write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-<div class="container new-discussion-timeline experiment-repo-nav">
+[lasso]
+# LASSO model implemented in Python
+# Build predictor via cross-validation and make prediction
+parameter: nfolds = 5
+depends: sos_step('simulation'), Py_Module("sklearn")
+input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2, concurrent = True
+output: [(f"data_{x}.lasso.predicted.csv", f"data_{x}.lasso.coef.csv") for x in id], group_by = 2
+python: expand = "${ }"
+  import numpy as np
+  from sklearn.linear_model import LassoCV
+  train = np.genfromtxt(${_input[0]:r}, delimiter = ",")
+  test = np.genfromtxt(${_input[1]:r}, delimiter = ",")
+  model = LassoCV(cv = ${nfolds}, fit_intercept = False).fit(train[:,1:], train[:,1])
+  Ypred = model.predict(test[:,1:])
+  np.savetxt(${_output[0]:r}, Ypred)
+  np.savetxt(${_output[1]:r}, model.coef_)
 
- <div class="commit-tease">
-      <span class="right">
-      </span>
- <div>
-        <a class="header-logo-invertocat" href="https://vatlab.github.io/SOS" data-hotkey="g d" aria-label="Homepage">
-        <img src="http://vatlab.github.io/SOS/img/sos_icon.svg" alt="sos_icon">
-        </a>
+[evaluation_core]
+# Evaluate predictors by calculating mean squared error
+# of prediction vs truth (first line of output)
+# and of betahat vs truth (2nd line of output)
+parameter: input_files = list
+parameter: output_files = list
+input: dynamic(input_files), group_by = 3, concurrent = True
+output: output_files, group_by = 1
+R: expand = "${ }"
+  b = c(${paths(beta):,})
+  Ytruth = as.matrix(read.csv(${_input[0]:r}, header = F)[,-1]) %*% b
+  Ypred = scan(${_input[1]:r})
+  prediction_mse = mean((Ytruth - Ypred)^2)
+  betahat = scan(${_input[2]:r})
+  estimation_mse = mean((betahat - b) ^ 2)
+  cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
 
-        <span class="user-mention"><a href="Outcome_Oriented_Step_Targets.sos">Outcome_Oriented_Step_Targets.sos</a></span>
+[evaluation_lasso]
+depends: sos_step('simulation'), sos_step('lasso')
+input_files = paths([(f"data_{x}.test.csv", f"data_{x}.lasso.predicted.csv", f"data_{x}.lasso.coef.csv") for x in id])
+output: lasso_result 
+sos_run("evaluation_core", input_files = input_files, output_files = lasso_result)
+
+[evaluation_ridge]
+depends: sos_step('simulation'), sos_step('ridge')
+input_files = paths([(f"data_{x}.test.csv", f"data_{x}.ridge.predicted.csv", f"data_{x}.ridge.coef.csv") for x in id])
+output: ridge_result 
+sos_run("evaluation_core", input_files = input_files, output_files = ridge_result)
+
+[default]
+depends: sos_step('evaluation_lasso'), sos_step('evaluation_ridge')
+output: lasso_result, ridge_result
+</textarea>
+         </div>
       </div>
-      </div>
+      <footer>
+         <a class="sos-logo" href="https://vatlab.github.io/sos-docs">
+         <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
+         </a>
+         &nbsp;
+         <a href="https://vatlab.github.io/sos-docs/">SoS Workflow Engine</a> version <samp>0.9.14.9</samp>
+      </footer>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+      <script>
+         /**
+ * Copyright (c) Bo Peng and UT MD Anderson Cancer Center
+ * Distributed under the terms of the Modified BSD License.
+ **/
 
-  <div class="repository-content">
-  <div class="file">
-  <div class="file-header">
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("codemirror/lib/codemirror"),
+      require("codemirror/mode/python/python"),
+      require("codemirror/mode/r/r"),
+      require("codemirror/mode/octave/octave"),
+      require("codemirror/mode/ruby/ruby"),
+      require("codemirror/mode/sas/sas"),
+      require("codemirror/mode/javascript/javascript"),
+      require("codemirror/mode/shell/shell"),
+      require("codemirror/mode/julia/julia"),
+      require("codemirror/mode/markdown/markdown"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["codemirror/lib/codemirror", "codemirror/mode/python/python",
+      "codemirror/mode/markdown/markdown", "codemirror/mode/r/r"
+    ], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  "use strict";
 
-  <div class="file-info">
-      <a href="Outcome_Oriented_Step_Targets.sos" class="commit-tease-sha">Outcome_Oriented_Step_Targets.sos</a>
-      <span class="file-info-divider"></span>
-    4.4 KiB
-  </div>
-  <div class="file-actions">
-  </div>
-  </div>
- <div itemprop="text" class="blob-wrapper data type-python">
+  var sosKeywords = ["input", "output", "depends", "parameter"];
+  var sosActionWords = ["script", "download", "run", "bash", "sh", "csh",
+    "tcsh", "zsh", "python", "python2", "python3", "R", "node", "julia",
+    "matlab", "octave", "ruby", "perl", "report", "pandoc", "docker_build",
+    "Rmarkdown"
+  ];
+  var sosMagicWords = ['cd', 'capture', 'clear', 'debug', 'dict', 'expand', 'get',
+    'matplotlib', 'paste', 'preview', 'pull', 'push', 'put', 'render',
+    'rerun', 'run', 'save', 'sandbox', 'set', 'sessioninfo', 'sosrun',
+    'sossave', 'shutdown', 'taskinfo', 'tasks', 'toc', 'use', 'with'
+  ]
+  var sosFunctionWords = ["sos_run", "logger", "get_output"];
 
-<table class="highlight tab-size js-file-line-container"><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>2</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># fileformat=SOS1.0</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>3</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Author: Gao Wang and Bo Peng</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>4</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span> 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>5</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>6</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Linear-model based prediction</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>7</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>8</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># This script fits linear models</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>9</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># using Lasso and Ridge regression</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>10</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># and summarizes their prediction performance</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>11</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># This script is written in a &quot;backward&quot; flavor</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>12</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># aka the &quot;Make Style&quot;, demonstrating dynamic input, grouped output</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>13</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># and step dependencies.</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>14</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span> 
-</pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>15</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>16
-17
-18
-19</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="nb">id</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
-<span class="n">ridge_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;data_{x}.ridge.mse.csv&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">]</span>
-<span class="n">lasso_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;data_{x}.lasso.mse.csv&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">]</span>
- 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>20</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">simulation</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>21</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Simulate sparse data-sets</span>
-</pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>22
-23
-24
-25
-26</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;MASS&quot;</span><span class="p">)</span>
-<span class="kn">parameter:</span> <span class="n">N</span> <span class="o">=</span> <span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="c1"># training and testing samples</span>
-<span class="kn">parameter:</span> <span class="n">rstd</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span> 
-<span class="kn">output:</span> <span class="p">[(</span><span class="n">f</span><span class="s2">&quot;data_{x}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>27</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>28
-29
-30
-31
-32
-33
-34
-35
-36
-37</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span><span class="kp">set.seed</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_id<span class="p">})</span>
-N <span class="o">=</span> <span class="kp">sum</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span>N<span class="p">)</span><span class="o">:</span><span class="p">,}))</span>
-p <span class="o">=</span> <span class="kp">length</span><span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,}))</span>
-X <span class="o">=</span> MASS<span class="o">::</span>mvrnorm<span class="p">(</span>n <span class="o">=</span> N<span class="p">,</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> p<span class="p">),</span> <span class="m">0.5</span><span class="o">^</span><span class="kp">abs</span><span class="p">(</span><span class="kp">outer</span><span class="p">(</span><span class="m">1</span><span class="o">:</span>p<span class="p">,</span> <span class="m">1</span><span class="o">:</span>p<span class="p">,</span> FUN <span class="o">=</span> <span class="s">&quot;-&quot;</span><span class="p">)))</span>
-Y <span class="o">=</span> X <span class="o">%*%</span> <span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,})</span> <span class="o">+</span> rnorm<span class="p">(</span>N<span class="p">,</span> mean <span class="o">=</span> <span class="m">0</span><span class="p">,</span> sd <span class="o">=</span> <span class="o">$</span><span class="p">{</span>rstd<span class="p">})</span>
-Xtrain <span class="o">=</span> X<span class="p">[</span><span class="m">1</span><span class="o">:$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]},];</span> Xtest <span class="o">=</span> X<span class="p">[(</span><span class="o">$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}</span><span class="m">+1</span><span class="p">)</span><span class="o">:</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}</span><span class="o">+$</span><span class="p">{</span>N<span class="p">[</span><span class="m">1</span><span class="p">]}),]</span>
-Ytrain <span class="o">=</span> Y<span class="p">[</span><span class="m">1</span><span class="o">:$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}];</span> Ytest <span class="o">=</span> Y<span class="p">[(</span><span class="o">$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}</span><span class="m">+1</span><span class="p">)</span><span class="o">:</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>N<span class="p">[</span><span class="m">0</span><span class="p">]}</span><span class="o">+$</span><span class="p">{</span>N<span class="p">[</span><span class="m">1</span><span class="p">]})]</span>
-write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>Ytrain<span class="p">,</span> Xtrain<span class="p">),</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
-write.table<span class="p">(</span><span class="kp">cbind</span><span class="p">(</span>Ytest<span class="p">,</span> Xtest<span class="p">),</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
- 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>38</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">ridge</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>39</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Ridge regression model implemented in R</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>40</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Build predictor via cross-validation and make prediction</span>
-</pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>41
-42
-43
-44</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;glmnet&quot;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">paths</span><span class="p">([(</span><span class="n">f</span><span class="s2">&quot;data_{x}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="p">[(</span><span class="n">f</span><span class="s2">&quot;data_{x}.ridge.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.ridge.coef.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>45</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>46
-47
-48
-49
-50
-51
-52
-53</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>train <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
-test <span class="o">=</span> read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
-model <span class="o">=</span> glmnet<span class="o">::</span>cv.glmnet<span class="p">(</span><span class="kp">as.matrix</span><span class="p">(</span>train<span class="p">[,</span><span class="m">-1</span><span class="p">]),</span> train<span class="p">[,</span><span class="m">1</span><span class="p">],</span> family <span class="o">=</span> <span class="s">&quot;gaussian&quot;</span><span class="p">,</span> alpha <span class="o">=</span> <span class="m">0</span><span class="p">,</span> nfolds <span class="o">=</span> <span class="o">$</span><span class="p">{</span>nfolds<span class="p">},</span> intercept <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
-betahat <span class="o">=</span> <span class="kp">as.vector</span><span class="p">(</span>coef<span class="p">(</span>model<span class="p">,</span> s <span class="o">=</span> <span class="s">&quot;lambda.min&quot;</span><span class="p">)[</span><span class="m">-1</span><span class="p">])</span>
-Ypred <span class="o">=</span> predict<span class="p">(</span>model<span class="p">,</span> <span class="kp">as.matrix</span><span class="p">(</span>test<span class="p">[,</span><span class="m">-1</span><span class="p">]),</span> s <span class="o">=</span> <span class="s">&quot;lambda.min&quot;</span><span class="p">)</span>
-write.table<span class="p">(</span>Ypred<span class="p">,</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
-write.table<span class="p">(</span>betahat<span class="p">,</span> <span class="o">$</span><span class="p">{</span>_output<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> row.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> col.names <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
- 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>54</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">lasso</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>55</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># LASSO model implemented in Python</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>56</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Build predictor via cross-validation and make prediction</span>
-</pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>57
-58
-59
-60</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s2">&quot;sklearn&quot;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">paths</span><span class="p">([(</span><span class="n">f</span><span class="s2">&quot;data_{x}.train.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="p">[(</span><span class="n">f</span><span class="s2">&quot;data_{x}.lasso.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.lasso.coef.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">2</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>61</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>62
-63
-64
-65
-66
-67
-68
-69
-70</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LassoCV</span>
-<span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
-<span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">LassoCV</span><span class="p">(</span><span class="n">cv</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">nfolds</span><span class="p">},</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">train</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">Ypred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span>
-<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">Ypred</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
- 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>71</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">evaluation_core</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>72</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Evaluate predictors by calculating mean squared error</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>73</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># of prediction vs truth (first line of output)</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>74</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="c1"># and of betahat vs truth (2nd line of output)</span>
-</pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>75
-76
-77
-78</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">input_files</span> <span class="o">=</span> <span class="nb">list</span>
-<span class="kn">parameter:</span> <span class="n">output_files</span> <span class="o">=</span> <span class="nb">list</span>
-<span class="kn">input:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">input_files</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">output_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>79</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>80
-81
-82
-83
-84
-85
-86
-87</pre></div></td><td class="code"><div class="source blob-code sos-script "><pre><span></span>b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>paths<span class="p">(</span><span class="kp">beta</span><span class="p">)</span><span class="o">:</span><span class="p">,})</span>
-Ytruth <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>read.csv<span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">:</span>r<span class="p">},</span> header <span class="o">=</span> <span class="bp">F</span><span class="p">)[,</span><span class="m">-1</span><span class="p">])</span> <span class="o">%*%</span> b
-Ypred <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">:</span>r<span class="p">})</span>
-prediction_mse <span class="o">=</span> <span class="kp">mean</span><span class="p">((</span>Ytruth <span class="o">-</span> Ypred<span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
-betahat <span class="o">=</span> <span class="kp">scan</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="o">:</span>r<span class="p">})</span>
-estimation_mse <span class="o">=</span> <span class="kp">mean</span><span class="p">((</span>betahat <span class="o">-</span> b<span class="p">)</span> <span class="o">^</span> <span class="m">2</span><span class="p">)</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span>prediction_mse<span class="p">,</span> estimation_mse<span class="p">),</span> file <span class="o">=</span> <span class="o">$</span><span class="p">{</span>_output<span class="o">:</span>r<span class="p">})</span>
- 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>88</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">evaluation_lasso</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>89</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">),</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;lasso&#39;</span><span class="p">)</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>90</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">input_files</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([(</span><span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.lasso.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.lasso.coef.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>91</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">output:</span> <span class="n">lasso_result</span> 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>92
-93</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">sos_run</span><span class="p">(</span><span class="s2">&quot;evaluation_core&quot;</span><span class="p">,</span> <span class="n">input_files</span> <span class="o">=</span> <span class="n">input_files</span><span class="p">,</span> <span class="n">output_files</span> <span class="o">=</span> <span class="n">lasso_result</span><span class="p">)</span>
- 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>94</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">evaluation_ridge</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>95</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;simulation&#39;</span><span class="p">),</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;ridge&#39;</span><span class="p">)</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>96</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">input_files</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([(</span><span class="n">f</span><span class="s2">&quot;data_{x}.test.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.ridge.predicted.csv&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;data_{x}.ridge.coef.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">])</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>97</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">output:</span> <span class="n">ridge_result</span> 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>98
-99</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="n">sos_run</span><span class="p">(</span><span class="s2">&quot;evaluation_core&quot;</span><span class="p">,</span> <span class="n">input_files</span> <span class="o">=</span> <span class="n">input_files</span><span class="p">,</span> <span class="n">output_files</span> <span class="o">=</span> <span class="n">ridge_result</span><span class="p">)</span>
- 
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>100</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>101
-102</pre></div></td><td class="code"><div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;evaluation_lasso&#39;</span><span class="p">),</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;evaluation_ridge&#39;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="n">lasso_result</span><span class="p">,</span> <span class="n">ridge_result</span>
-</pre></div>
-</td></tr>
-</table>
-</div>
-</div>
-</div>
-</body></html>
+  var hintWords = sosKeywords.concat(sosActionWords).concat(sosFunctionWords)
+    .concat(sosMagicWords);
+
+  var sosDirectives = sosKeywords.map(x => x + ":");
+  var sosActions = sosActionWords.map(x => x + ":");
+  var sosMagics = sosMagicWords.map(x => '%' + x);
+
+  // hint word for SoS mode
+  CodeMirror.registerHelper("hintWords", "sos", hintWords);
+
+  var modeMap = {
+    'sos': null,
+    'python': {
+      name: 'python',
+      version: 3
+    },
+    'python2': {
+      name: 'python',
+      version: 2
+    },
+    'python3': {
+      name: 'python',
+      version: 3
+    },
+    'r': 'r',
+    'report': 'markdown',
+    'pandoc': 'markdown',
+    'download': 'markdown',
+    'markdown': 'markdown',
+    'ruby': 'ruby',
+    'sas': 'sas',
+    'bash': 'shell',
+    'sh': 'shell',
+    'julia': 'julia',
+    'run': 'shell',
+    'javascript': 'javascript',
+    'typescript': {
+      name: "javascript",
+      typescript: true
+    },
+    'octave': 'octave',
+    'matlab': 'octave',
+  }
+
+  function findMode(mode) {
+    if (mode in modeMap) {
+      return modeMap[mode];
+    }
+    return null;
+  }
+
+  function markExpr(python_mode) {
+    return {
+      startState: function() {
+        return {
+          in_python: false,
+          sigil: null,
+          matched: true,
+          python_state: CodeMirror.startState(python_mode),
+        };
+      },
+
+      copyState: function(state) {
+        return {
+          in_python: state.in_python,
+          sigil: state.sigil,
+          matched: state.matched,
+          python_state: CodeMirror.copyState(python_mode, state.python_state)
+        };
+      },
+
+      token: function(stream, state) {
+        if (state.in_python) {
+          if (stream.match(state.sigil.right)) {
+            state.in_python = false;
+            state.python_state = CodeMirror.startState(python_mode);
+            return "sos-sigil";
+          }
+          let it = null;
+          try {
+            it = python_mode.token(stream, state.python_state);
+          } catch (error) {
+            return "sos-interpolated error" + (state.matched ? "" : " sos-unmatched");
+          }
+          if (it == 'variable' || it == 'builtin') {
+            let ct = stream.current();
+            // warn users in the use of input and output in {}
+            if (ct === 'input' || ct === 'output')
+              it += ' error';
+          }
+          return (it ? ("sos-interpolated " + it) : "sos-interpolated") + (state.matched ? "" : " sos-unmatched");
+        } else {
+          // remove the double brace case, the syntax highlighter
+          // does not have to worry (highlight) }}, although it would
+          // probably mark an error for single }
+          if (state.sigil.left === '{' && stream.match(/\{\{/))
+            return null;
+          if (stream.match(state.sigil.left)) {
+            state.in_python = true;
+            // let us see if there is any right sigil till the end of the editor.
+            try {
+              let rest = stream.string.slice(stream.pos);
+              if (!rest.includes(state.sigil.right)) {
+                state.matched = false;
+                for (let idx = 1; idx < 5; ++idx) {
+                  if (stream.lookAhead(idx).includes(state.sigil.right)) {
+                    state.matched = true;
+                    break;
+                  }
+                }
+              }
+            } catch (error) {
+              // only codemirror 5.27.0 supports this function
+            }
+            return "sos-sigil" + (state.matched ? "" : " sos-unmatched");
+          }
+          while (stream.next() && !stream.match(state.sigil.left, false)) {}
+          return null;
+        }
+      }
+    }
+  }
+
+  CodeMirror.defineMode("sos", function(conf, parserConf) {
+    let sosPythonConf = {};
+    for (let prop in parserConf) {
+      if (parserConf.hasOwnProperty(prop)) {
+        sosPythonConf[prop] = parserConf[prop];
+      }
+    }
+    sosPythonConf.name = 'python';
+    sosPythonConf.version = 3;
+    sosPythonConf.extra_keywords = sosActionWords.concat(sosFunctionWords);
+    // this is the SoS flavored python mode with more identifiers
+    var base_mode = null;
+    if ('base_mode' in parserConf && parserConf.base_mode) {
+      let mode = findMode(parserConf.base_mode.toLowerCase());
+      if (mode) {
+        base_mode = CodeMirror.getMode(conf, mode);
+      } else {
+        console.log(`No base mode is found for ${parserConf.base_mode}. Python mode used.`);
+      }
+    } else if ('base_mode' in conf && conf.base_mode) {
+      let mode = findMode(conf.base_mode.toLowerCase());
+      if (mode) {
+        base_mode = CodeMirror.getMode(conf, mode);
+      } else {
+        console.log(`No base mode is found for ${parserConf.base_mode}. Python mode used.`);
+      }
+    }
+    // if there is a user specified base mode, this is the single cell mode
+    if (base_mode) {
+      var python_mode = CodeMirror.getMode({}, {
+        name: 'python',
+        version: 3
+      });
+      var overlay_mode = markExpr(python_mode);
+      return {
+        startState: function() {
+          return {
+            sos_mode: true,
+            base_state: CodeMirror.startState(base_mode),
+            overlay_state: CodeMirror.startState(overlay_mode),
+            // for overlay
+            basePos: 0,
+            baseCur: null,
+            overlayPos: 0,
+            overlayCur: null,
+            streamSeen: null
+          };
+        },
+
+        copyState: function(state) {
+          return {
+            sos_mode: state.sos_mode,
+            base_state: CodeMirror.copyState(base_mode, state.base_state),
+            overlay_state: CodeMirror.copyState(overlay_mode, state.overlay_state),
+            // for overlay
+            basePos: state.basePos,
+            baseCur: null,
+            overlayPos: state.overlayPos,
+            overlayCur: null
+          };
+        },
+
+        token: function(stream, state) {
+          if (state.sos_mode) {
+            if (stream.sol()) {
+              let sl = stream.peek();
+              if (sl == '!') {
+                stream.skipToEnd();
+                return "meta";
+              } else if (sl == '#') {
+                stream.skipToEnd();
+                return 'comment'
+              }
+              for (var i = 0; i < sosMagics.length; i++) {
+                if (stream.match(sosMagics[i])) {
+                  if (sosMagics[i] === "%expand") {
+                    if (stream.eol() || stream.match(/\s*$/, false)) {
+                      state.overlay_state.sigil = {
+                        'left': '{',
+                        'right': '}'
+                      }
+                    } else {
+                      let found = stream.match(/\s+(\S+)\s+(\S+)$/, false);
+                      if (found) {
+                        state.overlay_state.sigil = {
+                          'left': found[1],
+                          'right': found[2]
+                        }
+                      } else {
+                        state.overlay_state.sigil = null;
+                      }
+                    }
+                  }
+                  // the rest of the lines will be processed as Python code
+                  return "meta";
+                }
+              }
+              state.sos_mode = false;
+            } else {
+              stream.skipToEnd();
+              return null;
+            }
+          }
+
+          if (state.overlay_state.sigil) {
+            if (stream != state.streamSeen ||
+              Math.min(state.basePos, state.overlayPos) < stream.start) {
+              state.streamSeen = stream;
+              state.basePos = state.overlayPos = stream.start;
+            }
+
+            if (stream.start == state.basePos) {
+              state.baseCur = base_mode.token(stream, state.base_state);
+              state.basePos = stream.pos;
+            }
+            if (stream.start == state.overlayPos) {
+              stream.pos = stream.start;
+              state.overlayCur = overlay_mode.token(stream, state.overlay_state);
+              state.overlayPos = stream.pos;
+            }
+            stream.pos = Math.min(state.basePos, state.overlayPos);
+
+            // state.overlay.combineTokens always takes precedence over combine,
+            // unless set to null
+            return state.overlayCur ? state.overlayCur : state.baseCur;
+          } else {
+            return base_mode.token(stream, state.base_state);
+          }
+        },
+
+        indent: function(state, textAfter) {
+          // inner indent
+          if (!state.sos_mode) {
+            if (!base_mode.indent) return CodeMirror.Pass;
+            return base_mode.indent(state.base_state, textAfter);
+          } else {
+            // sos mode has no indent
+            return 0;
+          }
+        },
+
+        innerMode: function(state) {
+          return state.sos_mode ? {
+            state: state.base_state,
+            mode: base_mode
+          } : null;
+        },
+
+        lineComment: "#",
+        fold: "indent"
+      };
+    } else {
+      // this is SoS mode
+      base_mode = CodeMirror.getMode(conf, sosPythonConf);
+      overlay_mode = markExpr(base_mode);
+      return {
+        startState: function() {
+          return {
+            sos_state: null,
+            base_state: CodeMirror.startState(base_mode),
+            overlay_state: CodeMirror.startState(overlay_mode),
+            inner_mode: null,
+            inner_state: null,
+            // for overlay
+            basePos: 0,
+            baseCur: null,
+            overlayPos: 0,
+            overlayCur: null,
+            streamSeen: null
+          };
+        },
+
+        copyState: function(state) {
+          return {
+            sos_state: state.sos_state,
+            base_state: CodeMirror.copyState(base_mode, state.base_state),
+            overlay_state: CodeMirror.copyState(overlay_mode, state.overlay_state),
+            inner_mode: state.inner_mode,
+            inner_state: state.inner_mode && CodeMirror.copyState(state.inner_mode, state.inner_state),
+            // for overlay
+            basePos: state.basePos,
+            baseCur: null,
+            overlayPos: state.overlayPos,
+            overlayCur: null
+          };
+        },
+
+        token: function(stream, state) {
+          if (stream.sol()) {
+            let sl = stream.peek();
+            if (sl == '[') {
+              // header, move to the end
+              if (stream.match(/^\[.*\]$/, false)) {
+                // if there is no :, the easy case
+                if (stream.match(/^\[[^:]*\]$/)) {
+                  // reset state
+                  state.sos_state = null;
+                  state.inner_mode = null;
+                  return "header";
+                } else {
+                  // match up to :
+                  stream.match(/^\[[^:]*:/);
+                  state.sos_state = 'header_option';
+                  return "header";
+                }
+              }
+            } else if (sl == '!') {
+              stream.eatWhile(/\S/);
+              return "meta";
+            } else if (sl == '%') {
+              stream.eatWhile(/\S/);
+              return "meta";
+            } else if (state.sos_state && state.sos_state.startsWith('entering')) {
+              // the second parameter is starting column
+              let mode = findMode(state.sos_state.slice(9).toLowerCase());
+              state.inner_mode = CodeMirror.getMode(conf, mode);
+              state.inner_state = CodeMirror.startState(state.inner_mode, stream.indentation());
+              state.sos_state = null;
+            }
+            for (var i = 0; i < sosDirectives.length; i++) {
+              if (stream.match(sosDirectives[i])) {
+                // the rest of the lines will be processed as Python code
+                state.sos_state = 'directive_option'
+                return "keyword strong";
+              }
+            }
+            for (var i = 0; i < sosActions.length; i++) {
+              if (stream.match(sosActions[i])) {
+                // switch to submode?
+                if (stream.eol()) {
+                  // really
+                  let mode = findMode(stream.current().slice(0, -1).toLowerCase());
+                  if (mode) {
+                    state.sos_state = "entering " + stream.current().slice(0, -1);
+                  } else {
+                    state.sos_state = 'unknown_language';
+                  }
+                } else {
+                  state.sos_state = 'start ' + stream.current().slice(0, -1);
+                }
+                state.overlay_state.sigil = null;
+                return "builtin strong";
+              }
+            }
+            // if unknown action
+            if (stream.match(/\w+:/)) {
+              state.overlay_state.sigil = null;
+              state.sos_state = 'start ' + stream.current().slice(0, -1);
+              return "builtin strong";
+            }
+          } else if (state.sos_state == 'header_option') {
+            // stuff after :
+            if (stream.peek() == ']') {
+              // move next
+              stream.next();
+              // ] is the last char
+              if (stream.eol()) {
+                state.sos_state = null;
+                state.inner_mode = null;
+                return "header";
+              } else {
+                stream.backUp(1);
+                let it = base_mode.token(stream, state.base_state);
+                return it ? it + ' sos-option' : null;
+              }
+            } else {
+              let it = base_mode.token(stream, state.base_state);
+              return it ? it + ' sos-option' : null;
+            }
+          } else if (state.sos_state == 'directive_option') {
+            // stuff after input:, R: etc
+            if (stream.peek() == ',') {
+              // move next
+              stream.next();
+              // , is the last char, continue option line
+              if (stream.eol()) {
+                stream.backUp(1);
+                let it = base_mode.token(stream, state.base_state);
+                return it ? it + ' sos-option' : null;
+              }
+              stream.backUp(1);
+            } else if (stream.eol()) {
+              // end of line stops option mode
+              state.sos_state = null;
+              state.inner_mode = null;
+            }
+            let it = base_mode.token(stream, state.base_state);
+            return it ? it + ' sos-option' : null;
+          } else if (state.sos_state && state.sos_state.startsWith("start ")) {
+            // try to understand option expand=
+            if (stream.match(/expand\s*=\s*True/, false)) {
+              // highlight {}
+              state.overlay_state.sigil = {
+                'left': '{',
+                'right': '}'
+              }
+            } else {
+              let found = stream.match(/expand\s*=\s*"(\S+) (\S+)"/, false);
+              if (!found)
+                found = stream.match(/expand\s*=\s*'(\S+) (\S+)'/, false);
+              if (found) {
+                state.overlay_state.sigil = {
+                  'left': found[1],
+                  'right': found[2]
+                }
+              }
+            }
+            let token = base_mode.token(stream, state.base_state);
+            // if it is end of line, ending the starting switch mode
+            if (stream.eol() && stream.peek() !== ',') {
+              // really
+              let mode = findMode(state.sos_state.slice(6).toLowerCase());
+              if (mode) {
+                state.sos_state = "entering " + state.sos_state.slice(6);
+              } else {
+                state.sos_state = 'unknown_language';
+              }
+            }
+            return token + ' sos-option';
+          }
+          // can be start of line but not special
+          if (state.sos_state == 'unknown_language') {
+            // we still handle {} in no man unknown_language
+            if (state.overlay_state.sigil) {
+              return overlay_mode.token(stream, state.overlay_state);
+            } else {
+              stream.skipToEnd();
+              return null;
+            }
+          } else if (state.inner_mode) {
+            let it = 'sos_script ';
+            if (!state.overlay_state.sigil) {
+              let st = state.inner_mode.token(stream, state.inner_state);
+              return st ? it + st : null;
+            } else {
+              // overlay mode, more complicated
+              if (stream != state.streamSeen ||
+                Math.min(state.basePos, state.overlayPos) < stream.start) {
+                state.streamSeen = stream;
+                state.basePos = state.overlayPos = stream.start;
+              }
+
+              if (stream.start == state.basePos) {
+                state.baseCur = state.inner_mode.token(stream, state.inner_state);
+                state.basePos = stream.pos;
+              }
+              if (stream.start == state.overlayPos) {
+                stream.pos = stream.start;
+                state.overlayCur = overlay_mode.token(stream, state.overlay_state);
+                state.overlayPos = stream.pos;
+              }
+              stream.pos = Math.min(state.basePos, state.overlayPos);
+              // state.overlay.combineTokens always takes precedence over combine,
+              // unless set to null
+              return (state.overlayCur ? state.overlayCur : state.baseCur) + " sos-script";
+            }
+          } else {
+            return base_mode.token(stream, state.base_state);
+          }
+        },
+
+        indent: function(state, textAfter) {
+          // inner indent
+          if (state.inner_mode) {
+            if (!state.inner_mode.indent) return CodeMirror.Pass;
+            return state.inner_mode.indent(state.inner_mode, textAfter) + 2;
+          } else {
+            return base_mode.indent(state.base_state, textAfter);
+          }
+        },
+
+        innerMode: function(state) {
+          return state.inner_mode ? null : {
+            state: state.base_state,
+            mode: base_mode
+          };
+        },
+
+        lineComment: "#",
+        fold: "indent",
+        electricInput: /^\s*[\}\]\)]$/,
+      };
+    };
+  }, "python");
+
+  CodeMirror.defineMIME("text/x-sos", "sos");
+});
+      </script>
+      <script>
+         var editor = CodeMirror.fromTextArea(document.getElementById("source-code"), {
+           lineNumbers: true,
+           styleActiveLine: true,
+           matchBrackets: true,
+           readOnly: true,
+           theme: 'default',
+           mode: 'sos'
+         });
+      </script>
+   </body>
+</html>

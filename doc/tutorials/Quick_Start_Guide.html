@@ -1,18 +1,8 @@
-<!-- Global Site Tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments)};
-  gtag('js', new Date());
-
-  gtag('config', 'UA-107286198-1');
-</script>
-
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Quick_Start_Guide</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<title>Quick_Start_Guide</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
 
@@ -22,7 +12,6 @@
 
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -47,145 +36,160 @@
     </script>
     <!-- End of mathjax configuration --></head>
 
+
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments)};
+   gtag('js', new Date());
+   
+   gtag('config', 'UA-107286198-1');
+</script>
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+  
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
 <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
 <style>  /* defined here in case the main.css below cannot be loaded */
-.lev1 {margin-left: 80px}
-.lev2 {margin-left: 100px}
-.lev3 {margin-left: 120px}
-.lev4 {margin-left: 140px}
-.lev5 {margin-left: 160px}
-.lev6 {margin-left: 180px}
+   .lev1 {margin-left: 80px}
+   .lev2 {margin-left: 100px}
+   .lev3 {margin-left: 120px}
+   .lev4 {margin-left: 140px}
+   .lev5 {margin-left: 160px}
+   .lev6 {margin-left: 180px}
+   .cm-sos-interpolated {
+  background-color: #EDD5F3;
+}
+.cm-sos-sigil {
+  background-color: #EDD5F3;
+}
 </style>
-
 <link rel="stylesheet" type="text/css" href="../../css/jt.css">
 <link rel="stylesheet" type="text/css" href="../../css/toc2.css">
-
 <script src="../../js/doc_toc.js"></script>
-
- <script src="../../js/docs.js"></script>
-
+<script src="../../js/docs.js"></script>
 <script>
-    MathJax.Hub.Config({
-        "HTML-CSS": {
-            preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
-            styles: {
-                scale: 110,
-                ".MathJax_Display": {
-                    "font-size": "110%",
-                }
-            }
-        }
-    });
+   MathJax.Hub.Config({
+       "HTML-CSS": {
+           preferredFont: "TeX",
+           availableFonts: ["STIX","TeX"],
+           styles: {
+               scale: 110,
+               ".MathJax_Display": {
+                   "font-size": "110%",
+               }
+           }
+       }
+   });
 </script>
-
 <script>
-
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        }
-    }
-}
-
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-
-    if (dtype === 'numeric') {
-        var fn = function(a, b) {
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim());
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]);
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-
-    var sorted = isSorted(tr, fn);
-
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-
-
-$( document ).ready(function(){
-
-            var cfg={'threshold':4,     // depth of toc (number of levels)
-             // 'number_sections': true,
-             'number_sections': false,  // sections numbering
-             'toc_cell': false,          // useless here
-             'toc_window_display': true, // display the toc window
-             "toc_section_display": "block", // display toc contents in the window
-             // 'sideBar':true,
-             'sideBar':true,       // sidebar or floating window
-             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
-            }
-
-            var st={};                  // some variables used in the script
-            st.rendering_toc_cell = false;
-            st.config_loaded = false;
-            st.extension_initialized=false;
-            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-            st.nbcontainer_width = $('#notebook-container').css('width')
-            st.oldTocHeight = undefined
-            st.cell_toc = undefined;
-            st.toc_index=0;
-
-            // fire the main function with these parameters
-
-
-            table_of_contents(cfg,st);
-
-
-            var file=tutorialsDict[$("h1:first").attr("id")];
-            var path="http://vatlab.github.io/sos-docs"
+   function filterDataFrame(id) {
+       var input = document.getElementById("search_" + id);
+       var filter = input.value.toUpperCase();
+       var table = document.getElementById("dataframe_" + id);
+       var tr = table.getElementsByTagName("tr");
+   
+       // Loop through all table rows, and hide those who don't match the search query
+       for (var i = 1; i < tr.length; i++) {
+           for (var j = 0; j < tr[i].cells.length; ++j) {
+               var matched = false;
+               if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                   tr[i].style.display = "";
+                   matched = true
+                   break;
+               }
+               if (!matched)
+                   tr[i].style.display = "none";
+           } 
+       }
+   }
+   
+   function sortDataFrame(id, n, dtype) {
+       var table = document.getElementById("dataframe_" + id);
+   
+       var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+       var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+   
+       if (dtype === 'numeric') {
+           var fn = function(a, b) { 
+               return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+           }
+       } else {
+           var fn = function(a, b) {
+               var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+               return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+       }
+       var isSorted = function(array, fn) {
+           if (array.length < 2)
+               return 1;
+           var direction = fn(array[0], array[1]); 
+           for (var i = 1; i < array.length - 1; ++i) {
+               var d = fn(array[i], array[i+1]);
+               if (d == 0)
+                   continue;
+               else if (direction == 0)
+                   direction = d;
+               else if (direction != d)
+                   return 0;
+               }
+           return direction;
+       }
+   
+       var sorted = isSorted(tr, fn);
+   
+       if (sorted == 1 || sorted == -1) {
+           // if sorted already, reverse it
+           for(var i = tr.length - 1; i >= 0; --i)
+               tb.appendChild(tr[i]); // append each row in order
+       } else {
+           tr = tr.sort(fn);
+           for(var i = 0; i < tr.length; ++i)
+               tb.appendChild(tr[i]); // append each row in order
+       }
+   }
+   
+   $( document ).ready(function(){
+   
+               var cfg={'threshold':4,     // depth of toc (number of levels)
+                // 'number_sections': true,  // sections numbering
+                'number_sections': false, 
+                'toc_cell': false,          // useless here
+                'toc_window_display': true, // display the toc window
+                "toc_section_display": "block", // display toc contents in the window
+                // 'sideBar':true,      
+                'sideBar':true,       // sidebar or floating window
+                'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+               }
+   
+               var st={};                  // some variables used in the script
+               st.rendering_toc_cell = false;
+               st.config_loaded = false;
+               st.extension_initialized=false;
+               st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+               st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+               st.nbcontainer_width = $('#notebook-container').css('width')
+               st.oldTocHeight = undefined
+               st.cell_toc = undefined;
+               st.toc_index=0;
+   
+               // fire the main function with these parameters
+   
+   
+   
+               table_of_contents(cfg,st);
+               var file=tutorialsDict[$("h1:first").attr("id")];
+               var path="http://vatlab.github.io/sos-docs"
             // $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
 
@@ -219,15 +223,14 @@ $( document ).ready(function(){
 
 
             // $(".number_sections-btn").hide();
-            // $(".toc_cell_sections-btn".hide();
-
-
-    });
+            // $(".toc_cell_sections-btn".hide();   
+   
+       });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
-
- .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }
-
+   .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_MATLAB .input_prompt { background-color: #dff8fb !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }
 </style>
+
+
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -250,21 +253,20 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="nb">set</span> <span class="o">-</span><span class="n">v2</span> <span class="o">-</span><span class="n">s</span> <span class="n">default</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">--</span><span class="n">off</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">fastq</span> <span class="n">case</span><span class="o">.</span><span class="n">fastq</span>
-<span class="err">!</span><span class="n">cp</span> <span class="n">STAR</span> <span class="n">Rscript</span> <span class="o">~/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span>
-<span class="err">!</span><span class="n">sos</span> <span class="n">remove</span> <span class="o">--</span><span class="n">signature</span> <span class="o">-</span><span class="n">v</span> <span class="mi">0</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%set -v2 -s default
+%preview --off
+!touch mutated.fastq control.fastq ctrl.fastq case.fastq
+!cp STAR Rscript ~/.sos/bin/
+!sos remove --signature -v 0</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -286,7 +288,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -304,28 +307,27 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_Bash">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="c1"># using a fake STAR in ~/</span>
-<span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="n">HOME</span><span class="o">/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="p">:</span><span class="err">$</span><span class="n">PATH</span>
-<span class="c1"># index reference genome</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-    <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
-<span class="c1"># align reads to the reference genome</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="Bash"># using a fake STAR in ~/
+export PATH=$HOME/.sos/bin:$PATH
+# index reference genome
+STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+    --genomeDir STAR_index
+# align reads to the reference genome
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn control.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/control
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn mutated.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/mutated</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -349,7 +351,8 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -360,22 +363,21 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_R">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">)</span>
-<span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">)</span>
-<span class="c1"># normalize, compare, output etc, ignored.</span>
-<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
-<span class="c1"># plot results</span>
-<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="R">control.count <- read.table('aligned/control.out.tab')
+mutated.count <- read.table('aligned/mutated.out.tab')
+# normalize, compare, output etc, ignored.
+pdf('myfigure.pdf')
+# plot results
+dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -398,7 +400,8 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -416,22 +419,22 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">INDEXDIR</span> <span class="o">=</span> <span class="s1">&#39;STAR_index&#39;</span>
-<span class="n">ALIGNDIR</span> <span class="o">=</span> <span class="s1">&#39;aligned&#39;</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">INDEXDIR = 'STAR_index'
+ALIGNDIR = 'aligned'</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -441,29 +444,28 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_Bash">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
-<span class="c1"># using a fake STAR in ~/</span>
-<span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="err">$</span><span class="n">HOME</span><span class="o">/.</span><span class="n">sos</span><span class="o">/</span><span class="nb">bin</span><span class="p">:</span><span class="err">$</span><span class="n">PATH</span>
-<span class="c1"># index reference genome</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-    <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">INDEXDIR</span><span class="p">}</span>
-<span class="c1"># align reads to the reference genome</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">ALIGNDIR</span><span class="p">}</span><span class="o">/</span><span class="n">control</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">ALIGNDIR</span><span class="p">}</span><span class="o">/</span><span class="n">mutated</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="Bash">%expand
+# using a fake STAR in ~/
+export PATH=$HOME/.sos/bin:$PATH
+# index reference genome
+STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+    --genomeDir {INDEXDIR}
+# align reads to the reference genome
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn control.fastq --quantMode GeneCounts \
+    --outFileNamePrefix {ALIGNDIR}/control
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn mutated.fastq --quantMode GeneCounts \
+    --outFileNamePrefix {ALIGNDIR}/mutated</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -487,24 +489,24 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div><div class="cell border-box-sizing code_cell rendered lan_R">
-	
+</div>
+<div class="cell border-box-sizing code_cell rendered lan_R">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
-<span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{ALIGNDIR}/control.out.tab&#39;</span><span class="p">)</span>
-<span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{ALIGNDIR}/mutated.out.tab&#39;</span><span class="p">)</span>
-<span class="c1"># normalize, compare, output etc, ignored.</span>
-<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
-<span class="c1"># plot results</span>
-<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="R">%expand
+control.count <- read.table('{ALIGNDIR}/control.out.tab')
+mutated.count <- read.table('{ALIGNDIR}/mutated.out.tab')
+# normalize, compare, output etc, ignored.
+pdf('myfigure.pdf')
+# plot results
+dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -527,7 +529,8 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -555,27 +558,26 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_Bash">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">INDEXDIR</span> <span class="n">ALIGNDIR</span>
-<span class="c1"># index reference genome</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-    <span class="o">--</span><span class="n">genomeDir</span> <span class="err">$</span><span class="n">INDEXDIR</span>
-<span class="c1"># align reads to the reference genome</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="err">$</span><span class="n">ALIGNDIR</span><span class="o">/</span><span class="n">control</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="err">$</span><span class="n">ALIGNDIR</span><span class="o">/</span><span class="n">mutated</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="Bash">%get INDEXDIR ALIGNDIR
+# index reference genome
+STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+    --genomeDir $INDEXDIR
+# align reads to the reference genome
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn control.fastq --quantMode GeneCounts \
+    --outFileNamePrefix $ALIGNDIR/control
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn mutated.fastq --quantMode GeneCounts \
+    --outFileNamePrefix $ALIGNDIR/mutated</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -599,7 +601,8 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -609,23 +612,22 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_R">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">ALIGNDIR</span>
-<span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">ALIGNDIR</span><span class="p">,</span> <span class="s1">&#39;/control.out.tab&#39;</span><span class="p">))</span>
-<span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">ALIGNDIR</span><span class="p">,</span> <span class="s1">&#39;/mutated.out.tab&#39;</span><span class="p">))</span>
-<span class="c1"># normalize, compare, output etc, ignored.</span>
-<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
-<span class="c1"># plot results</span>
-<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="R">%get ALIGNDIR
+control.count <- read.table(paste0(ALIGNDIR, '/control.out.tab'))
+mutated.count <- read.table(paste0(ALIGNDIR, '/mutated.out.tab'))
+# normalize, compare, output etc, ignored.
+pdf('myfigure.pdf')
+# plot results
+dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -648,7 +650,8 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -658,17 +661,16 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_Bash">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">echo</span> <span class="n">Align</span> <span class="n">directory</span> <span class="ow">is</span> <span class="err">$</span><span class="n">ALIGNDIR</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="Bash">echo Align directory is $ALIGNDIR</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -690,7 +692,8 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -717,44 +720,43 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="c1">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="kn">run:</span>
-<span class="c1"># index reference genome</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-    <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+run:
+# index reference genome
+STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+    --genomeDir STAR_index
 
-<span class="c1"># align reads to the reference genome</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-<span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-    <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-    <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
+# align reads to the reference genome
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn control.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/control
+STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+    --readFilesIn mutated.fastq --quantMode GeneCounts \
+    --outFileNamePrefix aligned/mutated
 
-<span class="kn">R:</span>
-<span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">)</span>
-<span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">)</span>
-<span class="c1"># normalize, compare, output etc, ignored.</span>
-<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
-<span class="c1"># plot results</span>
-<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+R:
+control.count <- read.table('aligned/control.out.tab')
+mutated.count <- read.table('aligned/mutated.out.tab')
+# normalize, compare, output etc, ignored.
+pdf('myfigure.pdf')
+# plot results
+dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -791,7 +793,8 @@ Generating myfigure.pdf
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -818,45 +821,44 @@ Generating myfigure.pdf
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="c1">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="kn">run:</span>
-    <span class="c1"># index reference genome</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span>\
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+run:
+    # index reference genome
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq\
+        --genomeDir STAR_index
 
-    <span class="c1"># align reads to the reference genome</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
+    # align reads to the reference genome
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn control.fastq --quantMode GeneCounts \
+        --outFileNamePrefix aligned/control
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn mutated.fastq --quantMode GeneCounts \
+        --outFileNamePrefix aligned/mutated
 
-<span class="c1"># compare expression values</span>
-<span class="kn">R:</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+# compare expression values
+R:
+    control.count <- read.table('aligned/control.out.tab')
+    mutated.count <- read.table('aligned/mutated.out.tab')
+    # normalize, compare, output etc, ignored.
+    pdf('myfigure.pdf')
+    # plot results
+    dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -893,7 +895,8 @@ Generating myfigure.pdf
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -920,49 +923,48 @@ Generating myfigure.pdf
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="c1">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># index reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+[1]
+# index reference genome
+run:
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+        --genomeDir STAR_index
 
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="c1"># align reads to the reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
+[2]
+# align reads to the reference genome
+run:
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn control.fastq --quantMode GeneCounts \
+        --outFileNamePrefix aligned/control
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn mutated.fastq --quantMode GeneCounts \
+        --outFileNamePrefix aligned/mutated
 
-<span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="c1"># compare expression values</span>
-<span class="kn">R:</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+[3]
+# compare expression values
+R:
+    control.count <- read.table('aligned/control.out.tab')
+    mutated.count <- read.table('aligned/mutated.out.tab')
+    # normalize, compare, output etc, ignored.
+    pdf('myfigure.pdf')
+    # plot results
+    dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -997,7 +999,8 @@ Generating myfigure.pdf
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1019,71 +1022,71 @@ Generating myfigure.pdf
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># index reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">[1]
+# index reference genome
+run:
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+        --genomeDir STAR_index</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
-  </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="c1"># align reads to the reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">control</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="n">mutated</span><span class="o">.</span><span class="n">fastq</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-  </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="c1"># compare expression values</span>
-<span class="kn">R:</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">[2]
+# align reads to the reference genome
+run:
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn control.fastq --quantMode GeneCounts \
+        --outFileNamePrefix aligned/control
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn mutated.fastq --quantMode GeneCounts \
+        --outFileNamePrefix aligned/mutated</textarea>
+
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">[3]
+# compare expression values
+R:
+    control.count <- read.table('aligned/control.out.tab')
+    mutated.count <- read.table('aligned/mutated.out.tab')
+    # normalize, compare, output etc, ignored.
+    pdf('myfigure.pdf')
+    # plot results
+    dev.off()</textarea>
+
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1113,53 +1116,52 @@ Generating myfigure.pdf
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="c1">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="c1"># Two input files in .fastq formats. The first one for control sample</span>
-<span class="c1"># and the second one for mutated sample.</span>
-<span class="kn">parameter:</span> <span class="n">fastq_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;control.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;mutated.fastq&#39;</span><span class="p">]</span>
+# Two input files in .fastq formats. The first one for control sample
+# and the second one for mutated sample.
+parameter: fastq_files=['control.fastq', 'mutated.fastq']
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># index reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+[1]
+# index reference genome
+run:
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+        --genomeDir STAR_index
 
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="c1"># align reads to the reference genome</span>
-<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">fastq_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">fastq_files</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
+[2]
+# align reads to the reference genome
+run: expand=True
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {fastq_files[0]} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/control
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {fastq_files[1]} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/mutated
 
-<span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="c1"># compare expression values</span>
-<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;myfigure.pdf&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+[3]
+# compare expression values
+R: expand=True
+    control.count <- read.table('aligned/control.out.tab')
+    mutated.count <- read.table('aligned/mutated.out.tab')
+    # normalize, compare, output etc, ignored.
+    pdf('myfigure.pdf')
+    # plot results
+    dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1194,7 +1196,8 @@ Generating myfigure.pdf
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1208,17 +1211,16 @@ Generating myfigure.pdf
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">fastq_files</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">fastq</span> <span class="n">case</span><span class="o">.</span><span class="n">fastq</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%rerun --fastq_files ctrl.fastq case.fastq</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1253,7 +1255,8 @@ Generating myfigure.pdf
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1280,59 +1283,58 @@ Generating myfigure.pdf
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">v4</span>
-<span class="c1">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run -v4
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="c1"># Two input files in .fastq formats. The first one for control sample</span>
-<span class="c1"># and the second one for mutated sample.</span>
-<span class="kn">parameter:</span> <span class="n">fastq_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;control.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;mutated.fastq&#39;</span><span class="p">]</span>
+# Two input files in .fastq formats. The first one for control sample
+# and the second one for mutated sample.
+parameter: fastq_files=['control.fastq', 'mutated.fastq']
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># create a index for reference genome</span>
-<span class="kn">output:</span> <span class="s1">&#39;STAR_index/chrName.txt&#39;</span>
-<span class="kn">run:</span> 
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+[1]
+# create a index for reference genome
+output: 'STAR_index/chrName.txt'
+run: 
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+        --genomeDir STAR_index
 
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="c1"># align the reads to the reference genome</span>
-<span class="kn">input:</span>    <span class="n">fastq_files</span>
-<span class="kn">depends:</span>  <span class="s1">&#39;STAR_index/chrName.txt&#39;</span>
-<span class="kn">output:</span>   <span class="p">[</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">]</span>
-<span class="kn">run:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
+[2]
+# align the reads to the reference genome
+input:    fastq_files
+depends:  'STAR_index/chrName.txt'
+output:   ['aligned/control.out.tab', 'aligned/mutated.out.tab']
+run:  expand=True
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {_input[0]} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/control
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {_input[1]} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/mutated
 
-<span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="c1"># compare expression values</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="s1">&#39;myfigure.pdf&#39;</span>
-<span class="kn">R:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[0]}&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[1]}&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_output}&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+[3]
+# compare expression values
+print(input)
+output: 'myfigure.pdf'
+R:  expand=True
+    control.count <- read.table('{input[0]}')
+    mutated.count <- read.table('{input[1]}')
+    # normalize, compare, output etc, ignored.
+    pdf('{_output}')
+    # plot results
+    dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1385,7 +1387,8 @@ control.fastq mutated.fastq
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1405,17 +1408,16 @@ control.fastq mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span> <span class="o">--</span><span class="n">fastq</span><span class="o">-</span><span class="n">files</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">fastq</span> <span class="n">case</span><span class="o">.</span><span class="n">fastq</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%rerun --fastq-files ctrl.fastq case.fastq</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1458,7 +1460,8 @@ Generating myfigure.pdf
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1488,58 +1491,57 @@ Generating myfigure.pdf
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
 
-<span class="c1">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="c1"># Two input files in .fastq formats. The first one for control sample</span>
-<span class="c1"># and the second one for mutated sample.</span>
-<span class="kn">parameter:</span> <span class="n">fastq_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;control.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;mutated.fastq&#39;</span><span class="p">]</span>
+# Two input files in .fastq formats. The first one for control sample
+# and the second one for mutated sample.
+parameter: fastq_files=['control.fastq', 'mutated.fastq']
 
-<span class="p">[</span><span class="n">build_index</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;STAR_index/chrName.txt&#39;</span><span class="p">]</span>
-<span class="c1"># create a index for reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+[build_index: provides='STAR_index/chrName.txt']
+# create a index for reference genome
+run:
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+        --genomeDir STAR_index
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># align the reads to the reference genome</span>
-<span class="kn">input:</span>    <span class="n">fastq_files</span>
-<span class="kn">depends:</span>  <span class="s1">&#39;STAR_index/chrName.txt&#39;</span>
-<span class="kn">output:</span>   <span class="p">[</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">]</span>
-<span class="kn">run:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
+[1]
+# align the reads to the reference genome
+input:    fastq_files
+depends:  'STAR_index/chrName.txt'
+output:   ['aligned/control.out.tab', 'aligned/mutated.out.tab']
+run:  expand=True
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {_input[0]} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/control
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {_input[1]} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/mutated
 
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="c1"># compare expression values</span>
-<span class="kn">output:</span> <span class="s1">&#39;myfigure.pdf&#39;</span>
-<span class="kn">R:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[0]}&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[1]}&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_output}&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+[2]
+# compare expression values
+output: 'myfigure.pdf'
+R:  expand=True
+    control.count <- read.table('{input[0]}')
+    mutated.count <- read.table('{input[1]}')
+    # normalize, compare, output etc, ignored.
+    pdf('{_output}')
+    # plot results
+    dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1580,7 +1582,8 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1590,17 +1593,16 @@ Generating aligned/mutated.out.tab from mutated.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">rerun</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%rerun</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1623,7 +1625,8 @@ INFO: <span class="ansi-green-fg">default_2</span> (index=0) is <span class="ans
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1641,59 +1644,58 @@ INFO: <span class="ansi-green-fg">default_2</span> (index=0) is <span class="ans
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
 
-<span class="c1">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="c1"># Two input files in .fastq formats. The first one for control sample</span>
-<span class="c1"># and the second one for mutated sample.</span>
-<span class="kn">parameter:</span> <span class="n">fastq_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;control.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;mutated.fastq&#39;</span><span class="p">]</span>
+# Two input files in .fastq formats. The first one for control sample
+# and the second one for mutated sample.
+parameter: fastq_files=['control.fastq', 'mutated.fastq']
 
-<span class="p">[</span><span class="n">build_index</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;STAR_index/chrName.txt&#39;</span><span class="p">]</span>
-<span class="c1"># create a index for reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+[build_index: provides='STAR_index/chrName.txt']
+# create a index for reference genome
+run:
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+        --genomeDir STAR_index
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># align the reads to the reference genome</span>
-<span class="kn">input:</span>    <span class="n">fastq_files</span>
-<span class="kn">depends:</span>  <span class="s1">&#39;STAR_index/chrName.txt&#39;</span>
-<span class="kn">output:</span>   <span class="p">[</span><span class="s1">&#39;aligned/control.out.tab&#39;</span><span class="p">,</span> <span class="s1">&#39;aligned/mutated.out.tab&#39;</span><span class="p">]</span>
-<span class="kn">task:</span>
-<span class="kn">run:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">control</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="n">mutated</span>
+[1]
+# align the reads to the reference genome
+input:    fastq_files
+depends:  'STAR_index/chrName.txt'
+output:   ['aligned/control.out.tab', 'aligned/mutated.out.tab']
+task:
+run:  expand=True
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {_input[0]} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/control
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {_input[1]} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/mutated
 
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="c1"># compare expression values</span>
-<span class="kn">output:</span> <span class="s1">&#39;myfigure.pdf&#39;</span>
-<span class="kn">R:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[0]}&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[1]}&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_output}&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+[2]
+# compare expression values
+output: 'myfigure.pdf'
+R:  expand=True
+    control.count <- read.table('{input[0]}')
+    mutated.count <- read.table('{input[1]}')
+    # normalize, compare, output etc, ignored.
+    pdf('{_output}')
+    # plot results
+    dev.off()</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1716,7 +1718,8 @@ INFO: <span class="ansi-green-fg">default_2</span> (index=0) is <span class="ans
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1743,60 +1746,61 @@ INFO: <span class="ansi-green-fg">default_2</span> (index=0) is <span class="ans
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="c1"># Two input files in .fastq formats. The first one for control sample</span>
-<span class="c1"># and the second one for mutated sample.</span>
-<span class="kn">parameter:</span> <span class="n">fastq_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;control.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;mutated.fastq&#39;</span><span class="p">]</span>
+# Two input files in .fastq formats. The first one for control sample
+# and the second one for mutated sample.
+parameter: fastq_files=['control.fastq', 'mutated.fastq']
 
-<span class="p">[</span><span class="n">build_index</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;STAR_index/chrName.txt&#39;</span><span class="p">]</span>
-<span class="c1"># create a index for reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+[build_index: provides='STAR_index/chrName.txt']
+# create a index for reference genome
+run:
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+        --genomeDir STAR_index
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># align the reads to the reference genome</span>
-<span class="n">sample_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;control&#39;</span><span class="p">,</span> <span class="s1">&#39;mutated&#39;</span><span class="p">]</span>
-<span class="kn">input:</span>    <span class="n">fastq_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="s1">&#39;sample_type&#39;</span>
-<span class="kn">depends:</span>  <span class="s1">&#39;STAR_index/chrName.txt&#39;</span>
-<span class="kn">output:</span>   <span class="n">f</span><span class="s2">&quot;aligned/{_sample_type}.out.tab&quot;</span>
+[1]
+# align the reads to the reference genome
+sample_type = ['control', 'mutated']
+input:    fastq_files, group_by='single', paired_with='sample_type'
+depends:  'STAR_index/chrName.txt'
+output:   f"aligned/{_sample_type}.out.tab"
 
-<span class="kn">task:</span>     <span class="kp">concurrent</span><span class="o">=</span><span class="bp">True</span>
-<span class="kn">run:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">q</span><span class="p">}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="p">{</span><span class="n">_sample_type</span><span class="p">}</span>
+task:     concurrent=True
+run:  expand=True
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {_input:q} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/{_sample_type}
 
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="c1"># compare expression values</span>
-<span class="kn">output:</span> <span class="s1">&#39;myfigure.pdf&#39;</span>
-<span class="kn">R:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[0]}&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{input[1]}&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_output}&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
+[2]
+# compare expression values
+output: 'myfigure.pdf'
+R:  expand=True
+    control.count <- read.table('{input[0]}')
+    mutated.count <- read.table('{input[1]}')
+    # normalize, compare, output etc, ignored.
+    pdf('{_output}')
+    # plot results
+    dev.off()
+</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1833,72 +1837,72 @@ INFO: <span class="ansi-green-fg">default_2</span> (index=0) is <span class="ans
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">report</span><span class="o">.</span><span class="n">html</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%preview report.html
+%run
 
-<span class="c1">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
 
-<span class="c1"># This script aligns raw reads of a control and a mutated sample</span>
-<span class="c1"># to the reference genome and compare the expression values</span>
-<span class="c1"># of the samples at genes A, B and C.</span>
+# This script aligns raw reads of a control and a mutated sample
+# to the reference genome and compare the expression values
+# of the samples at genes A, B and C.
 
-<span class="c1"># Two input files in .fastq formats. The first one for control sample</span>
-<span class="c1"># and the second one for mutated sample.</span>
-<span class="kn">parameter:</span> <span class="n">fastq_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;control.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;mutated.fastq&#39;</span><span class="p">]</span>
+# Two input files in .fastq formats. The first one for control sample
+# and the second one for mutated sample.
+parameter: fastq_files=['control.fastq', 'mutated.fastq']
 
-<span class="p">[</span><span class="n">build_index</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;STAR_index/chrName.txt&#39;</span><span class="p">]</span>
-<span class="c1"># create a index for reference genome</span>
-<span class="kn">run:</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> <span class="o">--</span><span class="n">genomeFastaFile</span> <span class="n">human38</span><span class="o">.</span><span class="n">fastq</span> \
-        <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span>
+[build_index: provides='STAR_index/chrName.txt']
+# create a index for reference genome
+run:
+    STAR --runMode genomeGenerate --genomeFastaFile human38.fastq \
+        --genomeDir STAR_index
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># align the reads to the reference genome</span>
-<span class="n">sample_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;control&#39;</span><span class="p">,</span> <span class="s1">&#39;mutated&#39;</span><span class="p">]</span>
-<span class="kn">input:</span>    <span class="n">fastq_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="s1">&#39;sample_type&#39;</span>
-<span class="kn">depends:</span>  <span class="s1">&#39;STAR_index/chrName.txt&#39;</span>
-<span class="kn">output:</span>   <span class="n">f</span><span class="s2">&quot;aligned/{_sample_type[0]}.out.tab&quot;</span>
+[1]
+# align the reads to the reference genome
+sample_type = ['control', 'mutated']
+input:    fastq_files, group_by='single', paired_with='sample_type'
+depends:  'STAR_index/chrName.txt'
+output:   f"aligned/{_sample_type[0]}.out.tab"
 
-<span class="kn">run:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="n">STAR_index</span> <span class="o">--</span><span class="n">outSAMtype</span> <span class="n">BAM</span> <span class="n">SortedByCoordinate</span> \
-        <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">q</span><span class="p">}</span> <span class="o">--</span><span class="n">quantMode</span> <span class="n">GeneCounts</span> \
-        <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="n">aligned</span><span class="o">/</span><span class="p">{</span><span class="n">_sample_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+run:  expand=True
+    STAR --genomeDir STAR_index --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn {_input:q} --quantMode GeneCounts \
+        --outFileNamePrefix aligned/{_sample_type[0]}
 
-<span class="kn">report:</span>   <span class="n">output</span><span class="o">=</span><span class="s1">&#39;align.md&#39;</span><span class="p">,</span> <span class="kp">active</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="c1">## Alignment of reads</span>
-    <span class="o">*</span> <span class="nb">input</span> <span class="nb">file</span><span class="p">:</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
-    <span class="o">*</span> <span class="n">output</span> <span class="nb">file</span><span class="p">:</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+report:   output='align.md', active=-1,  expand=True
+    ## Alignment of reads
+    * input file: {_input}
+    * output file: {_output}
 
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="c1"># compare expression values</span>
-<span class="kn">output:</span> <span class="s1">&#39;myfigure.pdf&#39;</span>
-<span class="kn">R:</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">control</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{_input[0]}&#39;</span><span class="p">)</span>
-    <span class="n">mutated</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;{_input[1]}&#39;</span><span class="p">)</span>
-    <span class="c1"># normalize, compare, output etc, ignored.</span>
-    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{_output}&#39;</span><span class="p">)</span>
-    <span class="c1"># plot results</span>
-    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+[2]
+# compare expression values
+output: 'myfigure.pdf'
+R:  expand=True
+    control.count <- read.table('{_input[0]}')
+    mutated.count <- read.table('{_input[1]}')
+    # normalize, compare, output etc, ignored.
+    pdf('{_output}')
+    # plot results
+    dev.off()
 
-<span class="kn">report:</span>  <span class="n">output</span><span class="o">=</span><span class="s1">&#39;analysis.md&#39;</span><span class="p">,</span> <span class="kp">active</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>  <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="c1">## Statistical analysis</span>
-    <span class="o">*</span> <span class="nb">input</span> <span class="nb">file</span><span class="p">:</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
-    <span class="o">*</span> <span class="n">Figure</span><span class="p">:</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+report:  output='analysis.md', active=-1,  expand=True
+    ## Statistical analysis
+    * input file: {_input}
+    * Figure: {_output}
 
-<span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="kn">pandoc:</span> <span class="nb">input</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;align.md&#39;</span><span class="p">,</span> <span class="s1">&#39;analysis.md&#39;</span><span class="p">],</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;report.html&#39;</span>
-    <span class="c1"># An analysis of two RNA Seq samples</span>
-</pre></div>
+[3]
+pandoc: input=['align.md', 'analysis.md'], output='report.html'
+    # An analysis of two RNA Seq samples
+    </textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1923,7 +1927,8 @@ INFO: Report saved to report.html
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1946,6 +1951,39 @@ INFO: Report saved to report.html
     </div>
   </div>
 </body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+	  <script src="../../js/sos-mode.js"> </script>
+      <script>
+		   function highlight_cells(cells, i, interval) {
+			  setTimeout(function() {
+				var editor = CodeMirror.fromTextArea(cells[i], {
+		           lineNumbers: false,
+				   styleActiveLine: true,
+		           matchBrackets: true,
+				   readOnly: true,
+		           mode: 'sos',
+				   base_mode: cells[i].name,
+		         });
+				$(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>" 
+					+ cells[i].name + "</option></select>");
+		      if (i < cells.length)
+			    highlight_cells(cells, i + 1, interval);
+			}, interval);
+		  }
+
+	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      </script>
+
+
 
  
 

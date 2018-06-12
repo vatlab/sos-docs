@@ -1,18 +1,8 @@
-<!-- Global Site Tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments)};
-  gtag('js', new Date());
-
-  gtag('config', 'UA-107286198-1');
-</script>
-
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Auxiliary_Steps</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<title>Auxiliary_Steps</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
 
@@ -22,7 +12,6 @@
 
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -47,145 +36,160 @@
     </script>
     <!-- End of mathjax configuration --></head>
 
+
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments)};
+   gtag('js', new Date());
+   
+   gtag('config', 'UA-107286198-1');
+</script>
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+  
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
 <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
 <style>  /* defined here in case the main.css below cannot be loaded */
-.lev1 {margin-left: 80px}
-.lev2 {margin-left: 100px}
-.lev3 {margin-left: 120px}
-.lev4 {margin-left: 140px}
-.lev5 {margin-left: 160px}
-.lev6 {margin-left: 180px}
+   .lev1 {margin-left: 80px}
+   .lev2 {margin-left: 100px}
+   .lev3 {margin-left: 120px}
+   .lev4 {margin-left: 140px}
+   .lev5 {margin-left: 160px}
+   .lev6 {margin-left: 180px}
+   .cm-sos-interpolated {
+  background-color: #EDD5F3;
+}
+.cm-sos-sigil {
+  background-color: #EDD5F3;
+}
 </style>
-
 <link rel="stylesheet" type="text/css" href="../../css/jt.css">
 <link rel="stylesheet" type="text/css" href="../../css/toc2.css">
-
 <script src="../../js/doc_toc.js"></script>
-
- <script src="../../js/docs.js"></script>
-
+<script src="../../js/docs.js"></script>
 <script>
-    MathJax.Hub.Config({
-        "HTML-CSS": {
-            preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
-            styles: {
-                scale: 110,
-                ".MathJax_Display": {
-                    "font-size": "110%",
-                }
-            }
-        }
-    });
+   MathJax.Hub.Config({
+       "HTML-CSS": {
+           preferredFont: "TeX",
+           availableFonts: ["STIX","TeX"],
+           styles: {
+               scale: 110,
+               ".MathJax_Display": {
+                   "font-size": "110%",
+               }
+           }
+       }
+   });
 </script>
-
 <script>
-
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        }
-    }
-}
-
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-
-    if (dtype === 'numeric') {
-        var fn = function(a, b) {
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim());
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]);
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-
-    var sorted = isSorted(tr, fn);
-
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-
-
-$( document ).ready(function(){
-
-            var cfg={'threshold':4,     // depth of toc (number of levels)
-             // 'number_sections': true,
-             'number_sections': false,  // sections numbering
-             'toc_cell': false,          // useless here
-             'toc_window_display': true, // display the toc window
-             "toc_section_display": "block", // display toc contents in the window
-             // 'sideBar':true,
-             'sideBar':true,       // sidebar or floating window
-             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
-            }
-
-            var st={};                  // some variables used in the script
-            st.rendering_toc_cell = false;
-            st.config_loaded = false;
-            st.extension_initialized=false;
-            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-            st.nbcontainer_width = $('#notebook-container').css('width')
-            st.oldTocHeight = undefined
-            st.cell_toc = undefined;
-            st.toc_index=0;
-
-            // fire the main function with these parameters
-
-
-            table_of_contents(cfg,st);
-
-
-            var file=tutorialsDict[$("h1:first").attr("id")];
-            var path="http://vatlab.github.io/sos-docs"
+   function filterDataFrame(id) {
+       var input = document.getElementById("search_" + id);
+       var filter = input.value.toUpperCase();
+       var table = document.getElementById("dataframe_" + id);
+       var tr = table.getElementsByTagName("tr");
+   
+       // Loop through all table rows, and hide those who don't match the search query
+       for (var i = 1; i < tr.length; i++) {
+           for (var j = 0; j < tr[i].cells.length; ++j) {
+               var matched = false;
+               if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                   tr[i].style.display = "";
+                   matched = true
+                   break;
+               }
+               if (!matched)
+                   tr[i].style.display = "none";
+           } 
+       }
+   }
+   
+   function sortDataFrame(id, n, dtype) {
+       var table = document.getElementById("dataframe_" + id);
+   
+       var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+       var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+   
+       if (dtype === 'numeric') {
+           var fn = function(a, b) { 
+               return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+           }
+       } else {
+           var fn = function(a, b) {
+               var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+               return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+       }
+       var isSorted = function(array, fn) {
+           if (array.length < 2)
+               return 1;
+           var direction = fn(array[0], array[1]); 
+           for (var i = 1; i < array.length - 1; ++i) {
+               var d = fn(array[i], array[i+1]);
+               if (d == 0)
+                   continue;
+               else if (direction == 0)
+                   direction = d;
+               else if (direction != d)
+                   return 0;
+               }
+           return direction;
+       }
+   
+       var sorted = isSorted(tr, fn);
+   
+       if (sorted == 1 || sorted == -1) {
+           // if sorted already, reverse it
+           for(var i = tr.length - 1; i >= 0; --i)
+               tb.appendChild(tr[i]); // append each row in order
+       } else {
+           tr = tr.sort(fn);
+           for(var i = 0; i < tr.length; ++i)
+               tb.appendChild(tr[i]); // append each row in order
+       }
+   }
+   
+   $( document ).ready(function(){
+   
+               var cfg={'threshold':4,     // depth of toc (number of levels)
+                // 'number_sections': true,  // sections numbering
+                'number_sections': false, 
+                'toc_cell': false,          // useless here
+                'toc_window_display': true, // display the toc window
+                "toc_section_display": "block", // display toc contents in the window
+                // 'sideBar':true,      
+                'sideBar':true,       // sidebar or floating window
+                'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+               }
+   
+               var st={};                  // some variables used in the script
+               st.rendering_toc_cell = false;
+               st.config_loaded = false;
+               st.extension_initialized=false;
+               st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+               st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+               st.nbcontainer_width = $('#notebook-container').css('width')
+               st.oldTocHeight = undefined
+               st.cell_toc = undefined;
+               st.toc_index=0;
+   
+               // fire the main function with these parameters
+   
+   
+   
+               table_of_contents(cfg,st);
+               var file=tutorialsDict[$("h1:first").attr("id")];
+               var path="http://vatlab.github.io/sos-docs"
             // $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
 
@@ -219,15 +223,14 @@ $( document ).ready(function(){
 
 
             // $(".number_sections-btn").hide();
-            // $(".toc_cell_sections-btn".hide();
-
-
-    });
+            // $(".toc_cell_sections-btn".hide();   
+   
+       });
 </script><style>  /* defined here in case the main.css below cannot be loaded */
-
- .lan_SoS {}
-
+   .lan_SoS {}
 </style>
+
+
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -300,25 +303,24 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
-<span class="o">%</span><span class="n">run</span> <span class="n">report</span>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview -n a.md
+%run report
 
-<span class="p">[</span><span class="n">report</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;a.md&#39;</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="n">_output</span>
-  <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-  <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
-</pre></div>
+[report]
+output: 'a.md'
+report: output=_output
+  * item 1
+  * item 2</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -356,7 +358,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -366,25 +369,24 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
-<span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview -n a.md
+%run -t a.md
 
-<span class="p">[</span><span class="n">report</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;a.md&#39;</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="n">_output</span>
-  <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-  <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
-</pre></div>
+[report]
+output: 'a.md'
+report: output=_output
+  * item 1
+  * item 2</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -422,7 +424,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -432,24 +435,23 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
-<span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="n">a</span><span class="o">.</span><span class="n">md</span>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview -n a.md
+%run -t a.md
 
-<span class="p">[</span><span class="n">report</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;a.md&#39;</span><span class="p">]</span>
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="n">_output</span>
-  <span class="o">*</span> <span class="n">item</span> <span class="mi">1</span>
-  <span class="o">*</span> <span class="n">item</span> <span class="mi">2</span>
-</pre></div>
+[report: provides='a.md']
+report: output=_output
+  * item 1
+  * item 2</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -487,7 +489,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -536,30 +539,29 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">--</span><span class="n">off</span>
-<span class="o">%</span><span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="n">TS1</span><span class="o">.</span><span class="n">bam</span>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview --off
+%run -t TS1.bam
 
-<span class="p">[</span><span class="n">compress</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="s1">&#39;{filename}.bam&#39;</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;&gt; {step_name} input to {_output}&quot;</span><span class="p">)</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+[compress: provides = '{filename}.bam']
+print(f"> {step_name} input to {_output}")
+sh: expand=True
+    touch {_output}
 
-<span class="p">[</span><span class="n">index</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="s1">&#39;{filename}.bam.bai&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{filename}.bam&quot;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;&gt; {step_name} {_input} to {_output}&quot;</span><span class="p">)</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
-</pre></div>
+[index: provides = '{filename}.bam.bai']
+input: f"{filename}.bam"
+print(f"> {step_name} {_input} to {_output}")
+sh: expand=True
+    touch {_output}</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -581,19 +583,19 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+</div>
+<div class="cell border-box-sizing code_cell rendered lan_SoS">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">rerun</span> <span class="o">-</span><span class="n">t</span> <span class="n">TS2</span><span class="o">.</span><span class="n">bam</span><span class="o">.</span><span class="n">bai</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%rerun -t TS2.bam.bai</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -616,7 +618,8 @@ $( document ).ready(function(){
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -643,31 +646,31 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="c1"># remove var in case it is defined already</span>
-<span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="k">del</span> <span class="n">numNotebooks</span>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS"># remove var in case it is defined already
+%dict --del numNotebooks
 
-<span class="c1"># this step provides variable `numNotebooks`</span>
-<span class="p">[</span><span class="n">count</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="n">sos_variable</span><span class="p">(</span><span class="s1">&#39;numNotebooks&#39;</span><span class="p">)]</span>
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="n">numNotebooks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*.ipynb&#39;</span><span class="p">))</span>
+# this step provides variable `numNotebooks`
+[count: provides=sos_variable('numNotebooks')]
+import glob
+numNotebooks = len(glob.glob('*.ipynb'))
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="n">sos_variable</span><span class="p">(</span><span class="s1">&#39;numNotebooks&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;There are {numNotebooks} notebooks in this directory&quot;</span><span class="p">)</span>
-</pre></div>
+[default]
+depends: sos_variable('numNotebooks')
+print(f"There are {numNotebooks} notebooks in this directory")</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -685,30 +688,30 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">--</span><span class="n">off</span>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview --off
 
-<span class="p">[</span><span class="n">temp</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;{filename}.bak&#39;</span><span class="p">,</span> <span class="s1">&#39;{filename}.tmp&#39;</span><span class="p">]]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Touch {_output}&quot;</span><span class="p">)</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+[temp: provides = ['{filename}.bak', '{filename}.tmp']]
+print(f"Touch {_output}")
+sh: expand=True
+    touch {_output}
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s1">&#39;text.bak&#39;</span><span class="p">,</span> <span class="s1">&#39;text.tmp&#39;</span>
-</pre></div>
+[default]
+depends: 'text.bak', 'text.tmp'</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -730,30 +733,30 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">--</span><span class="n">off</span>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview --off
 
-<span class="p">[</span><span class="n">touch</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span><span class="p">]]</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">echo</span> <span class="s2">&quot;Create {_output}&quot;</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+[touch: provides = ['1.txt', '2.txt', '3.txt']]
+sh: expand=True
+    echo "Create {_output}"
+    touch {_output}
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span>
-</pre></div>
+[default]
+depends: '1.txt', '2.txt', '3.txt'</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -763,29 +766,28 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">--</span><span class="n">off</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview --off
+%run
 
-<span class="p">[</span><span class="n">touch</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span><span class="p">]]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;step triggered by {__default_output__}&quot;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">echo</span> <span class="s2">&quot;Write A to {_output}&quot;</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+[touch: provides = ['1.txt', '2.txt', '3.txt']]
+print(f"step triggered by {__default_output__}")
+output: '1.txt', '2.txt', '3.txt'
+sh: expand=True
+    echo "Write A to {_output}"
+    touch {_output}
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span>
-</pre></div>
+[default]
+depends: '1.txt', '2.txt', '3.txt'</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -808,7 +810,8 @@ Write A to 1.txt 2.txt 3.txt
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -835,31 +838,31 @@ Write A to 1.txt 2.txt 3.txt
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="c1"># remove var in case it is defined already</span>
-<span class="o">%</span><span class="nb">dict</span> <span class="o">--</span><span class="k">del</span> <span class="n">numNotebooks</span>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS"># remove var in case it is defined already
+%dict --del numNotebooks
 
-<span class="c1"># this step provides variable `numNotebooks`</span>
-<span class="p">[</span><span class="n">count</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;numNotebooks&#39;</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="n">numNotebooks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*.ipynb&#39;</span><span class="p">))</span>
+# this step provides variable `numNotebooks`
+[count: shared='numNotebooks']
+import glob
+numNotebooks = len(glob.glob('*.ipynb'))
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="n">sos_variable</span><span class="p">(</span><span class="s1">&#39;numNotebooks&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;There are {numNotebooks} notebooks in this directory&quot;</span><span class="p">)</span>
-</pre></div>
+[default]
+depends: sos_variable('numNotebooks')
+print(f"There are {numNotebooks} notebooks in this directory")</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -907,62 +910,62 @@ output: sos_variable('var1'), sos_variable('var2')</code></pre>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox --expect-error
+%run
 
-<span class="p">[</span><span class="n">gzip</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{name}.gz&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{name}&quot;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;&gt; {step_name} {input} to {output}&quot;</span><span class="p">)</span>
-<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">output</span><span class="p">}</span>
+[gzip: provides='{name}.gz']
+input: f"{name}"
+print(f"> {step_name} {input} to {output}")
+run: expand=True
+    touch {output}
 
-<span class="p">[</span><span class="n">download</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{name}.pdf&#39;</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;&gt; {step_name} {output}&quot;</span><span class="p">)</span>
-<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">output</span><span class="p">}</span>
+[download: provides='{name}.pdf']
+print(f"> {step_name} {output}")
+run: expand=True
+    touch {output}
 
-<span class="p">[</span><span class="n">process_10</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;&gt; Running step {step_name}&quot;</span><span class="p">)</span>
+[process_10]
+print(f"> Running step {step_name}")
 
-<span class="p">[</span><span class="n">process_20</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s2">&quot;step20.pdf&quot;</span>
-<span class="kn">output:</span> <span class="s2">&quot;step20.out&quot;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;&gt; Running step {step_name} to produce {output}&quot;</span><span class="p">)</span>
-<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">output</span><span class="p">}</span>
+[process_20]
+depends: "step20.pdf"
+output: "step20.out"
+print(f"> Running step {step_name} to produce {output}")
+run: expand=True
+    touch {output}
 
-<span class="p">[</span><span class="n">process_30</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s2">&quot;step30.out&quot;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;&gt; Running step {step_name} to produce {output}&quot;</span><span class="p">)</span>
-<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">output</span><span class="p">}</span>
+[process_30]
+output: "step30.out"
+print(f"> Running step {step_name} to produce {output}")
+run: expand=True
+    touch {output}
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Forward-style workflow&quot;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">)</span>
+[default]
+print("Forward-style workflow")
+sos_run("process")
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Makefile-style workflow&quot;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="n">targets</span><span class="o">=</span><span class="s2">&quot;ms.pdf.gz&quot;</span><span class="p">)</span>
+print("\nMakefile-style workflow")
+sos_run(targets="ms.pdf.gz")
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Targets of forward-style workflow&quot;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="s2">&quot;step20.out&quot;</span><span class="p">)</span>
+print("\nTargets of forward-style workflow")
+sos_run("process", targets="step20.out")
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Targets from forward-style and makefile-style workflows&quot;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;step20.out&quot;</span><span class="p">,</span> <span class="s2">&quot;ms1.pdf.gz&quot;</span><span class="p">])</span>
+print("\nTargets from forward-style and makefile-style workflows")
+sos_run("process", targets=["step20.out", "ms1.pdf.gz"])
 
-<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;step20.out&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Invalid target step20.out&quot;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;step20.out&quot;</span><span class="p">])</span>
-</pre></div>
+os.remove('step20.out')
+print("\nInvalid target step20.out")
+sos_run(targets=["step20.out"])
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -998,7 +1001,8 @@ name &#39;output&#39; is not defined
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1053,64 +1057,64 @@ name &#39;output&#39; is not defined
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="nb">dir</span> <span class="n">temp</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">dag</span><span class="o">.</span><span class="n">dot</span>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox --dir temp
+%preview -n dag.dot
 
-<span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">A</span><span class="err">?</span><span class="o">.</span><span class="n">txt</span> <span class="n">B</span><span class="err">?</span><span class="o">.</span><span class="n">txt</span> <span class="n">C</span><span class="err">?</span><span class="o">.</span><span class="n">txt</span>
-<span class="o">%</span><span class="n">run</span>  <span class="o">-</span><span class="n">t</span> <span class="n">B2</span><span class="o">.</span><span class="n">txt</span> <span class="n">C2</span><span class="o">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">d</span> <span class="n">dag</span>
-<span class="p">[</span><span class="n">A_1</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;B1.txt&#39;</span>
-<span class="kn">output:</span> <span class="s1">&#39;A1.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">A1</span><span class="o">.</span><span class="n">txt</span>
+!rm -f A?.txt B?.txt C?.txt
+%run  -t B2.txt C2.txt -d dag
+[A_1]
+input: 'B1.txt'
+output: 'A1.txt'
+sh:
+    touch A1.txt
 
-<span class="p">[</span><span class="n">A_2</span><span class="p">]</span>
-<span class="kn">depends:</span>  <span class="s1">&#39;B2.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">A2</span><span class="o">.</span><span class="n">txt</span>
+[A_2]
+depends:  'B2.txt'
+sh:
+    touch A2.txt
 
-<span class="p">[</span><span class="n">B1</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;B1.txt&#39;</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s1">&#39;B2.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">B1</span><span class="o">.</span><span class="n">txt</span>
+[B1: provides='B1.txt']
+depends: 'B2.txt'
+sh:
+    touch B1.txt
 
-<span class="p">[</span><span class="n">B2</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;B2.txt&#39;</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s1">&#39;B3.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;C1.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">B2</span><span class="o">.</span><span class="n">txt</span>
+[B2: provides='B2.txt']
+depends: 'B3.txt', 'C1.txt'
+sh:
+    touch B2.txt
 
-<span class="p">[</span><span class="n">B3</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;B3.txt&#39;</span><span class="p">]</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">B3</span><span class="o">.</span><span class="n">txt</span>
+[B3: provides='B3.txt']
+sh:
+    touch B3.txt
 
-<span class="p">[</span><span class="n">C1</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;C1.txt&#39;</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s1">&#39;C2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;C3.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">C1</span><span class="o">.</span><span class="n">txt</span>
+[C1: provides='C1.txt']
+depends: 'C2.txt', 'C3.txt'
+sh:
+    touch C1.txt
 
-<span class="p">[</span><span class="n">C2</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;C2.txt&#39;</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s1">&#39;C4.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">C2</span><span class="o">.</span><span class="n">txt</span>
+[C2: provides='C2.txt']
+depends: 'C4.txt'
+sh:
+    touch C2.txt
 
-<span class="p">[</span><span class="n">C3</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;C3.txt&#39;</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="s1">&#39;C4.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">C3</span><span class="o">.</span><span class="n">txt</span>
+[C3: provides='C3.txt']
+depends: 'C4.txt'
+sh:
+    touch C3.txt
 
-<span class="p">[</span><span class="n">C4</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;C4.txt&#39;</span><span class="p">]</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">C4</span><span class="o">.</span><span class="n">txt</span>
-</pre></div>
+[C4: provides='C4.txt']
+sh:
+    touch C4.txt
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1147,7 +1151,8 @@ name &#39;output&#39; is not defined
 </div>
 
 </div>
-  </div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1166,25 +1171,58 @@ name &#39;output&#39; is not defined
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Clean up</span>
-<span class="err">!</span><span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="n">temp</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS"># Clean up
+!rm -rf temp</textarea>
 
-</div>
-</div>
-</div>
-
-</div>
   </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
     </div>
   </div>
 </body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+	  <script src="../../js/sos-mode.js"> </script>
+      <script>
+		   function highlight_cells(cells, i, interval) {
+			  setTimeout(function() {
+				var editor = CodeMirror.fromTextArea(cells[i], {
+		           lineNumbers: false,
+				   styleActiveLine: true,
+		           matchBrackets: true,
+				   readOnly: true,
+		           mode: 'sos',
+				   base_mode: cells[i].name,
+		         });
+				$(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>" 
+					+ cells[i].name + "</option></select>");
+		      if (i < cells.length)
+			    highlight_cells(cells, i + 1, interval);
+			}, interval);
+		  }
+
+	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      </script>
+
+
 
  
 

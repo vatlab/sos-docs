@@ -1,18 +1,8 @@
-<!-- Global Site Tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments)};
-  gtag('js', new Date());
-
-  gtag('config', 'UA-107286198-1');
-</script>
-
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>SoS_Step</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<title>SoS_Step</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
 
@@ -22,7 +12,6 @@
 
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -48,184 +37,199 @@
     <!-- End of mathjax configuration --></head>
 
 
- <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
-<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
-
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
-<style>  /* defined here in case the main.css below cannot be loaded */
-.lev1 {margin-left: 80px}
-.lev2 {margin-left: 100px}
-.lev3 {margin-left: 120px}
-.lev4 {margin-left: 140px}
-.lev5 {margin-left: 160px}
-.lev6 {margin-left: 180px}
-</style>
-
-<link rel="stylesheet" type="text/css" href="../../css/jt.css">
-<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
-
-<script src="../../js/doc_toc.js"></script>
-
- <script src="../../js/docs.js"></script>
-
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
 <script>
-    MathJax.Hub.Config({
-        "HTML-CSS": {
-            preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
-            styles: {
-                scale: 110,
-                ".MathJax_Display": {
-                    "font-size": "110%",
-                }
-            }
-        }
-    });
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments)};
+   gtag('js', new Date());
+   
+   gtag('config', 'UA-107286198-1');
 </script>
 
-<script>
 
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        } 
-    }
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+  
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<style>  /* defined here in case the main.css below cannot be loaded */
+   .lev1 {margin-left: 80px}
+   .lev2 {margin-left: 100px}
+   .lev3 {margin-left: 120px}
+   .lev4 {margin-left: 140px}
+   .lev5 {margin-left: 160px}
+   .lev6 {margin-left: 180px}
+   .cm-sos-interpolated {
+  background-color: #EDD5F3;
 }
-
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-
-    if (dtype === 'numeric') {
-        var fn = function(a, b) { 
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]); 
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-
-    var sorted = isSorted(tr, fn);
-
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
+.cm-sos-sigil {
+  background-color: #EDD5F3;
 }
-
-$( document ).ready(function(){
-
-            var cfg={'threshold':4,     // depth of toc (number of levels)
-             // 'number_sections': true,  // sections numbering
-             'number_sections': false, 
-             'toc_cell': false,          // useless here
-             'toc_window_display': true, // display the toc window
-             "toc_section_display": "block", // display toc contents in the window
-             // 'sideBar':true,      
-             'sideBar':true,       // sidebar or floating window
-             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
-            }
-
-            var st={};                  // some variables used in the script
-            st.rendering_toc_cell = false;
-            st.config_loaded = false;
-            st.extension_initialized=false;
-            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-            st.nbcontainer_width = $('#notebook-container').css('width')
-            st.oldTocHeight = undefined
-            st.cell_toc = undefined;
-            st.toc_index=0;
-
-            // fire the main function with these parameters
-
-
-
-            table_of_contents(cfg,st);
-
-            var file=documentationDict[$("h1:first").attr("id")];
-            var path="http://vatlab.github.io/sos-docs"
-            $("#toc-level0 a").css("color","#126dce");
-            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
-            var docs=documentation;
-            var pos=documentation.indexOf(file);
-        
-            for (var a=pos;a>=0;a--){
-                  var name=docs[a]
-                  $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
-                   + '&nbsp ' + '<i class="fa ' +
-                      (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' +'</a></li>').insertBefore("#toc-level0 li:eq(0)");
-            }
-            $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
-
-
-            for (var a=pos+1;a<docs.length;a++){
-                  var name=docs[a]
-                  $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
-                    + '&nbsp' + '<i class="fa fa-caret-right"></i>' +'</a></li>');
-            }
-
-            // var docs=documentation
-            // for (var a =0;a<docs.length;a++){
-            //       var name =docs[a];
-            //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
-            // }
-            // var home=$("#toc-level0 #indexHome");
-          
-            // home.insertBefore("#toc-level0 li:eq(0)");
-
-            // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
-            // $("#toc").attr("style","max-height:938px")
-
-
-    });
-</script><style>  /* defined here in case the main.css below cannot be loaded */
-
- .lan_SoS {}.lan_SoS {}
-
 </style>
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+<script src="../../js/doc_toc.js"></script>
+<script src="../../js/docs.js"></script>
+<script>
+   MathJax.Hub.Config({
+       "HTML-CSS": {
+           preferredFont: "TeX",
+           availableFonts: ["STIX","TeX"],
+           styles: {
+               scale: 110,
+               ".MathJax_Display": {
+                   "font-size": "110%",
+               }
+           }
+       }
+   });
+</script>
+<script>
+   function filterDataFrame(id) {
+       var input = document.getElementById("search_" + id);
+       var filter = input.value.toUpperCase();
+       var table = document.getElementById("dataframe_" + id);
+       var tr = table.getElementsByTagName("tr");
+   
+       // Loop through all table rows, and hide those who don't match the search query
+       for (var i = 1; i < tr.length; i++) {
+           for (var j = 0; j < tr[i].cells.length; ++j) {
+               var matched = false;
+               if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                   tr[i].style.display = "";
+                   matched = true
+                   break;
+               }
+               if (!matched)
+                   tr[i].style.display = "none";
+           } 
+       }
+   }
+   
+   function sortDataFrame(id, n, dtype) {
+       var table = document.getElementById("dataframe_" + id);
+   
+       var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+       var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+   
+       if (dtype === 'numeric') {
+           var fn = function(a, b) { 
+               return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+           }
+       } else {
+           var fn = function(a, b) {
+               var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+               return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+       }
+       var isSorted = function(array, fn) {
+           if (array.length < 2)
+               return 1;
+           var direction = fn(array[0], array[1]); 
+           for (var i = 1; i < array.length - 1; ++i) {
+               var d = fn(array[i], array[i+1]);
+               if (d == 0)
+                   continue;
+               else if (direction == 0)
+                   direction = d;
+               else if (direction != d)
+                   return 0;
+               }
+           return direction;
+       }
+   
+       var sorted = isSorted(tr, fn);
+   
+       if (sorted == 1 || sorted == -1) {
+           // if sorted already, reverse it
+           for(var i = tr.length - 1; i >= 0; --i)
+               tb.appendChild(tr[i]); // append each row in order
+       } else {
+           tr = tr.sort(fn);
+           for(var i = 0; i < tr.length; ++i)
+               tb.appendChild(tr[i]); // append each row in order
+       }
+   }
+   
+   $( document ).ready(function(){
+   
+               var cfg={'threshold':4,     // depth of toc (number of levels)
+                // 'number_sections': true,  // sections numbering
+                'number_sections': false, 
+                'toc_cell': false,          // useless here
+                'toc_window_display': true, // display the toc window
+                "toc_section_display": "block", // display toc contents in the window
+                // 'sideBar':true,      
+                'sideBar':true,       // sidebar or floating window
+                'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+               }
+   
+               var st={};                  // some variables used in the script
+               st.rendering_toc_cell = false;
+               st.config_loaded = false;
+               st.extension_initialized=false;
+               st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+               st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+               st.nbcontainer_width = $('#notebook-container').css('width')
+               st.oldTocHeight = undefined
+               st.cell_toc = undefined;
+               st.toc_index=0;
+   
+               // fire the main function with these parameters
+   
+   
+   
+               table_of_contents(cfg,st);
+   
+               var file=documentationDict[$("h1:first").attr("id")];
+               var path="http://vatlab.github.io/sos-docs"
+               $("#toc-level0 a").css("color","#126dce");
+               $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+               var docs=documentation;
+               var pos=documentation.indexOf(file);
+           
+               for (var a=pos;a>=0;a--){
+                     var name=docs[a]
+                     $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
+                      + '&nbsp ' + '<i class="fa ' +
+                         (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' +'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+               }
+               $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+   
+   
+               for (var a=pos+1;a<docs.length;a++){
+                     var name=docs[a]
+                     $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
+                       + '&nbsp' + '<i class="fa fa-caret-right"></i>' +'</a></li>');
+               }
+   
+               // var docs=documentation
+               // for (var a =0;a<docs.length;a++){
+               //       var name =docs[a];
+               //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+               // }
+               // var home=$("#toc-level0 #indexHome");
+             
+               // home.insertBefore("#toc-level0 li:eq(0)");
+   
+               // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+               // $("#toc").attr("style","max-height:938px")
+   
+   
+       });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+   .lan_SoS {}.lan_SoS {}
+</style>
+
+
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -272,29 +276,28 @@ $( document ).ready(function(){
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">nested</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: step name={step_name}&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: step id={step_id}&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: workflow id={workflow_id}&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: master id={master_id}&#39;</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+[nested]
+print(f'Workflow {workflow_id}: step name={step_name}')
+print(f'Workflow {workflow_id}: step id={step_id}')
+print(f'Workflow {workflow_id}: workflow id={workflow_id}')
+print(f'Workflow {workflow_id}: master id={master_id}')
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: step name={step_name}&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: step id={step_id}&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: workflow id={workflow_id}&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Workflow {workflow_id}: master id={master_id}&#39;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;nested&#39;</span><span class="p">)</span>
-</pre></div>
+[default]
+print(f'Workflow {workflow_id}: step name={step_name}')
+print(f'Workflow {workflow_id}: step id={step_id}')
+print(f'Workflow {workflow_id}: workflow id={workflow_id}')
+print(f'Workflow {workflow_id}: master id={master_id}')
+sos_run('nested')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -323,7 +326,8 @@ Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -333,22 +337,21 @@ Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">default_10</span><span class="o">.</span><span class="n">log</span>
-<span class="o">%</span><span class="n">run</span> 
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%preview -n default_10.log
+%run 
 
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">step_name</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">log</span><span class="p">:</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Step specific log message saved in {step_name}.log&#39;</span><span class="p">)</span>
-</pre></div>
+[10]
+with open(step_name + '.log', 'w') as log:
+    log.write(f'Step specific log message saved in {step_name}.log')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -381,7 +384,8 @@ Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -391,23 +395,23 @@ Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="n">human</span>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run human
 
-<span class="p">[</span><span class="n">human_10</span><span class="p">,</span> <span class="n">mouse_10</span><span class="p">]</span>
-<span class="k">if</span> <span class="s1">&#39;human&#39;</span> <span class="ow">in</span> <span class="n">step_name</span><span class="p">:</span>
-   <span class="k">print</span><span class="p">(</span><span class="s2">&quot;I am dealing with human&quot;</span><span class="p">)</span>
-<span class="kn">else:</span>
-   <span class="k">print</span><span class="p">(</span><span class="s2">&quot;I am dealing with mouse&quot;</span><span class="p">)</span>
-</pre></div>
+[human_10, mouse_10]
+if 'human' in step_name:
+   print("I am dealing with human")
+else:
+   print("I am dealing with mouse")
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -429,7 +433,8 @@ Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -481,20 +486,19 @@ Option <code>skip</code> takes two formats, the first format has no value</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="kn">parameter:</span> <span class="n">qc</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="p">[</span><span class="mi">10</span> <span class="p">(</span><span class="n">quality</span> <span class="n">check</span><span class="p">):</span> <span class="kp">skip</span><span class="o">=</span><span class="ow">not</span> <span class="n">qc</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{step_name} is executed&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+parameter: qc = True
+[10 (quality check): skip=not qc]
+print(f"{step_name} is executed")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -516,7 +520,8 @@ Option <code>skip</code> takes two formats, the first format has no value</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -526,20 +531,19 @@ Option <code>skip</code> takes two formats, the first format has no value</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">qc</span>
-<span class="kn">parameter:</span> <span class="n">qc</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="p">[</span><span class="mi">10</span> <span class="p">(</span><span class="n">quality</span> <span class="n">check</span><span class="p">):</span> <span class="kp">skip</span><span class="o">=</span><span class="ow">not</span> <span class="n">qc</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{step_name} is executed&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run --no-qc
+parameter: qc = True
+[10 (quality check): skip=not qc]
+print(f"{step_name} is executed")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -561,7 +565,8 @@ Option <code>skip</code> takes two formats, the first format has no value</p>
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -595,22 +600,21 @@ Option <code>sigil</code> accepts a string for an alternative sigil, or <code>No
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="s1">&#39;myvar&#39;</span><span class="p">]</span>
-<span class="n">myvar</span> <span class="o">=</span> <span class="mi">100</span>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%run
+[10: shared='myvar']
+myvar = 100
 
-<span class="p">[</span><span class="mi">20</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">myvar</span><span class="p">)</span>
-</pre></div>
+[20]
+print(myvar)</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -632,7 +636,8 @@ Option <code>sigil</code> accepts a string for an alternative sigil, or <code>No
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -642,25 +647,24 @@ Option <code>sigil</code> accepts a string for an alternative sigil, or <code>No
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">:</span> <span class="kp">shared</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;test_output&#39;</span><span class="p">:</span> <span class="s1">&#39;step_output&#39;</span><span class="p">}]</span>
-<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Input file {test_output}&quot;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="n">test_output</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+[1: shared = {'test_output': 'step_output'}]
+output: 'a.txt'
+sh:
+    touch a.txt
+[2]
+print(f"Input file {test_output}")
+input: test_output</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -682,7 +686,8 @@ Option <code>sigil</code> accepts a string for an alternative sigil, or <code>No
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -692,25 +697,24 @@ Option <code>sigil</code> accepts a string for an alternative sigil, or <code>No
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">:</span> <span class="kp">shared</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;test_output_1&#39;</span><span class="p">:</span><span class="s1">&#39;step_output[0]&#39;</span><span class="p">,</span> <span class="s1">&#39;test_output_2&#39;</span><span class="p">:</span> <span class="s1">&#39;step_output[1]&#39;</span><span class="p">}]</span>
-<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b.txt&#39;</span>
-<span class="kn">sh:</span>
-    <span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span> <span class="n">b</span><span class="o">.</span><span class="n">txt</span>
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;output 1: {test_output_1}&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;output 2: {test_output_2}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+[1: shared={'test_output_1':'step_output[0]', 'test_output_2': 'step_output[1]'}]
+output: 'a.txt', 'b.txt'
+sh:
+    touch a.txt b.txt
+[2]
+print(f"output 1: {test_output_1}")
+print(f"output 2: {test_output_2}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -733,7 +737,8 @@ output 2: b.txt
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -842,22 +847,21 @@ SoS allows the specification of input options, which are appended to input file 
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">fastq</span> <span class="n">b</span><span class="o">.</span><span class="n">fastq</span> <span class="n">README</span><span class="o">.</span><span class="n">txt</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">step</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="kp">filetype</span><span class="o">=</span><span class="s1">&#39;*.fastq&#39;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{input}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch a.fastq b.fastq README.txt
+%run
+[step]
+input: '*', filetype='*.fastq'
+print(f"{input}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -879,7 +883,8 @@ SoS allows the specification of input options, which are appended to input file 
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -904,24 +909,23 @@ SoS allows the specification of input options, which are appended to input file 
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">echo</span> <span class="s1">&#39;##fileformat=VCF4.1&#39;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">vcf</span>
-<span class="err">!</span><span class="n">echo</span> <span class="s1">&#39;#!/usr/bin/env python&#39;</span> <span class="o">&gt;</span> <span class="n">a</span><span class="o">.</span><span class="n">py</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!echo '##fileformat=VCF4.1' > a.vcf
+!echo '#!/usr/bin/env python' > a.py
+%run
 
-<span class="p">[</span><span class="n">step</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="kp">filetype</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">open</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;##fileformat=VCF4.1&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_input}&quot;</span><span class="p">)</span>
-</pre></div>
+[step]
+input: '*', filetype=lambda x: open(x).readline().startswith('##fileformat=VCF4.1')
+print(f"{_input}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -943,7 +947,8 @@ SoS allows the specification of input options, which are appended to input file 
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -970,22 +975,21 @@ SoS allows the specification of input options, which are appended to input file 
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span> <span class="n">file3</span> <span class="n">file4</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">group</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="s1">&#39;file3&#39;</span><span class="p">,</span> <span class="s1">&#39;file4&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;pairwise&#39;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_input}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch file1 file2 file3 file4
+%run
+[group]
+input: 'file1', 'file2', 'file3', 'file4', group_by='pairwise'
+print(f"{_input}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1009,7 +1013,8 @@ file3 file4
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1019,33 +1024,33 @@ file3 file4
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span> <span class="n">file3</span> <span class="n">file4</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch file1 file2 file3 file4
+%run
 
-<span class="p">[</span><span class="n">group</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">group</span> <span class="o">=</span> <span class="nb">str</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;group_by={group}&quot;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="s1">&#39;file3&#39;</span><span class="p">,</span> <span class="s1">&#39;file4&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="n">group</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: {_input}&quot;</span><span class="p">)</span>
+[group]
+parameter: group = str
+print(f"group_by={group}")
+input: 'file1', 'file2', 'file3', 'file4', group_by=group
+print(f"{_index}: {_input}")
 
-<span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;pairs&#39;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;pairwise&#39;</span><span class="p">)</span>
-<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;combinations&#39;</span><span class="p">)</span>
-</pre></div>
+[default]
+sos_run('group', group=1)
+sos_run('group', group=2)
+sos_run('group', group='single')
+sos_run('group', group='pairs')
+sos_run('group', group='pairwise')
+sos_run('group', group='combinations')
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1093,7 +1098,8 @@ group_by=combinations
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1103,30 +1109,29 @@ group_by=combinations
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">A_R1_0</span><span class="o">.</span><span class="n">fastq</span> <span class="n">A_R2_0</span><span class="o">.</span><span class="n">fastq</span> <span class="n">B_R1_0</span><span class="o">.</span><span class="n">fastq</span> <span class="n">B_R2_0</span><span class="o">.</span><span class="n">fastq</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">A_R1_1</span><span class="o">.</span><span class="n">fastq</span> <span class="n">A_R2_1</span><span class="o">.</span><span class="n">fastq</span> <span class="n">B_R1_1</span><span class="o">.</span><span class="n">fastq</span> <span class="n">B_R2_1</span><span class="o">.</span><span class="n">fastq</span>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+!touch A_R1_0.fastq A_R2_0.fastq B_R1_0.fastq B_R2_0.fastq
+!touch A_R1_1.fastq A_R2_1.fastq B_R1_1.fastq B_R2_1.fastq
 
-<span class="n">fastq_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+fastq_files = glob.glob('*')
 
-<span class="p">[</span><span class="n">step</span><span class="p">]</span>
-<span class="kn">input:</span>
-	<span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fastq_files</span> <span class="k">if</span> <span class="s1">&#39;_R1_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]),</span>
-	<span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fastq_files</span> <span class="k">if</span> <span class="s1">&#39;_R2_&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]),</span>
-	<span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;pairs&#39;</span>
+[step]
+input:
+	sorted([x for x in fastq_files if '_R1_' in x]),
+	sorted([x for x in fastq_files if '_R2_' in x]),
+	group_by='pairs'
 
-<span class="k">print</span><span class="p">(</span><span class="n">_input</span><span class="p">)</span>
-</pre></div>
+print(_input)</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1151,7 +1156,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1178,23 +1184,22 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
-<span class="o">%</span><span class="n">run</span>
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch file1 file2
+%run
 
-<span class="n">method</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="s1">&#39;method&#39;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: {_input} {_method}&quot;</span><span class="p">)</span>
-</pre></div>
+method = ['m1', 'm2']
+input: 'file1', 'file2', for_each='method'
+print(f"{_index}: {_input} {_method}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1217,7 +1222,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1245,24 +1251,23 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">method</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]</span>
-<span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;pars&#39;</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: _input={_input} _method={_method}, _pars={_pars}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch file1 file2
+%run
+[0]
+method = ['m1', 'm2']
+pars = [1, 2]
+input: 'file1', 'file2', for_each=['method', 'pars']
+print(f"{_index}: _input={_input} _method={_method}, _pars={_pars}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1287,7 +1292,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1297,25 +1303,24 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+!touch file1 file2
 
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">method</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]</span>
-<span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;method,pars&#39;</span><span class="p">]</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: _input={_input} _method={_method}, _pars={_pars}&quot;</span><span class="p">)</span>
-</pre></div>
+[0]
+method = ['m1', 'm2']
+pars = [1, 2]
+input: 'file1', 'file2', for_each=['method,pars']
+print(f"{_index}: _input={_input} _method={_method}, _pars={_pars}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1338,7 +1343,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1348,30 +1354,30 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">preview</span> <span class="n">data</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Hello&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;World&#39;</span><span class="p">)],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">])</span>
-<span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="s1">&#39;data&#39;</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_data[&#39;A&#39;]}_{_data[&#39;B&#39;]}_{_data[&#39;C&#39;]}.txt&quot;</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%preview data
+%run
+[0]
+import pandas as pd
+data = pd.DataFrame([(1, 2, 'Hello'), (2, 4, 'World')], columns=['A', 'B', 'C'])
+input: for_each='data'
+output: f"{_data['A']}_{_data['B']}_{_data['C']}.txt"
+sh: expand=True
+    touch {_output}</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1382,21 +1388,20 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch file1 file2
 
-<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]}</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: {_input} {method}&quot;</span><span class="p">)</span>
-</pre></div>
+input: 'file1', 'file2', for_each={'method': ['m1', 'm2']}
+print(f"{_index}: {_input} {method}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1419,7 +1424,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1429,23 +1435,22 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">file1</span> <span class="n">file2</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;file1&#39;</span><span class="p">,</span> <span class="s1">&#39;file2&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span><span class="s1">&#39;m2&#39;</span><span class="p">],</span>
-                                   <span class="s1">&#39;pars&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]}</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: _input={_input} method={method}, pars={pars}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch file1 file2
+%run
+[0]
+input: 'file1', 'file2', for_each={'method': ['m1','m2'],
+                                   'pars': [1, 2]}
+print(f"{_index}: _input={_input} method={method}, pars={pars}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1468,7 +1473,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1478,26 +1484,25 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">.</span><span class="n">txt</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">parameter:</span> <span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">outfile</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;4.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;5.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;6.txt&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;a.txt&#39;</span><span class="p">,</span> <span class="kp">for_each</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_n,_p&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="n">_n</span><span class="p">,</span><span class="n">_p</span><span class="p">)</span> <span class="k">for</span> <span class="n">_n</span> <span class="ow">in</span> <span class="n">n</span> <span class="k">for</span> <span class="n">_p</span> <span class="ow">in</span> <span class="n">p</span> <span class="k">if</span> <span class="n">_n</span> <span class="o">&gt;</span> <span class="n">_p</span><span class="p">]}</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index} {outfile[_index]} {_n} {_p}&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch a.txt
+%run
+[1]
+import itertools
+parameter: n = [100, 300]
+parameter: p = [50, 100, 200]
+parameter: outfile = ['1.txt', '2.txt', '3.txt', '4.txt', '5.txt', '6.txt']
+input: 'a.txt', for_each= {'_n,_p': [(_n,_p) for _n in n for _p in p if _n > _p]}
+print(f"{_index} {outfile[_index]} {_n} {_p}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1522,7 +1527,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1540,26 +1546,25 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!mkdir case ctrl
+!touch case/A1.bam case/A2.bam ctrl/A1.bam ctrl/A2.bam
 
-<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
-<span class="n">mutated</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">]</span>
-<span class="n">sample_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">,</span> <span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">]</span>
+bam_files = ['case/A1.bam', 'case/A2.bam', 'ctrl/A1.bam', 'ctrl/A2.bam']
+mutated = ['case', 'case', 'ctrl', 'ctrl']
+sample_name = ['A1', 'A2', 'A1', 'A2']
 
-<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mutated&#39;</span><span class="p">,</span> <span class="s1">&#39;sample_name&#39;</span><span class="p">],</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: _input={_input} _mutated={_mutated}, _sample_name={_sample_name}&quot;</span><span class="p">)</span>
-</pre></div>
+input: bam_files, paired_with=['mutated', 'sample_name'], group_by=1
+print(f"{_index}: _input={_input} _mutated={_mutated}, _sample_name={_sample_name}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1584,7 +1589,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1594,26 +1600,25 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!mkdir case ctrl
+!touch case/A1.bam case/A2.bam ctrl/A1.bam ctrl/A2.bam
 
-<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
-<span class="n">mutated</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">]</span>
-<span class="n">sample_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">,</span> <span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">]</span>
+bam_files = ['case/A1.bam', 'case/A2.bam', 'ctrl/A1.bam', 'ctrl/A2.bam']
+mutated = ['case', 'case', 'ctrl', 'ctrl']
+sample_name = ['A1', 'A2', 'A1', 'A2']
 
-<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mutated&#39;</span><span class="p">,</span> <span class="s1">&#39;sample_name&#39;</span><span class="p">],</span> <span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;pairs&#39;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: _input={_input} _mutated={_mutated}, _sample_name={_sample_name}&quot;</span><span class="p">)</span>
-</pre></div>
+input: bam_files, paired_with=['mutated', 'sample_name'], group_by='pairs'
+print(f"{_index}: _input={_input} _mutated={_mutated}, _sample_name={_sample_name}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1636,7 +1641,8 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1646,24 +1652,23 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="mf">1.</span><span class="n">txt</span> <span class="mf">2.</span><span class="n">txt</span> <span class="mf">3.</span><span class="n">txt</span>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch 1.txt 2.txt 3.txt
 
-<span class="n">anno</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="s1">&#39;1.ann&#39;</span><span class="p">,</span> <span class="s1">&#39;2.ann&#39;</span><span class="p">,</span> <span class="s1">&#39;3.ann&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="s1">&#39;1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;3.txt&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="s1">&#39;pairwise&#39;</span><span class="p">,</span>
-       <span class="kp">paired_with</span><span class="o">=</span><span class="s1">&#39;anno&#39;</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-  <span class="n">echo</span> <span class="s1">&#39;Pair {_anno} of type {type(_anno).__name__} with {_input}&#39;</span>
-</pre></div>
+anno = paths('1.ann', '2.ann', '3.ann')
+input: '1.txt', '2.txt', '3.txt', group_by='pairwise',
+       paired_with='anno'
+sh: expand=True
+  echo 'Pair {_anno} of type {type(_anno).__name__} with {_input}'</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1686,7 +1691,8 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1696,26 +1702,25 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!mkdir case ctrl
+!touch case/A1.bam case/A2.bam ctrl/A1.bam ctrl/A2.bam
 
-<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">paired_with</span><span class="o">=</span><span class="p">{</span>
-    <span class="s1">&#39;mutated&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;sample_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">,</span> <span class="s1">&#39;A1&#39;</span><span class="p">,</span> <span class="s1">&#39;A2&#39;</span><span class="p">]</span>
-    <span class="p">},</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: _input={_input} mutated={mutated}, sample_name={sample_name}&quot;</span><span class="p">)</span>
-</pre></div>
+bam_files = ['case/A1.bam', 'case/A2.bam', 'ctrl/A1.bam', 'ctrl/A2.bam']
+input: bam_files, paired_with={
+    'mutated': ['case', 'case', 'ctrl', 'ctrl'],
+    'sample_name': ['A1', 'A2', 'A1', 'A2']
+    }, group_by=1
+print(f"{_index}: _input={_input} mutated={mutated}, sample_name={sample_name}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1740,7 +1745,8 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1759,24 +1765,23 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!mkdir case ctrl
+!touch case/A1.bam case/A2.bam ctrl/A1.bam ctrl/A2.bam
 
-<span class="n">mutated</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">]</span>
-<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="kp">group_with</span><span class="o">=</span><span class="s1">&#39;mutated&#39;</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: _input={_input} _mutated={_mutated}&quot;</span><span class="p">)</span>
-</pre></div>
+mutated = ['case', 'ctrl']
+bam_files = ['case/A1.bam', 'case/A2.bam', 'ctrl/A1.bam', 'ctrl/A2.bam']
+input: bam_files, group_by=2, group_with='mutated'
+print(f"{_index}: _input={_input} _mutated={_mutated}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1799,7 +1804,8 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1809,23 +1815,22 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">mkdir</span> <span class="n">case</span> <span class="n">ctrl</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">case</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">case</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A1</span><span class="o">.</span><span class="n">bam</span> <span class="n">ctrl</span><span class="o">/</span><span class="n">A2</span><span class="o">.</span><span class="n">bam</span>
+<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!mkdir case ctrl
+!touch case/A1.bam case/A2.bam ctrl/A1.bam ctrl/A2.bam
 
-<span class="n">bam_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;case/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;case/A2.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A1.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl/A2.bam&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">bam_files</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="kp">group_with</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mutated&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;case&#39;</span><span class="p">,</span> <span class="s1">&#39;ctrl&#39;</span><span class="p">]}</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{_index}: _input={_input} mutated={mutated}&quot;</span><span class="p">)</span>
-</pre></div>
+bam_files = ['case/A1.bam', 'case/A2.bam', 'ctrl/A1.bam', 'ctrl/A2.bam']
+input: bam_files, group_by=2, group_with={'mutated': ['case', 'ctrl']}
+print(f"{_index}: _input={_input} mutated={mutated}")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1848,7 +1853,8 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1866,25 +1872,24 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">-</span><span class="mf">20.</span><span class="n">txt</span> <span class="n">b</span><span class="o">-</span><span class="mf">10.</span><span class="n">txt</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">step</span><span class="p">]</span>
-<span class="kn">input:</span>  <span class="s1">&#39;a-20.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b-10.txt&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}-{par}.txt&#39;</span>
-<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{name}-processed-{par}.txt&quot;</span><span class="p">)</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">echo</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch a-20.txt b-10.txt
+%run
+[step]
+input:  'a-20.txt', 'b-10.txt', pattern = '{name}-{par}.txt'
+output: expand_pattern("{name}-processed-{par}.txt")
+sh: expand=True
+    echo {_output}
+    touch {_output}</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1906,7 +1911,8 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1925,25 +1931,24 @@ Pair 2.ann 3.ann of type paths with 2.txt 3.txt
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="err">!</span><span class="n">touch</span> <span class="n">a</span><span class="o">-</span><span class="mf">20.</span><span class="n">txt</span> <span class="n">b</span><span class="o">-</span><span class="mf">10.</span><span class="n">txt</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="n">step</span><span class="p">]</span>
-<span class="kn">input:</span>  <span class="s1">&#39;a-20.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;b-10.txt&#39;</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}-{par}.txt&#39;</span><span class="p">,</span> <span class="kp">group_by</span><span class="o">=</span><span class="mi">1</span>
-<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{_name}-processed-{_par}.txt&quot;</span><span class="p">)</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">echo</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
-    <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+!touch a-20.txt b-10.txt
+%run
+[step]
+input:  'a-20.txt', 'b-10.txt', pattern = '{name}-{par}.txt', group_by=1
+output: expand_pattern("{_name}-processed-{_par}.txt")
+sh: expand=True
+    echo {_output}
+    touch {_output}</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -1966,7 +1971,8 @@ b-processed-10.txt
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1984,20 +1990,19 @@ b-processed-10.txt
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)}</span>
-<span class="nb">sum</span> <span class="o">+=</span> <span class="n">i</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;sum is {sum} at index {_index}&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sum = 0
+input: for_each={'i': range(4)}
+sum += i
+print(f'sum is {sum} at index {_index}')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2022,7 +2027,8 @@ sum is 6 at index 3
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2032,23 +2038,22 @@ sum is 6 at index 3
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="kn">input:</span> <span class="kp">for_each</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)},</span> <span class="kp">concurrent</span><span class="o">=</span><span class="bp">True</span>
-<span class="nb">sum</span> <span class="o">+=</span> <span class="n">i</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">4</span><span class="o">-</span><span class="n">i</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;sum is {sum} at index {_index}, completed in {time.time() - start_time:.1f} seconds&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">sum = 0
+import time
+start_time = time.time()
+input: for_each={'i': range(4)}, concurrent=True
+sum += i
+time.sleep(4-i)
+print(f'sum is {sum} at index {_index}, completed in {time.time() - start_time:.1f} seconds')</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2073,7 +2078,8 @@ sum is 3 at index 3, completed in 1.0 seconds
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2099,11 +2105,11 @@ sum is 3 at index 3, completed in 1.0 seconds
 out input and output of steps. This works most of the time but sometimes the input of a step can only be determined at runtime. For example,
 if you would like your workflow to automatically scan an input directory and process all fasta files under it, or if a previous step produces
 files that cannot be determined beforehand, you can specify input files as follows,</p>
-<div class="highlight"><pre><span></span><span class="kn">input:</span> <span class="s1">&#39;input/*.fasta&#39;</span>
+<div class="highlight"><pre><span></span><span class="nb">input</span><span class="p">:</span> <span class="s1">&#39;input/*.fasta&#39;</span>
 </pre></div>
 <p>The problem is that no file or a wrong set files might exist during the planing stage so SoS might skip this step or start the step
 with a wrong set of files. To address this problem, you can declare the input files as <strong>dynamic</strong> by passing a <code>dynamic</code> object</p>
-<div class="highlight"><pre><span></span><span class="kn">input:</span> <span class="n">dynamic</span><span class="p">(</span><span class="s1">&#39;input/*.fasta&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="nb">input</span><span class="p">:</span> <span class="n">dynamic</span><span class="p">(</span><span class="s1">&#39;input/*.fasta&#39;</span><span class="p">)</span>
 </pre></div>
 <p>This tells SoS that the input of this step can only be determined at runtime and will execute the step only after all its previous
 steps have been completed.</p>
@@ -2154,15 +2160,15 @@ steps have been completed.</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Output files of a step can be specified by step <code>output</code>. Similar to <code>input</code>, step output accepts strings, variables, expressions, and allows wildcard characters. For example, the following are acceptable output files</p>
-<div class="highlight"><pre><span></span><span class="kn">output:</span>  <span class="p">[]</span>
+<div class="highlight"><pre><span></span><span class="n">output</span><span class="p">:</span>  <span class="p">[]</span>
 
-<span class="kn">output:</span>  <span class="s1">&#39;accepted_hits.bam&#39;</span>
+<span class="n">output</span><span class="p">:</span>  <span class="s1">&#39;accepted_hits.bam&#39;</span>
 
-<span class="kn">output:</span>  <span class="n">aligned_reads</span><span class="p">,</span> <span class="n">bam_stats</span>
+<span class="n">output</span><span class="p">:</span>  <span class="n">aligned_reads</span><span class="p">,</span> <span class="n">bam_stats</span>
 
-<span class="kn">output:</span>  <span class="s1">&#39;aligned/*.bam&#39;</span>
+<span class="n">output</span><span class="p">:</span>  <span class="s1">&#39;aligned/*.bam&#39;</span>
 
-<span class="kn">output:</span>  <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;aligned_{samples}.bam&#39;</span><span class="p">)</span>
+<span class="n">output</span><span class="p">:</span>  <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;aligned_{samples}.bam&#39;</span><span class="p">)</span>
 </pre></div>
 <p>In the last example, function <code>expand_pattern</code> is used to contruct list of files from items of a sequence <code>samples</code>.</p>
 
@@ -2177,10 +2183,10 @@ steps have been completed.</p>
 <p>When there is no substep, <code>output</code> and <code>_output</code> are the same. Otherwise, the <code>output:</code> statement produces <code>_output</code> for each substep, and <code>_output</code> for all substeps form <code>output</code> after the completion of all substeps.</p>
 <p>For example, the following step accepts one or more bam files and index them using command <code>samtools index</code>. The input files are passed one by one and output from each substep is determined by <code>_input</code>.</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">input:</span>
+<span class="nb">input</span><span class="p">:</span>
     <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span>
 
-<span class="kn">output:</span>
+<span class="n">output</span><span class="p">:</span>
     <span class="n">f</span><span class="s1">&#39;{_input}.bai&#39;</span>
 
 <span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
@@ -2196,13 +2202,13 @@ steps have been completed.</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Specifying output of the entire step when there are multiple substeps can lead to error. For example,</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">input:</span>
+<span class="nb">input</span><span class="p">:</span>
     <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
 
-<span class="kn">output:</span>
+<span class="n">output</span><span class="p">:</span>
     <span class="n">output</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;.bai&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bamfiles</span><span class="p">]</span>
 
-<span class="kn">task:</span>
+<span class="n">task</span><span class="p">:</span>
 <span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
 </pre></div>
 <p>will fail because tasks in this step produce the same set of output files (equal <code>_output</code> for all substeps), and none of the task produces all specified output files.</p>
@@ -2225,13 +2231,13 @@ steps have been completed.</p>
 <p>As we have explained above, <code>_output</code> of an substep should be determined from <code>_input</code>. However, there are cases that <code>input</code> and <code>output</code> are pre-determined and it is not easy to derive <code>_output</code> from <code>_input</code>. In this case, option <code>group_by</code> could be used to divide specified outputs for each substep.</p>
 <p>For example, the above example would work with a <code>group_by</code> output option</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">input:</span>
+<span class="nb">input</span><span class="p">:</span>
     <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
 
-<span class="kn">output:</span>
+<span class="n">output</span><span class="p">:</span>
     <span class="n">output</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;.bai&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bamfiles</span><span class="p">],</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
 
-<span class="kn">task:</span>
+<span class="n">task</span><span class="p">:</span>
 <span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
 </pre></div>
 
@@ -2247,24 +2253,23 @@ steps have been completed.</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_sos">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span> <span class="o">--</span><span class="n">expect</span><span class="o">-</span><span class="n">error</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;*.html&#39;</span>
+<div class="prompt input_prompt">In&nbsp;[25]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="sos">%sandbox --expect-error
+%run
+[10]
+output: '*.html'
 
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-    <span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;touch result_{random.randint(1, 20)}.html&quot;</span><span class="p">)</span>
-</pre></div>
+import random
+for i in range(2):
+    run(f"touch result_{random.randint(1, 20)}.html")</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2299,7 +2304,8 @@ Output target *.html does not exist after the completion of step default_10
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2309,24 +2315,24 @@ Output target *.html does not exist after the completion of step default_10
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="s1">&#39;*.html&#39;</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[26]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+[10]
+output: dynamic('*.html')
 
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-    <span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;touch result_{random.randint(1, 20)}.html&quot;</span><span class="p">)</span>
-</pre></div>
+import random
+for i in range(2):
+    run(f"touch result_{random.randint(1, 20)}.html")
+</textarea>
 
+  </div>
 </div>
-</div>
+
 </div>
 
 <div class="output_wrapper">
@@ -2349,7 +2355,8 @@ touch result_7.html
 </div>
 
 </div>
-	</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2373,8 +2380,8 @@ touch result_7.html
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This item specifies files that are required for the step. Although not required, it is a good practice to list resource files and other dependency files for a particular step. For example</p>
 <div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">fasta_files</span>
-<span class="kn">depends:</span> <span class="n">reference_seq</span><span class="p">,</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;fastqc&#39;</span><span class="p">)</span>
+<span class="nb">input</span><span class="p">:</span> <span class="n">fasta_files</span>
+<span class="n">depends</span><span class="p">:</span> <span class="n">reference_seq</span><span class="p">,</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;fastqc&#39;</span><span class="p">)</span>
 </pre></div>
 <p>Similar to <code>output</code> options, dependent files can also be defined after <code>input</code> options and consist of dependent files determined from loop variables.</p>
 
@@ -2409,26 +2416,26 @@ of input and output files and related variables.</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dest</span><span class="p">:</span>
-   <span class="n">dest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;some text&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+[10]
+output: 'a.txt'
+with open(_output[0], 'w') as dest:
+   dest.write('some text')</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2438,26 +2445,26 @@ of input and output files and related variables.</p>
 </div>
 </div>
 </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-	
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sandbox</span>
-<span class="o">%</span><span class="n">run</span>
-<span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="s1">&#39;a.txt&#39;</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">echo</span> <span class="s2">&quot;some text&quot;</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">q</span><span class="p">}</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sandbox
+%run
+[10]
+output: 'a.txt'
+sh: expand=True
+    echo "some text" > {_output:q}</textarea>
 
-</div>
-</div>
+  </div>
 </div>
 
 </div>
-	</div>
+
+</div>
+</div>
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -2479,6 +2486,39 @@ of input and output files and related variables.</p>
     </div>
   </div>
 </body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+	  <script src="../../js/sos-mode.js"> </script>
+      <script>
+		   function highlight_cells(cells, i, interval) {
+			  setTimeout(function() {
+				var editor = CodeMirror.fromTextArea(cells[i], {
+		           lineNumbers: false,
+				   styleActiveLine: true,
+		           matchBrackets: true,
+				   readOnly: true,
+		           mode: 'sos',
+				   base_mode: cells[i].name,
+		         });
+				$(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>" 
+					+ cells[i].name + "</option></select>");
+		      if (i < cells.length)
+			    highlight_cells(cells, i + 1, interval);
+			}, interval);
+		  }
+
+	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      </script>
+
+
 
  
 
