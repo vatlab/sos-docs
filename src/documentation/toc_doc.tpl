@@ -14,12 +14,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
-{% for css in resources.inlining.css -%}
-    <style type="text/css">
-    {{ css }}
-    </style>
-{% endfor %}
-
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {

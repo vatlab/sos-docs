@@ -13,7 +13,6 @@ output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 run: expand='${ }'
 	cd ../src/documentation
 	sos convert ${_input:a} ${_output:a}  --template toc_doc
-  	perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output:a}
 
 [convert-tutorials]
 input:  '../src/tutorials/*.ipynb', group_by=1
@@ -23,7 +22,6 @@ output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 run: expand='${ }'
 	cd ../src/tutorials
 	sos convert ${_input:a} ${_output:a}  --template toc_tut
-  	perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output:a}
 
 [convert-homepage]
 input:  '../src/homepage/*.ipynb', group_by=1
