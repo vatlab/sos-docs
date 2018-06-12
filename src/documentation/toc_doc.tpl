@@ -49,10 +49,21 @@ div#notebook-container{
     page-break-inside: avoid; 
   }
 }
+
+.cell-kernel-selector {
+	width:70pt;
+    background: none;
+    z-index: 1000;
+    position: absolute;
+    height: 1.7em;
+    margin-top: 3pt;
+    right: 8pt;
+    font-size: 80%;
+}
+
 </style>
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
 {{ mathjax() }}
@@ -91,6 +102,12 @@ div#notebook-container{
    .lev4 {margin-left: 140px}
    .lev5 {margin-left: 160px}
    .lev6 {margin-left: 180px}
+   .cm-sos-interpolated {
+  background-color: #EDD5F3;
+}
+.cm-sos-sigil {
+  background-color: #EDD5F3;
+}
 </style>
 <link rel="stylesheet" type="text/css" href="../../css/jt.css">
 <link rel="stylesheet" type="text/css" href="../../css/toc2.css">
@@ -256,8 +273,6 @@ div#notebook-container{
 {%- endif -%}
 {%- endblock header -%}
 
-
-
 {% block codecell %}
 {%- if cell['metadata'].get('kernel',none) is not none -%}
 <div class="cell border-box-sizing code_cell rendered lan_{{cell['metadata'].get('kernel', none)}}">
@@ -272,7 +287,7 @@ div#notebook-container{
 {% block input %}
 {%- if cell['metadata'].get('kernel',none) is not none -%}
 <div class="inner_cell">
-  <div class="input_area">
+  <div class="input_area cm-s-ipython">
    <textarea class="sos-source" name="{{cell['metadata'].get('kernel')}}">{{ cell.source }}</textarea>
 
   </div>
@@ -295,12 +310,9 @@ div#notebook-container{
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
-	  <script>
-	  {% include 'sos-mode.js' %}
-	  </script>
+	  <script src="../../js/sos-mode.js"> </script>
       <script>
 		   function highlight_cells(cells, i, interval) {
-			  console.log(cells[i].name);
 			  setTimeout(function() {
 				var editor = CodeMirror.fromTextArea(cells[i], {
 		           lineNumbers: false,
@@ -310,15 +322,16 @@ div#notebook-container{
 		           mode: 'sos',
 				   base_mode: cells[i].name,
 		         });
+				$(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>" 
+					+ cells[i].name + "</option></select>");
 		      if (i < cells.length)
 			    highlight_cells(cells, i + 1, interval);
 			}, interval);
 		  }
 
-
-	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 100);
-		 
-	       
+	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
       </script>
 
 {% endblock body %}
+
+
