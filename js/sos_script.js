@@ -112,7 +112,7 @@ $(document).ready(function () {
 //];
 var options2 = [
     ["Polyglot Notebook"],
-    ["Workflow Engine"],
+    ["Workflow System"],
 ];
 
 //var interval = 1400;
