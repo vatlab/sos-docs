@@ -38,11 +38,23 @@ def findImages(docFile, folder):
     docFile.write(docString+"\n")
 
 def generate_doc_toc(docs_dir):
-    with open(os.path.join(docs_dir, "src", "homepage", "Documentation.ipynb")) as json_data:
-         d = json.load(json_data)
 
     tutString="var tutorials=["
     docString="var documentation=["
+    with open(os.path.join(docs_dir, "src", "homepage", "Notebook_Documentation.ipynb")) as json_data:
+         d = json.load(json_data)
+    for cell in d["cells"]:
+        for sentence in cell["source"]:
+            tut=re.search('doc/tutorials/(.+?).html',sentence)
+            if tut:
+                name=tut.group(1)
+                tutString+='"'+name+'", '
+            doc=re.search('doc/documentation/(.+?).html',sentence)
+            if doc:
+                name=doc.group(1)
+                docString+='"'+name+'", '
+    with open(os.path.join(docs_dir, "src", "homepage", "Workflow_Documentation.ipynb")) as json_data:
+         d = json.load(json_data)
     for cell in d["cells"]:
         for sentence in cell["source"]:
             tut=re.search('doc/tutorials/(.+?).html',sentence)

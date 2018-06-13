@@ -80,7 +80,10 @@ def generate_tipue_content(docs_dir):
             ('https://vatlab.github.io/sos-docs/', os.path.join(docs_dir, 'Overview.html')),
             ('https://vatlab.github.io/sos-docs/#features', os.path.join(docs_dir, 'Features.html')),
             ('https://vatlab.github.io/sos-docs/#runningsos', os.path.join(docs_dir, 'Running_SoS.html')),
-            ('https://vatlab.github.io/sos-docs/#documentation', os.path.join(docs_dir, 'Documentation.html'))] + 
+            ('https://vatlab.github.io/sos-docs/#notebook_documentation',
+                os.path.join(docs_dir, 'Notebook_Documentation.html')), 
+            ('https://vatlab.github.io/sos-docs/#workflow_documentation',
+                os.path.join(docs_dir, 'Workflow_Documentation.html'))] + 
             [('https://vatlab.github.io/sos-docs/doc/documentation/{}'.format(os.path.basename(x)), x) for x in documentations] + 
             [('https://vatlab.github.io/sos-docs/doc/tutorials/{}'.format(os.path.basename(x)), x) for x in tutorials] + 
             [('https://vatlab.github.io/sos-docs/doc/examples/{}'.format(os.path.basename(x)), x) for x in examples]]
