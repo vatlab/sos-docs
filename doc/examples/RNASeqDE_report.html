@@ -12057,7 +12057,7 @@ Display content:<br>
         
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">RNAseqDE</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">LargeFiles</span><span class="o">/</span><span class="n">RNAseqDE</span>
 </pre></div>
 
 </div>
@@ -12076,7 +12076,7 @@ Display content:<br>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/home/gaow/Documents/RNAseqDE</pre>
+<pre>/home/gaow/GIT/LargeFiles/RNAseqDE</pre>
 </div>
 </div>
 
@@ -12094,9 +12094,8 @@ Display content:<br>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/RNAseqDE&#39;</span><span class="p">)</span>
-<span class="c1">#parameter: samples = [&#39;SRR1039508&#39;, &#39;SRR1039509&#39;, &#39;SRR1039512&#39;, &#39;SRR1039513&#39;, &#39;SRR1039516&#39;, &#39;SRR1039517&#39;, &#39;SRR1039520&#39;, &#39;SRR1039521&#39;]</span>
-<span class="kn">parameter:</span> <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SRR1039508&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039509&#39;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/LargeFiles/RNAseqDE&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SRR1039508&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039509&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039512&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039513&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039516&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039517&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039520&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039521&#39;</span><span class="p">]</span>
 <span class="kn">parameter:</span> <span class="n">ncpu</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="c1"># Resource files</span>
 <span class="n">resource_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/hg19&quot;</span>
@@ -12119,10 +12118,10 @@ Display content:<br>
 <p>Please note that here we have specified paths to pre-existing directories in the <code>[global]</code> section, with <code>parameter</code> keyword. This setup allows users to configure all paths in one places for a “default” run, and optionally can configure them from command-line or <code>%sosrun</code> magic. To elaborate, for example:</p>
 
 <pre><code>[global]
-parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
+parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <p>can be override by command argument <code>--cwd /path/to/new/dir</code>. An alternative implementation is to use configuration file, eg, create a file called <code>config.yml</code> and write:</p>
 
-<pre><code>cwd: path('~/Documents/RNAseqDE')</code></pre>
+<pre><code>cwd: path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <p>and execute with <code>%sosrun -c config.yml</code>. The downside is that a <code>config.yml</code> file will have to be maintained.</p>
 
 </div>
@@ -12195,8 +12194,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">sra</span> <span class="p">(</span><span class="n">dump</span> <span class="n">SRA</span> <span class="n">to</span> <span class="n">fastq</span><span class="p">):</span> <span class="kp">provides</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;{data}_2.fastq&#39;</span><span class="p">]]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{data}_2.fastq&#39;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{_output:n}.err&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{_output:n}.out&#39;</span>
     <span class="n">fastq</span><span class="o">-</span><span class="n">dump</span> <span class="o">-</span><span class="n">I</span> <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">files</span> <span class="p">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
 </pre></div>
 
@@ -12278,10 +12276,9 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">alignment</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">),</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
-<span class="kn">input:</span> <span class="p">[(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_2.fastq&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span>
+<span class="kn">input:</span> <span class="p">[(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_2.fastq&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{cwd:a}/{s}.sam&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
         <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nnn</span><span class="p">}</span>
@@ -12309,10 +12306,9 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">SAM</span> <span class="n">to</span> <span class="n">BAM</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.sam&#39;</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.sam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{_name}.bam&#39;</span><span class="p">)</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bS</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
@@ -12347,7 +12343,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
         
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">align</span> <span class="o">-</span><span class="n">J</span> <span class="mi">8</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">align</span> <span class="o">-</span><span class="n">j</span> <span class="mi">2</span>
 </pre></div>
 
 </div>
@@ -12355,6 +12351,17 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
         </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or, to run it from command console:</p>
+
+<pre><code>sos run RNASeqDE.ipynb align -j 8</code></pre>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>

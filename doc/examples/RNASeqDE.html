@@ -11767,150 +11767,6 @@ div#notebook {
     });
     </script>
     <!-- End of mathjax configuration --></head>
-
- <meta name="viewport" content="width=device-width, initial-scale=1"><style type="text/css">
-
-table {
-   padding: 0;
-   border-collapse: collapse; }
-thead {
-    border-bottom-width: 1px;
-    border-bottom-color: rgb(0,0,0);
-    border-bottom-style: solid;
-}
-table tr {
-   border: none;
-   background-color: white;
-   margin: 0;
-   padding: 0; }
-table tr:nth-child(2n) {
-   background-color: #f8f8f8; }
-table tr th {
-   font-weight: bold;
-   border: none;
-   margin: 0;
-   padding: 6px 13px; }
-table tr td {
-   border: none;
-   margin: 0;
-   padding: 6px 13px; }
-table tr th :first-child, table tr td :first-child {
-   margin-top: 0; }
-table tr th :last-child, table tr td :last-child {
-   margin-bottom: 0; }
-
-.dataframe_container { max-height: 400px }
-.dataframe_input {
-    border: 1px solid #ddd;
-    margin-bottom: 5px;
-}
-
-.rendered_html table {
-  border: none;
-}
-
-#nextsteps {
-   color: blue;
-}
-
-.sos_hint {
-    color: rgba(0,0,0,.4);
-    font-family: monospace;
-}
-
-.scatterplot_by_rowname div.xAxis div.tickLabel {
-    transform: translateY(15px) translateX(15px) rotate(45deg);
-    -ms-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -moz-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -webkit-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -o-transform: translateY(15px) translateX(15px) rotate(45deg);
-    /*rotation-point:50% 50%;*/
-    /*rotation:270deg;*/
-}
-
-.sos_dataframe td, .sos_dataframe th, .sos_dataframe tr {
-    white-space: nowrap;
-    border: none;
-}
-
-.sos_dataframe tr:hover {
-    background-color: #e6f2ff;
-}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}</style>
-
-
-
-
-<script>
-
-
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        } 
-    }
-}
-
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-
-    if (dtype === 'numeric') {
-        var fn = function(a, b) { 
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]); 
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-
-    var sorted = isSorted(tr, fn);
-
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-
-
-
-</script>
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -11942,14 +11798,13 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">RNAseqDE</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">LargeFiles</span><span class="o">/</span><span class="n">RNAseqDE</span>
 </pre></div>
 
 </div>
@@ -11959,34 +11814,29 @@ function sortDataFrame(id, n, dtype) {
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/home/gaow/Documents/RNAseqDE</pre>
-</div>
-</div>
-
-        </div>
+<pre>/home/gaow/GIT/LargeFiles/RNAseqDE</pre>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
+
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/RNAseqDE&#39;</span><span class="p">)</span>
-<span class="c1">#parameter: samples = [&#39;SRR1039508&#39;, &#39;SRR1039509&#39;, &#39;SRR1039512&#39;, &#39;SRR1039513&#39;, &#39;SRR1039516&#39;, &#39;SRR1039517&#39;, &#39;SRR1039520&#39;, &#39;SRR1039521&#39;]</span>
-<span class="kn">parameter:</span> <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SRR1039508&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039509&#39;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/LargeFiles/RNAseqDE&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SRR1039508&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039509&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039512&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039513&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039516&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039517&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039520&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039521&#39;</span><span class="p">]</span>
 <span class="kn">parameter:</span> <span class="n">ncpu</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="c1"># Resource files</span>
 <span class="n">resource_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/hg19&quot;</span>
@@ -12000,7 +11850,6 @@ function sortDataFrame(id, n, dtype) {
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12008,10 +11857,10 @@ function sortDataFrame(id, n, dtype) {
 <p>Please note that here we have specified paths to pre-existing directories in the <code>[global]</code> section, with <code>parameter</code> keyword. This setup allows users to configure all paths in one places for a “default” run, and optionally can configure them from command-line or <code>%sosrun</code> magic. To elaborate, for example:</p>
 
 <pre><code>[global]
-parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
+parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <p>can be override by command argument <code>--cwd /path/to/new/dir</code>. An alternative implementation is to use configuration file, eg, create a file called <code>config.yml</code> and write:</p>
 
-<pre><code>cwd: path('~/Documents/RNAseqDE')</code></pre>
+<pre><code>cwd: path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <p>and execute with <code>%sosrun -c config.yml</code>. The downside is that a <code>config.yml</code> file will have to be maintained.</p>
 
 </div>
@@ -12074,8 +11923,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
@@ -12084,8 +11932,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">sra</span> <span class="p">(</span><span class="n">dump</span> <span class="n">SRA</span> <span class="n">to</span> <span class="n">fastq</span><span class="p">):</span> <span class="kp">provides</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;{data}_2.fastq&#39;</span><span class="p">]]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{data}_2.fastq&#39;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{_output:n}.err&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{_output:n}.out&#39;</span>
     <span class="n">fastq</span><span class="o">-</span><span class="n">dump</span> <span class="o">-</span><span class="n">I</span> <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">files</span> <span class="p">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
 </pre></div>
 
@@ -12094,7 +11941,6 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12102,8 +11948,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 <h4 id="Prepare-STAR-reference-genome">Prepare STAR reference genome<a class="anchor-link" href="#Prepare-STAR-reference-genome">&#182;</a></h4>
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -12149,7 +11994,6 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12158,8 +12002,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
@@ -12167,10 +12010,9 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">alignment</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">),</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
-<span class="kn">input:</span> <span class="p">[(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_2.fastq&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span>
+<span class="kn">input:</span> <span class="p">[(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_2.fastq&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{cwd:a}/{s}.sam&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
         <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nnn</span><span class="p">}</span>
@@ -12181,7 +12023,6 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12189,8 +12030,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 <h4 id="Generate-BAM-files">Generate BAM files<a class="anchor-link" href="#Generate-BAM-files">&#182;</a></h4>
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
@@ -12198,10 +12038,9 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">SAM</span> <span class="n">to</span> <span class="n">BAM</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.sam&#39;</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.sam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{_name}.bam&#39;</span><span class="p">)</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bS</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
@@ -12210,7 +12049,6 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12235,13 +12073,24 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">align</span> <span class="o">-</span><span class="n">J</span> <span class="mi">8</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">align</span> <span class="o">-</span><span class="n">j</span> <span class="mi">2</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or, to run it from command console:</p>
+
+<pre><code>sos run RNASeqDE.ipynb align -j 8</code></pre>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -12261,8 +12110,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
@@ -12281,7 +12129,6 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12290,8 +12137,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
@@ -12310,8 +12156,7 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12323,8 +12168,6 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 </div>
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12351,12 +12194,10 @@ parameter: cwd = path('~/Documents/RNAseqDE')</code></pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12366,8 +12207,7 @@ We load such a CSV file with read.csv:</p>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
@@ -12385,8 +12225,7 @@ We load such a CSV file with read.csv:</p>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12412,12 +12251,10 @@ We load such a CSV file with read.csv:</p>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12426,8 +12263,7 @@ We load such a CSV file with read.csv:</p>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
@@ -12446,8 +12282,7 @@ We load such a CSV file with read.csv:</p>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12470,8 +12305,6 @@ We load such a CSV file with read.csv:</p>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12494,12 +12327,10 @@ We load such a CSV file with read.csv:</p>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12549,8 +12380,7 @@ We load such a CSV file with read.csv:</p>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
@@ -12566,7 +12396,6 @@ We load such a CSV file with read.csv:</p>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12576,8 +12405,7 @@ Make sure that the chromosome names of the genomic features in the annotation yo
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
@@ -12594,8 +12422,7 @@ Make sure that the chromosome names of the genomic features in the annotation yo
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12621,12 +12448,10 @@ Make sure that the chromosome names of the genomic features in the annotation yo
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12636,8 +12461,7 @@ Make sure that the chromosome names of the genomic features in the annotation yo
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
@@ -12657,8 +12481,7 @@ Make sure that the chromosome names of the genomic features in the annotation yo
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12675,8 +12498,6 @@ OK
 </div>
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12705,12 +12526,10 @@ OK
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12719,8 +12538,7 @@ OK
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
@@ -12737,8 +12555,7 @@ OK
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12772,12 +12589,10 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12787,8 +12602,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
@@ -12811,7 +12625,6 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12824,8 +12637,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
@@ -12855,8 +12667,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12869,13 +12680,10 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
@@ -12891,8 +12699,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12905,8 +12712,6 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12921,12 +12726,10 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12935,8 +12738,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
@@ -12952,8 +12754,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -12976,13 +12777,10 @@ colData names(0):</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
@@ -12998,8 +12796,7 @@ colData names(0):</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13016,13 +12813,10 @@ colData names(0):</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
@@ -13038,8 +12832,7 @@ colData names(0):</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13052,13 +12845,10 @@ colData names(0):</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
@@ -13074,8 +12864,7 @@ colData names(0):</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13109,13 +12898,10 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
@@ -13131,8 +12917,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13160,13 +12945,10 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 </div>
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
@@ -13183,8 +12965,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13198,13 +12979,10 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
@@ -13220,8 +12998,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13244,13 +13021,10 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
@@ -13266,8 +13040,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13298,13 +13071,10 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
@@ -13321,8 +13091,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13356,12 +13125,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13374,8 +13141,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[26]:</div>
@@ -13391,8 +13157,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13415,13 +13180,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[27]:</div>
@@ -13438,8 +13200,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13462,12 +13223,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13476,8 +13235,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[28]:</div>
@@ -13496,8 +13254,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13528,13 +13285,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[29]:</div>
@@ -13550,8 +13304,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13585,12 +13338,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13600,8 +13351,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[30]:</div>
@@ -13616,7 +13366,6 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13627,8 +13376,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[31]:</div>
@@ -13645,8 +13393,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13667,12 +13414,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13681,8 +13426,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[32]:</div>
@@ -13696,7 +13440,6 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13711,8 +13454,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[33]:</div>
@@ -13728,7 +13470,6 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13747,8 +13488,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[34]:</div>
@@ -13766,8 +13506,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13780,8 +13519,6 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13794,12 +13531,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13808,8 +13543,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[36]:</div>
@@ -13829,8 +13563,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13843,13 +13576,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[37]:</div>
@@ -13865,8 +13595,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13879,8 +13608,6 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13895,12 +13622,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13909,8 +13634,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[38]:</div>
@@ -13931,8 +13655,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13945,13 +13668,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[39]:</div>
@@ -13967,8 +13687,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13981,8 +13700,6 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -13997,12 +13714,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14016,8 +13731,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[40]:</div>
@@ -14034,8 +13748,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14056,12 +13769,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14070,8 +13781,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[41]:</div>
@@ -14088,8 +13798,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14110,12 +13819,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14125,8 +13832,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[42]:</div>
@@ -14158,8 +13864,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14170,8 +13875,6 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14184,13 +13887,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[43]:</div>
@@ -14206,8 +13906,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14220,8 +13919,6 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14236,12 +13933,10 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14262,8 +13957,7 @@ Shown are scatterplots using the log2 transform of normalized counts (left), usi
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[44]:</div>
@@ -14280,8 +13974,7 @@ Shown are scatterplots using the log2 transform of normalized counts (left), usi
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14310,12 +14003,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14324,8 +14015,7 @@ SRR1039521   50.13430</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[45]:</div>
@@ -14353,8 +14043,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14367,13 +14056,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[47]:</div>
@@ -14389,8 +14075,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14403,8 +14088,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14419,12 +14102,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14435,8 +14116,7 @@ SRR1039521   50.13430</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[48]:</div>
@@ -14462,8 +14142,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14476,13 +14155,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[49]:</div>
@@ -14498,8 +14174,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14512,8 +14187,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14528,12 +14201,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14552,8 +14223,7 @@ SRR1039521   50.13430</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[50]:</div>
@@ -14579,8 +14249,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14591,8 +14260,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14603,8 +14270,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14617,13 +14282,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[51]:</div>
@@ -14639,8 +14301,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14653,8 +14314,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14669,12 +14328,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14684,8 +14341,7 @@ SRR1039521   50.13430</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[52]:</div>
@@ -14701,8 +14357,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14728,12 +14383,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14742,8 +14395,7 @@ SRR1039521   50.13430</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[53]:</div>
@@ -14764,8 +14416,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14776,8 +14427,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14790,13 +14439,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[54]:</div>
@@ -14812,8 +14458,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14826,8 +14471,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14842,12 +14485,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14856,8 +14497,7 @@ SRR1039521   50.13430</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[55]:</div>
@@ -14878,8 +14518,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14890,8 +14529,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14904,13 +14541,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[56]:</div>
@@ -14926,8 +14560,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14940,8 +14573,6 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -14956,12 +14587,10 @@ SRR1039521   50.13430</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14979,8 +14608,7 @@ SRR1039521   50.13430</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[57]:</div>
@@ -14996,8 +14624,7 @@ SRR1039521   50.13430</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15014,12 +14641,10 @@ fitting model and testing
 </div>
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15038,8 +14663,7 @@ fitting model and testing
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[58]:</div>
@@ -15056,8 +14680,7 @@ fitting model and testing
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15099,13 +14722,10 @@ ENSG00000273489          NA</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[59]:</div>
@@ -15121,8 +14741,7 @@ ENSG00000273489          NA</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15144,12 +14763,10 @@ padj                results                      BH adjusted p-values</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15161,8 +14778,7 @@ padj                results                      BH adjusted p-values</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[60]:</div>
@@ -15178,8 +14794,7 @@ padj                results                      BH adjusted p-values</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15201,12 +14816,10 @@ low counts [2]   : 11397, 39%
 </div>
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15220,8 +14833,7 @@ low counts [2]   : 11397, 39%
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[61]:</div>
@@ -15238,8 +14850,7 @@ low counts [2]   : 11397, 39%
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15255,12 +14866,10 @@ FALSE  TRUE
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15269,8 +14878,7 @@ FALSE  TRUE
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[62]:</div>
@@ -15287,8 +14895,7 @@ FALSE  TRUE
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15304,12 +14911,10 @@ FALSE  TRUE
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15328,8 +14933,7 @@ FALSE  TRUE
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[63]:</div>
@@ -15345,8 +14949,7 @@ FALSE  TRUE
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15388,12 +14991,10 @@ ENSG00000273489        NA</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15411,8 +15012,7 @@ ENSG00000273489        NA</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[64]:</div>
@@ -15429,8 +15029,7 @@ ENSG00000273489        NA</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15443,8 +15042,6 @@ ENSG00000273489        NA</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15457,12 +15054,10 @@ ENSG00000273489        NA</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15474,8 +15069,7 @@ ENSG00000273489        NA</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[65]:</div>
@@ -15491,8 +15085,7 @@ ENSG00000273489        NA</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15505,12 +15098,10 @@ ENSG00000273489        NA</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15519,8 +15110,7 @@ ENSG00000273489        NA</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[66]:</div>
@@ -15537,8 +15127,7 @@ ENSG00000273489        NA</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15570,12 +15159,10 @@ ENSG00000141469 2.069606e-03</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15584,8 +15171,7 @@ ENSG00000141469 2.069606e-03</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[67]:</div>
@@ -15601,8 +15187,7 @@ ENSG00000141469 2.069606e-03</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15634,12 +15219,10 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15648,8 +15231,7 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[68]:</div>
@@ -15668,8 +15250,7 @@ ENSG00000249364 1.223812e-04</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15682,13 +15263,10 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[69]:</div>
@@ -15704,8 +15282,7 @@ ENSG00000249364 1.223812e-04</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15718,8 +15295,6 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15734,12 +15309,10 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15749,8 +15322,7 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[70]:</div>
@@ -15775,8 +15347,7 @@ ENSG00000249364 1.223812e-04</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15787,8 +15358,6 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15799,8 +15368,6 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15813,13 +15380,10 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[71]:</div>
@@ -15835,8 +15399,7 @@ ENSG00000249364 1.223812e-04</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15849,8 +15412,6 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15865,12 +15426,10 @@ ENSG00000249364 1.223812e-04</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15882,8 +15441,7 @@ Note that the DESeq test actually takes into account the cell line effect, so th
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[72]:</div>
@@ -15902,8 +15460,7 @@ Note that the DESeq test actually takes into account the cell line effect, so th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15916,13 +15473,10 @@ Note that the DESeq test actually takes into account the cell line effect, so th
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[73]:</div>
@@ -15938,8 +15492,7 @@ Note that the DESeq test actually takes into account the cell line effect, so th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15952,8 +15505,6 @@ Note that the DESeq test actually takes into account the cell line effect, so th
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -15968,12 +15519,10 @@ Note that the DESeq test actually takes into account the cell line effect, so th
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15985,8 +15534,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[74]:</div>
@@ -16005,8 +15553,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16019,13 +15566,10 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[75]:</div>
@@ -16041,8 +15585,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16055,8 +15598,6 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16071,12 +15612,10 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16085,8 +15624,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[76]:</div>
@@ -16109,8 +15647,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16123,13 +15660,10 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[77]:</div>
@@ -16145,8 +15679,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16159,8 +15692,6 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16175,12 +15706,10 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16190,8 +15719,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[78]:</div>
@@ -16210,8 +15738,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16224,13 +15751,10 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[79]:</div>
@@ -16246,8 +15770,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16260,8 +15783,6 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16276,12 +15797,10 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16299,8 +15818,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[80]:</div>
@@ -16317,8 +15835,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16334,12 +15851,10 @@ The following objects are masked from ‘package:matrixStats’:
 </div>
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16348,8 +15863,7 @@ The following objects are masked from ‘package:matrixStats’:
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[81]:</div>
@@ -16370,8 +15884,7 @@ The following objects are masked from ‘package:matrixStats’:
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16384,13 +15897,10 @@ The following objects are masked from ‘package:matrixStats’:
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[82]:</div>
@@ -16406,8 +15916,7 @@ The following objects are masked from ‘package:matrixStats’:
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16420,8 +15929,6 @@ The following objects are masked from ‘package:matrixStats’:
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16436,12 +15943,10 @@ The following objects are masked from ‘package:matrixStats’:
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16462,8 +15967,7 @@ Treatment status and cell line information are shown with colored bars at the to
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[83]:</div>
@@ -16488,8 +15992,7 @@ Treatment status and cell line information are shown with colored bars at the to
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16502,13 +16005,10 @@ Treatment status and cell line information are shown with colored bars at the to
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[84]:</div>
@@ -16524,8 +16024,7 @@ Treatment status and cell line information are shown with colored bars at the to
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16538,8 +16037,6 @@ Treatment status and cell line information are shown with colored bars at the to
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16554,12 +16051,10 @@ Treatment status and cell line information are shown with colored bars at the to
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16580,8 +16075,7 @@ Treatment status and cell line information are shown with colored bars at the to
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[85]:</div>
@@ -16596,7 +16090,6 @@ Treatment status and cell line information are shown with colored bars at the to
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16605,8 +16098,7 @@ Treatment status and cell line information are shown with colored bars at the to
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[86]:</div>
@@ -16622,8 +16114,7 @@ Treatment status and cell line information are shown with colored bars at the to
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16664,12 +16155,10 @@ Treatment status and cell line information are shown with colored bars at the to
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16678,8 +16167,7 @@ Treatment status and cell line information are shown with colored bars at the to
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[87]:</div>
@@ -16706,8 +16194,7 @@ Treatment status and cell line information are shown with colored bars at the to
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16720,8 +16207,6 @@ Treatment status and cell line information are shown with colored bars at the to
 </div>
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16753,12 +16238,10 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16767,8 +16250,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[88]:</div>
@@ -16783,7 +16265,6 @@ ENSG00000211445        GPX3        2878</pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16792,8 +16273,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[91]:</div>
@@ -16811,8 +16291,6 @@ ENSG00000211445        GPX3        2878</pre>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[92]:</div>
@@ -16828,8 +16306,7 @@ ENSG00000211445        GPX3        2878</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16842,8 +16319,6 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16871,12 +16346,10 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16885,8 +16358,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[93]:</div>
@@ -16903,8 +16375,7 @@ ENSG00000211445        GPX3        2878</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16916,8 +16387,6 @@ ENSG00000211445        GPX3        2878</pre>
 </div>
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -16972,12 +16441,10 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16986,8 +16453,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[94]:</div>
@@ -17003,8 +16469,7 @@ ENSG00000211445        GPX3        2878</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17016,12 +16481,10 @@ ENSG00000211445        GPX3        2878</pre>
 </div>
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17030,8 +16493,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[95]:</div>
@@ -17045,7 +16507,6 @@ ENSG00000211445        GPX3        2878</pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17054,8 +16515,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[96]:</div>
@@ -17074,7 +16534,6 @@ ENSG00000211445        GPX3        2878</pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17083,8 +16542,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[97]:</div>
@@ -17099,7 +16557,6 @@ ENSG00000211445        GPX3        2878</pre>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17108,8 +16565,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[98]:</div>
@@ -17134,8 +16590,7 @@ ENSG00000211445        GPX3        2878</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17148,13 +16603,10 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[99]:</div>
@@ -17170,8 +16622,7 @@ ENSG00000211445        GPX3        2878</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17184,8 +16635,6 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17200,12 +16649,10 @@ ENSG00000211445        GPX3        2878</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17233,8 +16680,7 @@ Genes highlighted in pink have adjusted p value less than 0.1.</p>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[100]:</div>
@@ -17256,8 +16702,7 @@ Genes highlighted in pink have adjusted p value less than 0.1.</p>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17269,13 +16714,10 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 </div>
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[101]:</div>
@@ -17291,8 +16733,7 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17317,12 +16758,10 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17331,8 +16770,7 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[102]:</div>
@@ -17354,8 +16792,7 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17368,13 +16805,10 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[103]:</div>
@@ -17390,8 +16824,7 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17404,8 +16837,6 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17420,12 +16851,10 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17436,8 +16865,7 @@ Here, we know the hidden source of variation (cell line), and therefore can see 
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[104]:</div>
@@ -17454,7 +16882,6 @@ Here, we know the hidden source of variation (cell line), and therefore can see 
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17463,8 +16890,7 @@ Here, we know the hidden source of variation (cell line), and therefore can see 
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[105]:</div>
@@ -17481,8 +16907,7 @@ Here, we know the hidden source of variation (cell line), and therefore can see 
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17500,12 +16925,10 @@ fitting model and testing
 </div>
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17514,8 +16937,7 @@ fitting model and testing
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[106]:</div>
@@ -17531,7 +16953,6 @@ fitting model and testing
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17540,8 +16961,7 @@ fitting model and testing
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[107]:</div>
@@ -17559,8 +16979,7 @@ fitting model and testing
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17577,13 +16996,10 @@ fitting model and testing
 </div>
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[108]:</div>
@@ -17599,8 +17015,7 @@ fitting model and testing
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17628,12 +17043,10 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17643,8 +17056,7 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[109]:</div>
@@ -17666,8 +17078,7 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17678,8 +17089,6 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17692,13 +17101,10 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[110]:</div>
@@ -17714,8 +17120,7 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17728,8 +17133,6 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17744,12 +17147,10 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17759,8 +17160,7 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[111]:</div>
@@ -17777,8 +17177,7 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17805,13 +17204,10 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[112]:</div>
@@ -17827,8 +17223,7 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17850,12 +17245,10 @@ SPBC2F12.09c 0.2799312</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17864,8 +17257,7 @@ SPBC2F12.09c 0.2799312</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[113]:</div>
@@ -17882,8 +17274,7 @@ SPBC2F12.09c 0.2799312</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17910,12 +17301,10 @@ SPBC2F12.09c 0.2799312</pre>
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17924,8 +17313,7 @@ SPBC2F12.09c 0.2799312</pre>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[114]:</div>
@@ -17949,8 +17337,7 @@ SPBC2F12.09c 0.2799312</pre>
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17969,8 +17356,6 @@ Also defined by &#39;ggbio&#39;
 </div>
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -17983,13 +17368,10 @@ Also defined by &#39;ggbio&#39;
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[115]:</div>
@@ -18005,8 +17387,7 @@ Also defined by &#39;ggbio&#39;
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -18019,8 +17400,6 @@ Also defined by &#39;ggbio&#39;
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -18035,12 +17414,10 @@ Also defined by &#39;ggbio&#39;
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -18059,8 +17436,7 @@ Also defined by &#39;ggbio&#39;
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[116]:</div>
@@ -18076,8 +17452,7 @@ Also defined by &#39;ggbio&#39;
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -18202,12 +17577,10 @@ loaded via a namespace (and not attached):
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
