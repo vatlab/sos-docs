@@ -12156,7 +12156,7 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
 </li>
 </ol>
 <p>It results in 4 <strong>analysis ready expression data files</strong> in HDF5 format of different versions / organizations of the same information: emperical quantile normalized and standard normal quantile normalized, saved as flat tables or grouped by tissues. Additionally 2 original Count and RPKM files are converted to HDF5 format grouped by tissues.</p>
-<p>Notice that the implementation is memory intensive. As a result we use <code>task</code> to specifically configure the required resource on a cluster system (<code>uchicago_cluster</code>) that is required to run it. See <a href="https://vatlab.github.io/sos-docs/doc/documentation/Remote_Execution.html">remote tasks</a> for more details on remote computer configurations.</p>
+<p>Notice that the implementation is memory intensive. As a result we use <code>task</code> to specifically configure the required resource on a big memory server (<code>lab_server</code>) that is required to run it. See <a href="https://vatlab.github.io/sos-docs/doc/documentation/Remote_Execution.html">remote tasks</a> for more details on remote computer configurations.</p>
 <p>See code chunk below for an implementation.</p>
 
 </div>
@@ -12181,7 +12181,7 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
         <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.h5&quot;</span><span class="p">,</span>
         <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">),</span>
         <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;uchicago_cluster&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;20:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;90G&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;lab_server&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;20:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;90G&quot;</span>
 <span class="kn">python:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
 
     <span class="c1"># Adopted by Gao Wang from:</span>
@@ -12419,7 +12419,7 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_covariates.txt&quot;</span><span class="p">,</span> 
         <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_alpha.txt&quot;</span><span class="p">,</span> 
         <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_residuals.txt&quot;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;30:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;8G&quot;</span><span class="p">,</span> <span class="kp">trunk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="kp">trunk_workers</span><span class="o">=</span><span class="mi">1</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;uchicago_cluster&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;30:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;8G&quot;</span><span class="p">,</span> <span class="kp">trunk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="kp">trunk_workers</span><span class="o">=</span><span class="mi">1</span>
 <span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
     <span class="n">alphaprior_a</span><span class="o">=</span><span class="mf">0.001</span>
     <span class="n">alphaprior_b</span><span class="o">=</span><span class="mf">0.01</span>
@@ -12529,7 +12529,8 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
 
 </div>
 </div>
-</div>
+</div><div class="rendered lan_SoS">
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="hidden_content">
@@ -12545,6 +12546,7 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
 </div>
 
 </div>
+    </div>
     </div>
   </div>
 </body>

@@ -263,6 +263,12 @@ tr.subworkflow.step-row {
   border: 1px solid #eee;
   height: auto;
 }
+
+pre.section-header.CodeMirror-line {
+  background-color: #f7f7f7;
+  border-top: 1px solid #ddd;
+  margin-top: 1em;
+}
       </style>
    </head>
    <body>
@@ -274,9 +280,9 @@ tr.subworkflow.step-row {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               87 lines
+               84 lines
                <span class="file-info-divider"></span>
-               3.4 kB
+               3.5 kB
             </div>
          </div>
          <div class="filecontent">
@@ -303,7 +309,6 @@ depends: R_library("MASS")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
 output: f"data_{id}.train.csv", f"data_{id}.test.csv"
-task:
 R: expand = "${ }"
   set.seed(${id})
   N = sum(c(${paths(N):,}))
@@ -319,9 +324,8 @@ R: expand = "${ }"
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 parameter: nfolds = 5
-input: data_files, group_by = 2
+input: data_files, group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
-task:
 R: expand = "${ }"
   train = read.csv(${_input[0]:r}, header = F)
   test = read.csv(${_input[1]:r}, header = F)
@@ -335,9 +339,8 @@ R: expand = "${ }"
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 parameter: nfolds = 5
-input: data_files, group_by = 2
+input: data_files, group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
-task:
 python: expand = "${ }"
   import numpy as np
   from sklearn.linear_model import LassoCV
@@ -353,9 +356,9 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 depends: data_files
-input: group_by = 2, group_with = "data_files"
+input: group_by = 2, group_with = "data_files", concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
-R: expand = "${ }"
+R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
   Ytruth = as.matrix(read.csv(${path(_data_files[1]):r}, header = F)[,-1]) %*% b
   Ypred = scan(${_input[0]:r})
@@ -366,7 +369,8 @@ R: expand = "${ }"
  
 [default]
 sos_run('ridge')
-sos_run('lasso')</textarea>
+sos_run('lasso')
+</textarea>
          </div>
       </div>
       <footer>
@@ -751,12 +755,12 @@ sos_run('lasso')</textarea>
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header";
+                  return "header line-section-header";
                 } else {
                   // match up to :
                   stream.match(/^\[[^:]*:/);
                   state.sos_state = 'header_option';
-                  return "header";
+                  return "header line-section-header";
                 }
               }
             } else if (sl == '!') {
@@ -812,7 +816,7 @@ sos_run('lasso')</textarea>
               if (stream.eol()) {
                 state.sos_state = null;
                 state.inner_mode = null;
-                return "header";
+                return "header line-section-header";
               } else {
                 stream.backUp(1);
                 let it = base_mode.token(stream, state.base_state);

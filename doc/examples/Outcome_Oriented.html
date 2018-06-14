@@ -263,6 +263,12 @@ tr.subworkflow.step-row {
   border: 1px solid #eee;
   height: auto;
 }
+
+pre.section-header.CodeMirror-line {
+  background-color: #f7f7f7;
+  border-top: 1px solid #ddd;
+  margin-top: 1em;
+}
       </style>
    </head>
    <body>
@@ -351,7 +357,7 @@ python: expand = "${ }"
 # and of betahat vs truth (2nd line of output)
 depends: f"data_{id}.test.csv", f"data_{id}.{method}.predicted.csv",
          f"data_{id}.{method}.coef.csv"
-R: expand = "${ }"
+R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
   Ytruth = as.matrix(read.csv(${_depends[0]:r}, header = F)[,-1]) %*% b
   Ypred = scan(${_depends[1]:r})
@@ -763,12 +769,12 @@ pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pan
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header";
+                  return "header line-section-header";
                 } else {
                   // match up to :
                   stream.match(/^\[[^:]*:/);
                   state.sos_state = 'header_option';
-                  return "header";
+                  return "header line-section-header";
                 }
               }
             } else if (sl == '!') {
@@ -824,7 +830,7 @@ pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pan
               if (stream.eol()) {
                 state.sos_state = null;
                 state.inner_mode = null;
-                return "header";
+                return "header line-section-header";
               } else {
                 stream.backUp(1);
                 let it = base_mode.token(stream, state.base_state);

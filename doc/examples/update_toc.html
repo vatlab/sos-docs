@@ -263,6 +263,12 @@ tr.subworkflow.step-row {
   border: 1px solid #eee;
   height: auto;
 }
+
+pre.section-header.CodeMirror-line {
+  background-color: #f7f7f7;
+  border-top: 1px solid #ddd;
+  margin-top: 1em;
+}
       </style>
    </head>
    <body>
@@ -727,12 +733,12 @@ run:
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header";
+                  return "header line-section-header";
                 } else {
                   // match up to :
                   stream.match(/^\[[^:]*:/);
                   state.sos_state = 'header_option';
-                  return "header";
+                  return "header line-section-header";
                 }
               }
             } else if (sl == '!') {
@@ -788,7 +794,7 @@ run:
               if (stream.eol()) {
                 state.sos_state = null;
                 state.inner_mode = null;
-                return "header";
+                return "header line-section-header";
               } else {
                 stream.backUp(1);
                 let it = base_mode.token(stream, state.base_state);
