@@ -10,12 +10,14 @@
 # and summarizes their prediction performance
 # This script is written in a "forward" flavor
 
+# Simulated sparse regression coefficient
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
 [lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
 # Simulate sparse data-sets
 depends: R_library("MASS")
-parameter: N = (40, 200) # training and testing samples
+# training and testing samples
+parameter: N = (40, 200) 
 parameter: rstd = 3
 parameter: replicate = [x+1 for x in range(5)]
 input: None, for_each = ['replicate'], concurrent = True
@@ -69,7 +71,7 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 depends: sos_variable('data_files')
-parameter: replicates = list(zip(*(iter(data_files),) * 2))
+replicates = list(zip(*(iter(data_files),) * 2))
 input: group_by = 2, group_with = 'replicates', concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
@@ -82,10 +84,12 @@ R: expand = "${ }", stderr = False
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
   
 [default_1]
+# Run default core analysis
 sos_run('ridge')
 sos_run('lasso')
 
 [default_2]
+# Compute and report error estimates
 depends: executable("pandoc")
 input: dynamic("*.mse.csv")
 import numpy as np
