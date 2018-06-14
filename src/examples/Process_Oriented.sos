@@ -10,11 +10,11 @@
 # and summarizes their prediction performance
 # This script is written in a "forward" flavor
 
-# Simulated sparse regression coefficient
+# The "true" sparse regression coefficient
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
-[lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
 # Simulate sparse data-sets
+[lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
 depends: R_library("MASS")
 # training and testing samples
 parameter: N = (40, 200) 
@@ -33,8 +33,8 @@ R: expand = "${ }"
   write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[ridge_2]
 # Ridge regression model implemented in R
+[ridge_2]
 # Build predictor via cross-validation and make prediction
 depends: R_library("glmnet")
 parameter: nfolds = 5
@@ -49,8 +49,8 @@ R: expand = "${ }"
   write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[lasso_2]
 # LASSO model implemented in Python
+[lasso_2]
 # Build predictor via cross-validation and make prediction
 depends: Py_Module("sklearn")
 parameter: nfolds = 5
@@ -66,10 +66,10 @@ python: expand = "${ }"
   np.savetxt(${_output[0]:r}, Ypred)
   np.savetxt(${_output[1]:r}, model.coef_)
 
-[lasso_3, ridge_3]
 # Evaluate predictors by calculating mean squared error
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
+[lasso_3, ridge_3]
 depends: sos_variable('data_files')
 replicates = list(zip(*(iter(data_files),) * 2))
 input: group_by = 2, group_with = 'replicates', concurrent = True
@@ -83,13 +83,14 @@ R: expand = "${ }", stderr = False
   estimation_mse = mean((betahat - b) ^ 2)
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
   
-[default_1]
 # Run default core analysis
+[default_1]
 sos_run('ridge')
 sos_run('lasso')
 
-[default_2]
 # Compute and report error estimates
+# in HTML table format
+[default_2]
 depends: executable("pandoc")
 input: dynamic("*.mse.csv")
 import numpy as np
