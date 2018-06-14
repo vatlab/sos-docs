@@ -263,6 +263,12 @@ tr.subworkflow.step-row {
   border: 1px solid #eee;
   height: auto;
 }
+
+pre.section-header.CodeMirror-line {
+  background-color: #f7f7f7;
+  border-top: 1px solid #ddd;
+  margin-top: 1em;
+}
       </style>
    </head>
    <body>
@@ -276,7 +282,7 @@ tr.subworkflow.step-row {
             <div class="fileinfo">
                105 lines
                <span class="file-info-divider"></span>
-               4.3 kB
+               4.4 kB
             </div>
          </div>
          <div class="filecontent">
@@ -354,7 +360,7 @@ depends: sos_variable('data_files')
 parameter: replicates = list(zip(*(iter(data_files),) * 2))
 input: group_by = 2, group_with = 'replicates', concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
-R: expand = "${ }"
+R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
   Ytruth = as.matrix(read.csv(${_replicates[1]:r}, header = F)[,-1]) %*% b
   Ypred = scan(${_input[0]:r})
@@ -770,12 +776,12 @@ pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pan
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header";
+                  return "header line-section-header";
                 } else {
                   // match up to :
                   stream.match(/^\[[^:]*:/);
                   state.sos_state = 'header_option';
-                  return "header";
+                  return "header line-section-header";
                 }
               }
             } else if (sl == '!') {
@@ -831,7 +837,7 @@ pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pan
               if (stream.eol()) {
                 state.sos_state = null;
                 state.inner_mode = null;
-                return "header";
+                return "header line-section-header";
               } else {
                 stream.backUp(1);
                 let it = base_mode.token(stream, state.base_state);
