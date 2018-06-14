@@ -285,9 +285,9 @@ pre.section-header.CodeMirror-line {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               105 lines
+               110 lines
                <span class="file-info-divider"></span>
-               4.4 kB
+               4.5 kB
             </div>
          </div>
          <div class="filecontent">
@@ -303,12 +303,14 @@ pre.section-header.CodeMirror-line {
 # and summarizes their prediction performance
 # This script is written in a "forward" flavor
 
+# The "true" sparse regression coefficient
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
-[lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
 # Simulate sparse data-sets
+[lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
 depends: R_library("MASS")
-parameter: N = (40, 200) # training and testing samples
+# training and testing samples
+parameter: N = (40, 200) 
 parameter: rstd = 3
 parameter: replicate = [x+1 for x in range(5)]
 input: None, for_each = ['replicate'], concurrent = True
@@ -324,8 +326,8 @@ R: expand = "${ }"
   write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[ridge_2]
 # Ridge regression model implemented in R
+[ridge_2]
 # Build predictor via cross-validation and make prediction
 depends: R_library("glmnet")
 parameter: nfolds = 5
@@ -340,8 +342,8 @@ R: expand = "${ }"
   write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[lasso_2]
 # LASSO model implemented in Python
+[lasso_2]
 # Build predictor via cross-validation and make prediction
 depends: Py_Module("sklearn")
 parameter: nfolds = 5
@@ -357,12 +359,12 @@ python: expand = "${ }"
   np.savetxt(${_output[0]:r}, Ypred)
   np.savetxt(${_output[1]:r}, model.coef_)
 
-[lasso_3, ridge_3]
 # Evaluate predictors by calculating mean squared error
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
+[lasso_3, ridge_3]
 depends: sos_variable('data_files')
-parameter: replicates = list(zip(*(iter(data_files),) * 2))
+replicates = list(zip(*(iter(data_files),) * 2))
 input: group_by = 2, group_with = 'replicates', concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
@@ -374,10 +376,13 @@ R: expand = "${ }", stderr = False
   estimation_mse = mean((betahat - b) ^ 2)
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
   
+# Run default core analysis
 [default_1]
 sos_run('ridge')
 sos_run('lasso')
 
+# Compute and report error estimates
+# in HTML table format
 [default_2]
 depends: executable("pandoc")
 input: dynamic("*.mse.csv")
