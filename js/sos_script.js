@@ -129,6 +129,8 @@ var currentIndex2 = 0;
 //    setTimeout(doIt, interval);
 //}
 
+$('#exTab2').tabs();
+
 //doIt();
 
 function doIt2() {
