@@ -1,0 +1,69 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+[global]
+parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')
+parameter: samples = ['SRR1039508', 'SRR1039509', 'SRR1039512', 'SRR1039513', 'SRR1039516', 'SRR1039517', 'SRR1039520', 'SRR1039521']
+parameter: ncpu = 4
+# Resource files
+resource_dir = f"{cwd:a}/hg19"
+ref_fa = "hg19.fa"
+ref_gtf = 'Homo_sapiens.GRCh38.91.gtf.gz'
+sparse_star = False
+
+[sra (dump SRA to fastq): provides=['{data}_1.fastq', '{data}_2.fastq']]
+depends: Py_Module('docker')
+output: f'{data}_1.fastq', f'{data}_2.fastq'
+run: docker_image = 'gaow/debian-ngs', workdir = cwd, expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    fastq-dump -I --split-files {os.path.basename(data)}
+
+[hg19_reference_1 (download)]
+# Download `hg19.2bit` and `twoBitToFa` from {ucsc_url}
+ucsc_url = "http://hgdownload.cse.ucsc.edu"
+output: f"{resource_dir}/hg19.2bit", f"{resource_dir}/twoBitToFa"
+download: dest_dir = resource_dir, expand = True
+    {ucsc_url}/goldenPath/hg19/bigZips/hg19.2bit
+    {ucsc_url}/admin/exe/{"macOSX.x86_64" if sys.platform == 'darwin' else "linux.x86_64"}/twoBitToFa
+
+[hg19_reference_2 (decompress hg19.fa)]
+# Use `twoBitToFa` to extract `hg19.fa` from `hg19.2bit`
+output: f"{resource_dir}/{ref_fa}"
+bash: expand = True
+    chmod +x {_input[1]}
+    {_input[1]} {_input[0]} {_output}
+
+[hg19_reference_3 (gene annotations)]
+# Download `Homo_sapiens.GRCh38.91.gtf.gz` from Ensembl
+# https://useast.ensembl.org/info/data/ftp/index.html
+ensembl_ftp = 'ftp://ftp.ensembl.org/pub/release-91/gtf/homo_sapiens/'
+output: f"{resource_dir}/{ref_gtf}"
+download: dest_dir = resource_dir, expand = True
+    {ensembl_ftp}/{ref_gtf}
+    
+[star: provides = f"{resource_dir}/genomeParameters.txt"]
+# Quite time & resource consuming (3hrs, 32GB memory if sparse_star is False)
+depends: Py_Module('docker'), sos_step('hg19_reference')
+output: f"{resource_dir}/genomeParameters.txt"
+run: workdir = '/tmp', docker_image = 'gaow/debian-ngs', expand=True
+     STAR --runMode genomeGenerate \
+        --genomeDir {resource_dir} \
+        --genomeFastaFiles {resource_dir}/{ref_fa} \
+        --sjdbGTFtagExonParentTranscript {resource_dir}/{ref_gtf} \
+        --runThreadN {ncpu} {'--genomeSAsparseD 2' if sparse_star else ''}
+
+[align_1 (STAR alignment)]
+depends: Py_Module('docker'), f"{resource_dir}/genomeParameters.txt"
+input: [(f'{cwd:a}/{s}_1.fastq', f'{cwd:a}/{s}_2.fastq') for s in samples], group_by = "pairs", concurrent = True
+output: [f"{cwd:a}/{s}.sam" for s in samples], group_by = 1
+run: docker_image = 'gaow/debian-ngs', expand=True, workdir = cwd
+    STAR --genomeDir {resource_dir} \
+        --readFilesIn {_input[0]} {_input[1]} \
+        --runThreadN {ncpu} --outFileNamePrefix {_output:nnn}
+
+[align_2 (SAM to BAM)]
+depends: Py_Module('docker')
+input: group_by = 1, pattern = '{name}.sam', concurrent = True
+output: expand_pattern('{_name}.bam')
+run: docker_image = 'gaow/debian-ngs', expand=True, workdir = cwd
+    samtools view -bS {_input} -o {_output}
+
