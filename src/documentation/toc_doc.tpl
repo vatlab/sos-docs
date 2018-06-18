@@ -55,6 +55,22 @@ div#notebook-container{
     font-size: 80%;
 }
 
+textarea.sos-source {
+  display: contents;
+  line-height: 1.21429em;
+  font-size: 14px;
+  background: none;
+  width: 100%;
+  border: none;
+  font-family: monospace;
+  height: auto;
+  padding: 0.4em;
+  outline: none;
+  position: relative; */
+  resize: none;
+  overflow: hidden;
+  display: none; */
+}
 </style>
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
@@ -306,6 +322,10 @@ div#notebook-container{
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
 	  <script src="../../js/sos-mode.js"> </script>
       <script>
+ 		   $('textarea').each(function() {
+              $(this).height($(this).prop('scrollHeight'));
+           });
+
 		   function highlight_cells(cells, i, interval) {
 			  setTimeout(function() {
 				var editor = CodeMirror.fromTextArea(cells[i], {
