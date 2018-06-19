@@ -56,7 +56,6 @@ div#notebook-container{
 }
 
 textarea.sos-source {
-  display: contents;
   line-height: 1.21429em;
   font-size: 14px;
   background: none;
@@ -66,10 +65,10 @@ textarea.sos-source {
   height: auto;
   padding: 0.4em;
   outline: none;
-  position: relative; */
+  position: relative;
   resize: none;
   overflow: hidden;
-  display: none; */
+  vertical-align: text-top;
 }
 </style>
 
@@ -299,7 +298,7 @@ textarea.sos-source {
 {%- if cell['metadata'].get('kernel',none) is not none -%}
 <div class="inner_cell">
   <div class="input_area cm-s-ipython">
-   <textarea class="sos-source" name="{{cell['metadata'].get('kernel')}}">{{ cell.source }}</textarea>
+   <textarea rows="{{ cell.source.splitlines() | count }}" class="sos-source" name="{{cell['metadata'].get('kernel')}}">{{ cell.source }}</textarea>
 
   </div>
 </div>
@@ -323,9 +322,6 @@ textarea.sos-source {
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
 	  <script src="../../js/sos-mode.js"> </script>
       <script>
-           $('textarea').each(function() {
-              $(this).height($(this).prop('scrollHeight'));
-           });
 		   function highlight_cells(cells, i, interval) {
 			  setTimeout(function() {
 				var editor = CodeMirror.fromTextArea(cells[i], {
