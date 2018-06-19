@@ -12101,7 +12101,9 @@ Display content:<br>
 <span class="n">resource_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/hg19&quot;</span>
 <span class="n">ref_fa</span> <span class="o">=</span> <span class="s2">&quot;hg19.fa&quot;</span>
 <span class="n">ref_gtf</span> <span class="o">=</span> <span class="s1">&#39;Homo_sapiens.GRCh38.91.gtf.gz&#39;</span>
-<span class="n">sparse_star</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="c1"># when set to False (default) STAR will use ~30GB memory.</span>
+<span class="c1"># set it to `True` to reduce memory consumption to half.</span>
+<span class="kn">parameter:</span> <span class="n">sparse_star</span> <span class="o">=</span> <span class="bp">False</span>
 </pre></div>
 
 </div>
@@ -12191,10 +12193,11 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">sra</span> <span class="p">(</span><span class="n">dump</span> <span class="n">SRA</span> <span class="n">to</span> <span class="n">fastq</span><span class="p">):</span> <span class="kp">provides</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;{data}_2.fastq&#39;</span><span class="p">]]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># decrypt SRA files</span>
+<span class="p">[</span><span class="n">sra</span> <span class="p">(</span><span class="n">dump</span> <span class="n">SRA</span> <span class="n">to</span> <span class="n">fastq</span><span class="p">):</span> <span class="kp">provides</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;{data}_2.fastq&#39;</span><span class="p">]]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{data}_2.fastq&#39;</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{_output:n}.err&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{_output:n}.out&#39;</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">fastq</span><span class="o">-</span><span class="n">dump</span> <span class="o">-</span><span class="n">I</span> <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">files</span> <span class="p">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
 </pre></div>
 
@@ -12218,34 +12221,35 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">hg19_reference_1</span> <span class="p">(</span><span class="n">download</span><span class="p">)]</span>
-<span class="c1"># Download `hg19.2bit` and `twoBitToFa` from {ucsc_url}</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Download `hg19.2bit` and `twoBitToFa` from UCSC</span>
+<span class="p">[</span><span class="n">hg19_reference_1</span> <span class="p">(</span><span class="n">download</span><span class="p">)]</span>
 <span class="n">ucsc_url</span> <span class="o">=</span> <span class="s2">&quot;http://hgdownload.cse.ucsc.edu&quot;</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/hg19.2bit&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/twoBitToFa&quot;</span>
 <span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="p">{</span><span class="n">ucsc_url</span><span class="p">}</span><span class="o">/</span><span class="n">goldenPath</span><span class="o">/</span><span class="n">hg19</span><span class="o">/</span><span class="n">bigZips</span><span class="o">/</span><span class="n">hg19</span><span class="o">.</span><span class="mi">2</span><span class="n">bit</span>
     <span class="p">{</span><span class="n">ucsc_url</span><span class="p">}</span><span class="o">/</span><span class="n">admin</span><span class="o">/</span><span class="n">exe</span><span class="o">/</span><span class="p">{</span><span class="s2">&quot;macOSX.x86_64&quot;</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;darwin&#39;</span> <span class="k">else</span> <span class="s2">&quot;linux.x86_64&quot;</span><span class="p">}</span><span class="o">/</span><span class="n">twoBitToFa</span>
 
-<span class="p">[</span><span class="n">hg19_reference_2</span> <span class="p">(</span><span class="n">decompress</span> <span class="n">hg19</span><span class="o">.</span><span class="n">fa</span><span class="p">)]</span>
 <span class="c1"># Use `twoBitToFa` to extract `hg19.fa` from `hg19.2bit`</span>
+<span class="p">[</span><span class="n">hg19_reference_2</span> <span class="p">(</span><span class="n">decompress</span> <span class="n">hg19</span><span class="o">.</span><span class="n">fa</span><span class="p">)]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/{ref_fa}&quot;</span>
 <span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
     <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
-<span class="p">[</span><span class="n">hg19_reference_3</span> <span class="p">(</span><span class="n">gene</span> <span class="n">annotations</span><span class="p">)]</span>
 <span class="c1"># Download `Homo_sapiens.GRCh38.91.gtf.gz` from Ensembl</span>
+<span class="p">[</span><span class="n">hg19_reference_3</span> <span class="p">(</span><span class="n">gene</span> <span class="n">annotations</span><span class="p">)]</span>
 <span class="c1"># https://useast.ensembl.org/info/data/ftp/index.html</span>
 <span class="n">ensembl_ftp</span> <span class="o">=</span> <span class="s1">&#39;ftp://ftp.ensembl.org/pub/release-91/gtf/homo_sapiens/&#39;</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/{ref_gtf}&quot;</span>
 <span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="p">{</span><span class="n">ensembl_ftp</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span>
     
+<span class="c1"># Prepare STAR reference data</span>
 <span class="p">[</span><span class="n">star</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span><span class="p">]</span>
 <span class="c1"># Quite time &amp; resource consuming (3hrs, 32GB memory if sparse_star is False)</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">),</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;hg19_reference&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
-<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}:{resource_dir}&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
      <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
         <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> \
@@ -12274,14 +12278,15 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">alignment</span><span class="p">)]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Align to SAM file</span>
+<span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">alignment</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">),</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
 <span class="kn">input:</span> <span class="p">[(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_2.fastq&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{cwd:a}/{s}.sam&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+<span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{cwd:a}/{s}.Aligned.out.sam&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}:{resource_dir}&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
-        <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nnn</span><span class="p">}</span>
+        <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nnn</span><span class="p">}</span><span class="o">.</span>
 </pre></div>
 
 </div>
@@ -12304,12 +12309,14 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">SAM</span> <span class="n">to</span> <span class="n">BAM</span><span class="p">)]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Convert SAM to BAM file &amp; zap the input</span>
+<span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">SAM</span> <span class="n">to</span> <span class="n">BAM</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.sam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.Aligned.out.sam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{_name}.bam&#39;</span><span class="p">)</span>
 <span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bS</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+<span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12323,7 +12330,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The BAM files for a number of sequencing runs can then be used to generate count matrices, as described in the following section.</p>
-<p>Notice that the <code>align_2</code> step can be avoided if in <code>align_1</code> step options <code>--outStd BAM_SortedByCoordinate  --outSAMtype BAM SortedByCoordinate</code> are used for <code>STAR</code> aligner. We do not use those options because we would like to follow exactly how the Bioconductor tutorial instructs, for demonstration purpose.</p>
+<p>Notice that the <code>align_2</code> step can be avoided if in <code>align_1</code> step options <code>--outStd BAM_SortedByCoordinate  --outSAMtype BAM SortedByCoordinate</code> are used for <code>STAR</code> aligner. We do not use those options because we would like to follow exactly how the Bioconductor tutorial instructs, for demonstration purpose. However we used <code>_input.zap()</code> at the end of the step to delete those SAM files without potentially triggering reruns.</p>
 
 </div>
 </div>
@@ -12332,7 +12339,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Run-the-alignment-pipeline">Run the alignment pipeline<a class="anchor-link" href="#Run-the-alignment-pipeline">&#182;</a></h4><p>The following executes the pipeline from inside this notebook using 8 CPU cores in parallel:</p>
+<h4 id="Run-the-alignment-pipeline">Run the alignment pipeline<a class="anchor-link" href="#Run-the-alignment-pipeline">&#182;</a></h4><p>The following executes the pipeline from inside this notebook using 2 CPU cores in parallel:</p>
 
 </div>
 </div>
@@ -12358,7 +12365,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Or, to run it from command console:</p>
 
-<pre><code>sos run RNASeqDE.ipynb align -j 8</code></pre>
+<pre><code>sos run RNASeqDE.ipynb align -j 2</code></pre>
 
 </div>
 </div>
@@ -12367,7 +12374,10 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Caution that large data-set will be downloaded at a result of this alignment workflow and the alignment process is computationally intensive. This workflow will not impact the rest of demonstrations to follow; readers can terminate the workflow at any time they deem fit.</p>
+<p>Caution that large data-set will be downloaded at a result of this alignment workflow and the alignment process is computationally intensive. Also <code>align_1</code> STAR step uses ~ 30GB memory so <code>-j 2</code> is used on a machine with 64GB of memory. This workflow will not impact the rest of demonstrations to follow; readers can terminate the workflow at any time they deem fit.</p>
+<p><strong>If the goal is to test the workflow please only run it with one sample to avoid too much computation, eg:</strong></p>
+
+<pre><code>sos run RNASeqDE.ipynb align --samples SRR1039508</code></pre>
 
 </div>
 </div>
