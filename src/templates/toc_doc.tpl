@@ -1,6 +1,6 @@
 {% extends 'sos-cm.tpl' %}
 
-{% import 'parts/doc_toc.tpl' as toc %}
+{% import 'doc_toc.tpl' as toc %}
 
 {%- block html_head -%}
 
