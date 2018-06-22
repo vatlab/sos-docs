@@ -35,8 +35,25 @@ footer {
   padding-top: 1em;
   padding-bottom: 1em;
   padding-left: 25px;
+  padding-right: 25px;
   background-color: #f5f5f5;
   overflow: hidden;
+}
+
+textarea.sos-source {
+  line-height: 1.21429em;
+  font-size: 14px;
+  background: none;
+  width: 100%;
+  border: none;
+  font-family: monospace;
+  height: auto;
+  padding: 0.4em;
+  outline: none;
+  position: relative;
+  resize: none;
+  overflow: hidden;
+  vertical-align: text-top;
 }
 
 .code {
@@ -285,13 +302,13 @@ pre.section-header.CodeMirror-line {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               128 lines
+               126 lines
                <span class="file-info-divider"></span>
-               3.6 kB
+               3.5 kB
             </div>
          </div>
          <div class="filecontent">
-            <textarea id="source-code" name="code">#!/usr/bin/env sos-runner
+            <textarea rows="126" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
 [getFileNames]
@@ -300,7 +317,6 @@ run:
 
 [convert-documentation]
 input:  '../src/documentation/*.ipynb', group_by=1
-depends: '../src/documentation/toc_doc.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
@@ -309,7 +325,6 @@ run: expand='${ }'
 
 [convert-tutorials]
 input:  '../src/tutorials/*.ipynb', group_by=1
-depends: '../src/tutorials/toc_tut.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
@@ -423,11 +438,10 @@ run: workdir='..', expand=True
          </div>
       </div>
       <footer>
-         <a class="sos-logo" href="https://vatlab.github.io/sos-docs">
+         <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
-         </a>
-         &nbsp;
-         <a href="https://vatlab.github.io/sos-docs/">SoS Workflow Engine</a> version <samp>0.9.14.10</samp>
+         </a> &nbsp;See the output of command <samp>sos run update-website -h</samp> for usage information</div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.9.15.1</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
@@ -815,6 +829,9 @@ run: workdir='..', expand=True
             } else if (sl == '!') {
               stream.eatWhile(/\S/);
               return "meta";
+            } else if (sl == '#') {
+              stream.skipToEnd();
+              return "comment";
             } else if (sl == '%') {
               stream.eatWhile(/\S/);
               return "meta";
