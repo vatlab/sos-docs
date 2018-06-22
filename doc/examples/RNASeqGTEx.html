@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>RNASeqGTEx</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<title>RNASeqGTEx</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
     /*!
@@ -11931,6 +11931,44 @@ div.cell {
    
 </style>
 
+
+
+
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+
+<style type="text/css">
+
+.inner_cell .CodeMirror {
+    height: auto;
+}
+
+.cell-kernel-selector {
+  width:70pt;
+  background: none;
+  z-index: 1000;
+  position: absolute;
+  height: 1.7em;
+  margin-top: 3pt;
+  right: 8pt;
+  font-size: 80%;
+}
+textarea.sos-source {
+  line-height: 1.21429em;
+  font-size: 14px;
+  background: none;
+  width: 100%;
+  border: none;
+  font-family: monospace;
+  height: auto;
+  padding: 4px;
+  outline: none;
+  position: relative;
+  resize: none;
+  overflow: hidden;
+  vertical-align: text-top;
+}
+</style>
+
 </head>
 
 <body>
@@ -11966,19 +12004,18 @@ div.cell {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
-<span class="n">rna_rpkm</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx/gtex7/rna-seq/GTEx_Data_2016-01-15_v7_RNA-seq_RNA-SeQCv1.1.8_gene_rpkm.gct.gz&quot;</span><span class="p">)</span>
-<span class="n">rna_cnts</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx/gtex7/rna-seq/GTEx_Data_2016-01-15_v7_RNA-seq_RNA-SeQCv1.1.8_gene_reads.gct.gz&quot;</span><span class="p">)</span>
-<span class="n">genotype</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx/gtex7/variant_calls/GTEx_Analysis_2016-01-15_v7_WholeGenomeSeq_635Ind_PASS_AB02_GQ20_HETX_MISS15_PLINKQC.PIR.vcf.gz&quot;</span><span class="p">)</span>
-<span class="n">sample_attr</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx/gtex7/sample_annotations/GTEx_Analysis_2016-01-15_v7_SampleAttributesDS.txt&quot;</span><span class="p">)</span>
-<span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/Documents/GTEx&quot;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 9.67142858em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">[global]
+rna_rpkm = path("~/Documents/GTEx/gtex7/rna-seq/GTEx_Data_2016-01-15_v7_RNA-seq_RNA-SeQCv1.1.8_gene_rpkm.gct.gz")
+rna_cnts = path("~/Documents/GTEx/gtex7/rna-seq/GTEx_Data_2016-01-15_v7_RNA-seq_RNA-SeQCv1.1.8_gene_reads.gct.gz")
+genotype = path("~/Documents/GTEx/gtex7/variant_calls/GTEx_Analysis_2016-01-15_v7_WholeGenomeSeq_635Ind_PASS_AB02_GQ20_HETX_MISS15_PLINKQC.PIR.vcf.gz")
+sample_attr = path("~/Documents/GTEx/gtex7/sample_annotations/GTEx_Analysis_2016-01-15_v7_SampleAttributesDS.txt")
+cwd = path("~/Documents/GTEx")</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 </div>
@@ -12015,46 +12052,45 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">RNASeq_to_HDF5</span><span class="p">]</span>
-<span class="c1"># Convert RNASeq data to HDF5</span>
-<span class="kn">parameter:</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;np.uint32&#39;</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input[0]:nb}.hdf5&quot;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">python:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
-    <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-    <span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">os</span>
-    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span> <span class="n">fsample</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;First col of expression data is ENCODE gene name, 2nd col is HUGO name&#39;&#39;&#39;</span>
-        <span class="n">head</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span> <span class="n">skiprows</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">dt</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Description&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">}</span>
-        <span class="n">dt</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">x</span><span class="p">:</span> <span class="n">dtype</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">head</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dt</span><span class="p">})</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fdata</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s1">&#39;gzip&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
-                           <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dt</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Description&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">samples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fsample</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">sample_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">[[</span><span class="s1">&#39;SAMPID&#39;</span><span class="p">,</span> <span class="s1">&#39;SMTSD&#39;</span><span class="p">,</span> <span class="s1">&#39;SMAFRZE&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;EXCLUDE&#39;</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample_dict</span><span class="p">:</span>
-                <span class="n">sample_dict</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="n">sample_dict</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">((</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;[\W\d]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sample_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-    <span class="c1">#</span>
-    <span class="n">data</span><span class="p">,</span> <span class="n">sample</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="n">dtype</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">dtype</span><span class="p">})</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">sample</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">}</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}):</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">k</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 48.24285719em">
+   <textarea rows="33"
+      class="sos-source" name="SoS">[RNASeq_to_HDF5]
+# Convert RNASeq data to HDF5
+parameter: dtype = 'np.uint32'
+output: f"{_input[0]:nb}.hdf5"
+task: workdir = cwd
+python: expand='${ }'
+    import pandas as pd
+    import numpy as np
+    import re, os
+    def load_data(fdata, fsample, dtype = np.float32):
+        '''First col of expression data is ENCODE gene name, 2nd col is HUGO name'''
+        head = pd.read_csv(fdata, skiprows = 2, sep = '\t', nrows = 1)
+        dt = {'Description': str, 'Name': str}
+        dt.update({x: dtype for x in head.columns if x not in dt})
+        data = pd.read_csv(fdata, compression='gzip', skiprows=2, 
+                           index_col=0, header=0, dtype = dt, sep='\t').drop('Description', 1)
+        samples = pd.read_csv(fsample, dtype=str, delimiter='\t', header=0)
+        sample_dict = {}
+        for row in samples[['SAMPID', 'SMTSD', 'SMAFRZE']].values:
+            if row[2] == 'EXCLUDE':
+                continue
+            if row[1] not in sample_dict:
+                sample_dict[row[1]] = []
+            if row[0] in data.columns:
+                sample_dict[row[1]].append(row[0])
+        return data, dict((re.sub("[\W\d]+", "_", k.strip()).strip('_'), v) for k, v in sample_dict.items() if len(v))
+    #
+    data, sample = load_data(${_input[0]:r}, ${_input[1]:r}, dtype = ${dtype})
+    data = {k: data.loc[:, sample[k]] for k in sample}
+    if os.path.isfile(${_output:r}):
+        os.remove(${_output:r})
+    for k in data:
+        data[k].to_hdf(${_output:r}, k, mode = 'a', complevel = 9, complib = 'zlib')</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 </div>
@@ -12086,196 +12122,195 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">rnaseq_1</span><span class="p">]</span>
-<span class="c1"># Normalization and format conversion</span>
-<span class="kn">parameter:</span> <span class="n">rpkm_cutoff</span> <span class="o">=</span> <span class="mf">0.1</span>
-<span class="kn">parameter:</span> <span class="n">read_cutoff</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="kn">parameter:</span> <span class="n">sample_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="kn">input:</span> <span class="n">rna_rpkm</span><span class="p">,</span> <span class="n">rna_cnts</span><span class="p">,</span> <span class="n">genotype</span><span class="p">,</span> <span class="n">sample_attr</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span>
-        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> 
-        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> 
-        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.h5&quot;</span><span class="p">,</span>
-        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">),</span>
-        <span class="n">f</span><span class="s2">&quot;{cwd:a}/rna_processed/{_input[0]:nnb}.h5&quot;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;lab_server&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;20:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;90G&quot;</span>
-<span class="kn">python:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 262.52857169000004em">
+   <textarea rows="183"
+      class="sos-source" name="SoS">[rnaseq_1]
+# Normalization and format conversion
+parameter: rpkm_cutoff = 0.1
+parameter: read_cutoff = 5
+parameter: sample_cutoff = 10
+input: rna_rpkm, rna_cnts, genotype, sample_attr
+output: f"{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.flat.h5",
+        f"{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.flat.h5", 
+        f"{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.h5", 
+        f"{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.h5",
+        f"{cwd:a}/rna_processed/{_input[0]:nnb}.h5".replace('rpkm', 'reads'),
+        f"{cwd:a}/rna_processed/{_input[0]:nnb}.h5"
+task: workdir = cwd, queue = "lab_server", walltime = "20:00:00", cores = 1, mem = "90G"
+python: expand='${ }'
 
-    <span class="c1"># Adopted by Gao Wang from:</span>
-    <span class="c1"># https://github.com/broadinstitute/gtex-pipeline</span>
-    <span class="c1"># Originally authored by Francois Aguet</span>
+    # Adopted by Gao Wang from:
+    # https://github.com/broadinstitute/gtex-pipeline
+    # Originally authored by Francois Aguet
 
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-    <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-    <span class="kn">import</span> <span class="nn">gzip</span>
-    <span class="kn">import</span> <span class="nn">subprocess</span>
-    <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">stats</span>
-    <span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">os</span>
+    import numpy as np
+    import pandas as pd
+    import gzip
+    import subprocess
+    import scipy.stats as stats
+    import re, os
 
-    <span class="k">def</span> <span class="nf">annotate_tissue_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fsample</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Save data to tissue specific tables&#39;&#39;&#39;</span>
-        <span class="n">samples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fsample</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">sample_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">[[</span><span class="s1">&#39;SAMPID&#39;</span><span class="p">,</span> <span class="s1">&#39;SMTSD&#39;</span><span class="p">,</span> <span class="s1">&#39;SMAFRZE&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;EXCLUDE&#39;</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample_dict</span><span class="p">:</span>
-                <span class="n">sample_dict</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="n">sample_dict</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">sample</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;[\W\d]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sample_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">sample</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">}</span>
-        <span class="k">return</span> <span class="n">data</span>
+    def annotate_tissue_data(data, fsample):
+        '''Save data to tissue specific tables'''
+        samples = pd.read_csv(fsample, dtype=str, delimiter='\t', header=0)
+        sample_dict = {}
+        for row in samples[['SAMPID', 'SMTSD', 'SMAFRZE']].values:
+            if row[2] == 'EXCLUDE':
+                continue
+            if row[1] not in sample_dict:
+                sample_dict[row[1]] = []
+            if row[0] in data.columns:
+                sample_dict[row[1]].append(row[0])
+        sample = dict((re.sub("[\W\d]+", "_", k.strip()).strip('_'), v) for k, v in sample_dict.items() if len(v))
+        data = {k: data.loc[:, sample[k]] for k in sample}
+        return data
 
-    <span class="k">def</span> <span class="nf">write_per_tissue_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
+    def write_per_tissue_data(data, output):
+        if os.path.isfile(output):
+            os.remove(output)
+        for k in data:
+            data[k].to_hdf(output, k, mode = 'a', complevel = 9, complib = 'zlib')
 
-    <span class="k">def</span> <span class="nf">get_donors_from_vcf</span><span class="p">(</span><span class="n">vcfpath</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extract donor IDs from VCF</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">vcfpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">vcf</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">vcf</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;##&#39;</span><span class="p">:</span> <span class="k">continue</span>
-                <span class="k">break</span>
-        <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">9</span><span class="p">:]</span>
+    def get_donors_from_vcf(vcfpath):
+        """
+        Extract donor IDs from VCF
+        """
+        with gzip.open(vcfpath) as vcf:
+            for line in vcf:
+                if line.decode()[:2]=='##': continue
+                break
+        return line.decode().strip().split('\t')[9:]
 
-    <span class="k">def</span> <span class="nf">read_gct</span><span class="p">(</span><span class="n">gct_file</span><span class="p">,</span> <span class="n">donor_ids</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Load GCT as DataFrame</span>
-<span class="sd">        First col of expression data is ENCODE gene name, 2nd col is HUGO name</span>
-<span class="sd">        ======================================================================</span>
-<span class="sd">        A more memory friendly version:</span>
+    def read_gct(gct_file, donor_ids, dtype):
+        """
+        Load GCT as DataFrame
+        First col of expression data is ENCODE gene name, 2nd col is HUGO name
+        ======================================================================
+        A more memory friendly version:
 
-<span class="sd">        head = pd.read_csv(fdata, skiprows = 2, sep = &#39;\t&#39;, nrows = 1)</span>
-<span class="sd">        dt = {&#39;Description&#39;: str, &#39;Name&#39;: str}</span>
-<span class="sd">        dt.update({x: dtype for x in head.columns if x not in dt})</span>
-<span class="sd">        data = pd.read_csv(fdata, compression=&#39;gzip&#39;, skiprows=2,</span>
-<span class="sd">                           index_col=0, header=0, dtype = dt, sep=&#39;\t&#39;).drop(&#39;Description&#39;, 1)</span>
+        head = pd.read_csv(fdata, skiprows = 2, sep = '\t', nrows = 1)
+        dt = {'Description': str, 'Name': str}
+        dt.update({x: dtype for x in head.columns if x not in dt})
+        data = pd.read_csv(fdata, compression='gzip', skiprows=2,
+                           index_col=0, header=0, dtype = dt, sep='\t').drop('Description', 1)
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">gct_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Description&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="kp">name</span> <span class="o">=</span> <span class="s1">&#39;gene_id&#39;</span>
-        <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[:</span><span class="mi">2</span><span class="p">])</span> <span class="ow">in</span> <span class="n">donor_ids</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">copy</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+        """
+        df = pd.read_csv(gct_file, sep='\t', skiprows=2, index_col=0)
+        df.drop('Description', axis=1, inplace=True)
+        df.index.name = 'gene_id'
+        return df[[i for i in df.columns if '-'.join(i.split('-')[:2]) in donor_ids]].astype(dtype, copy = True)
 
-    <span class="k">def</span> <span class="nf">normalize_quantiles</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Note: replicates behavior of R function normalize.quantiles from library(&quot;preprocessCore&quot;)</span>
+    def normalize_quantiles(M, inplace=False):
+        """
+        Note: replicates behavior of R function normalize.quantiles from library("preprocessCore")
 
-<span class="sd">        Reference:</span>
-<span class="sd">         [1] Bolstad et al., Bioinformatics 19(2), pp. 185-193, 2003</span>
+        Reference:
+         [1] Bolstad et al., Bioinformatics 19(2), pp. 185-193, 2003
 
-<span class="sd">        Adapted from https://github.com/andrewdyates/quantile_normalize</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">inplace</span><span class="p">:</span>
-            <span class="n">M</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        Adapted from https://github.com/andrewdyates/quantile_normalize
+        """
+        if not inplace:
+            M = M.copy()
 
-        <span class="n">Q</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">m</span><span class="p">,</span><span class="n">n</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">shape</span>
+        Q = M.argsort(axis=0)
+        m,n = M.shape
 
-        <span class="c1"># compute quantile vector</span>
-        <span class="n">quantiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-            <span class="n">quantiles</span> <span class="o">+=</span> <span class="n">M</span><span class="p">[</span><span class="n">Q</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">quantiles</span> <span class="o">=</span> <span class="n">quantiles</span> <span class="o">/</span> <span class="n">n</span>
+        # compute quantile vector
+        quantiles = np.zeros(m)
+        for i in range(n):
+            quantiles += M[Q[:,i],i]
+        quantiles = quantiles / n
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-            <span class="c1"># Get equivalence classes; unique values == 0</span>
-            <span class="n">dupes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">M</span><span class="p">[</span><span class="n">Q</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="n">M</span><span class="p">[</span><span class="n">Q</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]:</span>
-                    <span class="n">dupes</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">dupes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+        for i in range(n):
+            # Get equivalence classes; unique values == 0
+            dupes = np.zeros(m, dtype=np.int)
+            for j in range(m-1):
+                if M[Q[j,i],i]==M[Q[j+1,i],i]:
+                    dupes[j+1] = dupes[j]+1
 
-            <span class="c1"># Replace column with quantile ranks</span>
-            <span class="n">M</span><span class="p">[</span><span class="n">Q</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantiles</span>
+            # Replace column with quantile ranks
+            M[Q[:,i],i] = quantiles
 
-            <span class="c1"># Average together equivalence classes</span>
-            <span class="n">j</span> <span class="o">=</span> <span class="n">m</span><span class="o">-</span><span class="mi">1</span>
-            <span class="k">while</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">dupes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">j</span> <span class="o">-=</span> <span class="mi">1</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">idxs</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="n">dupes</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">]</span>
-                    <span class="n">M</span><span class="p">[</span><span class="n">idxs</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">idxs</span><span class="p">,</span><span class="n">i</span><span class="p">])</span>
-                    <span class="n">j</span> <span class="o">-=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">dupes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
-            <span class="k">assert</span> <span class="n">j</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+            # Average together equivalence classes
+            j = m-1
+            while j >= 0:
+                if dupes[j] == 0:
+                    j -= 1
+                else:
+                    idxs = Q[j-dupes[j]:j+1,i]
+                    M[idxs,i] = np.median(M[idxs,i])
+                    j -= 1 + dupes[j]
+            assert j == -1
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">inplace</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">M</span>
+        if not inplace:
+            return M
 
-    <span class="k">def</span> <span class="nf">inverse_quantile_normalization</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        After quantile normalization of samples, standardize expression of each gene</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">mstats</span><span class="o">.</span><span class="n">rankdata</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># ties are averaged</span>
-        <span class="n">Q</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">Q</span>
+    def inverse_quantile_normalization(M):
+        """
+        After quantile normalization of samples, standardize expression of each gene
+        """
+        R = stats.mstats.rankdata(M,axis=1)  # ties are averaged
+        Q = stats.norm.ppf(R/(M.shape[1]+1))
+        return Q
 
-    <span class="k">def</span> <span class="nf">normalize_expression</span><span class="p">(</span><span class="n">expression_df</span><span class="p">,</span> <span class="n">counts_df</span><span class="p">,</span> <span class="n">expression_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">count_threshold</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Genes are thresholded based on the following expression rules:</span>
-<span class="sd">          &gt;=min_samples with &gt;expression_threshold expression values</span>
-<span class="sd">          &gt;=min_samples with &gt;count_threshold read counts</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># donor_ids = [&#39;-&#39;.join(i.split(&#39;-&#39;)[:2]) for i in expression_df.columns]</span>
-        <span class="n">donor_ids</span> <span class="o">=</span> <span class="n">expression_df</span><span class="o">.</span><span class="n">columns</span>
+    def normalize_expression(expression_df, counts_df, expression_threshold=0.1, count_threshold=5, min_samples=10, dtype = np.float32):
+        """
+        Genes are thresholded based on the following expression rules:
+          >=min_samples with >expression_threshold expression values
+          >=min_samples with >count_threshold read counts
+        """
+        # donor_ids = ['-'.join(i.split('-')[:2]) for i in expression_df.columns]
+        donor_ids = expression_df.columns
 
-        <span class="c1"># expression thresholds</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">expression_df</span><span class="o">&gt;</span><span class="n">expression_threshold</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;=</span><span class="n">min_samples</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">counts_df</span><span class="o">&gt;</span><span class="n">count_threshold</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;=</span><span class="n">min_samples</span><span class="p">))</span><span class="o">.</span><span class="n">values</span>
+        # expression thresholds
+        mask = ((np.sum(expression_df>expression_threshold,axis=1)>=min_samples) & (np.sum(counts_df>count_threshold,axis=1)>=min_samples)).values
 
-        <span class="c1"># apply normalization</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="n">normalize_quantiles</span><span class="p">(</span><span class="n">expression_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="n">inverse_quantile_normalization</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+        # apply normalization
+        M = normalize_quantiles(expression_df.loc[mask].values, inplace=False)
+        R = inverse_quantile_normalization(M)
 
-        <span class="n">quant_std_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">donor_ids</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">expression_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">)</span>
-        <span class="n">quant_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">donor_ids</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">expression_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">quant_std_df</span><span class="p">,</span> <span class="n">quant_df</span>
+        quant_std_df = pd.DataFrame(data=R, columns=donor_ids, index=expression_df.loc[mask].index, dtype = dtype)
+        quant_df = pd.DataFrame(data=M, columns=donor_ids, index=expression_df.loc[mask].index, dtype = dtype)
+        return quant_std_df, quant_df
 
-    <span class="k">class</span> <span class="nc">Environment</span><span class="p">:</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">expression_gct</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">ar</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">counts_gct</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">ar</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">vcf</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">ar</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span><span class="n">ar</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">nnbr</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">dr</span><span class="p">}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">expression_threshold</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">rpkm_cutoff</span><span class="p">}</span> 
-            <span class="bp">self</span><span class="o">.</span><span class="n">count_threshold</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">read_cutoff</span><span class="p">}</span> 
-            <span class="bp">self</span><span class="o">.</span><span class="n">min_samples</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">sample_cutoff</span><span class="p">}</span>
+    class Environment:
+        def __init__(self):
+            self.expression_gct = ${_input[0]:ar}
+            self.counts_gct = ${_input[1]:ar}
+            self.vcf = ${_input[2]:ar}
+            self.attributes = ${_input[3]:ar}
+            self.prefix = ${_input[0]:nnbr}
+            self.output_dir = ${_output[0]:dr}
+            self.expression_threshold = ${rpkm_cutoff} 
+            self.count_threshold = ${read_cutoff} 
+            self.min_samples = ${sample_cutoff}
 
-    <span class="n">args</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">()</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Generating normalized expression files ... &#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">donor_ids</span> <span class="o">=</span> <span class="n">get_donors_from_vcf</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">vcf</span><span class="p">)</span>
-    <span class="n">expression_df</span> <span class="o">=</span> <span class="n">read_gct</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">expression_gct</span><span class="p">,</span> <span class="n">donor_ids</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-    <span class="n">counts_df</span> <span class="o">=</span> <span class="n">read_gct</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">counts_gct</span><span class="p">,</span> <span class="n">donor_ids</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
-    <span class="n">quant_std_df</span><span class="p">,</span> <span class="n">quant_df</span> <span class="o">=</span> <span class="n">normalize_expression</span><span class="p">(</span><span class="n">expression_df</span><span class="p">,</span> <span class="n">counts_df</span><span class="p">,</span>
-                                                  <span class="n">expression_threshold</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">expression_threshold</span><span class="p">,</span> 
-                                                  <span class="n">count_threshold</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">count_threshold</span><span class="p">,</span> 
-                                                  <span class="n">min_samples</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">min_samples</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Save to HDF5 format, full matrix and per tissue data ...&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-    <span class="n">quant_std_per_tissue</span> <span class="o">=</span> <span class="n">annotate_tissue_data</span><span class="p">(</span><span class="n">quant_std_df</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
-    <span class="n">quant_per_tissue</span> <span class="o">=</span> <span class="n">annotate_tissue_data</span><span class="p">(</span><span class="n">quant_df</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
-    <span class="n">expression_per_tissue</span> <span class="o">=</span> <span class="n">annotate_tissue_data</span><span class="p">(</span><span class="n">expression_df</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
-    <span class="n">counts_per_tissue</span> <span class="o">=</span> <span class="n">annotate_tissue_data</span><span class="p">(</span><span class="n">counts_df</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
-    <span class="n">quant_std_df</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.qnorm.std.flat.h5&quot;</span><span class="p">,</span>  <span class="s1">&#39;GTExV7&#39;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
-    <span class="n">quant_df</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.qnorm.flat.h5&quot;</span><span class="p">,</span> <span class="s1">&#39;GTExV7&#39;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
-    <span class="n">write_per_tissue_data</span><span class="p">(</span><span class="n">quant_per_tissue</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.qnorm.h5&quot;</span><span class="p">)</span>
-    <span class="n">write_per_tissue_data</span><span class="p">(</span><span class="n">quant_std_per_tissue</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.qnorm.std.h5&quot;</span><span class="p">)</span>
-    <span class="n">write_per_tissue_data</span><span class="p">(</span><span class="n">expression_per_tissue</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.h5&quot;</span><span class="p">)</span>
-    <span class="n">write_per_tissue_data</span><span class="p">(</span><span class="n">counts_per_tissue</span><span class="p">,</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rpkm&#39;</span><span class="p">,</span> <span class="s1">&#39;reads&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.h5&quot;</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;done.&#39;</span><span class="p">)</span>
-</pre></div>
-
+    args = Environment()
+    print('Generating normalized expression files ... ', end='', flush=True)
+    donor_ids = get_donors_from_vcf(args.vcf)
+    expression_df = read_gct(args.expression_gct, donor_ids, np.float32)
+    counts_df = read_gct(args.counts_gct, donor_ids, np.uint32)
+    quant_std_df, quant_df = normalize_expression(expression_df, counts_df,
+                                                  expression_threshold=args.expression_threshold, 
+                                                  count_threshold=args.count_threshold, 
+                                                  min_samples=args.min_samples)
+    print('Save to HDF5 format, full matrix and per tissue data ...', end='', flush=True)
+    prefix = os.path.join(args.output_dir, args.prefix)
+    quant_std_per_tissue = annotate_tissue_data(quant_std_df, args.attributes)
+    quant_per_tissue = annotate_tissue_data(quant_df, args.attributes)
+    expression_per_tissue = annotate_tissue_data(expression_df, args.attributes)
+    counts_per_tissue = annotate_tissue_data(counts_df, args.attributes)
+    quant_std_df.to_hdf(prefix + ".qnorm.std.flat.h5",  'GTExV7', mode = 'w', complevel = 9, complib = 'zlib')
+    quant_df.to_hdf(prefix + ".qnorm.flat.h5", 'GTExV7', mode = 'w', complevel = 9, complib = 'zlib')
+    write_per_tissue_data(quant_per_tissue, prefix + ".qnorm.h5")
+    write_per_tissue_data(quant_std_per_tissue, prefix + ".qnorm.std.h5")
+    write_per_tissue_data(expression_per_tissue, prefix + ".h5")
+    write_per_tissue_data(counts_per_tissue, prefix.replace('rpkm', 'reads') + ".h5")
+    print('done.')</textarea>
+  </div>
 </div>
-</div>
+
 </div>
 
 </div>
@@ -12296,21 +12331,20 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">peer</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/R_peer_source_1.3.tgz&quot;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-<span class="kn">download:</span>
-    <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">downloads</span><span class="o">/</span><span class="n">PMBio</span><span class="o">/</span><span class="n">peer</span><span class="o">/</span><span class="n">R_peer_source_1</span><span class="o">.</span><span class="mf">3.</span><span class="n">tgz</span>
-<span class="kn">run:</span>
-    <span class="n">R</span> <span class="n">CMD</span> <span class="n">INSTALL</span> <span class="n">R_peer_source_1</span><span class="o">.</span><span class="mf">3.</span><span class="n">tgz</span>
-    <span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">R_peer_source_1</span><span class="o">.</span><span class="mf">3.</span><span class="n">tgz</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.52857144em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">[peer]
+output: f"{cwd:a}/R_peer_source_1.3.tgz"
+task: workdir = cwd
+download:
+    https://github.com/downloads/PMBio/peer/R_peer_source_1.3.tgz
+run:
+    R CMD INSTALL R_peer_source_1.3.tgz
+    rm -f R_peer_source_1.3.tgz</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 </div>
@@ -12332,114 +12366,113 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">rnaseq_2</span><span class="p">]</span>
-<span class="c1"># PEER analysis</span>
-<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">)</span>
-<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">paths</span><span class="p">(</span><span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;h5ls {_input[2]} | awk &#39;{{print $1}}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
-<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tissues&#39;</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_covariates.txt&quot;</span><span class="p">,</span> 
-        <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_alpha.txt&quot;</span><span class="p">,</span> 
-        <span class="n">f</span><span class="s2">&quot;{cwd:a}/peer_analysis/{_tissues}_PEER_residuals.txt&quot;</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="kp">queue</span> <span class="o">=</span> <span class="s2">&quot;uchicago_cluster&quot;</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;30:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;8G&quot;</span><span class="p">,</span> <span class="kp">trunk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="kp">trunk_workers</span><span class="o">=</span><span class="mi">1</span>
-<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="s1">&#39;${ }&#39;</span>
-    <span class="n">alphaprior_a</span><span class="o">=</span><span class="mf">0.001</span>
-    <span class="n">alphaprior_b</span><span class="o">=</span><span class="mf">0.01</span>
-    <span class="n">epsprior_a</span><span class="o">=</span><span class="mf">0.1</span>
-    <span class="n">epsprior_b</span><span class="o">=</span><span class="mi">10</span>
-    <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span>
-    <span class="n">use_genes</span> <span class="o">=</span> <span class="mi">10000</span>
-    <span class="n">expr</span><span class="o">.</span><span class="n">h5</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">r</span><span class="p">}</span>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 145.38571443em">
+   <textarea rows="101"
+      class="sos-source" name="SoS">[rnaseq_2]
+# PEER analysis
+depends: R_library('rhdf5'), R_library('peer')
+parameter: tissues = paths(get_output(f"h5ls {_input[2]} | awk '{{print $1}}'").strip().split('\n'))
+input: for_each = ['tissues']
+output: f"{cwd:a}/peer_analysis/{_tissues}_PEER_covariates.txt", 
+        f"{cwd:a}/peer_analysis/{_tissues}_PEER_alpha.txt", 
+        f"{cwd:a}/peer_analysis/{_tissues}_PEER_residuals.txt"
+task: workdir = cwd, queue = "uchicago_cluster", walltime = "30:00:00", cores = 1, mem = "8G", trunk_size=1, trunk_workers=1
+R: expand='${ }'
+    alphaprior_a=0.001
+    alphaprior_b=0.01
+    epsprior_a=0.1
+    epsprior_b=10
+    max_iter=1000
+    use_genes = 10000
+    expr.h5 = ${_input[2]:r}
 
-    <span class="n">library</span><span class="p">(</span><span class="n">peer</span><span class="p">,</span> <span class="n">quietly</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>  <span class="c1"># https://github.com/PMBio/peer</span>
-    <span class="n">library</span><span class="p">(</span><span class="n">rhdf5</span><span class="p">,</span> <span class="n">quietly</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
+    library(peer, quietly=TRUE)  # https://github.com/PMBio/peer
+    library(rhdf5, quietly=TRUE)
 
-    <span class="n">WriteTable</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">.</span><span class="kp">name</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">datafile</span> <span class="o">&lt;-</span> <span class="nb">file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">open</span> <span class="o">=</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
-        <span class="n">on</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">close</span><span class="p">(</span><span class="n">datafile</span><span class="p">))</span>
-        <span class="n">header</span> <span class="o">&lt;-</span> <span class="n">c</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="kp">name</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-        <span class="n">writeLines</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">collapse</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">con</span><span class="o">=</span><span class="n">datafile</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">datafile</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
-    <span class="p">}</span>
+    WriteTable <- function(data, filename, index.name) {
+        datafile <- file(filename, open = "wt")
+        on.exit(close(datafile))
+        header <- c(index.name, colnames(data))
+        writeLines(paste0(header, collapse="\t"), con=datafile, sep="\n")
+        write.table(data, datafile, sep="\t", col.names=FALSE, quote=FALSE)
+    }
 
-    <span class="n">loadTable</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">auto_transpose</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">obj</span> <span class="o">&lt;-</span> <span class="n">h5read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
-      <span class="n">dat</span> <span class="o">&lt;-</span> <span class="n">obj</span><span class="err">$</span><span class="n">block0_values</span>
-      <span class="n">rownames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">obj</span><span class="err">$</span><span class="n">axis0</span>
-      <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">obj</span><span class="err">$</span><span class="n">axis1</span>
-      <span class="k">if</span> <span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">nrow</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">auto_transpose</span><span class="p">)</span> <span class="n">dat</span> <span class="o">&lt;-</span> <span class="n">t</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
-      <span class="k">return</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
-    <span class="p">}</span>
+    loadTable <- function(filename, group, auto_transpose = FALSE) {
+      obj <- h5read(filename, group)
+      dat <- obj$block0_values
+      rownames(dat) <- obj$axis0
+      colnames(dat) <- obj$axis1
+      if (ncol(dat) > nrow(dat) && auto_transpose) dat <- t(dat)
+      return(dat)
+    }
 
-    <span class="n">getNumPeer</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="n">ss</span><span class="o">&lt;</span><span class="mi">150</span><span class="p">)</span> <span class="k">return</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">ceiling</span><span class="p">(</span><span class="n">ss</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)))</span>
-      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">ss</span> <span class="o">&gt;=</span><span class="mi">150</span> <span class="o">&amp;&amp;</span> <span class="n">ss</span> <span class="o">&lt;</span> <span class="mi">250</span><span class="p">)</span> <span class="k">return</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
-      <span class="k">else</span> <span class="k">return</span><span class="p">(</span><span class="mi">35</span><span class="p">)</span>
-    <span class="p">}</span>
+    getNumPeer <- function(ss) {
+      if (ss<150) return (min(15, ceiling(ss / 5)))
+      else if (ss >=150 && ss < 250) return(30)
+      else return(35)
+    }
 
-    <span class="n">whichpart</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">nx</span> <span class="o">&lt;-</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-      <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">nx</span><span class="o">-</span><span class="n">n</span>
-      <span class="n">xp</span> <span class="o">&lt;-</span> <span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="n">p</span><span class="p">)[</span><span class="n">p</span><span class="p">]</span>
-      <span class="n">which</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">xp</span><span class="p">)</span>
-    <span class="p">}</span>
+    whichpart <- function(x, n) {
+      nx <- length(x)
+      p <- nx-n
+      xp <- sort(x, partial=p)[p]
+      which(x > xp)
+    }
 
-    <span class="n">getTopGenes</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">gmat</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">num</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span><span class="p">(</span><span class="n">gmat</span><span class="p">)</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="n">top</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;-</span> <span class="n">whichpart</span><span class="p">(</span><span class="n">total</span><span class="o">.</span><span class="n">expr</span> <span class="o">&lt;-</span> <span class="n">colSums</span><span class="p">(</span><span class="n">gmat</span><span class="p">),</span> <span class="n">num</span><span class="p">)</span>
-            <span class="k">return</span><span class="p">(</span><span class="n">gmat</span><span class="p">[,</span><span class="n">top</span><span class="o">.</span><span class="n">index</span><span class="p">])</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    getTopGenes <- function(gmat, num = 1000) {
+        if (ncol(M) <= num) {
+            return(gmat)
+        } else {
+            top.index <- whichpart(total.expr <- colSums(gmat), num)
+            return(gmat[,top.index])
+        }
+    }
 
-    <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;PEER: loading expression data ... &quot;</span><span class="p">)</span>
-    <span class="c1"># rows are number of samples. columns are number of genes</span>
-    <span class="n">M</span> <span class="o">&lt;-</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">loadTable</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">h5</span><span class="p">,</span> <span class="s2">&quot;/${_tissues}&quot;</span><span class="p">))</span>
-    <span class="n">M</span> <span class="o">&lt;-</span> <span class="n">getTopGenes</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">use_genes</span><span class="p">)</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">getNumPeer</span><span class="p">(</span><span class="n">nrow</span><span class="p">(</span><span class="n">M</span><span class="p">))</span>
-    <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;done.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    cat("PEER: loading expression data ... ")
+    # rows are number of samples. columns are number of genes
+    M <- as.matrix(loadTable(expr.h5, "/${_tissues}"))
+    M <- getTopGenes(M, use_genes)
+    n = getNumPeer(nrow(M))
+    cat("done.\n")
 
-    <span class="c1"># run PEER</span>
-    <span class="n">cat</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;PEER: estimating hidden confounders (&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s2">&quot; for tissue &quot;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_tissues</span><span class="p">:</span><span class="n">r</span><span class="p">}</span> <span class="p">,</span> <span class="s2">&quot;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
-    <span class="n">model</span> <span class="o">&lt;-</span> <span class="n">PEER</span><span class="p">()</span>
-    <span class="n">invisible</span><span class="p">(</span><span class="n">PEER_setNk</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
-    <span class="n">invisible</span><span class="p">(</span><span class="n">PEER_setPhenoMean</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">M</span><span class="p">))</span>
-    <span class="n">invisible</span><span class="p">(</span><span class="n">PEER_setPriorAlpha</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">alphaprior_a</span><span class="p">,</span> <span class="n">alphaprior_b</span><span class="p">))</span>
-    <span class="n">invisible</span><span class="p">(</span><span class="n">PEER_setPriorEps</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">epsprior_a</span><span class="p">,</span> <span class="n">epsprior_b</span><span class="p">))</span>
-    <span class="n">invisible</span><span class="p">(</span><span class="n">PEER_setNmax_iterations</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">))</span>
-    <span class="c1"># if(!is.null(covs)) {</span>
-    <span class="c1">#   invisible(PEER_setCovariates(model, covs))</span>
-    <span class="c1"># }</span>
-    <span class="n">time</span> <span class="o">&lt;-</span> <span class="n">system</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="n">PEER_update</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
+    # run PEER
+    cat(paste0("PEER: estimating hidden confounders (", n, " for tissue ", ${_tissues:r} , ")\n"))
+    model <- PEER()
+    invisible(PEER_setNk(model, n))
+    invisible(PEER_setPhenoMean(model, M))
+    invisible(PEER_setPriorAlpha(model, alphaprior_a, alphaprior_b))
+    invisible(PEER_setPriorEps(model,epsprior_a, epsprior_b))
+    invisible(PEER_setNmax_iterations(model, max_iter))
+    # if(!is.null(covs)) {
+    #   invisible(PEER_setCovariates(model, covs))
+    # }
+    time <- system.time(PEER_update(model))
 
-    <span class="n">X</span> <span class="o">&lt;-</span> <span class="n">PEER_getX</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>  <span class="c1"># samples x PEER factors</span>
-    <span class="n">A</span> <span class="o">&lt;-</span> <span class="n">PEER_getAlpha</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>  <span class="c1"># PEER factors x 1</span>
-    <span class="n">R</span> <span class="o">&lt;-</span> <span class="n">t</span><span class="p">(</span><span class="n">PEER_getResiduals</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>  <span class="c1"># genes x samples</span>
+    X <- PEER_getX(model)  # samples x PEER factors
+    A <- PEER_getAlpha(model)  # PEER factors x 1
+    R <- t(PEER_getResiduals(model))  # genes x samples
 
-    <span class="c1"># add relevant row/column names</span>
-    <span class="n">c</span> <span class="o">&lt;-</span> <span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;InferredCov&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
-    <span class="n">rownames</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">rownames</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
-    <span class="n">colnames</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">c</span>
-    <span class="n">rownames</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">c</span>
-    <span class="n">colnames</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="s2">&quot;Alpha&quot;</span>
-    <span class="n">A</span> <span class="o">&lt;-</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-    <span class="n">A</span><span class="err">$</span><span class="n">Relevance</span> <span class="o">&lt;-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">A</span><span class="err">$</span><span class="n">Alpha</span>
-    <span class="n">rownames</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">colnames</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
-    <span class="n">colnames</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">rownames</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+    # add relevant row/column names
+    c <- paste0("InferredCov",1:ncol(X))
+    rownames(X) <- rownames(M)
+    colnames(X) <- c
+    rownames(A) <- c
+    colnames(A) <- "Alpha"
+    A <- as.data.frame(A)
+    A$Relevance <- 1.0 / A$Alpha
+    rownames(R) <- colnames(M)
+    colnames(R) <- rownames(M)
 
-    <span class="c1"># write results</span>
-    <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;PEER: writing results ... &quot;</span><span class="p">)</span>
-    <span class="n">WriteTable</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>  <span class="c1"># format(X, digits=6)</span>
-    <span class="n">WriteTable</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>
-    <span class="n">WriteTable</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">r</span><span class="p">},</span> <span class="s2">&quot;ID&quot;</span><span class="p">)</span>
-    <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;done.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-
+    # write results
+    cat("PEER: writing results ... ")
+    WriteTable(t(X), ${_output[0]:r}, "ID")  # format(X, digits=6)
+    WriteTable(A, ${_output[1]:r}, "ID")
+    WriteTable(R, ${_output[2]:r}, "ID")
+    cat("done.\n")</textarea>
+  </div>
 </div>
-</div>
+
 </div>
 
 </div>
@@ -12460,14 +12493,13 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">rnaseq</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.5285714300000004em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%sosrun rnaseq</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 </div>
@@ -12545,6 +12577,594 @@ function sortDataFrame(id, n, dtype) {
     }
 }
 
+</script>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+<script>
+    /**
+ * Copyright (c) Bo Peng and UT MD Anderson Cancer Center
+ * Distributed under the terms of the Modified BSD License.
+ **/
+
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("codemirror/lib/codemirror"),
+      require("codemirror/mode/python/python"),
+      require("codemirror/mode/r/r"),
+      require("codemirror/mode/octave/octave"),
+      require("codemirror/mode/ruby/ruby"),
+      require("codemirror/mode/sas/sas"),
+      require("codemirror/mode/javascript/javascript"),
+      require("codemirror/mode/shell/shell"),
+      require("codemirror/mode/julia/julia"),
+      require("codemirror/mode/markdown/markdown"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["codemirror/lib/codemirror", "codemirror/mode/python/python",
+      "codemirror/mode/markdown/markdown", "codemirror/mode/r/r"
+    ], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  "use strict";
+
+  var sosKeywords = ["input", "output", "depends", "parameter"];
+  var sosActionWords = ["script", "download", "run", "bash", "sh", "csh",
+    "tcsh", "zsh", "python", "python2", "python3", "R", "node", "julia",
+    "matlab", "octave", "ruby", "perl", "report", "pandoc", "docker_build",
+    "Rmarkdown"
+  ];
+  var sosMagicWords = ['cd', 'capture', 'clear', 'debug', 'dict', 'expand', 'get',
+    'matplotlib', 'paste', 'preview', 'pull', 'push', 'put', 'render',
+    'rerun', 'run', 'save', 'sandbox', 'set', 'sessioninfo', 'sosrun',
+    'sossave', 'shutdown', 'taskinfo', 'tasks', 'toc', 'use', 'with'
+  ]
+  var sosFunctionWords = ["sos_run", "logger", "get_output"];
+
+  var hintWords = sosKeywords.concat(sosActionWords).concat(sosFunctionWords)
+    .concat(sosMagicWords);
+
+  var sosDirectives = sosKeywords.map(x => x + ":");
+  var sosActions = sosActionWords.map(x => x + ":");
+  var sosMagics = sosMagicWords.map(x => '%' + x);
+
+  // hint word for SoS mode
+  CodeMirror.registerHelper("hintWords", "sos", hintWords);
+
+  var modeMap = {
+    'sos': null,
+    'python': {
+      name: 'python',
+      version: 3
+    },
+    'python2': {
+      name: 'python',
+      version: 2
+    },
+    'python3': {
+      name: 'python',
+      version: 3
+    },
+    'r': 'r',
+    'report': 'markdown',
+    'pandoc': 'markdown',
+    'download': 'markdown',
+    'markdown': 'markdown',
+    'ruby': 'ruby',
+    'sas': 'sas',
+    'bash': 'shell',
+    'sh': 'shell',
+    'julia': 'julia',
+    'run': 'shell',
+    'javascript': 'javascript',
+    'typescript': {
+      name: "javascript",
+      typescript: true
+    },
+    'octave': 'octave',
+    'matlab': 'octave',
+  }
+
+  function findMode(mode) {
+    if (mode in modeMap) {
+      return modeMap[mode];
+    }
+    return null;
+  }
+
+  function markExpr(python_mode) {
+    return {
+      startState: function() {
+        return {
+          in_python: false,
+          sigil: null,
+          matched: true,
+          python_state: CodeMirror.startState(python_mode),
+        };
+      },
+
+      copyState: function(state) {
+        return {
+          in_python: state.in_python,
+          sigil: state.sigil,
+          matched: state.matched,
+          python_state: CodeMirror.copyState(python_mode, state.python_state)
+        };
+      },
+
+      token: function(stream, state) {
+        if (state.in_python) {
+          if (stream.match(state.sigil.right)) {
+            state.in_python = false;
+            state.python_state = CodeMirror.startState(python_mode);
+            return "sos-sigil";
+          }
+          let it = null;
+          try {
+            it = python_mode.token(stream, state.python_state);
+          } catch (error) {
+            return "sos-interpolated error" + (state.matched ? "" : " sos-unmatched");
+          }
+          if (it == 'variable' || it == 'builtin') {
+            let ct = stream.current();
+            // warn users in the use of input and output in {}
+            if (ct === 'input' || ct === 'output')
+              it += ' error';
+          }
+          return (it ? ("sos-interpolated " + it) : "sos-interpolated") + (state.matched ? "" : " sos-unmatched");
+        } else {
+          // remove the double brace case, the syntax highlighter
+          // does not have to worry (highlight) }}, although it would
+          // probably mark an error for single }
+          if (state.sigil.left === '{' && stream.match(/\{\{/))
+            return null;
+          if (stream.match(state.sigil.left)) {
+            state.in_python = true;
+            // let us see if there is any right sigil till the end of the editor.
+            try {
+              let rest = stream.string.slice(stream.pos);
+              if (!rest.includes(state.sigil.right)) {
+                state.matched = false;
+                for (let idx = 1; idx < 5; ++idx) {
+                  if (stream.lookAhead(idx).includes(state.sigil.right)) {
+                    state.matched = true;
+                    break;
+                  }
+                }
+              }
+            } catch (error) {
+              // only codemirror 5.27.0 supports this function
+            }
+            return "sos-sigil" + (state.matched ? "" : " sos-unmatched");
+          }
+          while (stream.next() && !stream.match(state.sigil.left, false)) {}
+          return null;
+        }
+      }
+    }
+  }
+
+  CodeMirror.defineMode("sos", function(conf, parserConf) {
+    let sosPythonConf = {};
+    for (let prop in parserConf) {
+      if (parserConf.hasOwnProperty(prop)) {
+        sosPythonConf[prop] = parserConf[prop];
+      }
+    }
+    sosPythonConf.name = 'python';
+    sosPythonConf.version = 3;
+    sosPythonConf.extra_keywords = sosActionWords.concat(sosFunctionWords);
+    // this is the SoS flavored python mode with more identifiers
+    var base_mode = null;
+    if ('base_mode' in parserConf && parserConf.base_mode && parserConf.base_mode !== 'sos' && parserConf.base_mode !== 'SoS') {
+      let mode = findMode(parserConf.base_mode.toLowerCase());
+      if (mode) {
+        base_mode = CodeMirror.getMode(conf, mode);
+      } else {
+        console.log(`No base mode is found for ${parserConf.base_mode}. Python mode used.`);
+      }
+    } else if ('base_mode' in conf && conf.base_mode && conf.base_mode !== 'sos' && conf.base_mode !== 'SoS') {
+      let mode = findMode(conf.base_mode.toLowerCase());
+      if (mode) {
+        base_mode = CodeMirror.getMode(conf, mode);
+      } else {
+        console.log(`No base mode is found for ${conf.base_mode}. Python mode used.`);
+      }
+    }
+    // if there is a user specified base mode, this is the single cell mode
+    if (base_mode) {
+      var python_mode = CodeMirror.getMode({}, {
+        name: 'python',
+        version: 3
+      });
+      var overlay_mode = markExpr(python_mode);
+      return {
+        startState: function() {
+          return {
+            sos_mode: true,
+            base_state: CodeMirror.startState(base_mode),
+            overlay_state: CodeMirror.startState(overlay_mode),
+            // for overlay
+            basePos: 0,
+            baseCur: null,
+            overlayPos: 0,
+            overlayCur: null,
+            streamSeen: null
+          };
+        },
+
+        copyState: function(state) {
+          return {
+            sos_mode: state.sos_mode,
+            base_state: CodeMirror.copyState(base_mode, state.base_state),
+            overlay_state: CodeMirror.copyState(overlay_mode, state.overlay_state),
+            // for overlay
+            basePos: state.basePos,
+            baseCur: null,
+            overlayPos: state.overlayPos,
+            overlayCur: null
+          };
+        },
+
+        token: function(stream, state) {
+          if (state.sos_mode) {
+            if (stream.sol()) {
+              let sl = stream.peek();
+              if (sl == '!') {
+                stream.skipToEnd();
+                return "meta";
+              } else if (sl == '#') {
+                stream.skipToEnd();
+                return 'comment'
+              }
+              for (var i = 0; i < sosMagics.length; i++) {
+                if (stream.match(sosMagics[i])) {
+                  if (sosMagics[i] === "%expand") {
+                    if (stream.eol() || stream.match(/\s*$/, false)) {
+                      state.overlay_state.sigil = {
+                        'left': '{',
+                        'right': '}'
+                      }
+                    } else {
+                      let found = stream.match(/\s+(\S+)\s+(\S+)$/, false);
+                      if (found) {
+                        state.overlay_state.sigil = {
+                          'left': found[1],
+                          'right': found[2]
+                        }
+                      } else {
+                        state.overlay_state.sigil = null;
+                      }
+                    }
+                  }
+                  // the rest of the lines will be processed as Python code
+                  return "meta";
+                }
+              }
+              state.sos_mode = false;
+            } else {
+              stream.skipToEnd();
+              return null;
+            }
+          }
+
+          if (state.overlay_state.sigil) {
+            if (stream != state.streamSeen ||
+              Math.min(state.basePos, state.overlayPos) < stream.start) {
+              state.streamSeen = stream;
+              state.basePos = state.overlayPos = stream.start;
+            }
+
+            if (stream.start == state.basePos) {
+              state.baseCur = base_mode.token(stream, state.base_state);
+              state.basePos = stream.pos;
+            }
+            if (stream.start == state.overlayPos) {
+              stream.pos = stream.start;
+              state.overlayCur = overlay_mode.token(stream, state.overlay_state);
+              state.overlayPos = stream.pos;
+            }
+            stream.pos = Math.min(state.basePos, state.overlayPos);
+
+            // state.overlay.combineTokens always takes precedence over combine,
+            // unless set to null
+            return state.overlayCur ? state.overlayCur : state.baseCur;
+          } else {
+            return base_mode.token(stream, state.base_state);
+          }
+        },
+
+        indent: function(state, textAfter) {
+          // inner indent
+          if (!state.sos_mode) {
+            if (!base_mode.indent) return CodeMirror.Pass;
+            return base_mode.indent(state.base_state, textAfter);
+          } else {
+            // sos mode has no indent
+            return 0;
+          }
+        },
+
+        innerMode: function(state) {
+          return state.sos_mode ? {
+            state: state.base_state,
+            mode: base_mode
+          } : null;
+        },
+
+        lineComment: "#",
+        fold: "indent"
+      };
+    } else {
+      // this is SoS mode
+      base_mode = CodeMirror.getMode(conf, sosPythonConf);
+      overlay_mode = markExpr(base_mode);
+      return {
+        startState: function() {
+          return {
+            sos_state: null,
+            base_state: CodeMirror.startState(base_mode),
+            overlay_state: CodeMirror.startState(overlay_mode),
+            inner_mode: null,
+            inner_state: null,
+            // for overlay
+            basePos: 0,
+            baseCur: null,
+            overlayPos: 0,
+            overlayCur: null,
+            streamSeen: null
+          };
+        },
+
+        copyState: function(state) {
+          return {
+            sos_state: state.sos_state,
+            base_state: CodeMirror.copyState(base_mode, state.base_state),
+            overlay_state: CodeMirror.copyState(overlay_mode, state.overlay_state),
+            inner_mode: state.inner_mode,
+            inner_state: state.inner_mode && CodeMirror.copyState(state.inner_mode, state.inner_state),
+            // for overlay
+            basePos: state.basePos,
+            baseCur: null,
+            overlayPos: state.overlayPos,
+            overlayCur: null
+          };
+        },
+
+        token: function(stream, state) {
+          if (stream.sol()) {
+            let sl = stream.peek();
+            if (sl == '[') {
+              // header, move to the end
+              if (stream.match(/^\[.*\]$/, false)) {
+                // if there is no :, the easy case
+                if (stream.match(/^\[[^:]*\]$/)) {
+                  // reset state
+                  state.sos_state = null;
+                  state.inner_mode = null;
+                  return "header line-section-header";
+                } else {
+                  // match up to :
+                  stream.match(/^\[[^:]*:/);
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                }
+              }
+            } else if (sl == '!') {
+              stream.eatWhile(/\S/);
+              return "meta";
+            } else if (sl == '#') {
+              stream.skipToEnd();
+              return "comment";
+            } else if (sl == '%') {
+              stream.eatWhile(/\S/);
+              return "meta";
+            } else if (state.sos_state && state.sos_state.startsWith('entering')) {
+              // the second parameter is starting column
+              let mode = findMode(state.sos_state.slice(9).toLowerCase());
+              state.inner_mode = CodeMirror.getMode(conf, mode);
+              state.inner_state = CodeMirror.startState(state.inner_mode, stream.indentation());
+              state.sos_state = null;
+            }
+            for (var i = 0; i < sosDirectives.length; i++) {
+              if (stream.match(sosDirectives[i])) {
+                // the rest of the lines will be processed as Python code
+                state.sos_state = 'directive_option'
+                return "keyword strong";
+              }
+            }
+            for (var i = 0; i < sosActions.length; i++) {
+              if (stream.match(sosActions[i])) {
+                // switch to submode?
+                if (stream.eol()) {
+                  // really
+                  let mode = findMode(stream.current().slice(0, -1).toLowerCase());
+                  if (mode) {
+                    state.sos_state = "entering " + stream.current().slice(0, -1);
+                  } else {
+                    state.sos_state = 'unknown_language';
+                  }
+                } else {
+                  state.sos_state = 'start ' + stream.current().slice(0, -1);
+                }
+                state.overlay_state.sigil = null;
+                return "builtin strong";
+              }
+            }
+            // if unknown action
+            if (stream.match(/\w+:/)) {
+              state.overlay_state.sigil = null;
+              state.sos_state = 'start ' + stream.current().slice(0, -1);
+              return "builtin strong";
+            }
+          } else if (state.sos_state == 'header_option') {
+            // stuff after :
+            if (stream.peek() == ']') {
+              // move next
+              stream.next();
+              // ] is the last char
+              if (stream.eol()) {
+                state.sos_state = null;
+                state.inner_mode = null;
+                return "header line-section-header";
+              } else {
+                stream.backUp(1);
+                let it = base_mode.token(stream, state.base_state);
+                return it ? it + ' sos-option' : null;
+              }
+            } else {
+              let it = base_mode.token(stream, state.base_state);
+              return it ? it + ' sos-option' : null;
+            }
+          } else if (state.sos_state == 'directive_option') {
+            // stuff after input:, R: etc
+            if (stream.peek() == ',') {
+              // move next
+              stream.next();
+              // , is the last char, continue option line
+              if (stream.eol()) {
+                stream.backUp(1);
+                let it = base_mode.token(stream, state.base_state);
+                return it ? it + ' sos-option' : null;
+              }
+              stream.backUp(1);
+            } else if (stream.eol()) {
+              // end of line stops option mode
+              state.sos_state = null;
+              state.inner_mode = null;
+            }
+            let it = base_mode.token(stream, state.base_state);
+            return it ? it + ' sos-option' : null;
+          } else if (state.sos_state && state.sos_state.startsWith("start ")) {
+            // try to understand option expand=
+            if (stream.match(/expand\s*=\s*True/, false)) {
+              // highlight {}
+              state.overlay_state.sigil = {
+                'left': '{',
+                'right': '}'
+              }
+            } else {
+              let found = stream.match(/expand\s*=\s*"(\S+) (\S+)"/, false);
+              if (!found)
+                found = stream.match(/expand\s*=\s*'(\S+) (\S+)'/, false);
+              if (found) {
+                state.overlay_state.sigil = {
+                  'left': found[1],
+                  'right': found[2]
+                }
+              }
+            }
+            let token = base_mode.token(stream, state.base_state);
+            // if it is end of line, ending the starting switch mode
+            if (stream.eol() && stream.peek() !== ',') {
+              // really
+              let mode = findMode(state.sos_state.slice(6).toLowerCase());
+              if (mode) {
+                state.sos_state = "entering " + state.sos_state.slice(6);
+              } else {
+                state.sos_state = 'unknown_language';
+              }
+            }
+            return token + ' sos-option';
+          }
+          // can be start of line but not special
+          if (state.sos_state == 'unknown_language') {
+            // we still handle {} in no man unknown_language
+            if (state.overlay_state.sigil) {
+              return overlay_mode.token(stream, state.overlay_state);
+            } else {
+              stream.skipToEnd();
+              return null;
+            }
+          } else if (state.inner_mode) {
+            let it = 'sos_script ';
+            if (!state.overlay_state.sigil) {
+              let st = state.inner_mode.token(stream, state.inner_state);
+              return st ? it + st : null;
+            } else {
+              // overlay mode, more complicated
+              if (stream != state.streamSeen ||
+                Math.min(state.basePos, state.overlayPos) < stream.start) {
+                state.streamSeen = stream;
+                state.basePos = state.overlayPos = stream.start;
+              }
+
+              if (stream.start == state.basePos) {
+                state.baseCur = state.inner_mode.token(stream, state.inner_state);
+                state.basePos = stream.pos;
+              }
+              if (stream.start == state.overlayPos) {
+                stream.pos = stream.start;
+                state.overlayCur = overlay_mode.token(stream, state.overlay_state);
+                state.overlayPos = stream.pos;
+              }
+              stream.pos = Math.min(state.basePos, state.overlayPos);
+              // state.overlay.combineTokens always takes precedence over combine,
+              // unless set to null
+              return (state.overlayCur ? state.overlayCur : state.baseCur) + " sos-script";
+            }
+          } else {
+            return base_mode.token(stream, state.base_state);
+          }
+        },
+
+        indent: function(state, textAfter) {
+          // inner indent
+          if (state.inner_mode) {
+            if (!state.inner_mode.indent) return CodeMirror.Pass;
+            return state.inner_mode.indent(state.inner_mode, textAfter) + 2;
+          } else {
+            return base_mode.indent(state.base_state, textAfter);
+          }
+        },
+
+        innerMode: function(state) {
+          return state.inner_mode ? null : {
+            state: state.base_state,
+            mode: base_mode
+          };
+        },
+
+        lineComment: "#",
+        fold: "indent",
+        electricInput: /^\s*[\}\]\)]$/,
+      };
+    };
+  }, "python");
+
+  CodeMirror.defineMIME("text/x-sos", "sos");
+});
+</script>
+<script>
+    function highlight_cells(cells, i, interval) {
+        setTimeout(function() {
+            var editor = CodeMirror.fromTextArea(cells[i], {
+                lineNumbers: false,
+                styleActiveLine: true,
+                matchBrackets: true,
+                readOnly: true,
+                mode: 'sos',
+                base_mode: cells[i].name,
+            });
+            $(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>"
+					       + cells[i].name + "</option></select>");
+            if (i < cells.length)
+                highlight_cells(cells, i + 1, interval);
+        }, interval);
+    }
+
+    highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
 </script>
 
 
