@@ -7,7 +7,6 @@ run:
 
 [convert-documentation]
 input:  '../src/documentation/*.ipynb', group_by=1
-depends: '../src/documentation/toc_doc.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
@@ -16,7 +15,6 @@ run: expand='${ }'
 
 [convert-tutorials]
 input:  '../src/tutorials/*.ipynb', group_by=1
-depends: '../src/tutorials/toc_tut.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
@@ -29,7 +27,7 @@ output: f"../{_input:bn}.html"
 
 run: expand=True
 	cd ../src/tutorials
-	sos convert {_input:a} {_output:a} --template basic
+	sos convert {_input:a} {_output:a} 
 
 [convert-example-scripts]
 input:  '../src/examples/*.sos', 'update-website', group_by=1
@@ -37,7 +35,7 @@ output: f"../doc/examples/{_input:bn}.html"
 
 run: workdir='../doc/examples', expand=True
 	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --raw {_input:b} --lineno --style default
+	sos convert {_input:b} {_output:b} --raw {_input:b} 
 
 [convert-example-notebooks]
 input:  '../src/examples/*.ipynb', group_by=1
@@ -45,7 +43,7 @@ output: f"../doc/examples/{_input:bn}.html"
 
 run: workdir='../doc/examples', expand=True
 	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --template sos-full
+	sos convert {_input:b} {_output:b} --template sos-cm
 
 [convert-example-report]
 input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/RNASeqDE.ipynb', 
