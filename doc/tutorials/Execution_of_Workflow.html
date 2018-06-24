@@ -12174,7 +12174,25 @@ input: 'a.txt'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>dryrun</code> mode is used to check for syntax errors of a SoS script without actually executing any of the actions. It can be specified with option <code>-n</code>. For example, running the following script in dryrun mode would produce an error message</p>
+<p>The <code>dryrun</code> mode is used to check for errors of 
+SoS workflows without actually executing any of the actions and tasks. It can be specified with option <code>-n</code> to command <code>run</code> (<code>sos run -n</code>, <code>sos-runner -n</code>) or with subcommand <code>dryrun</code> (<code>sos dryrun</code>).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Checking-syntax-error">Checking syntax error<a class="anchor-link" href="#Checking-syntax-error">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first use of dryrun mode is to check syntax error of scripts. For example, the following script yields an error because the header of the step is wrong (should use <code>:</code> instead of <code>,</code>).</p>
 
 </div>
 </div>
@@ -12184,7 +12202,7 @@ input: 'a.txt'
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
       class="sos-source" name="SoS">%sandbox --expect-error
@@ -12227,8 +12245,7 @@ Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>because the header of the step is wrong (should use <code>:</code> instead of <code>,</code>).</p>
-
+<h3 id="Print-instead-of-execute-scripts">Print instead of execute scripts<a class="anchor-link" href="#Print-instead-of-execute-scripts">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12236,7 +12253,8 @@ Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The dryrun mode would print the commands in a script without actually executing them:</p>
+<p>Script-executing actions such as <code>run</code>, <code>sh</code>, and <code>python</code> does not execute the scripts in dryrun mode. In stead, they will print the script with the command to execute them. This usage allows you to check if the scripts are interpolated correctly, or even executing them outside of SoS.</p>
+<p>For example, the following script will print the expanded version of the scripts to be executed:</p>
 
 </div>
 </div>
@@ -12246,14 +12264,20 @@ Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
-   <textarea rows="5"
-      class="sos-source" name="SoS">%run -n
-[10: skip=False]
-sh:
-   echo "I am command echo"
-   sleep 100000000</textarea>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">!rm -f test*.txt
+%run -n
+
+[10]
+input: for_each={'i': (1, 2)}
+output: f'test_{i}.txt'
+sh: expand=True
+  sleep {100*i}
+  echo "Generating {_output}"
+  touch {_output}
+                 </textarea>
   </div>
 </div>
 
@@ -12269,13 +12293,439 @@ sh:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/bin/sh:
-echo &#34;I am command echo&#34;
-sleep 100000000
+<pre>/bin/sh SCRIPT:
+sleep 100
+echo &#34;Generating test_1.txt&#34;
+touch test_1.txt
+
+
+/bin/sh SCRIPT:
+sleep 200
+echo &#34;Generating test_2.txt&#34;
+touch test_2.txt
 
 
 </pre>
 </div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The output files does not exist after the execution of the workflow.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!ls test*.txt</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls: test*.txt: No such file or directory
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is worth noting, however, that sos executes Python statements in steps as usual so your workflow will appear to be executed normally if you do not use actions.</p>
+<p>For example, if you implement your steps in Python and include them directly, the step will be executed</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">!rm -f test*.txt
+%run -n
+
+[10]
+input: for_each={'i': (1, 2)}
+output: f'test_{i}.txt'
+print("Generating {_output}")
+_output.touch()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Generating {_output}
+Generating {_output}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the output files will be generated:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!ls test*.txt</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>test_1.txt test_2.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Generation-of-placeholder-files">Generation of placeholder files<a class="anchor-link" href="#Generation-of-placeholder-files">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another consequence of running workflows in dryrun mode is that SoS generates empty placeholder files during dryrun and remove them afterwards. This allows the workflows to be executed "normally" because the execution of the next steps might depend on the existence of the output files.</p>
+<p>For example, when running in dryrun mode, the following script will be executed "normally". The <code>_input</code> files (which are the output of step 10) could be opened at step 20, but the content would be empty:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">!rm -f test*.txt
+%run -n
+
+[10]
+input: for_each={'i': (1, 2)}
+output: f'test_{i}.txt'
+sh: expand=True
+  echo "Generating {_output}" > {_output}
+  
+[20]
+input: group_by=1
+output: f'{_input}.bak'
+print(f'Content of {_input}:')
+with open(_input) as ifile:
+    print(ifile.read())
+sh: expand=True
+  cp {_input} {_output}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/bin/sh SCRIPT:
+echo &#34;Generating test_1.txt&#34; &gt; test_1.txt
+
+
+
+/bin/sh SCRIPT:
+echo &#34;Generating test_2.txt&#34; &gt; test_2.txt
+
+
+
+Content of test_1.txt:
+
+/bin/sh SCRIPT:
+cp test_1.txt test_1.txt.bak
+
+
+Content of test_2.txt:
+
+/bin/sh SCRIPT:
+cp test_2.txt test_2.txt.bak
+
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>test_1.txt</code> and <code>test_2.txt</code> would be generated normally in run mode:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%rerun</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Content of test_1.txt:
+Generating test_1.txt
+
+Content of test_2.txt:
+Generating test_2.txt
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The placeholder files are removed automatically after the execution of the workflow in dryrun mode. However, if you interrupt a script running in dryrun mode, some placeholder files might remain and interfere with the execution of workflows. In this case, you can use command</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!sos remove --placeholders</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>INFO: No remaining placeholder file exists.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>to remove such files. A shorter form of this command is <code>sos remove -p</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="External-tasks">External tasks<a class="anchor-link" href="#External-tasks">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>External tasks are executed in <code>dryrun</code> mode as follows:</p>
+<ol>
+<li>Only task from the first substep will be generated and submitted.</li>
+<li>The task will be submitted to remote hosts as usual, with input files synchronized to remote host if needed. This allows you to test if the remote hosts are accessible.</li>
+<li>The task will be executed in <code>dryrun</code> mode, and will print instead of execute the scripts defined in actions.</li>
+</ol>
+<p>For example, although step <code>10</code> of the following workflow has 100 substeps, only the first task will be generated and executed in dryrun mode.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">%run -n
+
+[10]
+input: for_each={'i': range(2)}
+output: f'test_{i}.txt'
+task:
+sh: expand=True
+  echo "Generating {_output}" > {_output}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table id="table_localhost_a41594c317f2ce2e" class="task_table"><tr style="border: 0px">
+                        <td style="border: 0px">
+                        <i id="status_localhost_a41594c317f2ce2e"
+                            class="fa fa-2x fa-fw fa-square-o"
+                            onmouseover="$('#status_localhost_a41594c317f2ce2e').addClass('fa-stop task_hover').removeClass('fa-square-o')"
+                            onmouseleave="$('#status_localhost_a41594c317f2ce2e').addClass('fa-square-o').removeClass('fa-stop task_hover')"
+                            onclick="kill_task('a41594c317f2ce2e', 'localhost')"
+                        ></i> </td>
+                        <td style="border:0px"><a onclick="task_info('a41594c317f2ce2e', 'localhost')"><pre>a41594c317f2ce2e</pre></a></td>
+                        <td style="border:0px">&nbsp;</td>
+                        <td style="border:0px;text-align=right;">
+                        <pre><time id="duration_localhost_a41594c317f2ce2e" class="pending" datetime="1529819823704.5332">0 sec</time></pre></td>
+                        </tr>
+                        </table>
+</div>
+
 </div>
 
 </div>
