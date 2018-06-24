@@ -12054,6 +12054,69 @@ $(document).ready(function() {
 </div>
 </div>
 </div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%revisions</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><span class="revision_id">8dccbc9<span></td>
+<td>Bo Peng</td>
+<td>2018-06-11</td>
+<td>Update tutorials on docker</td></tr><tr><td><span class="revision_id">bd54b04<span></td>
+<td>Bo Peng</td>
+<td>2018-05-29</td>
+<td>Minor update to docker doc</td></tr><tr><td><span class="revision_id">a677605<span></td>
+<td>Bo Peng</td>
+<td>2018-05-29</td>
+<td>Fix new lines in pexpect output vatlab/sos-notebook#82</td></tr><tr><td><span class="revision_id">dd1d51e<span></td>
+<td>Bo Peng</td>
+<td>2018-05-29</td>
+<td>Update docker tutorial</td></tr><tr><td><span class="revision_id">e6d96bb<span></td>
+<td>Bo Peng</td>
+<td>2018-05-29</td>
+<td>Update docker guide</td></tr><tr><td><span class="revision_id">0a5dddc<span></td>
+<td>Bo Peng</td>
+<td>2017-10-05</td>
+<td>Move sos docs from sos to sos-docs repository</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12151,7 +12214,15 @@ ruby: docker_image='ruby'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Building-docker-image-(action-docker_build)">Building docker-image (action <code>docker_build</code>)<a class="anchor-link" href="#Building-docker-image-(action-docker_build)">&#182;</a></h2>
+<h2 id="Building-docker-images">Building docker images<a class="anchor-link" href="#Building-docker-images">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Action-docker_build-">Action <code>docker_build</code> <a id="docker_build" /><a class="anchor-link" href="#Action-docker_build-">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12187,15 +12258,25 @@ ruby: docker_image='ruby'
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[2]:</div>
+<div class="prompt"></div>
 
 
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Sending build context to Docker daemon  2.048kB
+Step 1/1 : FROM ubuntu:14.04
+14.04: Pulling from library/ubuntu
 
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0</pre>
+aceaff9b: Pulling fs layer 
+0055f2f8: Pulling fs layer 
+585ef8b8: Pulling fs layer 
+bb9f3ad2: Pulling fs layer 
+Digest: sha256:885bb6705b01d99544ddb98cbe4e4555d1efe1d052cef90832e72a0688ac6b37
+Status: Downloaded newer image for ubuntu:14.04
+ ---&gt; 578c3e61a98c
+Successfully built 578c3e61a98c
+Successfully tagged test_docker:latest
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -12264,7 +12345,125 @@ ruby: docker_image='ruby'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Customized-working-directory-(workdir-and-docker_workdir)">Customized working directory (<code>workdir</code> and <code>docker_workdir</code>)<a class="anchor-link" href="#Customized-working-directory-(workdir-and-docker_workdir)">&#182;</a></h2>
+<h3 id="Docker-build-options">Docker build options<a class="anchor-link" href="#Docker-build-options">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Action <code>docker_build</code> accepts usual SoS action options such as <code>workdir</code>, <code>stdout</code>, and <code>stderr</code>. For example, you can suppress the output of the action using options <code>stdout=False</code> and/or <code>stderr=False</code>:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">docker_build: tag='test_docker', stdout=False
+  FROM ubuntu:14.04</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre></pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This action also accepts all options to command <code>docker build</code>, as listed in the <a href="https://docs.docker.com/engine/reference/commandline/build/">docker build documentation</a>. Only the long format of the option names are accepted (e.g. <code>--memory</code> is acceptable but not <code>-m</code>). Option names containing hyphens (e.g. <code>disable-content-trust</code>) should have hyphens relaced with underscores. Boolean options should be specified as <code>name=True</code>.</p>
+<p>For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">docker_build: tag='test_docker', label='test image',
+  compress=True, no_cache=True, memory='2G'
+
+  FROM ubuntu:14.04</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Sending build context to Docker daemon     126B
+Step 1/2 : FROM ubuntu:14.04
+ ---&gt; 578c3e61a98c
+Step 2/2 : LABEL &#34;test image&#34;=&#39;&#39;
+ ---&gt; Running in ab9109a9d48e
+Removing intermediate container ab9109a9d48e
+ ---&gt; 05ecbf17492e
+Successfully built 05ecbf17492e
+Successfully tagged test_docker:latest
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Running-docker-images">Running docker images<a class="anchor-link" href="#Running-docker-images">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Customized-working-directory-(workdir-and-docker_workdir)">Customized working directory (<code>workdir</code> and <code>docker_workdir</code>)<a class="anchor-link" href="#Customized-working-directory-(workdir-and-docker_workdir)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12445,7 +12644,7 @@ sh: docker_image='test_docker_workdir', docker_workdir='/home/random_user'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Sharing-of-input-and-output-files-(volumes)">Sharing of input and output files (<code>volumes</code>)<a class="anchor-link" href="#Sharing-of-input-and-output-files-(volumes)">&#182;</a></h2>
+<h3 id="Sharing-of-input-and-output-files-(volumes)">Sharing of input and output files (<code>volumes</code>)<a class="anchor-link" href="#Sharing-of-input-and-output-files-(volumes)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12761,7 +12960,7 @@ sh:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Customize-user-and-group-ID-(user)">Customize user and group ID (<code>user</code>)<a class="anchor-link" href="#Customize-user-and-group-ID-(user)">&#182;</a></h2>
+<h3 id="Customize-user-and-group-ID-(user)-(Pending)">Customize user and group ID (<code>user</code>) (Pending)<a class="anchor-link" href="#Customize-user-and-group-ID-(user)-(Pending)">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12820,7 +13019,7 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Docker-images-with-ENTRYPOINT">Docker images with <code>ENTRYPOINT</code><a class="anchor-link" href="#Docker-images-with-ENTRYPOINT">&#182;</a></h2>
+<h3 id="Docker-images-with-ENTRYPOINT">Docker images with <code>ENTRYPOINT</code><a class="anchor-link" href="#Docker-images-with-ENTRYPOINT">&#182;</a></h3>
 </div>
 </div>
 </div>
