@@ -1,9 +1,9 @@
 $(document).ready(function () {
-	$("#intro_content").load("https://vatlab.github.io/sos-docs/Overview.html");
-	$("#features_content").load("https://vatlab.github.io/sos-docs/Features.html");
-	$("#installation_content").load("https://vatlab.github.io/sos-docs/Running_SoS.html");
-	$("#notebook_documentation_content").load("https://vatlab.github.io/sos-docs/Notebook_Documentation.html");
-	$("#workflow_documentation_content").load("https://vatlab.github.io/sos-docs/Workflow_Documentation.html");
+	$("#intro_content").load("Overview.html");
+	$("#features_content").load("Features.html");
+	$("#installation_content").load("Running_SoS.html");
+	$("#notebook_documentation_content").load("Notebook_Documentation.html");
+	$("#workflow_documentation_content").load("Workflow_Documentation.html");
 	
 	// var tuts=tutorials
 	// $("#tutorial > .container").append('<div class="row">')
