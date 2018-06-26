@@ -55,8 +55,8 @@ $(document).ready(function () {
                   "top": "0px"
               });
             }
-          });
 	      */
+          });
     // var tabindex=$("#fixedbar").tabs({active:1}).tabs("option","active");
     // console.log(tabindex);
     // $("#navigation").tabs().tabs("option","active",tabindex);
@@ -68,7 +68,8 @@ $(document).ready(function () {
 
       $("#navigation li a ").click(function(){
               var tabindex=$(this).attr('href');
-              $('#fixedbar li a').filter('[href="'+tabindex+'"]').tab('show');
+              // $('#fixedbar li a').filter('[href="'+tabindex+'"]').tab('show');
+              $('#navigation li a').filter('[href="'+tabindex+'"]').tab('show');
       })
       var imgs=images
 
