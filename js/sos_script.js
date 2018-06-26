@@ -39,6 +39,7 @@ $(document).ready(function () {
      $(window).on('scroll',function() {
             var scrolltop = $(this).scrollTop();
 
+		 /*
             if(scrolltop >= 420) {
               $('#fixedbar').fadeIn(250);
               $('.toc').css({
@@ -55,7 +56,7 @@ $(document).ready(function () {
               });
             }
           });
-
+	      */
     // var tabindex=$("#fixedbar").tabs({active:1}).tabs("option","active");
     // console.log(tabindex);
     // $("#navigation").tabs().tabs("option","active",tabindex);
