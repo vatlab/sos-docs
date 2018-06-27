@@ -16558,7 +16558,7 @@ loaded via a namespace (and not attached):
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As shown above, the <code>%use name</code> magic starts or switch to a subkernel named <code>name</code>. The kernel will be used for the current cell and any new cell, but not for existing cells created with another kernel. The kernel can be any locally installed Jupyter kenel, or name of a <strong>language</strong> (e.g. <code>R</code> for kernel <code>ir</code>). A <code>language</code> is usually built upon the corresponding subkernel, with added support for data exchange between SoS and the subkernel.</p>
+<p>As shown above, the <code>%use name</code> magic starts or switch to a subkernel named <code>name</code>. The kernel can be any locally installed Jupyter kenel, or name of a <strong>language</strong> (e.g. <code>R</code> for kernel <code>ir</code>). A <code>language</code> is usually built upon the corresponding subkernel, with added support for data exchange between SoS and the subkernel.</p>
 
 </div>
 </div>
@@ -16567,8 +16567,7 @@ loaded via a namespace (and not attached):
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>%use</code> magic accepts parameters <code>--in (-i)</code> and <code>--out (-o)</code>, followed by variables that will be transferred to the subkernel after starting (or switching to) the subkernel, and variables that will be transferred back to SoS before magic <code>%use sos</code>. It also accepts an option <code>--restart</code> (<code>-r</code>) to restart the kernel if it is already running.</p>
-<p>For example,</p>
+<p>Without any parameter, magic <code>%use</code> lists the available subkernels:</p>
 
 </div>
 </div>
@@ -16578,48 +16577,10 @@ loaded via a namespace (and not attached):
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[68]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">n = 5</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[69]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">%use ir -i n -o ran
-ran <- rnorm(n)</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[70]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%use sos
-ran</textarea>
+      class="sos-source" name="SoS">%use</textarea>
   </div>
 </div>
 
@@ -16631,19 +16592,24 @@ ran</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[70]:</div>
+<div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[1.96928885361215,
- 0.0118757623948863,
- -0.312544424000368,
- -0.893922947749198,
- 1.40511083506582]</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Active subkernels: 
+Available subkernels:
+    Bash (bash)
+    JavaScript (javascript)
+    Julia (julia-0.6)
+    Octave (octave)
+    Python2 (python2)
+    Python3 (python3)
+    R (ir)
+    SAS (sas)
+    SoS (sos)
+    TypeScript (typescript)
+    markdown (markdown)</pre>
 </div>
-
 </div>
 
 </div>
@@ -16657,16 +16623,7 @@ ran</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Data exchange is actually performed by magics <code>%get</code> and <code>%put</code> so please refer to these magics for details.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>More sophisticated methods to start a new subkernel can be achieved with options <code>-k</code> (<code>--kernel</code>), <code>-l</code> (<code>--language</code>) and <code>-c</code> (<code>--color</code>), more specifically</p>
+<p>The value of magic <code>%use</code>, compared to choosing existing kernels interactively, is its ability to start multiple instances of the same subkernel, change properties of existing subkernels, and create new subkernels. These are achieved with options <code>-k</code> (<code>--kernel</code>), <code>-l</code> (<code>--language</code>) and <code>-c</code> (<code>--color</code>), more specifically</p>
 <table>
 <thead><tr>
 <th>usage</th>
@@ -16723,7 +16680,7 @@ ran</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>%with kernel</code> also starts (or switches to) a subkernel, but kernel specified by <code>%with kernel</code> will be reset as soon as the cell is executed. This magic is therefore suitable for a quick errand to another kernel. This magic also accepts options <code>--in</code> (or <code>-i</code>) and <code>--out</code> (or <code>-o</code>), so you could use</p>
+<p>The <code>%with</code> magic switches to an existing subkernel for the evaluation of the current cell. It accepts options <code>--in</code> (or <code>-i</code>) and <code>--out</code> (or <code>-o</code>), so you could use</p>
 
 </div>
 </div>
@@ -16751,58 +16708,11 @@ ran <- rnorm(n)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>to get a list of normally distributed numbers using R's <code>rnorm</code> function. The current kernel is still <code>sos</code>.</p>
+<p>to get a list of normally distributed numbers using R's <code>rnorm</code> function.</p>
 
 </div>
 </div>
 </div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[72]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%use</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Current subkernel: SoS (kernel=sos, language=undefined, color=&#34;&#34;)
-Active subkernels: Python3, R
-Available subkernels:
-    Bash (bash)
-    Julia (julia-0.6)
-    MATLAB (imatlab)
-    Python3 (python3)
-    R (ir)
-    SoS (sos)
-    django_extensions (django_extensions)
-    django_extensions (django_extensions)
-    jupyter3_python_3 (jupyter3_python_3)
-    jupyter3_python_3 (jupyter3_python_3)</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
 
 <div class="lan_SoS">
    

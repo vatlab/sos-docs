@@ -12754,13 +12754,6 @@ This is step wf_30 of a workflow
 </tr>
 </tbody>
 </table>
-<p>You can switch between installed kernels interactively:</p>
-<ol>
-<li><p>A dropdown list at the top right corner of each cell displays the current kernel for the cell. You can change the kernel used for the cell by selecting another kernel from the list.</p>
-</li>
-<li><p>A dropbown list in the notebook toolbar lists the global default kernel that will be used for new cell.</p>
-</li>
-</ol>
 
 </div>
 </div>
@@ -12769,7 +12762,7 @@ This is step wf_30 of a workflow
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You can also use the <code>%use</code> and <code>%with</code> magics to switch between kernels. Despite of the flexibility on the use of local and remote kernels, multiple instances of the same kernel, use of self-defined languages, the majority of the times you will be using magics like</p>
+<p>You can switch the kernel of a code cell from a dropdown list at the top right corner of the cell or using the <code>%use</code> or <code>%with</code> magic. Despite of the flexibility on the use of local and remote kernels, multiple instances of the same kernel, use of self-defined languages, the majority of the times you will be using magics like</p>
 
 <pre><code>%use R</code></pre>
 <p>to switch to a language with default kernel (<code>ir</code>), color (<code>FDEDEC</code>), and name (<code>R</code>).</p>
@@ -16051,16 +16044,35 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>%use</code> magic switches to a new default kernel that would be used for any new cell, but it does not change the kernel of existing cells. The <code>ir</code> kernel will still be used if you re-evaluate the above cell in <code>R</code>.</p>
+<p>The <code>%with</code> magic is similar to magic <code>%use</code> but it does not start a new kernel, and it accepts options <code>--in</code> (<code>-i</code>) and <code>--out</code> (<code>-o</code>) to pass specified input variables to the kernel, and return specified output variables from the kernel after the completion of the evaluation.</p>
+<p>For example, if you have</p>
 
 </div>
 </div>
 </div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">n = 3</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>%with</code> magic changes the kernel of the present cell without affect the global default.</p>
+<p>you can pass the input and output variables to magic <code>%with</code></p>
 
 </div>
 </div>
@@ -16070,11 +16082,38 @@ QAISkIAEJCABCUhAAhKQgAQKgf8H1z2xSZVHCcMAAAAASUVORK5CYII="
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="R">%with R
-rnorm(3)</textarea>
+      class="sos-source" name="R">%with R -i n -o arr
+arr = rnorm(n)</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and obtain the result in the SoS kernel</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">arr</textarea>
   </div>
 </div>
 
@@ -16086,17 +16125,13 @@ rnorm(3)</textarea>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[3]:</div>
 
 
 
-<div class="output_html rendered_html output_subarea ">
-<ol class=list-inline>
-	<li>-0.966980535152674</li>
-	<li>0.194659671096298</li>
-	<li>-0.267711412708092</li>
-</ol>
 
+<div class="output_text output_subarea output_execute_result">
+<pre>[-0.332398523287471, 0.399394530973962, 0.948654039906551]</pre>
 </div>
 
 </div>
