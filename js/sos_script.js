@@ -24,6 +24,10 @@ $(document).ready(function () {
           var tabindex=$(this).attr('href');
           $('#navigation li a').filter('[href="'+tabindex+'"]').tab('show');
           $('html,body').scrollTop(headerheight + navheight);
+          if ($('#toc_Running_SoS').length > 0) {
+            $('#toc_Running_SoS').detach().appendTo('#dropdown_runningsos');
+          }
+
       })
 
       $('#exTab2').tabs({});
