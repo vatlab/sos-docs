@@ -17038,17 +17038,20 @@ function sortDataFrame(id, n, dtype) {
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header";
+                  return "header line-section-header";
                 } else {
                   // match up to :
                   stream.match(/^\[[^:]*:/);
                   state.sos_state = 'header_option';
-                  return "header";
+                  return "header line-section-header";
                 }
               }
             } else if (sl == '!') {
               stream.eatWhile(/\S/);
               return "meta";
+            } else if (sl == '#') {
+              stream.skipToEnd();
+              return "comment";
             } else if (sl == '%') {
               stream.eatWhile(/\S/);
               return "meta";
@@ -17099,7 +17102,7 @@ function sortDataFrame(id, n, dtype) {
               if (stream.eol()) {
                 state.sos_state = null;
                 state.inner_mode = null;
-                return "header";
+                return "header line-section-header";
               } else {
                 stream.backUp(1);
                 let it = base_mode.token(stream, state.base_state);
