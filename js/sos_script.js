@@ -27,7 +27,12 @@ $(document).ready(function () {
           if ($('#toc_Running_SoS').length > 0) {
             $('#toc_Running_SoS').detach().appendTo('#dropdown_runningsos');
           }
-
+          if ($('#toc_Notebook_Documentation').length > 0) {
+            $('#toc_Notebook_Documentation').detach().appendTo('#dropdown_notebook_documentation');
+          }
+          if ($('#toc_Workflow_Documentation').length > 0) {
+            $('#toc_Workflow_Documentation').detach().appendTo('#dropdown_workflow_documentation');
+          }
       })
 
       $('#exTab2').tabs({});
