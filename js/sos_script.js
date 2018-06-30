@@ -23,7 +23,7 @@ $(document).ready(function () {
       $("#navigation li a ").click(function(){
           var tabindex=$(this).attr('href');
           $('#navigation li a').filter('[href="'+tabindex+'"]').tab('show');
-          $('html,body').scrollTop(headerheight + navheight);
+          $('html,body').animate({ scrollTop: headerheight + navheight }, "slow");
           if ($('#toc_Running_SoS').length > 0) {
             $('#toc_Running_SoS').detach().appendTo('#dropdown_runningsos');
           }
