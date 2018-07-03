@@ -35,8 +35,25 @@ footer {
   padding-top: 1em;
   padding-bottom: 1em;
   padding-left: 25px;
+  padding-right: 25px;
   background-color: #f5f5f5;
   overflow: hidden;
+}
+
+textarea.sos-source {
+  line-height: 1.21429em;
+  font-size: 14px;
+  background: none;
+  width: 100%;
+  border: none;
+  font-family: monospace;
+  height: auto;
+  padding: 0.4em;
+  outline: none;
+  position: relative;
+  resize: none;
+  overflow: hidden;
+  vertical-align: text-top;
 }
 
 .code {
@@ -285,13 +302,13 @@ pre.section-header.CodeMirror-line {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               128 lines
+               136 lines
                <span class="file-info-divider"></span>
-               3.6 kB
+               3.9 kB
             </div>
          </div>
          <div class="filecontent">
-            <textarea id="source-code" name="code">#!/usr/bin/env sos-runner
+            <textarea rows="136" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
 [getFileNames]
@@ -300,29 +317,35 @@ run:
 
 [convert-documentation]
 input:  '../src/documentation/*.ipynb', group_by=1
-depends: '../src/documentation/toc_doc.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
 	cd ../src/documentation
-	sos convert ${_input:a} ${_output:a}  --template toc_doc
+	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_doc.tpl
 
 [convert-tutorials]
 input:  '../src/tutorials/*.ipynb', group_by=1
-depends: '../src/tutorials/toc_tut.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
 	cd ../src/tutorials
-	sos convert ${_input:a} ${_output:a}  --template toc_tut
+	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_tut.tpl
 
 [convert-homepage]
 input:  '../src/homepage/*.ipynb', group_by=1
 output: f"../{_input:bn}.html"
 
+with_toc = False # 'Running' in str(_input)
+
 run: expand=True
 	cd ../src/tutorials
-	sos convert {_input:a} {_output:a} --template basic
+	sos convert {_input:a} {_output:a} --template {'../templates/basic_toc.tpl' if with_toc else 'basic'}
+
+stop_if(not with_toc)
+run: expand=True
+    perl -pi -e 's/id="toc"/id="side_toc_{_output:bn}"/' {_output:a}
+    perl -pi -e 's/"#toc"/"#toc_{_output:bn}"/' {_output:a}
+    perl -pi -e 's/"#side_toc"/"#side_toc_{_output:bn}"/' {_output:a}
 
 [convert-example-scripts]
 input:  '../src/examples/*.sos', 'update-website', group_by=1
@@ -330,15 +353,17 @@ output: f"../doc/examples/{_input:bn}.html"
 
 run: workdir='../doc/examples', expand=True
 	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --raw {_input:b} --lineno --style default
+	sos convert {_input:b} {_output:b} --raw {_input:b} 
 
 [convert-example-notebooks]
 input:  '../src/examples/*.ipynb', group_by=1
 output: f"../doc/examples/{_input:bn}.html"
 
+has_header = '"## ' in open(_input).read()
+
 run: workdir='../doc/examples', expand=True
 	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --template sos-full
+	sos convert {_input:b} {_output:b} --template {'sos-cm-toc' if has_header else 'sos-cm'}
 
 [convert-example-report]
 input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/RNASeqDE.ipynb', 
@@ -423,11 +448,10 @@ run: workdir='..', expand=True
          </div>
       </div>
       <footer>
-         <a class="sos-logo" href="https://vatlab.github.io/sos-docs">
+         <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
-         </a>
-         &nbsp;
-         <a href="https://vatlab.github.io/sos-docs/">SoS Workflow Engine</a> version <samp>0.9.14.10</samp>
+         </a> &nbsp;See the output of command <samp>sos run update-website -h</samp> for usage information</div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.9.15.4</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
@@ -815,6 +839,9 @@ run: workdir='..', expand=True
             } else if (sl == '!') {
               stream.eatWhile(/\S/);
               return "meta";
+            } else if (sl == '#') {
+              stream.skipToEnd();
+              return "comment";
             } else if (sl == '%') {
               stream.eatWhile(/\S/);
               return "meta";

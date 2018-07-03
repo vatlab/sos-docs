@@ -35,8 +35,25 @@ footer {
   padding-top: 1em;
   padding-bottom: 1em;
   padding-left: 25px;
+  padding-right: 25px;
   background-color: #f5f5f5;
   overflow: hidden;
+}
+
+textarea.sos-source {
+  line-height: 1.21429em;
+  font-size: 14px;
+  background: none;
+  width: 100%;
+  border: none;
+  font-family: monospace;
+  height: auto;
+  padding: 0.4em;
+  outline: none;
+  position: relative;
+  resize: none;
+  overflow: hidden;
+  vertical-align: text-top;
 }
 
 .code {
@@ -291,7 +308,7 @@ pre.section-header.CodeMirror-line {
             </div>
          </div>
          <div class="filecontent">
-            <textarea id="source-code" name="code">#!/usr/bin/env sos-runner
+            <textarea rows="84" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
 # fileformat=SOS1.0
 # Author: Gao Wang and Bo Peng
 
@@ -379,11 +396,10 @@ sos_run('lasso')
          </div>
       </div>
       <footer>
-         <a class="sos-logo" href="https://vatlab.github.io/sos-docs">
+         <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
-         </a>
-         &nbsp;
-         <a href="https://vatlab.github.io/sos-docs/">SoS Workflow Engine</a> version <samp>0.9.14.10</samp>
+         </a> &nbsp;See the output of command <samp>sos run Mixed_Style.sos -h</samp> for usage information</div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.9.15.4</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
@@ -771,6 +787,9 @@ sos_run('lasso')
             } else if (sl == '!') {
               stream.eatWhile(/\S/);
               return "meta";
+            } else if (sl == '#') {
+              stream.skipToEnd();
+              return "comment";
             } else if (sl == '%') {
               stream.eatWhile(/\S/);
               return "meta";

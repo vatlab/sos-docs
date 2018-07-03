@@ -1,8 +1,12 @@
+
+
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8" />
-<title>Preview_and_Report_Generation</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<title>Preview_and_Report_Generation</title>
 
 <style type="text/css">
     /*!
@@ -11766,56 +11770,142 @@ div#notebook {
         }
     });
     </script>
-    <!-- End of mathjax configuration --></head>
+    <!-- End of mathjax configuration -->
 
- <meta name="viewport" content="width=device-width, initial-scale=1"><style type="text/css">
 
-table {
+<style type="text/css">
+
+.rendered_html table {
    padding: 0;
-   border-collapse: collapse; }
-thead {
-    border-bottom-width: 1px;
-    border-bottom-color: rgb(0,0,0);
-    border-bottom-style: solid;
+   border-collapse: collapse;
+   border: none;
+ }
+.rendered_html thead {
+  border: none;
+  border-bottom: 1px solid black;
 }
-table tr {
+
+.rendered_html table tr {
    border: none;
    background-color: white;
    margin: 0;
-   padding: 0; }
-table tr:nth-child(2n) {
-   background-color: #f8f8f8; }
-table tr th {
+   padding: 0;
+ }
+
+.rendered_html table tr:nth-child(2n) {
+   background-color: #f8f8f8;
+}
+
+.rendered_html table tr th {
    font-weight: bold;
    border: none;
    margin: 0;
-   padding: 6px 13px; }
-table tr td {
+   padding: 6px 13px;
+}
+
+.rendered_html table tr td {
    border: none;
    margin: 0;
-   padding: 6px 13px; }
-table tr th :first-child, table tr td :first-child {
-   margin-top: 0; }
-table tr th :last-child, table tr td :last-child {
-   margin-bottom: 0; }
+   padding: 6px 13px;
+}
 
-.dataframe_container { max-height: 400px }
+ .rendered_html tbody tr:hover {
+   background-color: #eeeeea;
+ }
+
+.rendered_html table tr th :first-child, table tr td :first-child {
+   margin-top: 0;
+ }
+
+.rendered_html table tr th :last-child, table tr td :last-child {
+   margin-bottom: 0;
+ }
+
+.sos_hint {
+  color: rgba(0,0,0,.4);
+  font-family: monospace;
+}
+
+
+.cm-sos-interpolated {
+  background-color: #EDD5F3;
+}
+
+.cm-sos-sigil {
+  background-color: #EDD5F3;
+}
+
+
+pre.section-header.CodeMirror-line {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  background-color: #f7f7f7;
+  /* border-top: 1px solid #ddd; */
+}
+
+.code_cell .cm-header-1,
+.code_cell .cm-header-2,
+.code_cell .cm-header-3,
+.code_cell .cm-header-4,
+.code_cell .cm-header-5,
+.code_cell .cm-header-6
+{
+    font-size: 100%;
+    font-style: normal;
+    font-weight: normal;
+    font-family: monospace;
+}
+
+
+
+div.cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  width: 100%;
+  padding: 5px;
+  /* This acts as a spacer between cells, that is outside the border */
+  margin: 0px;
+  outline: none;
+  position: relative;
+  overflow: visible;
+}
+
+
+</style>
+
+
+
+
+
+
+<style type="text/css">
+.dataframe_container {
+   max-height: 400px;
+}
+
 .dataframe_input {
     border: 1px solid #ddd;
     margin-bottom: 5px;
-}
-
-.rendered_html table {
-  border: none;
-}
-
-#nextsteps {
-   color: blue;
-}
-
-.sos_hint {
-    color: rgba(0,0,0,.4);
-    font-family: monospace;
 }
 
 .scatterplot_by_rowname div.xAxis div.tickLabel {
@@ -11835,91 +11925,177 @@ table tr th :last-child, table tr td :last-child {
 
 .sos_dataframe tr:hover {
     background-color: #e6f2ff;
-}.lan_R .input_prompt { background-color: #FDEDEC !important }.lan_SoS {}.lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_JavaScript .input_prompt { background-color: #c8e1ae !important }.lan_Julia .input_prompt { background-color: #ebd8eb !important }.lan_Python2 .input_prompt { background-color: #FFE771 !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }</style>
+}
+</style>
 
 
-
-
-<script>
-
-
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        } 
+<style>
+   .lan_R .input_prompt {
+      background-color: #FDEDEC !important;
+    }.lan_Bash .input_prompt {
+      background-color: #E6EEFF !important;
+    }.lan_JavaScript .input_prompt {
+      background-color: #c8e1ae !important;
+    }.lan_Julia .input_prompt {
+      background-color: #ebd8eb !important;
+    }.lan_Python2 .input_prompt {
+      background-color: #FFE771 !important;
+    }.lan_Python3 .input_prompt {
+      background-color: #FFE771 !important;
     }
+</style>
+
+
+
+
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+
+<style type="text/css">
+
+.inner_cell .CodeMirror {
+    height: auto;
 }
 
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
+.cell-kernel-selector {
+  width:70pt;
+  background: none;
+  z-index: 1000;
+  position: absolute;
+  height: 1.7em;
+  margin-top: 3pt;
+  right: 8pt;
+  font-size: 80%;
+}
+textarea.sos-source {
+  line-height: 1.21429em;
+  font-size: 14px;
+  background: none;
+  width: 100%;
+  border: none;
+  font-family: monospace;
+  height: auto;
+  padding: 4px;
+  outline: none;
+  position: relative;
+  resize: none;
+  overflow: hidden;
+  vertical-align: text-top;
+}
+</style>
 
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
 
-    if (dtype === 'numeric') {
-        var fn = function(a, b) { 
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]); 
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
 
-    var sorted = isSorted(tr, fn);
 
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
+<style type="text/css">
+/*
+ * jquery.tocify.css 1.9.0
+ * Author: @gregfranko
+ */
+
+/* The Table of Contents container element */
+.tocify {
+    width: 20%;
+    max-height: 90%;
+    overflow: auto;
+    margin-left: 2%;
+    position: fixed;
+    border: 1px solid #ccc;
+    webkit-border-radius: 6px;
+    moz-border-radius: 6px;
+    border-radius: 6px;
 }
 
+/* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
+.tocify ul, .tocify li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 30px;
+}
 
+/* Top level header elements */
+.tocify-header {
+    text-indent: 10px;
+}
 
-</script>
+/* Top level subheader elements.  These are the first nested items underneath a header element. */
+.tocify-subheader {
+    text-indent: 20px;
+    display: none;
+}
+
+/* Makes the font smaller for all subheader elements. */
+.tocify-subheader li {
+    font-size: 12px;
+}
+
+/* Further indents second level subheader elements. */
+.tocify-subheader .tocify-subheader {
+    text-indent: 30px;
+}
+
+/* Further indents third level subheader elements. You can continue this pattern if you have more nested elements. */
+.tocify-subheader .tocify-subheader .tocify-subheader {
+    text-indent: 40px;
+}
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a, .nav-list .nav-header {
+    margin: 0px;
+}
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a {
+    padding: 5px;
+}
+</style>
+<style>
+#notebook-container {
+  box-shadow: none;
+}
+li.tocify-item.active {
+  background-color: #6197d5;
+}
+.tocify-item.active a {
+  color: white;
+}
+
+.tocify {
+  margin-top: 60px;
+}
+.tocify ul, .tocify li {
+    line-height: 1.5em;
+}
+.nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+    color: #337ab7;
+}
+</style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.9.1/themes/smoothness/jquery-ui.css">
+
+</head>
 <body>
-  <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
+  <div class="row-fluid">
+    <div class="col-xs-12 col-sm-4 col-md-3">
+      <div id="toc" class="tocify">
+      </div><!--/.well -->
+    </div><!--/span-->
+    <div class="col-xs-12 col-sm-8 col-md-9">
+      
 
+
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="notebook-container" id="notebook-container">
+
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="On-the-Generation-of-HTML-Report-from-Jupyter-Notebook">On the Generation of HTML Report from Jupyter Notebook<a class="anchor-link" href="#On-the-Generation-of-HTML-Report-from-Jupyter-Notebook">&#182;</a></h2><p>This example demonstrates how to use the <code>%preview</code> magic to preview results and how to generate a report in HTML format from a Jupyter notebook with SoS kernel. The report has the following features:</p>
+<h2 id="On-the-Generation-of-HTML-Report-from-Jupyter-Notebook">On the Generation of HTML Report from Jupyter Notebook<a class="anchor-link" href="#On-the-Generation-of-HTML-Report-from-Jupyter-Notebook"></a></h2><p>This example demonstrates how to use the <code>%preview</code> magic to preview results and how to generate a report in HTML format from a Jupyter notebook with SoS kernel. The report has the following features:</p>
 <ol>
 <li>The report contains all details of the analysis but only displays output or both input and output of selected cells by default.</li>
 <li>A control panel (hidden at the top left corner of the screen) can be used to display hidden contents.</li>
@@ -11929,37 +12105,38 @@ function sortDataFrame(id, n, dtype) {
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Description-of-data">Description of data<a class="anchor-link" href="#Description-of-data">&#182;</a></h3><p>We have got an excel file with a list of differentially expressed genes for certain experiment. The analysis was done with ensembl genes so it is difficult to figure out what they are. The goal of the analysis is to annotate the gene IDs with HGNC names.</p>
+<h3 id="Description-of-data">Description of data<a class="anchor-link" href="#Description-of-data"></a></h3><p>We have got an excel file with a list of differentially expressed genes for certain experiment. The analysis was done with ensembl genes so it is difficult to figure out what they are. The goal of the analysis is to annotate the gene IDs with HGNC names.</p>
 <p>Let us first read the data from the excel file and have a look:</p>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
+
+<div class="lan_SoS">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">data</span> <span class="o">-</span><span class="n">l</span> <span class="mi">2000</span>
-<span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;xlrd&#39;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;DEG_list.xlsx&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%preview -n data -l 2000
+depends: Py_Module('xlrd')
+import pandas as pd
+data = pd.read_excel('DEG_list.xlsx')</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -11972,8 +12149,6 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -11986,8 +12161,6 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -22673,64 +22846,69 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
+</div>
+
+
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Data-analysis">Data analysis<a class="anchor-link" href="#Data-analysis">&#182;</a></h3><p>The <a href="https://bioconductor.org/packages/release/bioc/html/biomaRt.html">biomaRt</a> bioconductor package provides required datasets to annotate the ensembl IDs so we transfer the gene list from Python to R, and use the biomaRt package to annotate the IDs.</p>
+<h3 id="Data-analysis">Data analysis<a class="anchor-link" href="#Data-analysis"></a></h3><p>The <a href="https://bioconductor.org/packages/release/bioc/html/biomaRt.html">biomaRt</a> bioconductor package provides required datasets to annotate the ensembl IDs so we transfer the gene list from Python to R, and use the biomaRt package to annotate the IDs.</p>
 <p>As we can see from the following list, the genes are correctly annotated</p>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+</div>
+
+<div class="lan_R">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">data</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">%get data</textarea>
+  </div>
+</div>
+
+</div>
 
 </div>
 </div>
-</div>
 
-</div>
-    </div><div class="cell border-box-sizing code_cell rendered lan_R">
-    
+
+
+<div class="lan_R">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">hgnc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,]</span>
-<span class="n">library</span><span class="p">(</span><span class="n">biomaRt</span><span class="p">)</span>
-<span class="n">ensembl</span> <span class="o">&lt;-</span> <span class="n">useEnsembl</span><span class="p">(</span><span class="n">biomart</span><span class="o">=</span><span class="s1">&#39;ensembl&#39;</span><span class="p">)</span>
-<span class="c1">#listDatasets(ensembl)</span>
-<span class="n">ensembl</span> <span class="o">&lt;-</span> <span class="n">useEnsembl</span><span class="p">(</span><span class="n">biomart</span><span class="o">=</span><span class="s2">&quot;ensembl&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;mmusculus_gene_ensembl&quot;</span><span class="p">)</span>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="R">%preview -n hgnc[1:5,]
+library(biomaRt)
+ensembl <- useEnsembl(biomart='ensembl')
+#listDatasets(ensembl)
+ensembl <- useEnsembl(biomart="ensembl", dataset="mmusculus_gene_ensembl")
                      
-<span class="n">hgnc</span> <span class="o">&lt;-</span> <span class="n">getBM</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;ensembl_gene_id&#39;</span><span class="p">,</span> <span class="s1">&#39;external_gene_name&#39;</span><span class="p">),</span>
-        <span class="n">filters</span> <span class="o">=</span> <span class="s1">&#39;ensembl_gene_id&#39;</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ensembl_gene_id&#39;</span><span class="p">],</span> <span class="n">mart</span> <span class="o">=</span> <span class="n">ensembl</span><span class="p">)</span>
+hgnc <- getBM(attributes=c('ensembl_gene_id', 'external_gene_name'),
+        filters = 'ensembl_gene_id', values = data['ensembl_gene_id'], mart = ensembl)
 
-<span class="n">annotated</span> <span class="o">&lt;-</span> <span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">hgnc</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;ensembl_gene_id&#39;</span><span class="p">,</span> <span class="nb">all</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
-</pre></div>
+annotated <- merge(data, hgnc, by='ensembl_gene_id', all.x=TRUE)</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -22743,8 +22921,6 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -22757,8 +22933,6 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -22781,43 +22955,45 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
+</div>
+
+
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Result">Result<a class="anchor-link" href="#Result">&#182;</a></h3><p>We transfer the annotated result back to Python and write it to another excel file. The content of the file is previewed and list here:</p>
+<h3 id="Result">Result<a class="anchor-link" href="#Result"></a></h3><p>We transfer the annotated result back to Python and write it to another excel file. The content of the file is previewed and list here:</p>
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
+
+<div class="lan_SoS">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">annotated</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
-<span class="o">%</span><span class="n">preview</span> <span class="o">-</span><span class="n">n</span> <span class="n">annotated_DEG_list</span><span class="o">.</span><span class="n">xlsx</span> <span class="o">-</span><span class="n">l</span> <span class="mi">2000</span>
-<span class="n">annotated</span> <span class="o">=</span> <span class="n">annotated</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;external_gene_name&#39;</span><span class="p">)</span>
-<span class="n">annotated</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;padj&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">annotated</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s1">&#39;annotated_DEG_list.xlsx&#39;</span><span class="p">)</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%get annotated --from R
+%preview -n annotated_DEG_list.xlsx -l 2000
+annotated = annotated.set_index('external_gene_name')
+annotated.sort_values(by='padj', inplace=True)
+annotated.to_excel('annotated_DEG_list.xlsx')</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -22830,8 +23006,6 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -22844,8 +23018,6 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -34716,12 +34888,14 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
+</div>
+
+
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -34730,26 +34904,26 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 </div>
-</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
-    
+</div>
+
+<div class="lan_SoS">
+   
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">annotated</span> <span class="o">-</span><span class="n">n</span> <span class="o">-</span><span class="n">s</span> <span class="n">scatterplot</span> <span class="n">log2FoldChange</span> <span class="n">baseMean</span> \
-    <span class="o">--</span><span class="n">tooltip</span> <span class="n">ensembl_gene_id</span> <span class="n">pvalue</span> <span class="n">padj</span> <span class="o">--</span><span class="n">log</span> <span class="n">y</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%preview annotated -n -s scatterplot log2FoldChange baseMean \
+    --tooltip ensembl_gene_id pvalue padj --log y</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 <div class="output_wrapper">
 <div class="output">
 
-<div class="hidden_output">
-        
+
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -34762,8 +34936,6 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -34776,8 +34948,6 @@ function sortDataFrame(id, n, dtype) {
 
 </div>
 
-        </div><div class="hidden_output">
-        
 <div class="output_area">
 
 <div class="prompt"></div>
@@ -34845,17 +35015,19 @@ showFigure1()
 
 </div>
 
-        </div>
 </div>
 </div>
 
 </div>
-    </div>
+</div>
+
+
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Report-Generation">Report Generation<a class="anchor-link" href="#Report-Generation">&#182;</a></h3><p>Now that we have completed our analysis, you can mark the cells with tags to control how they appear in the report. If you are not familiar with Jupyter, a <code>tag</code> is any string that can be attached to a cell. You can view, add, and remove tags from the tag toolbar, which can be turned on using <code>View</code> -&gt; <code>Cell Toolbar</code> -&gt; <code>Tags</code>.</p>
+<h3 id="Report-Generation">Report Generation<a class="anchor-link" href="#Report-Generation"></a></h3><p>Now that we have completed our analysis, you can mark the cells with tags to control how they appear in the report. If you are not familiar with Jupyter, a <code>tag</code> is any string that can be attached to a cell. You can view, add, and remove tags from the tag toolbar, which can be turned on using <code>View</code> -&gt; <code>Cell Toolbar</code> -&gt; <code>Tags</code>.</p>
 <p>You can</p>
 <ol>
 <li>Mark code cells that will be outputed with shortcut <code>Ctrl-Shift-O</code>. This will add a <code>report_output</code> tag to the cell and mark the cell with a gray bar to the right of the output area.</li>
@@ -34921,6 +35093,17 @@ showFigure1()
 </div>
 </div>
 </div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Just for demonstration purposes, this paragraph will not be displayed in the report because of the inserted <code>scratch</code> tag.</p>
+
+</div>
+</div>
+</div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -34932,7 +35115,695 @@ showFigure1()
 </div>
     </div>
   </div>
+
+
+<script>
+
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) {
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim());
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]);
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+</script>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+<script>
+    /**
+ * Copyright (c) Bo Peng and UT MD Anderson Cancer Center
+ * Distributed under the terms of the Modified BSD License.
+ **/
+
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("codemirror/lib/codemirror"),
+      require("codemirror/mode/python/python"),
+      require("codemirror/mode/r/r"),
+      require("codemirror/mode/octave/octave"),
+      require("codemirror/mode/ruby/ruby"),
+      require("codemirror/mode/sas/sas"),
+      require("codemirror/mode/javascript/javascript"),
+      require("codemirror/mode/shell/shell"),
+      require("codemirror/mode/julia/julia"),
+      require("codemirror/mode/markdown/markdown"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["codemirror/lib/codemirror", "codemirror/mode/python/python",
+      "codemirror/mode/markdown/markdown", "codemirror/mode/r/r"
+    ], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+  "use strict";
+
+  var sosKeywords = ["input", "output", "depends", "parameter"];
+  var sosActionWords = ["script", "download", "run", "bash", "sh", "csh",
+    "tcsh", "zsh", "python", "python2", "python3", "R", "node", "julia",
+    "matlab", "octave", "ruby", "perl", "report", "pandoc", "docker_build",
+    "Rmarkdown"
+  ];
+  var sosMagicWords = ['cd', 'capture', 'clear', 'debug', 'dict', 'expand', 'get',
+    'matplotlib', 'paste', 'preview', 'pull', 'push', 'put', 'render',
+    'rerun', 'run', 'save', 'sandbox', 'set', 'sessioninfo', 'sosrun',
+    'sossave', 'shutdown', 'taskinfo', 'tasks', 'toc', 'use', 'with'
+  ]
+  var sosFunctionWords = ["sos_run", "logger", "get_output"];
+
+  var hintWords = sosKeywords.concat(sosActionWords).concat(sosFunctionWords)
+    .concat(sosMagicWords);
+
+  var sosDirectives = sosKeywords.map(x => x + ":");
+  var sosActions = sosActionWords.map(x => x + ":");
+  var sosMagics = sosMagicWords.map(x => '%' + x);
+
+  // hint word for SoS mode
+  CodeMirror.registerHelper("hintWords", "sos", hintWords);
+
+  var modeMap = {
+    'sos': null,
+    'python': {
+      name: 'python',
+      version: 3
+    },
+    'python2': {
+      name: 'python',
+      version: 2
+    },
+    'python3': {
+      name: 'python',
+      version: 3
+    },
+    'r': 'r',
+    'report': 'markdown',
+    'pandoc': 'markdown',
+    'download': 'markdown',
+    'markdown': 'markdown',
+    'ruby': 'ruby',
+    'sas': 'sas',
+    'bash': 'shell',
+    'sh': 'shell',
+    'julia': 'julia',
+    'run': 'shell',
+    'javascript': 'javascript',
+    'typescript': {
+      name: "javascript",
+      typescript: true
+    },
+    'octave': 'octave',
+    'matlab': 'octave',
+  }
+
+  function findMode(mode) {
+    if (mode in modeMap) {
+      return modeMap[mode];
+    }
+    return null;
+  }
+
+  function markExpr(python_mode) {
+    return {
+      startState: function() {
+        return {
+          in_python: false,
+          sigil: null,
+          matched: true,
+          python_state: CodeMirror.startState(python_mode),
+        };
+      },
+
+      copyState: function(state) {
+        return {
+          in_python: state.in_python,
+          sigil: state.sigil,
+          matched: state.matched,
+          python_state: CodeMirror.copyState(python_mode, state.python_state)
+        };
+      },
+
+      token: function(stream, state) {
+        if (state.in_python) {
+          if (stream.match(state.sigil.right)) {
+            state.in_python = false;
+            state.python_state = CodeMirror.startState(python_mode);
+            return "sos-sigil";
+          }
+          let it = null;
+          try {
+            it = python_mode.token(stream, state.python_state);
+          } catch (error) {
+            return "sos-interpolated error" + (state.matched ? "" : " sos-unmatched");
+          }
+          if (it == 'variable' || it == 'builtin') {
+            let ct = stream.current();
+            // warn users in the use of input and output in {}
+            if (ct === 'input' || ct === 'output')
+              it += ' error';
+          }
+          return (it ? ("sos-interpolated " + it) : "sos-interpolated") + (state.matched ? "" : " sos-unmatched");
+        } else {
+          // remove the double brace case, the syntax highlighter
+          // does not have to worry (highlight) }}, although it would
+          // probably mark an error for single }
+          if (state.sigil.left === '{' && stream.match(/\{\{/))
+            return null;
+          if (stream.match(state.sigil.left)) {
+            state.in_python = true;
+            // let us see if there is any right sigil till the end of the editor.
+            try {
+              let rest = stream.string.slice(stream.pos);
+              if (!rest.includes(state.sigil.right)) {
+                state.matched = false;
+                for (let idx = 1; idx < 5; ++idx) {
+                  if (stream.lookAhead(idx).includes(state.sigil.right)) {
+                    state.matched = true;
+                    break;
+                  }
+                }
+              }
+            } catch (error) {
+              // only codemirror 5.27.0 supports this function
+            }
+            return "sos-sigil" + (state.matched ? "" : " sos-unmatched");
+          }
+          while (stream.next() && !stream.match(state.sigil.left, false)) {}
+          return null;
+        }
+      }
+    }
+  }
+
+  CodeMirror.defineMode("sos", function(conf, parserConf) {
+    let sosPythonConf = {};
+    for (let prop in parserConf) {
+      if (parserConf.hasOwnProperty(prop)) {
+        sosPythonConf[prop] = parserConf[prop];
+      }
+    }
+    sosPythonConf.name = 'python';
+    sosPythonConf.version = 3;
+    sosPythonConf.extra_keywords = sosActionWords.concat(sosFunctionWords);
+    // this is the SoS flavored python mode with more identifiers
+    var base_mode = null;
+    if ('base_mode' in parserConf && parserConf.base_mode && parserConf.base_mode !== 'sos' && parserConf.base_mode !== 'SoS') {
+      let mode = findMode(parserConf.base_mode.toLowerCase());
+      if (mode) {
+        base_mode = CodeMirror.getMode(conf, mode);
+      } else {
+        console.log(`No base mode is found for ${parserConf.base_mode}. Python mode used.`);
+      }
+    } else if ('base_mode' in conf && conf.base_mode && conf.base_mode !== 'sos' && conf.base_mode !== 'SoS') {
+      let mode = findMode(conf.base_mode.toLowerCase());
+      if (mode) {
+        base_mode = CodeMirror.getMode(conf, mode);
+      } else {
+        console.log(`No base mode is found for ${conf.base_mode}. Python mode used.`);
+      }
+    }
+    // if there is a user specified base mode, this is the single cell mode
+    if (base_mode) {
+      var python_mode = CodeMirror.getMode({}, {
+        name: 'python',
+        version: 3
+      });
+      var overlay_mode = markExpr(python_mode);
+      return {
+        startState: function() {
+          return {
+            sos_mode: true,
+            base_state: CodeMirror.startState(base_mode),
+            overlay_state: CodeMirror.startState(overlay_mode),
+            // for overlay
+            basePos: 0,
+            baseCur: null,
+            overlayPos: 0,
+            overlayCur: null,
+            streamSeen: null
+          };
+        },
+
+        copyState: function(state) {
+          return {
+            sos_mode: state.sos_mode,
+            base_state: CodeMirror.copyState(base_mode, state.base_state),
+            overlay_state: CodeMirror.copyState(overlay_mode, state.overlay_state),
+            // for overlay
+            basePos: state.basePos,
+            baseCur: null,
+            overlayPos: state.overlayPos,
+            overlayCur: null
+          };
+        },
+
+        token: function(stream, state) {
+          if (state.sos_mode) {
+            if (stream.sol()) {
+              let sl = stream.peek();
+              if (sl == '!') {
+                stream.skipToEnd();
+                return "meta";
+              } else if (sl == '#') {
+                stream.skipToEnd();
+                return 'comment'
+              }
+              for (var i = 0; i < sosMagics.length; i++) {
+                if (stream.match(sosMagics[i])) {
+                  if (sosMagics[i] === "%expand") {
+                    if (stream.eol() || stream.match(/\s*$/, false)) {
+                      state.overlay_state.sigil = {
+                        'left': '{',
+                        'right': '}'
+                      }
+                    } else {
+                      let found = stream.match(/\s+(\S+)\s+(\S+)$/, false);
+                      if (found) {
+                        state.overlay_state.sigil = {
+                          'left': found[1],
+                          'right': found[2]
+                        }
+                      } else {
+                        state.overlay_state.sigil = null;
+                      }
+                    }
+                  }
+                  // the rest of the lines will be processed as Python code
+                  return "meta";
+                }
+              }
+              state.sos_mode = false;
+            } else {
+              stream.skipToEnd();
+              return null;
+            }
+          }
+
+          if (state.overlay_state.sigil) {
+            if (stream != state.streamSeen ||
+              Math.min(state.basePos, state.overlayPos) < stream.start) {
+              state.streamSeen = stream;
+              state.basePos = state.overlayPos = stream.start;
+            }
+
+            if (stream.start == state.basePos) {
+              state.baseCur = base_mode.token(stream, state.base_state);
+              state.basePos = stream.pos;
+            }
+            if (stream.start == state.overlayPos) {
+              stream.pos = stream.start;
+              state.overlayCur = overlay_mode.token(stream, state.overlay_state);
+              state.overlayPos = stream.pos;
+            }
+            stream.pos = Math.min(state.basePos, state.overlayPos);
+
+            // state.overlay.combineTokens always takes precedence over combine,
+            // unless set to null
+            return state.overlayCur ? state.overlayCur : state.baseCur;
+          } else {
+            return base_mode.token(stream, state.base_state);
+          }
+        },
+
+        indent: function(state, textAfter) {
+          // inner indent
+          if (!state.sos_mode) {
+            if (!base_mode.indent) return CodeMirror.Pass;
+            return base_mode.indent(state.base_state, textAfter);
+          } else {
+            // sos mode has no indent
+            return 0;
+          }
+        },
+
+        innerMode: function(state) {
+          return state.sos_mode ? {
+            state: state.base_state,
+            mode: base_mode
+          } : null;
+        },
+
+        lineComment: "#",
+        fold: "indent"
+      };
+    } else {
+      // this is SoS mode
+      base_mode = CodeMirror.getMode(conf, sosPythonConf);
+      overlay_mode = markExpr(base_mode);
+      return {
+        startState: function() {
+          return {
+            sos_state: null,
+            base_state: CodeMirror.startState(base_mode),
+            overlay_state: CodeMirror.startState(overlay_mode),
+            inner_mode: null,
+            inner_state: null,
+            // for overlay
+            basePos: 0,
+            baseCur: null,
+            overlayPos: 0,
+            overlayCur: null,
+            streamSeen: null
+          };
+        },
+
+        copyState: function(state) {
+          return {
+            sos_state: state.sos_state,
+            base_state: CodeMirror.copyState(base_mode, state.base_state),
+            overlay_state: CodeMirror.copyState(overlay_mode, state.overlay_state),
+            inner_mode: state.inner_mode,
+            inner_state: state.inner_mode && CodeMirror.copyState(state.inner_mode, state.inner_state),
+            // for overlay
+            basePos: state.basePos,
+            baseCur: null,
+            overlayPos: state.overlayPos,
+            overlayCur: null
+          };
+        },
+
+        token: function(stream, state) {
+          if (stream.sol()) {
+            let sl = stream.peek();
+            if (sl == '[') {
+              // header, move to the end
+              if (stream.match(/^\[.*\]$/, false)) {
+                // if there is no :, the easy case
+                if (stream.match(/^\[[^:]*\]$/)) {
+                  // reset state
+                  state.sos_state = null;
+                  state.inner_mode = null;
+                  return "header line-section-header";
+                } else {
+                  // match up to :
+                  stream.match(/^\[[^:]*:/);
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                }
+              }
+            } else if (sl == '!') {
+              stream.eatWhile(/\S/);
+              return "meta";
+            } else if (sl == '#') {
+              stream.skipToEnd();
+              return "comment";
+            } else if (sl == '%') {
+              stream.eatWhile(/\S/);
+              return "meta";
+            } else if (state.sos_state && state.sos_state.startsWith('entering')) {
+              // the second parameter is starting column
+              let mode = findMode(state.sos_state.slice(9).toLowerCase());
+              state.inner_mode = CodeMirror.getMode(conf, mode);
+              state.inner_state = CodeMirror.startState(state.inner_mode, stream.indentation());
+              state.sos_state = null;
+            }
+            for (var i = 0; i < sosDirectives.length; i++) {
+              if (stream.match(sosDirectives[i])) {
+                // the rest of the lines will be processed as Python code
+                state.sos_state = 'directive_option'
+                return "keyword strong";
+              }
+            }
+            for (var i = 0; i < sosActions.length; i++) {
+              if (stream.match(sosActions[i])) {
+                // switch to submode?
+                if (stream.eol()) {
+                  // really
+                  let mode = findMode(stream.current().slice(0, -1).toLowerCase());
+                  if (mode) {
+                    state.sos_state = "entering " + stream.current().slice(0, -1);
+                  } else {
+                    state.sos_state = 'unknown_language';
+                  }
+                } else {
+                  state.sos_state = 'start ' + stream.current().slice(0, -1);
+                }
+                state.overlay_state.sigil = null;
+                return "builtin strong";
+              }
+            }
+            // if unknown action
+            if (stream.match(/\w+:/)) {
+              state.overlay_state.sigil = null;
+              state.sos_state = 'start ' + stream.current().slice(0, -1);
+              return "builtin strong";
+            }
+          } else if (state.sos_state == 'header_option') {
+            // stuff after :
+            if (stream.peek() == ']') {
+              // move next
+              stream.next();
+              // ] is the last char
+              if (stream.eol()) {
+                state.sos_state = null;
+                state.inner_mode = null;
+                return "header line-section-header";
+              } else {
+                stream.backUp(1);
+                let it = base_mode.token(stream, state.base_state);
+                return it ? it + ' sos-option' : null;
+              }
+            } else {
+              let it = base_mode.token(stream, state.base_state);
+              return it ? it + ' sos-option' : null;
+            }
+          } else if (state.sos_state == 'directive_option') {
+            // stuff after input:, R: etc
+            if (stream.peek() == ',') {
+              // move next
+              stream.next();
+              // , is the last char, continue option line
+              if (stream.eol()) {
+                stream.backUp(1);
+                let it = base_mode.token(stream, state.base_state);
+                return it ? it + ' sos-option' : null;
+              }
+              stream.backUp(1);
+            } else if (stream.eol()) {
+              // end of line stops option mode
+              state.sos_state = null;
+              state.inner_mode = null;
+            }
+            let it = base_mode.token(stream, state.base_state);
+            return it ? it + ' sos-option' : null;
+          } else if (state.sos_state && state.sos_state.startsWith("start ")) {
+            // try to understand option expand=
+            if (stream.match(/expand\s*=\s*True/, false)) {
+              // highlight {}
+              state.overlay_state.sigil = {
+                'left': '{',
+                'right': '}'
+              }
+            } else {
+              let found = stream.match(/expand\s*=\s*"(\S+) (\S+)"/, false);
+              if (!found)
+                found = stream.match(/expand\s*=\s*'(\S+) (\S+)'/, false);
+              if (found) {
+                state.overlay_state.sigil = {
+                  'left': found[1],
+                  'right': found[2]
+                }
+              }
+            }
+            let token = base_mode.token(stream, state.base_state);
+            // if it is end of line, ending the starting switch mode
+            if (stream.eol() && stream.peek() !== ',') {
+              // really
+              let mode = findMode(state.sos_state.slice(6).toLowerCase());
+              if (mode) {
+                state.sos_state = "entering " + state.sos_state.slice(6);
+              } else {
+                state.sos_state = 'unknown_language';
+              }
+            }
+            return token + ' sos-option';
+          }
+          // can be start of line but not special
+          if (state.sos_state == 'unknown_language') {
+            // we still handle {} in no man unknown_language
+            if (state.overlay_state.sigil) {
+              return overlay_mode.token(stream, state.overlay_state);
+            } else {
+              stream.skipToEnd();
+              return null;
+            }
+          } else if (state.inner_mode) {
+            let it = 'sos_script ';
+            if (!state.overlay_state.sigil) {
+              let st = state.inner_mode.token(stream, state.inner_state);
+              return st ? it + st : null;
+            } else {
+              // overlay mode, more complicated
+              if (stream != state.streamSeen ||
+                Math.min(state.basePos, state.overlayPos) < stream.start) {
+                state.streamSeen = stream;
+                state.basePos = state.overlayPos = stream.start;
+              }
+
+              if (stream.start == state.basePos) {
+                state.baseCur = state.inner_mode.token(stream, state.inner_state);
+                state.basePos = stream.pos;
+              }
+              if (stream.start == state.overlayPos) {
+                stream.pos = stream.start;
+                state.overlayCur = overlay_mode.token(stream, state.overlay_state);
+                state.overlayPos = stream.pos;
+              }
+              stream.pos = Math.min(state.basePos, state.overlayPos);
+              // state.overlay.combineTokens always takes precedence over combine,
+              // unless set to null
+              return (state.overlayCur ? state.overlayCur : state.baseCur) + " sos-script";
+            }
+          } else {
+            return base_mode.token(stream, state.base_state);
+          }
+        },
+
+        indent: function(state, textAfter) {
+          // inner indent
+          if (state.inner_mode) {
+            if (!state.inner_mode.indent) return CodeMirror.Pass;
+            return state.inner_mode.indent(state.inner_mode, textAfter) + 2;
+          } else {
+            return base_mode.indent(state.base_state, textAfter);
+          }
+        },
+
+        innerMode: function(state) {
+          return state.inner_mode ? null : {
+            state: state.base_state,
+            mode: base_mode
+          };
+        },
+
+        lineComment: "#",
+        fold: "indent",
+        electricInput: /^\s*[\}\]\)]$/,
+      };
+    };
+  }, "python");
+
+  CodeMirror.defineMIME("text/x-sos", "sos");
+});
+</script>
+<script>
+    function highlight_cells(cells, i, interval) {
+        setTimeout(function() {
+            var editor = CodeMirror.fromTextArea(cells[i], {
+                lineNumbers: false,
+                styleActiveLine: true,
+                matchBrackets: true,
+                readOnly: true,
+                mode: 'sos',
+                base_mode: cells[i].name,
+            });
+            $(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>"
+					       + cells[i].name + "</option></select>");
+            if (i < cells.length)
+                highlight_cells(cells, i + 1, interval);
+        }, interval);
+    }
+
+    highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+</script>
+
+
+
+
+
+<script
+  src="https://code.jquery.com/jquery-1.7.2.min.js"
+  integrity="sha256-R7aNzoy2gFrVs+pNJ6+SokH04ppcEqJ0yFLkNGoFALQ="
+  crossorigin="anonymous"></script>
+<script
+  src="https://code.jquery.com/ui/1.9.1/jquery-ui.min.js"
+  integrity="sha256-UezNdLBLZaG/YoRcr48I68gr8pb5gyTBM+di5P8p6t8="
+  crossorigin="anonymous"></script>
+<script>
+!function(e){"use strict";!function(e,t,s,i){var o="tocify",n="tocify-hide",a="tocify-header",l="."+a,r="tocify-subheader",h="."+r,d="tocify-item",c="."+d,f="tocify-extend-page";e.widget("toc.tocify",{version:"1.9.0",options:{context:"body",ignoreSelector:null,selectors:"h1, h2, h3",showAndHide:!0,showEffect:"slideDown",showEffectSpeed:"medium",hideEffect:"slideUp",hideEffectSpeed:"medium",smoothScroll:!0,smoothScrollSpeed:"medium",scrollTo:0,showAndHideOnScroll:!0,highlightOnScroll:!0,highlightOffset:40,theme:"bootstrap",extendPage:!0,extendPageOffset:100,history:!0,scrollHistory:!1,hashGenerator:"compact",highlightDefault:!0},_create:function(){var s=this;s.extendPageScroll=!0,s.items=[],s._generateToc(),s._addCSSClasses(),s.webkit=function(){for(var e in t)if(e&&-1!==e.toLowerCase().indexOf("webkit"))return!0;return!1}(),s._setEventHandlers(),e(t).load(function(){s._setActiveElement(!0),e("html, body").promise().done(function(){setTimeout(function(){s.extendPageScroll=!1},0)})})},_generateToc:function(){var t,s,i=this,l=i.options.ignoreSelector;if((t=-1!==this.options.selectors.indexOf(",")?e(this.options.context).find(this.options.selectors.replace(/ /g,"").substr(0,this.options.selectors.indexOf(","))):e(this.options.context).find(this.options.selectors.replace(/ /g,""))).length){i.element.addClass(o);var r=e(this.options.context).find(this.options.selectors),h=0;t.each(function(t){if(!e(this).is(l)){for(s=e("<ul/>",{id:a+t,class:a}).append(i._nestElements(e(this),t)),i.element.append(s);r[h]!==this;)h+=1;for(var o=h+1;o<r.length&&r[o].nodeName.toLowerCase()!==r[h].nodeName.toLowerCase();)o+=1;for(h+=1;h<o;){var n=r[h];e(n).is(l)||i._appendSubheaders.call(n,i,s),h+=1}}})}else i.element.addClass(n)},_setActiveElement:function(e){var s=this,i=t.location.hash.substring(1),o=s.element.find('li[data-unique="'+i+'"]');return i.length?(s.element.find("."+s.focusClass).removeClass(s.focusClass),o.addClass(s.focusClass),s.options.showAndHide&&o.click()):(s.element.find("."+s.focusClass).removeClass(s.focusClass),!i.length&&e&&s.options.highlightDefault&&s.element.find(c).first().addClass(s.focusClass)),s},_nestElements:function(t,s){var i,o,n;return(i=e.grep(this.items,function(e){return e===t.text()})).length?this.items.push(t.text()+s):this.items.push(t.text()),n=this._generateHashValue(i,t,s),o=e("<li/>",{class:d,"data-unique":n}).append(e("<a/>",{text:t.text()})),t.before(e("<div/>",{name:n,"data-unique":n})),o},_generateHashValue:function(e,t,s){var i="",o=this.options.hashGenerator;if("pretty"===o){for(i=t.text().toLowerCase().replace(/\s/g,"-");i.indexOf("--")>-1;)i=i.replace(/--/g,"-");for(;i.indexOf(":-")>-1;)i=i.replace(/:-/g,"-")}else i="function"==typeof o?o(t.text(),t):t.text().replace(/\s/g,"");return e.length&&(i+=""+s),i},_appendSubheaders:function(t,s){var i=e(this).index(t.options.selectors),o=e(t.options.selectors).eq(i-1),n=+e(this).prop("tagName").charAt(1),a=+o.prop("tagName").charAt(1);n<a?t.element.find(h+"[data-tag="+n+"]").last().append(t._nestElements(e(this),i)):n===a?s.find(c).last().after(t._nestElements(e(this),i)):s.find(c).last().after(e("<ul/>",{class:r,"data-tag":n})).next(h).append(t._nestElements(e(this),i))},_setEventHandlers:function(){var i=this;this.element.on("click.tocify","li",function(s){if(i.options.history&&(t.location.hash=e(this).attr("data-unique")),i.element.find("."+i.focusClass).removeClass(i.focusClass),e(this).addClass(i.focusClass),i.options.showAndHide){var o=e('li[data-unique="'+e(this).attr("data-unique")+'"]');i._triggerShow(o)}i._scrollTo(e(this))}),this.element.find("li").on({"mouseenter.tocify":function(){e(this).addClass(i.hoverClass),e(this).css("cursor","pointer")},"mouseleave.tocify":function(){"bootstrap"!==i.options.theme&&e(this).removeClass(i.hoverClass)}}),(i.options.extendPage||i.options.highlightOnScroll||i.options.scrollHistory||i.options.showAndHideOnScroll)&&e(t).on("scroll.tocify",function(){e("html, body").promise().done(function(){var o,n,a,l,r=e(t).scrollTop(),h=e(t).height(),d=e(s).height(),u=e("body")[0].scrollHeight;if(i.options.extendPage&&(i.webkit&&r>=u-h-i.options.extendPageOffset||!i.webkit&&h+r>d-i.options.extendPageOffset)&&!e(".tocify-extend-page").length){if(!(n=e('div[data-unique="'+e(c).last().attr("data-unique")+'"]')).length)return;a=n.offset().top,e(i.options.context).append(e("<div />",{class:f,height:Math.abs(a-r)+"px","data-unique":f})),i.extendPageScroll&&(l=i.element.find("li.active"),i._scrollTo(e('div[data-unique="'+l.attr("data-unique")+'"]')))}setTimeout(function(){var s,n=null,a=null,l=e(i.options.context).find("div[data-unique]");l.each(function(t){var s=Math.abs((e(this).next().length?e(this).next():e(this)).offset().top-r-i.options.highlightOffset);if(!(null==n||s<n))return!1;n=s,a=t}),s=e(l[a]).attr("data-unique"),o=e('li[data-unique="'+s+'"]'),i.options.highlightOnScroll&&o.length&&(i.element.find("."+i.focusClass).removeClass(i.focusClass),o.addClass(i.focusClass)),i.options.scrollHistory&&t.location.hash!=="#"+s&&t.location.replace("#"+s),i.options.showAndHideOnScroll&&i.options.showAndHide&&i._triggerShow(o,!0)},0)})})},show:function(t,s){var i=this;if(!t.is(":visible"))switch(t.find(h).length||t.parent().is(l)||t.parent().is(":visible")?t.children(h).length||t.parent().is(l)||(t=t.closest(h)):t=t.parents(h).add(t),i.options.showEffect){case"none":t.show();break;case"show":t.show(i.options.showEffectSpeed);break;case"slideDown":t.slideDown(i.options.showEffectSpeed);break;case"fadeIn":t.fadeIn(i.options.showEffectSpeed);break;default:t.show()}return t.parent().is(l)?i.hide(e(h).not(t)):i.hide(e(h).not(t.closest(l).find(h).not(t.siblings()))),i},hide:function(e){var t=this;switch(t.options.hideEffect){case"none":e.hide();break;case"hide":e.hide(t.options.hideEffectSpeed);break;case"slideUp":e.slideUp(t.options.hideEffectSpeed);break;case"fadeOut":e.fadeOut(t.options.hideEffectSpeed);break;default:e.hide()}return t},_triggerShow:function(e,t){return e.parent().is(l)||e.next().is(h)?this.show(e.next(h),t):e.parent().is(h)&&this.show(e.parent(),t),this},_addCSSClasses:function(){return"jqueryui"===this.options.theme?(this.focusClass="ui-state-default",this.hoverClass="ui-state-hover",this.element.addClass("ui-widget").find(".toc-title").addClass("ui-widget-header").end().find("li").addClass("ui-widget-content")):"bootstrap"===this.options.theme?(this.element.find(l+","+h).addClass("nav nav-list"),this.focusClass="active"):(this.focusClass="tocify-focus",this.hoverClass="tocify-hover"),this},setOption:function(){e.Widget.prototype._setOption.apply(this,arguments)},setOptions:function(){e.Widget.prototype._setOptions.apply(this,arguments)},_scrollTo:function(t){var s=this.options.smoothScroll||0,i=this.options.scrollTo,o=e('div[data-unique="'+t.attr("data-unique")+'"]');return o.length?(e("html, body").promise().done(function(){e("html, body").animate({scrollTop:o.offset().top-(e.isFunction(i)?i.call():i)+"px"},{duration:s})}),this):this}})}(window.jQuery,window,document)}();
+</script>
+<script>
+    $(function() {
+        var toc = $("#toc").tocify({
+          selectors: "h2,h3,h4,h5"
+        });
+    });
+</script>
+
+
+
+    </div>
+  </div>
 </body>
+
 
  
 

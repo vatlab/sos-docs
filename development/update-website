@@ -7,29 +7,35 @@ run:
 
 [convert-documentation]
 input:  '../src/documentation/*.ipynb', group_by=1
-depends: '../src/documentation/toc_doc.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
 	cd ../src/documentation
-	sos convert ${_input:a} ${_output:a}  --template toc_doc
+	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_doc.tpl
 
 [convert-tutorials]
 input:  '../src/tutorials/*.ipynb', group_by=1
-depends: '../src/tutorials/toc_tut.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 run: expand='${ }'
 	cd ../src/tutorials
-	sos convert ${_input:a} ${_output:a}  --template toc_tut
+	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_tut.tpl
 
 [convert-homepage]
 input:  '../src/homepage/*.ipynb', group_by=1
 output: f"../{_input:bn}.html"
 
+with_toc = False # 'Running' in str(_input)
+
 run: expand=True
 	cd ../src/tutorials
-	sos convert {_input:a} {_output:a} --template basic
+	sos convert {_input:a} {_output:a} --template {'../templates/basic_toc.tpl' if with_toc else 'basic'}
+
+stop_if(not with_toc)
+run: expand=True
+    perl -pi -e 's/id="toc"/id="side_toc_{_output:bn}"/' {_output:a}
+    perl -pi -e 's/"#toc"/"#toc_{_output:bn}"/' {_output:a}
+    perl -pi -e 's/"#side_toc"/"#side_toc_{_output:bn}"/' {_output:a}
 
 [convert-example-scripts]
 input:  '../src/examples/*.sos', 'update-website', group_by=1
@@ -37,15 +43,17 @@ output: f"../doc/examples/{_input:bn}.html"
 
 run: workdir='../doc/examples', expand=True
 	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --raw {_input:b} --lineno --style default
+	sos convert {_input:b} {_output:b} --raw {_input:b} 
 
 [convert-example-notebooks]
 input:  '../src/examples/*.ipynb', group_by=1
 output: f"../doc/examples/{_input:bn}.html"
 
+has_header = '"## ' in open(_input).read()
+
 run: workdir='../doc/examples', expand=True
 	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --template sos-full
+	sos convert {_input:b} {_output:b} --template {'sos-cm-toc' if has_header else 'sos-cm'}
 
 [convert-example-report]
 input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/RNASeqDE.ipynb', 
