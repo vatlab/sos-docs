@@ -11935,6 +11935,82 @@ div.cell {
     }
 </style>
 
+<script src="https://code.jquery.com/jquery-1.7.2.min.js"
+  integrity="sha256-R7aNzoy2gFrVs+pNJ6+SokH04ppcEqJ0yFLkNGoFALQ="
+  crossorigin="anonymous">
+</script>
+
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+
+    if (dtype === 'numeric') {
+        var fn = function(a, b) {
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim());
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]);
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+
+    var sorted = isSorted(tr, fn);
+
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+
+</script>
+
+
+
+
 
 
 
@@ -12099,6 +12175,75 @@ li.tocify-item.active {
 <p><sup>1</sup>Departments of Biostatistics and Genetics, UNC-Chapel Hill, Chapel Hill, NC, US
 <sup>2</sup>Institute for Molecular Medicine Finland (FIMM), Helsinki, Finland
 <sup>3</sup>European Molecular Biology Laboratory (EMBL), Heidelberg, Germany</p>
+
+</div>
+</div>
+</div>
+
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+   
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">5</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="http://github.com/vatlab/sos-docs/blob/13d093ce4abdc1492f7179963f2918b110d9b513/RNASeqDE.ipynb"><span class="revision_id">13d093c<span></a></td>
+<td>Gao Wang</td>
+<td>2018-06-16</td>
+<td>Make STAR sparse mode a parameter</td></tr><tr><td><a target="_blank" href="http://github.com/vatlab/sos-docs/blob/3da9e4b60369c6a9ce591f971ef9e70a5c881867/RNASeqDE.ipynb"><span class="revision_id">3da9e4b<span></a></td>
+<td>Gao Wang</td>
+<td>2018-06-16</td>
+<td>Fix & finalize DE example</td></tr><tr><td><a target="_blank" href="http://github.com/vatlab/sos-docs/blob/3a5eb79e2fbfc3220ff7ac8977f6c0abb954f303/RNASeqDE.ipynb"><span class="revision_id">3a5eb79<span></a></td>
+<td>Gao Wang</td>
+<td>2018-06-16</td>
+<td>Update DE pipeline</td></tr><tr><td><a target="_blank" href="http://github.com/vatlab/sos-docs/blob/22b1b5137034dea3ac027e13f749a9fdaa879f87/RNASeqDE.ipynb"><span class="revision_id">22b1b51<span></a></td>
+<td>Gao Wang</td>
+<td>2018-06-13</td>
+<td>Update workflow document</td></tr><tr><td><a target="_blank" href="http://github.com/vatlab/sos-docs/blob/8027190f9f4537efb46c87655f8a97fe30590334/RNASeqDE.ipynb"><span class="revision_id">8027190<span></a></td>
+<td>Gao Wang</td>
+<td>2018-04-28</td>
+<td>Update DE align workflow</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>This notebook is converted from <a href="https://github.com/Bioconductor-notebooks/Dynamic-Re-analysis-RNA-seq-differential-expression-workflow">a Jupyter implementation</a>. See <a href="http://dx.doi.org/10.1101/144816">this paper</a> for more details. The original Bioconductor workflow loads pre-processed BAM files packaged into <code>airway</code> library, and perform interactive analysis along the way. Here we highlight the advantage using SoS over a conventional Jupyter <code>R</code> notebook:</p>
 <ul>
 <li>All command-line based procedures can be formally implemented in SoS and performed in an interactive environment.</li>
@@ -18616,77 +18761,6 @@ loaded via a namespace (and not attached):
 </div>
     </div>
   </div>
-
-
-<script>
-
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        }
-    }
-}
-
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-
-    if (dtype === 'numeric') {
-        var fn = function(a, b) {
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim());
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]);
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-
-    var sorted = isSorted(tr, fn);
-
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-
-</script>
-
 
 
 
