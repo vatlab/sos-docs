@@ -13411,7 +13411,11 @@ Successfully tagged test_docker_ls:latest
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><p>If you are using Docker Toolbox instead of Docker for Mac on a Mac, the docker image will be executed inside a VirtualBox virtual machine, which has its own shared directories, allocated CPUs and memories. It is therefore possible that your docker image will run out of memory even when your system has plenty of RAM left. Re-configure your docker VM if this happens.</p>
+<li><p>If you are using <strong>Docker Toolbox</strong> instead of Docker for Mac on a Mac, the docker image will be executed inside a VirtualBox virtual machine, which has its own shared directories, allocated CPUs and memories. It is therefore possible that</p>
+<ol>
+<li>Your virtual machine is usually onnfigured with a small amount of RAM (e.g. 2G), so your docker image will run out of memory even when your system has plenty of RAM left. Re-configure your virtual box VM if this happens.</li>
+<li>SoS uses native paths for its docker command line so it will for example map <code>c:\Users</code> to <code>/C/Users</code> under windows. However, this path might not be accessible from docker if the virtual box does not share this directory (<code>c:\Users</code>) or if the shared directory has a different name (e.g. <code>/Users</code> instead of <code>/C/Users</code>). Before you use SoS with Docker Toolbox, please make sure that the directory you would like to use is shared in the VM, and use names recognizable by SoS (e.g. share <code>C:\Users</code> as <code>/C/Users</code>, <code>D:\Data</code> as <code>/D/Data</code>).</li>
+</ol>
 </li>
 <li><p>Symbolic links are different from OS to OS so creating symbolic links inside docker might fail with strange error messages such as "Read-only file system". Even if you can create symbolic links inside docker, the created links might not be accessible from the host machine.</p>
 </li>
