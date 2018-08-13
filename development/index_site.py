@@ -64,7 +64,7 @@ def parse_html(url, html):
                     tag = ''
                 
             part = '{{"mainTitle": "{}", "title": "{}", "text": "{}", "tags": "", "mainUrl": "{}", "url": "{}"}}'.format(
-                    re.sub('¶', '', maintitle), header.get_text().replace('¶', '').replace('"', r'\"'), 
+                    maintitle.replace('¶', '').strip(), header.get_text().replace('¶', '').replace('"', r'\"').strip(), 
                     part, url, url + tag.replace('"', r'\"'))
             all_text.append(part)
        
