@@ -12744,7 +12744,7 @@ print('Step after run')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="docker_image"><code>docker_image</code><a class="anchor-link" href="#docker_image">&#182;</a></h3>
+<h3 id="container"><code>container</code><a class="anchor-link" href="#container">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12752,7 +12752,22 @@ print('Step after run')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If a docker image is specified (either a name, an Id, or a file), the action is assumed to be executed in the specified docker. The image will be automatically downloaded (pulled) or loaded (if a <code>.tar</code> or <code>.tar.gz</code> file is specified`) if it is not available locally.</p>
+<p>Container used to execute the action in the format of <code>container_type://tag</code>. Because sos currently only supports docker, it currently accepts the following values:</p>
+
+<pre><code>tag
+docker://tag
+local://tag</code></pre>
+<p>where 
+<code>tag</code> is a shortcut for <code>docker://tag</code> and <code>local://tag</code> means do not use any container.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If a docker image is specified, the action is assumed to be executed in the specified docker container. The image will be automatically downloaded (pulled) if it is not available locally.</p>
 <p>For example, executing the following script</p>
 
 </div>
@@ -12764,7 +12779,7 @@ print('Step after run')</textarea>
 <div class="text_cell_render border-box-sizing rendered_html">
 
 <pre><code>[10]
-python3: docker_image='python'
+python3: container='python'
   set = {'a', 'b'}
   print(set)</code></pre>
 
@@ -12804,6 +12819,32 @@ is executed in a docker image. These options include</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="docker_image-(deprecated)"><code>docker_image</code> (deprecated)<a class="anchor-link" href="#docker_image-(deprecated)">&#182;</a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">`docker_image='tag'` is now replaced with `container='tag'` or `container='docker://tag'` </textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="default_env"><code>default_env</code><a class="anchor-link" href="#default_env">&#182;</a></h3>
 </div>
 </div>
@@ -12821,7 +12862,7 @@ is executed in a docker image. These options include</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="docker_file"><code>docker_file</code><a class="anchor-link" href="#docker_file">&#182;</a></h3><p>This option allows you to import a docker from specified <code>docker_file</code>, which can be an archive file (<code>.tar</code>, <code>.tar.gz</code>, <code>.tgz</code>, <code>.bzip</code>, <code>.tar.xz</code>, <code>.txz</code>) or a URL to an archive file (e.g. <code>http://example.com/exampleimage.tgz</code>). SoS will use command <code>docker import</code> to import the <code>docker_file</code>. However, because SoS does not know the repository and tag names of the imported docker file, you will still need to use option <code>docker_image</code> to specify the image to use.</p>
+<h3 id="docker_file-(deprecated)"><code>docker_file</code> (deprecated)<a class="anchor-link" href="#docker_file-(deprecated)">&#182;</a></h3><p>This option allows you to import a docker from specified <code>docker_file</code>, which can be an archive file (<code>.tar</code>, <code>.tar.gz</code>, <code>.tgz</code>, <code>.bzip</code>, <code>.tar.xz</code>, <code>.txz</code>) or a URL to an archive file (e.g. <code>http://example.com/exampleimage.tgz</code>). SoS will use command <code>docker import</code> to import the <code>docker_file</code>. However, because SoS does not know the repository and tag names of the imported docker file, you will still need to use option <code>docker_image</code> to specify the image to use.</p>
 
 </div>
 </div>

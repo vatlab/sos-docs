@@ -12163,7 +12163,13 @@ $(document).ready(function() {
         <th>Date</th>
         <th>Message</th>
         <tr>
-        <tr><td><span class="revision_id">0838fb0<span></td>
+        <tr><td><span class="revision_id">b4a418a<span></td>
+<td>Bo Peng</td>
+<td>2018-08-07</td>
+<td>Updata sos docker guide with information on docker toolbox vatlab/sos#996</td></tr><tr><td><span class="revision_id">14318e8<span></td>
+<td>Bo Peng</td>
+<td>2018-06-24</td>
+<td>Update docker and dryrun related documents</td></tr><tr><td><span class="revision_id">0838fb0<span></td>
 <td>Bo Peng</td>
 <td>2018-06-24</td>
 <td>Update docker toturial on docker build</td></tr><tr><td><span class="revision_id">8dccbc9<span></td>
@@ -12222,7 +12228,7 @@ $(document).ready(function() {
   <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
    <textarea rows="11"
       class="sos-source" name="SoS">%run
-ruby: docker_image='ruby'
+ruby: container='ruby'
     line1 = "Cats are smarter than dogs";
     line2 = "Dogs also like meat";
 
@@ -12293,7 +12299,7 @@ ruby: docker_image='ruby'
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">docker run --rm   -v /Users/bpeng1/sos/sos-docs/src/tutorials:/Users/bpeng1/sos/sos-docs/src/tutorials -v /Users/bpeng1/sos/sos-docs/src/tutorials/tmpjyo05208/docker_run_99338.rb:/var/lib/sos/docker_run_99338.rb    -t -P -w=/Users/bpeng1/sos/sos-docs/src/tutorials -u 1985961928:895809667    ruby ruby /var/lib/sos/docker_run_99338.rb</div>
+<div class="sos_hint">docker run --rm   -v /Users/bpeng1/sos/sos-docs/src/tutorials:/Users/bpeng1/sos/sos-docs/src/tutorials -v /Users/bpeng1/sos/sos-docs/src/tutorials/tmpbvxhyqy5/docker_run_60521.rb:/var/lib/sos/docker_run_60521.rb    -t  -w=/Users/bpeng1/sos/sos-docs/src/tutorials -u 1985961928:895809667    ruby ruby /var/lib/sos/docker_run_60521.rb</div>
 </div>
 
 </div>
@@ -12360,6 +12366,20 @@ end
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that</p>
+
+<pre><code>ruby: container='ruby'</code></pre>
+<p>is a shortcut for</p>
+
+<pre><code>ruby: container='docker://ruby'</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Building-docker-images">Building docker images<a class="anchor-link" href="#Building-docker-images">&#182;</a></h2>
 </div>
 </div>
@@ -12410,8 +12430,8 @@ end
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Sending build context to Docker daemon  2.048kB
 Step 1/1 : FROM ubuntu:14.04
- ---&gt; 578c3e61a98c
-Successfully built 578c3e61a98c
+ ---&gt; 8cef1fa16c77
+Successfully built 8cef1fa16c77
 Successfully tagged test_docker:latest
 </pre>
 </div>
@@ -12587,12 +12607,12 @@ Successfully tagged test_docker:latest
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Sending build context to Docker daemon     126B
 Step 1/2 : FROM ubuntu:14.04
- ---&gt; 578c3e61a98c
+ ---&gt; 8cef1fa16c77
 Step 2/2 : LABEL &#34;test image&#34;=&#39;&#39;
- ---&gt; Running in 1ad93f0e5be6
-Removing intermediate container 1ad93f0e5be6
- ---&gt; 36b25bbdd09c
-Successfully built 36b25bbdd09c
+ ---&gt; Running in 56f529bd5495
+Removing intermediate container 56f529bd5495
+ ---&gt; 05724ccffb6f
+Successfully built 05724ccffb6f
 Successfully tagged test_docker:latest
 </pre>
 </div>
@@ -12651,7 +12671,7 @@ Successfully tagged test_docker:latest
 <div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04'
+      class="sos-source" name="SoS">sh: container='ubuntu:14.04'
   echo `pwd`</textarea>
   </div>
 </div>
@@ -12697,7 +12717,7 @@ Successfully tagged test_docker:latest
 <div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04', workdir='..'
+      class="sos-source" name="SoS">sh: container='ubuntu:14.04', workdir='..'
   echo `pwd`</textarea>
   </div>
 </div>
@@ -12761,13 +12781,13 @@ Successfully tagged test_docker:latest
   FROM ubuntu:14.04
   WORKDIR /usr
 
-sh: docker_image='test_docker_workdir'
+sh: container='test_docker_workdir'
   echo `pwd`
   
-sh: docker_image='test_docker_workdir', docker_workdir=None
+sh: container='test_docker_workdir', docker_workdir=None
   echo `pwd`
   
-sh: docker_image='test_docker_workdir', docker_workdir='/home/random_user'
+sh: container='test_docker_workdir', docker_workdir='/home/random_user'
   echo `pwd`</textarea>
   </div>
 </div>
@@ -12786,11 +12806,11 @@ sh: docker_image='test_docker_workdir', docker_workdir='/home/random_user'
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Sending build context to Docker daemon  2.048kB
 Step 1/2 : FROM ubuntu:14.04
- ---&gt; 578c3e61a98c
+ ---&gt; 8cef1fa16c77
 Step 2/2 : WORKDIR /usr
  ---&gt; Using cache
- ---&gt; 2d5bd4d406b3
-Successfully built 2d5bd4d406b3
+ ---&gt; 336ce9da9b8f
+Successfully built 336ce9da9b8f
 Successfully tagged test_docker_workdir:latest
 /Users/bpeng1/sos/sos-docs/src/tutorials
 /usr
@@ -12840,7 +12860,7 @@ Successfully tagged test_docker_workdir:latest
 <div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
-      class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04'
+      class="sos-source" name="SoS">sh: container='ubuntu:14.04'
   wc -l SoS_Docker_Guide.ipynb > docker_wc.txt
   
 sh:
@@ -12860,7 +12880,7 @@ sh:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>978 SoS_Docker_Guide.ipynb
+<pre>935 SoS_Docker_Guide.ipynb
 </pre>
 </div>
 </div>
@@ -12927,7 +12947,7 @@ sh:
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">%sandbox --expect-error
-sh: docker_image='ubuntu:14.04'
+sh: container='ubuntu:14.04'
   wc -l SoS_Docker_Guide.ipynb > /Volumes/SANDISK/filelist</textarea>
   </div>
 </div>
@@ -12944,7 +12964,7 @@ sh: docker_image='ubuntu:14.04'
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/var/lib/sos/docker_run_99338.sh: 1: /var/lib/sos/docker_run_99338.sh: cannot create /Volumes/SANDISK/filelist: Directory nonexistent
+<pre>/var/lib/sos/docker_run_60521.sh: 1: /var/lib/sos/docker_run_60521.sh: cannot create /Volumes/SANDISK/filelist: Directory nonexistent
 </pre>
 </div>
 </div>
@@ -12956,8 +12976,8 @@ sh: docker_image='ubuntu:14.04'
 
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>Executing script in docker returns an error (exitcode=2).
-The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpje4fyj_9/.sos/docker_run_99338.sh. To reproduce the error please run:
-``docker run --rm   -v /private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpje4fyj_9:/private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpje4fyj_9 -v /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpje4fyj_9/.sos/docker_run_99338.sh:/var/lib/sos/docker_run_99338.sh    -t -P -w=/private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpje4fyj_9 -u 1985961928:895809667    ubuntu:14.04 /bin/sh /var/lib/sos/docker_run_99338.sh``
+The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpg1dh89_3/.sos/docker_run_60521.sh. To reproduce the error please run:
+``docker run --rm   -v /private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpg1dh89_3:/private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpg1dh89_3 -v /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpg1dh89_3/.sos/docker_run_60521.sh:/var/lib/sos/docker_run_60521.sh    -t  -w=/private/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmpg1dh89_3 -u 1985961928:895809667    ubuntu:14.04 /bin/sh /var/lib/sos/docker_run_60521.sh``
 </pre>
 </div>
 </div>
@@ -13000,7 +13020,7 @@ The script has been saved to /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tm
 <div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
-      class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04', volumes='/Volumes'
+      class="sos-source" name="SoS">sh: container='ubuntu:14.04', volumes='/Volumes'
   wc -l SoS_Docker_Guide.ipynb > /Volumes/SANDISK/filelist
 
 sh:
@@ -13020,7 +13040,7 @@ sh:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>978 SoS_Docker_Guide.ipynb
+<pre>935 SoS_Docker_Guide.ipynb
 </pre>
 </div>
 </div>
@@ -13049,7 +13069,7 @@ sh:
 <div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
    <textarea rows="6"
-      class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04',
+      class="sos-source" name="SoS">sh: container='ubuntu:14.04',
   volumes=['~/sos/sos-docs/src/tutorials:/input', '/Volumes:/output']
   wc -l /input/SoS_Docker_Guide.ipynb > /output/SANDISK/filelist
 
@@ -13070,7 +13090,7 @@ sh:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>978 /input/SoS_Docker_Guide.ipynb
+<pre>935 /input/SoS_Docker_Guide.ipynb
 </pre>
 </div>
 </div>
@@ -13100,7 +13120,7 @@ sh:
 <div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
-      class="sos-source" name="SoS">sh: docker_image='ubuntu:14.04', volumes='~:/data'
+      class="sos-source" name="SoS">sh: container='ubuntu:14.04', volumes='~:/data'
   ls ~ | wc -l
   ls /data | wc -l</textarea>
   </div>
@@ -13119,7 +13139,7 @@ sh:
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>21
-21
+49
 </pre>
 </div>
 </div>
@@ -13178,11 +13198,12 @@ FIXME: example of using another user (<code>user=blah</code>)</p>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Sending build context to Docker daemon  2.048kB
 Step 1/2 : FROM ubuntu:14.04
- ---&gt; 578c3e61a98c
+ ---&gt; 8cef1fa16c77
 Step 2/2 : USER blah
- ---&gt; Using cache
- ---&gt; ef7a1a1474b5
-Successfully built ef7a1a1474b5
+ ---&gt; Running in c0f9cb79f0b8
+Removing intermediate container c0f9cb79f0b8
+ ---&gt; 659e07eb2f37
+Successfully built 659e07eb2f37
 Successfully tagged test_docker_workdir:latest
 </pre>
 </div>
@@ -13257,11 +13278,12 @@ Successfully tagged test_docker_workdir:latest
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Sending build context to Docker daemon  2.048kB
 Step 1/2 : FROM ubuntu:14.04
- ---&gt; 578c3e61a98c
+ ---&gt; 8cef1fa16c77
 Step 2/2 : ENTRYPOINT [&#34;ls&#34;]
- ---&gt; Using cache
- ---&gt; a9cd39e681a2
-Successfully built a9cd39e681a2
+ ---&gt; Running in d1a3a4d6d919
+Removing intermediate container d1a3a4d6d919
+ ---&gt; a7768bfbb101
+Successfully built a7768bfbb101
 Successfully tagged test_docker_ls:latest
 </pre>
 </div>
@@ -13313,7 +13335,7 @@ Successfully tagged test_docker_ls:latest
 <div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">script: args = '-l SoS_Docker_Guide.ipynb', docker_image = 'test_docker_ls'</textarea>
+      class="sos-source" name="SoS">script: args = '-l SoS_Docker_Guide.ipynb', container = 'test_docker_ls'</textarea>
   </div>
 </div>
 
@@ -13329,7 +13351,7 @@ Successfully tagged test_docker_ls:latest
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>-rw-r--r-- 1 1985961928 895809667 28993 Jun 24 18:04 SoS_Docker_Guide.ipynb
+<pre>-rw-r--r-- 1 1985961928 895809667 28872 Aug 14 16:45 SoS_Docker_Guide.ipynb
 </pre>
 </div>
 </div>
@@ -13369,7 +13391,7 @@ Successfully tagged test_docker_ls:latest
 <div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="SoS">script: args = '{script}', docker_image = 'test_docker_ls'
+      class="sos-source" name="SoS">script: args='{script}', container='test_docker_ls'
   -l SoS_Docker_Guide.ipynb</textarea>
   </div>
 </div>
@@ -13386,7 +13408,7 @@ Successfully tagged test_docker_ls:latest
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>-rw-r--r-- 1 1985961928 895809667 28993 Jun 24 18:04 SoS_Docker_Guide.ipynb
+<pre>-rw-r--r-- 1 1985961928 895809667 28872 Aug 14 16:45 SoS_Docker_Guide.ipynb
 </pre>
 </div>
 </div>
