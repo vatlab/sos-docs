@@ -17369,8 +17369,16 @@ sos_var</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Magic <code>capture</code> captures output from a cell, parse, and save or append the result to a variable in SoS. The output of the cell (namely the input to magic <code>%capture</code>) can be standard output, or a file created by the cell.</p>
-<p>By default, the <code>%capture</code> magic captures the standard output from a cell and save it to specified variable:</p>
+<p>Magic <code>capture</code> captures output from a cell, optionally parse it in specified format (option <code>--as</code>, and save or append the result to a variable in SoS (<code>--to</code> or <code>--append</code>). The output of the cell (namely the input to magic <code>%capture</code>) can be</p>
+<ul>
+<li>standard output, <code>%capture stdout</code> or just <code>%capture</code></li>
+<li>standard error, <code>%capture stderr</code></li>
+<li>plain text, <code>%capture text</code> from <code>text/plain</code> of message <code>display_data</code></li>
+<li>markdown, <code>%capture markdown</code> from <code>text/markdown</code> of message <code>display_data</code></li>
+<li>html, <code>%capture html</code> from <code>text/html</code> of message <code>display_data</code>, or</li>
+<li>raw, which simply returns a list of messages.</li>
+</ul>
+<p>For example</p>
 
 </div>
 </div>
@@ -17380,7 +17388,7 @@ sos_var</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="R">%capture --to r_var
@@ -17402,6 +17410,96 @@ cat(paste(c(1,2,3)))</textarea>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>1 2 3</pre>
 </div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>captures standard output of the cell to variable <code>r_var</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">r_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;1 2 3&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%capture text --to r_var
+paste(c(1,2,3))</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'1'</li>
+	<li>'2'</li>
+	<li>'3'</li>
+</ol>
+
+</div>
+
 </div>
 
 </div>
@@ -17437,73 +17535,7 @@ cat(paste(c(1,2,3)))</textarea>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;1 2 3&#39;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If the cell generates a file, you can capture the result from a text file</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_Bash">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="Bash">%capture --to bash_var --from a.txt
-!ls | head -2 > a.txt</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">bash_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[4]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;Extending_SoS.ipynb\nLanguage_Module.ipynb\n&#39;</pre>
+<pre>&#39;[1] &#34;1&#34; &#34;2&#34; &#34;3&#34;&#39;</pre>
 </div>
 
 </div>
@@ -17538,10 +17570,10 @@ cat(paste(c(1,2,3)))</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="SoS">%capture csv --to table
+      class="sos-source" name="SoS">%capture --as csv --to table
 print('a,b\n1,2\n3,4')</textarea>
   </div>
 </div>
@@ -17577,7 +17609,7 @@ print('a,b\n1,2\n3,4')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="SoS">table</textarea>
@@ -17592,23 +17624,23 @@ print('a,b\n1,2\n3,4')</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[14]:</div>
+<div class="prompt output_prompt">Out[4]:</div>
 
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -17658,14 +17690,13 @@ print('a,b\n1,2\n3,4')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
-   <textarea rows="12"
-      class="sos-source" name="sparql">%capture json --from output.txt --to sparql
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="sparql">#%capture json --from output.txt --to sparql
 
-%outfile output.txt
 %endpoint http://dbpedia.org/sparql
-%display table withtypes
+%format JSON
 
 SELECT DISTINCT ?property
 WHERE {
@@ -17689,7 +17720,7 @@ LIMIT 3</textarea>
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="krn-spql"><div class="magic">Output file: output.txt</div><div class="magic">Endpoint set to: http://dbpedia.org/sparql</div><div class="magic">Display: table<br/>Show Types: on</div></div>
+<div class="krn-spql"><div class="magic">Endpoint set to: http://dbpedia.org/sparql</div><div class="magic">Return format: JSON</div></div>
 </div>
 
 </div>
@@ -17700,8 +17731,17 @@ LIMIT 3</textarea>
 
 
 
-<div class="output_html rendered_html output_subarea ">
-<div class="krn-spql"><table><tr class=hdr><th>property</th><th>type</th></tr><tr class=odd><td class=val><a href="http://www.w3.org/2002/07/owl#differentFrom" target="_other">http://www.w3.org/2002/07/owl#differentFrom</a></td><td class=typ>uri</td></tr><tr class=even><td class=val><a href="http://www.w3.org/2000/01/rdf-schema#seeAlso" target="_other">http://www.w3.org/2000/01/rdf-schema#seeAlso</a></td><td class=typ>uri</td></tr><tr class=odd><td class=val><a href="http://www.w3.org/2002/07/owl#sameAs" target="_other">http://www.w3.org/2002/07/owl#sameAs</a></td><td class=typ>uri</td></tr></table><div class="tinfo">Total: 3, Shown: 3</div></div>
+
+<div class="output_text output_subarea ">
+<pre>{&#39;head&#39;: {&#39;link&#39;: [], &#39;vars&#39;: [&#39;property&#39;]},
+ &#39;results&#39;: {&#39;bindings&#39;: [{&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
+                                        &#39;value&#39;: &#39;http://www.w3.org/2002/07/owl#differentFrom&#39;}},
+                          {&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
+                                        &#39;value&#39;: &#39;http://www.w3.org/2000/01/rdf-schema#seeAlso&#39;}},
+                          {&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
+                                        &#39;value&#39;: &#39;http://www.w3.org/2002/07/owl#sameAs&#39;}}],
+             &#39;distinct&#39;: False,
+             &#39;ordered&#39;: True}}</pre>
 </div>
 
 </div>
@@ -17718,10 +17758,11 @@ LIMIT 3</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">sparql</textarea>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">import json
+json.loads(sparql)</textarea>
   </div>
 </div>
 
@@ -17733,23 +17774,20 @@ LIMIT 3</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[10]:</div>
+<div class="prompt"></div>
 
 
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+---------------------------------------------------------------------------
+JSONDecodeError                           Traceback (most recent call last)
+script_6857601439525848633 in &lt;module&gt;
+      import json
+----&gt; json.loads(sparql)
 
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;head&#39;: {&#39;link&#39;: [], &#39;vars&#39;: [&#39;property&#39;]},
- &#39;results&#39;: {&#39;bindings&#39;: [{&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
-     &#39;value&#39;: &#39;http://www.w3.org/2002/07/owl#differentFrom&#39;}},
-   {&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
-     &#39;value&#39;: &#39;http://www.w3.org/2000/01/rdf-schema#seeAlso&#39;}},
-   {&#39;property&#39;: {&#39;type&#39;: &#39;uri&#39;,
-     &#39;value&#39;: &#39;http://www.w3.org/2002/07/owl#sameAs&#39;}}],
-  &#39;distinct&#39;: False,
-  &#39;ordered&#39;: True}}</pre>
+JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+</pre>
 </div>
-
 </div>
 
 </div>
