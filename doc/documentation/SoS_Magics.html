@@ -15022,7 +15022,7 @@ optional arguments:
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The <code>%run</code> magic allows you to run the content of a cell as a SoS workflow with specify SoS options such as <code>-v</code> (verbosity), <code>-j</code> (max number of jobs), and workflow options as defined by <code>parameter:</code> keyword.</p>
-<p><strong>The content of the cell is extracted and executed as an independent SoS script prepended with [global] sections defined in the notebook</strong>. The script does not use any existing variable so all parameters must be passed from command line (options of <code>%run</code>). The resulting dictionary will merged to the SoS dictionary to make it easy to check the result of the workflow, unless the workflow is executed remotely on another server (option <code>-r HOST</code>).</p>
+<p>The content of the cell is extracted and executed as an independent SoS script. The script does not use any existing variable so all parameters must be passed from command line (options of <code>%run</code>). The resulting dictionary will merged to the SoS dictionary to make it easy to check the result of the workflow, unless the workflow is executed remotely on another server (option <code>-r HOST</code>).</p>
 
 </div>
 </div>
@@ -15041,7 +15041,7 @@ optional arguments:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="SoS">var = 100</textarea>
@@ -15068,7 +15068,7 @@ optional arguments:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="SoS">var += 100
@@ -15114,7 +15114,7 @@ print(var)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">%sandbox --expect-error
@@ -15135,9 +15135,13 @@ print(var)</textarea>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>NameError at line 1 of 
-&gt;&gt;&gt; print(var)
-name &#39;var&#39; is not defined
+<pre>
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+script_5226703861919018952 in &lt;module&gt;
+----&gt; print(var)
+
+NameError: name &#39;var&#39; is not defined
 </pre>
 </div>
 </div>
@@ -15163,7 +15167,7 @@ name &#39;var&#39; is not defined
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">%run --var 40
@@ -15192,7 +15196,7 @@ var += 400</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="SoS">print(var)</textarea>
@@ -15237,7 +15241,7 @@ var += 400</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
       class="sos-source" name="SoS">%run
@@ -15277,7 +15281,7 @@ sh: expand=True
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>%run</code> magic executes <code>global</code> sections defined in the notebook which allows you to define commonly used definitions in a <code>global</code> section and used them in every cell executed by <code>%run</code>. For example, although we define a variable <code>VAR</code> to be <code>this is local</code> in the notebook,</p>
+<p>The <code>[global]</code> section header is optional for SoS scripts so you can define global variables in a cell executed by magic <code>%run</code> as follows:</p>
 
 </div>
 </div>
@@ -15287,99 +15291,7 @@ sh: expand=True
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">[global]
-VAR='this is global'</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">VAR='this is local'</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The global section is executed by the <code>%run</code> magic</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%run
-print(VAR)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>this is global
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Also, recall that statements defined before any section is considered as a global section without header, so if you redefine <code>VAR</code> in a cell as follows, it effectively appends <code>VAR = "this is local global"</code> to the <code>global</code> section, which changes the definition of <code>VAR</code>:</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
       class="sos-source" name="SoS">%run
@@ -15418,6 +15330,15 @@ print(VAR)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Remember that <code>%sosrun</code> collects all sections from a notebook and merge multiple <code>[global]</code> sections into one, using the global section without a header is actually recommended if the definition is meant to be confined to the cell workflow.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>A complete list of arguments can be shown using the <code>-h</code> option.</p>
 
 </div>
@@ -15428,11 +15349,10 @@ print(VAR)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%use sos
-%run -h</textarea>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%run -h</textarea>
   </div>
 </div>
 
@@ -15448,9 +15368,10 @@ print(VAR)</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: run [-h] [-J EXTERNAL_JOBS] [-c CONFIG_FILE] [-t FILE [FILE ...]]
-           [-b [BIN_DIR [BIN_DIR ...]]] [-q [QUEUE]] [-w] [-W] [-r [HOST]]
-           [-n] [-s SIGMODE] [-d [DAG]] [-v {0,1,2,3,4}]
+<pre>usage: run [-h] [-j JOBS] [-J EXTERNAL_JOBS] [-c CONFIG_FILE]
+           [-t FILE [FILE ...]] [-b [BIN_DIR [BIN_DIR ...]]] [-q [QUEUE]] [-w]
+           [-W] [-r [HOST]] [-n] [-s SIGMODE] [-d [DAG]] [-p [REPORT]]
+           [-v {0,1,2,3,4}]
            [WORKFLOW]
 
 Execute default or specified workflow defined in script
@@ -15469,6 +15390,10 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -j JOBS               Maximum number of worker processes for the execution
+                        of steps in a workflow and substeps in a step (with
+                        input option concurrent), default to half of number of
+                        CPUs
   -J EXTERNAL_JOBS      Maximum number of externally running tasks. This
                         option overrides option &#34;max_running_jobs&#34; of a task
                         queue (option -q) so that you can, for example, submit
@@ -15507,9 +15432,7 @@ optional arguments:
                         basically copy the workflow to remote host and invoke
                         sos command there. No path translation and
                         input/output file synchronization will be performed
-                        before or after the execution of the workflow. If this
-                        option is specified without value, SoS will list all
-                        configured queues and exit.
+                        before or after the execution of the workflow.
 
 Run mode options:
   Control how sos scirpt is executed.
@@ -15532,12 +15455,19 @@ Output options:
   Output of workflow
 
   -d [DAG]              Output Direct Acyclic Graph (DAGs) in graphiviz .dot
-                        format. An exntesion of &#34;.dot&#34; would be added
-                        automatically. Because DAG could change during the
-                        execution of workflow, multiple DAGs could be outputed
-                        with names $FILE_1.dot, $FILE_2.dot. If this option is
-                        specified without a name, the DAG would be wrritten to
-                        the standard output.
+                        format. Because DAG and status of nodes will change
+                        during the execution of workflow, multiple DAGs will
+                        be written to the specified file with names
+                        {workflow}_1, {workflow}_2 etc. The dot file would be
+                        named {script_name}_{timestamp}.dot unless a separate
+                        filename is specified.
+  -p [REPORT]           Output a report that summarizes the execution of the
+                        workflow after the completion of the execution. This
+                        includes command line, steps executed, tasks executed,
+                        CPU/memory of tasks, and DAG if option -d is also
+                        specified. The report will by be named
+                        {script_name}_{timestamp}.html unless a separate
+                        filename is specified.
   -v {0,1,2,3,4}        Output error (0), warning (1), info (2), debug (3) and
                         trace (4) information to standard output (default to
                         2).
