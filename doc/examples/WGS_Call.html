@@ -12267,9 +12267,9 @@ Global Workflow Options:
   --ref-indel  path(f&#39;{wd:a}/ref/known_variants.vcf.gz&#39;)
 
                         name of known indel file
-  --genome-url &#39;&#39;
+  --genome-url &#39;https://github.com/vatlab/sos-docs/raw/master/src/examples/k9-test/reference.fa.gz&#39;
                         download link for reference fasta file, in gz format
-  --variants-url &#39;&#39;
+  --variants-url &#39;https://github.com/vatlab/sos-docs/raw/master/src/examples/k9-test/known.vcf.gz&#39;
                         download link for known variants vcf file, in gz format
   --[no-]zap (default to False)
                         whether or not to remove files from intermediate steps
@@ -12334,10 +12334,10 @@ Sections
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Reference-data-preparation">Reference data preparation<a class="anchor-link" href="#Reference-data-preparation"></a></h2><p>To prepare reference genome data, run:</p>
 
-<pre><code>sos run Canine_WGS_Call.ipynb get_ref_genome</code></pre>
+<pre><code>sos run WGS_Call.ipynb get_ref_genome</code></pre>
 <p>To prepare reference known variants data, run:</p>
 
-<pre><code>sos run Canine_WGS_Call.ipynb get_known_variants</code></pre>
+<pre><code>sos run WGS_Call.ipynb get_known_variants</code></pre>
 <p>These commands will download reference data to <code>./WGS_Call_SoS/ref</code> 
 (work directory, can be configured via <code>--wd</code> option as shown in the workflow help message above).</p>
 <p>If you already have reference genome data bundle and known variants data you can use <code>--ref-genome</code>, 
@@ -12536,9 +12536,9 @@ bash: expand = True
       class="sos-source" name="SoS"># Index reference genome
 [get_ref_genome_2]
 output: f'{ref_genome:n}.dict'
-run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True
-    samtools faidx {_input}
-    bwa index {_input}
+run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    samtools faidx {_input} && \
+    bwa index {_input} && \
     gatk CreateSequenceDictionary -R {_input} -O {_output}</textarea>
   </div>
 </div>
@@ -12602,10 +12602,10 @@ download: dest_file = f'{_output}', expand = True
       class="sos-source" name="SoS"># Index known variants
 [get_known_variants_2]
 output: ref_variants
-bash: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True
+bash: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk SortVcf -I {_input} -O {_output} \
         --SEQUENCE_DICTIONARY {ref_genome:n}.dict \
-        --COMPRESSION_LEVEL 9
+        --COMPRESSION_LEVEL 9 && \
     gatk IndexFeatureFile -F {_output}
 if zap:
     _input.zap()</textarea>
@@ -12689,7 +12689,7 @@ bash: expand=True, stderr=False
 fail_if(not samples.is_file(), msg = 'Need sample name list file!')
 sample_files = list(set(get_output(f"awk '{{print $1}}' {samples:e}").strip().split('\n')))
 fail_if(len(sample_files) == 0, msg = 'Need input sample files!')
-input: [(f'{samples:d}/{x}_1.fq.gz', f'{samples:d}/{x}_2.fq.gz') for x in sample_files], group_by = 'pairs', concurrent = True
+input: [(f'{samples:d}/{x}_1.fq.gz', f'{samples:d}/{x}_2.fq.gz') for x in sample_files], group_by = 2, concurrent = True
 output: f'{wd:a}/{samples:bn}_bam/{_input[0]:bnn}.fixmate.bam'
 run: docker_image='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bwa mem -t {ncpu} -M -R "@RG\\tID:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tSM:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tLB:library1\\tPL:ILLUMINA\\tPU:{os.path.basename(sample_files[_index].replace('-', '_'))}.library1" {ref_genome} {_input[0]} {_input[1]} | samtools sort -n - | samtools fixmate -O bam - {_output}</textarea>
@@ -12707,7 +12707,44 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{w
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We extract relevant chromosomes and sort them from name order into coordinate order:</p>
+<p>To sort them from name order into coordinate order,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS"># Sort BAM files
+[2]
+# sort via GATK4 is way faster
+# https://software.broadinstitute.org/gatk/blog?id=9644
+input: group_by = 1, concurrent = True
+output: f'{_input:n}.sorted.bam'
+run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    gatk SortSam -I {_input} -O {_output} -SO coordinate
+if zap:
+    _input.zap()</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We extract relevant chromosomes and re-order to match ordering in reference,</p>
 
 </div>
 </div>
@@ -12721,7 +12758,7 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{w
   <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
    <textarea rows="9"
       class="sos-source" name="SoS"># Extract relevant chromosomes for analysis
-[2]
+[3]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.cleaned.bam'
 run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
@@ -12747,7 +12784,7 @@ if zap:
   <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
    <textarea rows="10"
       class="sos-source" name="SoS"># Re-order bam files
-[3]
+[4]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.reordered.bam'
 run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
@@ -12785,7 +12822,7 @@ if zap:
   <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
    <textarea rows="18"
       class="sos-source" name="SoS"># Indel re-alignment
-[4]
+[5]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.realigned.bam'
 run: docker_image='gaow/gatk3', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
@@ -12830,7 +12867,7 @@ if zap:
   <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
    <textarea rows="12"
       class="sos-source" name="SoS"># Base recalibration
-[5]
+[6]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.recal.bam'
 run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output}.err', stdout=f'{_output}.out'
@@ -12838,7 +12875,7 @@ run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=Tr
         -R {ref_genome} \
         --known-sites {ref_variants} \
         -I {_input} -O {_input:n}.table && \
-    gatk ApplyBQSR -I {_input} -bqsr {_input:n}.table -O {_output}
+    gatk ApplyBQSR -I {_input} -bqsr {_input:n}.table -O {_output} # --create-output-bam-index TRUE
 if zap:
     _input.zap()</textarea>
   </div>
@@ -12867,52 +12904,20 @@ if zap:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
-   <textarea rows="11"
+  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
+   <textarea rows="12"
       class="sos-source" name="SoS"># Mark duplicates
-[6]
+[7]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.dedup.bam'
 run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk MarkDuplicates \
         --VALIDATION_STRINGENCY LENIENT \
         --INPUT {_input} --OUTPUT {_output} \
-        --METRICS_FILE {_output:n}.metrics_file
+        --METRICS_FILE {_output:n}.metrics_file \
+        --CREATE_INDEX TRUE
 if zap:
     _input.zap()</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Lastly we index our BAM using samtools:</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
-      class="sos-source" name="SoS"># Index BAM in preparation for genotyping
-[7]
-input: group_by = 1, concurrent = True
-output: f'{_input}.bai'
-run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True
-    samtools index {_input}</textarea>
   </div>
 </div>
 
@@ -12945,7 +12950,7 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True
 # the 2nd line can have many samples separated by space
 output: f'{wd:a}/{samples:bn}_vcf/{samples:bn}.bcf'
 run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
-    bcftools mpileup -Ob -f {ref_genome} --threads {ncpu} -o {_output} {paths([f"{x:n}" for x in _input])}</textarea>
+    bcftools mpileup -Ob -f {ref_genome} --threads {ncpu} -o {_output} {_input}</textarea>
   </div>
 </div>
 
