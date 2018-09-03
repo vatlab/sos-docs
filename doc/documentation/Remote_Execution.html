@@ -13836,15 +13836,15 @@ sh: expand=True
 </div>
 </div>
 
-<div class="lan_sos">
+<div class="lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
-   <textarea rows="10"
-      class="sos-source" name="sos">%run
-[10 (simulate): shared='rng']
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">%run
+[10 (simulate): shared=['rng', 'step_rng']]
 input: for_each={'i': range(10)}
 task: shared='rng'
 print(f"{i}")
@@ -13853,6 +13853,7 @@ rng = random.randint(1, 1000)
 
 [20]
 print(rng)
+print(step_rng)
 </textarea>
   </div>
 </div>
@@ -13868,9 +13869,22 @@ print(rng)
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">10 tasks completed: <a onclick="task_info('a190034a4845df90', 'laptop')">a190</a>, <a onclick="task_info('c3dc90b99a30eef3', 'laptop')">c3dc</a>, ..., <a onclick="task_info('e346404fd41fa97b', 'laptop')">e346</a></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>10 tasks completed.
-{0: 857, 1: 904, 2: 404, 3: 862, 4: 269, 5: 87, 6: 699, 7: 240, 8: 119, 9: 245}
+<pre>
+524
+[129, 479, 825, 773, 453, 923, 459, 257, 676, 524]
 </pre>
 </div>
 </div>
@@ -13886,7 +13900,7 @@ print(rng)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is important to note that, however, because there can be multiple tasks in one step, the variables returned by tasks are dictionaries with loop index <code>_index</code> as keys.</p>
+<p>It is important to note that option <code>shared</code> of the task passes variable <code>rng</code> to substeps of the step. The step level <code>shared='rng'</code> will only return <code>rng</code> of the last substep, and <code>shared='step_rng'</code> will return <code>rng</code> from all substeps as a list.</p>
 
 </div>
 </div>
