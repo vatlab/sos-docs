@@ -12500,7 +12500,7 @@ Option <code>sigil</code> accepts a string for an alternative sigil, or <code>No
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
    <textarea rows="6"
       class="sos-source" name="SoS">%run
@@ -12540,7 +12540,7 @@ print(myvar)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A map syntax is recommended to share <code>output</code> of one step with others, because the variable assignment will be evaluated only after the step is complete:</p>
+<p>A map syntax is recommended to share <code>step_output</code> of one step with others, because the variable assignment will be evaluated only after the step is complete:</p>
 
 </div>
 </div>
@@ -12550,7 +12550,7 @@ print(myvar)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
    <textarea rows="9"
       class="sos-source" name="SoS">%sandbox
@@ -12603,7 +12603,7 @@ input: test_output</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
    <textarea rows="9"
       class="sos-source" name="SoS">%sandbox
@@ -12661,6 +12661,237 @@ output 2: b.txt
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Things becomes more complicated when there are multiple substeps. For example, when you use option <code>shared</code> on the following step with 10 substeps, only one of the random seed is returned because <code>rng</code> represent the last value of the variable after the completion of all substeps.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">%run
+[1: shared='seed']
+input: for_each={'i': range(10)}
+import random
+seed = random.randint(0, 1000)
+
+
+[2]
+print(seed)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>450
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like to see the variable in all substeps, you can prefix the variable name with <code>step_</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">%run
+[1: shared='step_seed']
+input: for_each={'i': range(10)}
+import random
+seed = random.randint(0, 1000)
+
+
+[2]
+print(step_seed)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[858, 513, 328, 610, 142, 275, 458, 57, 762, 981]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also use the <code>step_*</code> vsriables in expressions as in the following example:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">%run
+[1: shared={'summed': 'sum(step_rng)', 'rngs': 'step_rng'}]
+input: for_each={'i': range(10)}
+import random
+rng = random.randint(0, 10)
+
+
+[2]
+print(rngs)
+print(summed)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[10, 0, 8, 1, 8, 9, 6, 7, 9, 1]
+59
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Variables generated by external tasks adds another layer of complexity because tasks usually do not share variables with the substep it belongs. To solve this problem, you will have to use the <code>shared</code> option of <code>task</code> to return the variable to the substep:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
+   <textarea rows="12"
+      class="sos-source" name="SoS">%run
+[1: shared={'summed': 'sum(step_rng)', 'rngs': 'step_rng'}]
+input: for_each={'i': range(10)}
+
+task: shared='rng'
+import random
+rng = random.randint(0, 10*i)
+
+
+[2]
+print(rngs)
+print(summed)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">10 tasks completed: <a onclick="task_info('fc4e5aa9d56b8670', 'laptop')">fc4e</a>, <a onclick="task_info('b42d81697655e60b', 'laptop')">b42d</a>, ..., <a onclick="task_info('559c2306ff715392', 'laptop')">559c</a></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+[0, 2, 12, 10, 24, 9, 51, 39, 79, 4]
+230
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
