@@ -12170,7 +12170,7 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="SoS">%revisions -s -n 10</textarea>
@@ -12223,7 +12223,7 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="SoS">!sos run WGS_Call.ipynb -h</textarea>
@@ -12285,6 +12285,8 @@ Global Workflow Options:
                         autosome and X.
   --[no-]variants-only (default to False)
                         Set to True to only call variant sites not &#34;wildtype&#34;
+  --keep-coord . (as path)
+                        Keep a list of specified variants only
 
 Sections
   get_ref_genome_1:     Download reference genome
@@ -12293,17 +12295,17 @@ Sections
   get_known_variants_2: Index known variants
   default_0:            Export workflow to HTML file
   default_1:            BWA mapping &amp; samtools postprocessing
-  default_2:            Extract relevant chromosomes for analysis
-  default_3:            Re-order bam files
-  default_4:            Indel re-alignment
-  default_5:            Base recalibration
-  default_6:            Mark duplicates
-  default_7:            Index BAM in preparation for genotyping
+  default_2:            Sort BAM files
+  default_3:            Extract relevant chromosomes for analysis
+  default_4:            Re-order bam files
+  default_5:            Indel re-alignment
+  default_6:            Base recalibration
+  default_7:            Mark duplicates
   default_8:            Multi-sample variant calling -- pileup
   default_9:            Multi-sample variant calling -- call
-  default_10:           Index VCF file
-  default_11:           Quality summary of VCF file
-  default_12:           Quality filtering
+  default_10:           Quality summary plots for VCF file
+  default_11:           Quality filtering
+  default_12:           Only extract regions that we can handle
 </pre>
 </div>
 </div>
@@ -12375,6 +12377,15 @@ After it completes you'll find under folder <code>./WGS_Call_SoS</code> (can be 
 
 <pre><code>sos dryrun WGS_Call.ipynb default:1-5 --samples /path/to/this/test_samples.manifest</code></pre>
 <p><code>dryrun</code> will print out all commands which you can collect to a file and run them separately (for debugging, for example).</p>
+<h3 id="Do-we-keep-all-loci-even-if-they-are-not-variants?">Do we keep all loci even if they are not variants?<a class="anchor-link" href="#Do-we-keep-all-loci-even-if-they-are-not-variants?"></a></h3><p>Yes we do (for obvious reasons)! This is why <code>--variants_only</code> is <code>False</code> by default. However it is a huge file to work on. We include an option <code>--keep_coord</code> that provides a list of genomic coordinates like this:</p>
+
+<pre><code>1   2815013
+1   7421527
+1   11653215
+1   12326997
+1   14892273
+1   16663755</code></pre>
+<p>This case, only selected loci (variants of interest) are kept for further investigation.</p>
 
 </div>
 </div>
@@ -12424,8 +12435,8 @@ sudo usermod -aG docker $USER</code></pre>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 36.31441em">
-   <textarea rows="29"
+  <div class="input_area cm-s-ipython" style="min-height: 38.742990000000006em">
+   <textarea rows="31"
       class="sos-source" name="SoS">[global]
 # a file containing sample names
 parameter: samples = path() 
@@ -12454,7 +12465,9 @@ parameter: chr_prefix = 'chr'
 parameter: n_chrom = 38
 chroms = ' '.join([f'{chr_prefix}{x+1}' for x in range(n_chrom)] + [f'{chr_prefix}X'])
 # Set to True to only call variant sites not "wildtype"
-parameter: variants_only = False</textarea>
+parameter: variants_only = False
+# Keep a list of specified variants only
+parameter: keep_coord = path()</textarea>
   </div>
 </div>
 
@@ -12966,45 +12979,14 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, st
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
-   <textarea rows="5"
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
       class="sos-source" name="SoS"># Multi-sample variant calling -- call
 [9]
 output: f'{_input:n}.vcf.gz'
 run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
-    bcftools call -{"v" if variants_only else ""}mO z --threads {ncpu} -o {_output} {_input}</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To prepare our VCF for querying we next index it using tabix:</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
-   <textarea rows="5"
-      class="sos-source" name="SoS"># Index VCF file
-[10]
-output: f'{_input}.tbi'
-run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True
-    tabix -p vcf {_input}</textarea>
+    bcftools call -{"v" if variants_only else ""}mO z --threads {ncpu} -o {_output} {_input} \
+    && tabix -p vcf {_output}</textarea>
   </div>
 </div>
 
@@ -13032,9 +13014,9 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True
 <div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
    <textarea rows="7"
-      class="sos-source" name="SoS"># Quality summary of VCF file
-[11]
-output: f'{_input:nn}.stats'
+      class="sos-source" name="SoS"># Quality summary plots for VCF file
+[10]
+output: f'{_input:n}.stats'
 run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools stats -F {ref_genome} -s - {_input:n} > {_output}
     mkdir -p {_input:nnn}_plots
@@ -13064,14 +13046,15 @@ run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=Tr
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
       class="sos-source" name="SoS"># Quality filtering
-[12]
+[11]
 output: f'{_input:nn}.filtered.vcf.gz'
 run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools filter -O z -o {_output} \
-        -s LOWQUAL -i'{bcftools_filter}' {_input:nn}.vcf.gz</textarea>
+        -s LOWQUAL -i'{bcftools_filter}' {_input:nn}.vcf.gz \
+    && tabix -p vcf {_output}</textarea>
   </div>
 </div>
 
@@ -13091,6 +13074,31 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, st
 </div>
 </div>
 </div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS"># Only extract regions we are interested in
+[12]
+stop_if(not keep_coord.is_file(), msg = 'Skip extracting selected SNPs because no list (--keep_coord coord.list) was provided to extract from.')
+output: f'{_input:nn}.extracted.vcf.gz'
+run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    tabix -H {_input} > {_output:n}
+    tabix {_input} -R {keep_coord} >> {_output:n}
+    bgzip {_output:n}</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
