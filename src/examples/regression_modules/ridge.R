@@ -1,4 +1,5 @@
 ## Rscript ridge.R train="'train.txt'" test="'test.txt'" nfolds=5 ofpred="'pred.txt'" ofcoef="'coef.txt'"
+eval(parse(text=commandArgs(T)))
 train = read.csv(train, header = F)
 test = read.csv(test, header = F)
 model = glmnet::cv.glmnet(as.matrix(train[,-1]), train[,1], family = "gaussian", alpha = 0, nfolds = nfolds, intercept = F)
