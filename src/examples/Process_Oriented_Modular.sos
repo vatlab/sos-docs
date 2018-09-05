@@ -38,7 +38,6 @@ output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
 bash: expand = True
   Rscript {script} train="'{_input[0]}'" test="'{_input[1]}'" nfolds={nfold} ofpred="'{_output[0]}'" ofcoef="'{_output[1]}'"
 
-
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso_2]
@@ -60,16 +59,8 @@ script='regression_modules/evaluate.R'
 input: group_by = 2, group_with = 'replicates', concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
 bash: expand = True
-  Rscript {script} 
+  Rscript {script} b="c({paths(beta):,})" test="'{_replicates[1]}'" fpred="'{_input[0]}'" fcoef="'{_input[1]}'" output="'{_output}'"
  
-  b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${_replicates[1]:r}, header = F)[,-1]) %*% b
-  Ypred = scan(${_input[0]:r})
-  prediction_mse = mean((Ytruth - Ypred)^2)
-  betahat = scan(${_input[1]:r})
-  estimation_mse = mean((betahat - b) ^ 2)
-  cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
-  
 # Run default core analysis
 [default_1]
 sos_run('ridge')
