@@ -12170,7 +12170,7 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="SoS">%revisions -s -n 10</textarea>
@@ -12188,10 +12188,31 @@ li.tocify-item.active {
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Failed to retrieve revisions of notebook: &#39;Revisions_Magic&#39; object has no attribute &#39;_meta&#39;
-</pre>
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="git@github.com:vatlab/sos-docs/blob/b98d99ebb16666979b617db95dcd243903711309/WGS_Call.ipynb"><span class="revision_id">b98d99e<span></a></td>
+<td>Gao Wang</td>
+<td>2018-09-03</td>
+<td>Update docker option</td></tr><tr><td><a target="_blank" href="git@github.com:vatlab/sos-docs/blob/3bf8f4dd4a6a3a8cbd9cfd5019ac39fb8d243f1a/WGS_Call.ipynb"><span class="revision_id">3bf8f4d<span></a></td>
+<td>Gao Wang</td>
+<td>2018-09-03</td>
+<td>Add a step to select given list of variants</td></tr><tr><td><a target="_blank" href="git@github.com:vatlab/sos-docs/blob/33fd12cb7d223ae379484d38472f2438437139bf/WGS_Call.ipynb"><span class="revision_id">33fd12c<span></a></td>
+<td>Gao Wang</td>
+<td>2018-09-03</td>
+<td>Get toy example to work</td></tr><tr><td><a target="_blank" href="git@github.com:vatlab/sos-docs/blob/8f3b701b2e3bcd99b30714b9b15e5dd16210343f/WGS_Call.ipynb"><span class="revision_id">8f3b701<span></a></td>
+<td>Gao Wang</td>
+<td>2018-09-03</td>
+<td>Add links to toy reference data</td></tr></table>
 </div>
+
 </div>
 
 </div>
@@ -12223,7 +12244,7 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="SoS">!sos run WGS_Call.ipynb -h</textarea>
@@ -12305,7 +12326,7 @@ Sections
   default_9:            Multi-sample variant calling -- call
   default_10:           Quality summary plots for VCF file
   default_11:           Quality filtering
-  default_12:           Only extract regions that we can handle
+  default_12:           Only extract regions we are interested in
 </pre>
 </div>
 </div>
@@ -12356,26 +12377,26 @@ steps below to download them. The default is pointed to a toy example data-set f
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Run-the-workflow">Run the workflow<a class="anchor-link" href="#Run-the-workflow"></a></h2><p>The workflow has been tested on Linux and Mac. 
 In brief, after installing <a href="https://github.com/vatlab/SOS">SoS</a> (see "Software Configuration" below), 
-you provide a text file of sample list named eg <code>test_samples.manifest</code>, with contents:</p>
+you provide a text file of sample list named eg <code>k9-test/test_samples.manifest</code>, with contents:</p>
 
 <pre><code>Sample_79162
 Sample_75641</code></pre>
 <p>Under the same folder as this list file, you keep all the listed sample <code>fastq</code> files. Then you run</p>
 
-<pre><code>sos run WGS_Call.ipynb --samples /path/to/this/test_samples.manifest -j2</code></pre>
+<pre><code>sos run WGS_Call.ipynb --samples k9-test/test_samples.manifest -j2</code></pre>
 <p>to perform variant calling. <code>-j2</code> option means to run 2 processes in parallel. 
 After it completes you'll find under folder <code>./WGS_Call_SoS</code> (can be configured):</p>
 <ol>
 <li><code>WGS_Call.html</code> of this document</li>
-<li><code>bam</code> folder of intermediate and processed BAM files</li>
+<li><code>bam</code> folder of intermediate and processed BAM files. Only BAM files from the last preprocessing step is kept by default, unless option <code>--no-zap</code> (which changes <code>parameter: zap = ...</code> in the workflow) is appended to the command above.</li>
 <li><code>vcf</code> folder of genotype call. The final output is <code>vcf/test_samples.filtered.vcf.gz</code> -- the file name is derived after your input sample list <code>/path/to/this/test_samples.manifest</code></li>
 </ol>
 <p>You can also "dryrun" the workflow to see what is actually going on:</p>
 
-<pre><code>sos dryrun WGS_Call.ipynb --samples /path/to/this/test_samples.manifest</code></pre>
+<pre><code>sos dryrun WGS_Call.ipynb --samples k9-test/test_samples.manifest</code></pre>
 <p>Or, run / dryrun a few steps, eg, the first 5 steps.</p>
 
-<pre><code>sos dryrun WGS_Call.ipynb default:1-5 --samples /path/to/this/test_samples.manifest</code></pre>
+<pre><code>sos dryrun WGS_Call.ipynb default:1-5 --samples k9-test/test_samples.manifest</code></pre>
 <p><code>dryrun</code> will print out all commands which you can collect to a file and run them separately (for debugging, for example).</p>
 <h3 id="Do-we-keep-all-loci-even-if-they-are-not-variants?">Do we keep all loci even if they are not variants?<a class="anchor-link" href="#Do-we-keep-all-loci-even-if-they-are-not-variants?"></a></h3><p>Yes we do (for obvious reasons)! This is why <code>--variants_only</code> is <code>False</code> by default. However it is a huge file to work on. We include an option <code>--keep_coord</code> that provides a list of genomic coordinates like this:</p>
 
@@ -12453,7 +12474,7 @@ parameter: genome_url = "https://github.com/vatlab/sos-docs/raw/master/src/examp
 # download link for known variants vcf file, in gz format
 parameter: variants_url = "https://github.com/vatlab/sos-docs/raw/master/src/examples/k9-test/known.vcf.gz"
 # whether or not to remove files from intermediate steps
-parameter: zap = False
+parameter: zap = True
 # bcftools default quality filter
 parameter: bcftools_filter = '%QUAL>10'
 # number of CPU threads to use per process
@@ -12492,7 +12513,7 @@ parameter: keep_coord = path()</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
    <textarea rows="7"
       class="sos-source" name="SoS"># Download reference genome
@@ -12500,28 +12521,11 @@ parameter: keep_coord = path()</textarea>
 output: ref_genome
 download: dest_file = f'{_output}.gz', expand = True
     {genome_url}
-bash: expand = True
-    zcat {ref_genome}.gz > {ref_genome}</textarea>
+bash: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand = True
+    gunzip -f {ref_genome}.gz</textarea>
   </div>
 </div>
 
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Workflow can only be executed with magic %run or %sosrun.</pre>
-</div>
-</div>
-
-</div>
 </div>
 
 </div>
@@ -12543,16 +12547,19 @@ bash: expand = True
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
-   <textarea rows="7"
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
       class="sos-source" name="SoS"># Index reference genome
 [get_ref_genome_2]
-output: f'{ref_genome:n}.dict'
-run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+output: f'{ref_genome:n}.dict', f'{ref_genome}.fai', f'{ref_genome}.bwt',
+        f'{ref_genome}.pac', f'{ref_genome}.ann', f'{ref_genome}.amb', f'{ref_genome}.sa'
+stop_if(all([path(x).is_file() for x in _output]))
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{ref_genome}.err', stdout=f'{ref_genome}.out'
+    rm -f {_output}
     samtools faidx {_input} && \
     bwa index {_input} && \
-    gatk CreateSequenceDictionary -R {_input} -O {_output}</textarea>
+    gatk CreateSequenceDictionary -R {_input} -O {_output[0]}</textarea>
   </div>
 </div>
 
@@ -12577,7 +12584,7 @@ run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=Tr
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
       class="sos-source" name="SoS"># Download known variants
@@ -12609,13 +12616,13 @@ download: dest_file = f'{_output}', expand = True
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
    <textarea rows="10"
       class="sos-source" name="SoS"># Index known variants
 [get_known_variants_2]
 output: ref_variants
-bash: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+bash: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk SortVcf -I {_input} -O {_output} \
         --SEQUENCE_DICTIONARY {ref_genome:n}.dict \
         --COMPRESSION_LEVEL 9 && \
@@ -12651,7 +12658,7 @@ if zap:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
    <textarea rows="6"
       class="sos-source" name="SoS"># Export workflow to HTML file
@@ -12694,7 +12701,7 @@ bash: expand=True, stderr=False
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
    <textarea rows="9"
       class="sos-source" name="SoS"># BWA mapping & samtools postprocessing
@@ -12704,7 +12711,7 @@ sample_files = list(set(get_output(f"awk '{{print $1}}' {samples:e}").strip().sp
 fail_if(len(sample_files) == 0, msg = 'Need input sample files!')
 input: [(f'{samples:d}/{x}_1.fq.gz', f'{samples:d}/{x}_2.fq.gz') for x in sample_files], group_by = 2, concurrent = True
 output: f'{wd:a}/{samples:bn}_bam/{_input[0]:bnn}.fixmate.bam'
-run: docker_image='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bwa mem -t {ncpu} -M -R "@RG\\tID:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tSM:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tLB:library1\\tPL:ILLUMINA\\tPU:{os.path.basename(sample_files[_index].replace('-', '_'))}.library1" {ref_genome} {_input[0]} {_input[1]} | samtools sort -n - | samtools fixmate -O bam - {_output}</textarea>
   </div>
 </div>
@@ -12730,7 +12737,7 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{w
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
    <textarea rows="10"
       class="sos-source" name="SoS"># Sort BAM files
@@ -12739,7 +12746,7 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{w
 # https://software.broadinstitute.org/gatk/blog?id=9644
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.sorted.bam'
-run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk SortSam -I {_input} -O {_output} -SO coordinate
 if zap:
     _input.zap()</textarea>
@@ -12767,14 +12774,14 @@ if zap:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
    <textarea rows="9"
       class="sos-source" name="SoS"># Extract relevant chromosomes for analysis
 [3]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.cleaned.bam'
-run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     samtools index {_input}
     samtools view -@ {ncpu} -b {_input} {chroms} > {_output}
 if zap:
@@ -12793,14 +12800,14 @@ if zap:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
    <textarea rows="10"
       class="sos-source" name="SoS"># Re-order bam files
 [4]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.reordered.bam'
-run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk ReorderSam -I {_input} -O {_output} -R {ref_genome} \
         --CREATE_INDEX TRUE \
         --ALLOW_INCOMPLETE_DICT_CONCORDANCE TRUE
@@ -12831,14 +12838,14 @@ if zap:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
    <textarea rows="18"
       class="sos-source" name="SoS"># Indel re-alignment
 [5]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.realigned.bam'
-run: docker_image='gaow/gatk3', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/gatk3', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     java -jar /opt/GenomeAnalysisTK.jar -T RealignerTargetCreator \
         -R {ref_genome} \
         -I {_input} \
@@ -12876,14 +12883,14 @@ if zap:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
    <textarea rows="12"
       class="sos-source" name="SoS"># Base recalibration
 [6]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.recal.bam'
-run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output}.err', stdout=f'{_output}.out'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output}.err', stdout=f'{_output}.out'
     gatk BaseRecalibrator \
         -R {ref_genome} \
         --known-sites {ref_variants} \
@@ -12923,7 +12930,7 @@ if zap:
 [7]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.dedup.bam'
-run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk MarkDuplicates \
         --VALIDATION_STRINGENCY LENIENT \
         --INPUT {_input} --OUTPUT {_output} \
@@ -12955,14 +12962,14 @@ if zap:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
    <textarea rows="6"
       class="sos-source" name="SoS"># Multi-sample variant calling -- pileup
 [8]
 # the 2nd line can have many samples separated by space
 output: f'{wd:a}/{samples:bn}_vcf/{samples:bn}.bcf'
-run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools mpileup -Ob -f {ref_genome} --threads {ncpu} -o {_output} {_input}</textarea>
   </div>
 </div>
@@ -12978,13 +12985,13 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, st
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
    <textarea rows="6"
       class="sos-source" name="SoS"># Multi-sample variant calling -- call
 [9]
 output: f'{_input:n}.vcf.gz'
-run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools call -{"v" if variants_only else ""}mO z --threads {ncpu} -o {_output} {_input} \
     && tabix -p vcf {_output}</textarea>
   </div>
@@ -13011,16 +13018,16 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, st
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
    <textarea rows="7"
       class="sos-source" name="SoS"># Quality summary plots for VCF file
 [10]
 output: f'{_input:n}.stats'
-run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
-    bcftools stats -F {ref_genome} -s - {_input:n} > {_output}
-    mkdir -p {_input:nnn}_plots
-    plot-vcfstats -P -p {_input:nnn}_plots {_output}</textarea>
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    bcftools stats -F {ref_genome} -s - {_input} > {_output}
+    mkdir -p {_input:nn}_plots
+    plot-vcfstats -P -p {_input:nn}_plots {_output}</textarea>
   </div>
 </div>
 
@@ -13045,13 +13052,13 @@ run: docker_image='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=Tr
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
    <textarea rows="7"
       class="sos-source" name="SoS"># Quality filtering
 [11]
 output: f'{_input:nn}.filtered.vcf.gz'
-run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools filter -O z -o {_output} \
         -s LOWQUAL -i'{bcftools_filter}' {_input:nn}.vcf.gz \
     && tabix -p vcf {_output}</textarea>
@@ -13079,14 +13086,14 @@ run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, st
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
    <textarea rows="8"
       class="sos-source" name="SoS"># Only extract regions we are interested in
 [12]
 stop_if(not keep_coord.is_file(), msg = 'Skip extracting selected SNPs because no list (--keep_coord coord.list) was provided to extract from.')
 output: f'{_input:nn}.extracted.vcf.gz'
-run: docker_image='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     tabix -H {_input} > {_output:n}
     tabix {_input} -R {keep_coord} >> {_output:n}
     bgzip {_output:n}</textarea>

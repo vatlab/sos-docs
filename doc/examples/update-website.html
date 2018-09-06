@@ -341,13 +341,13 @@ pre.section-header.CodeMirror-line {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               136 lines
+               137 lines
                <span class="file-info-divider"></span>
-               3.9 kB
+               4.0 kB
             </div>
          </div>
          <div class="filecontent">
-            <textarea rows="136" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
+            <textarea rows="137" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
 [getFileNames]
@@ -409,9 +409,10 @@ input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/
 	'../src/examples/RNASeqGTEx.ipynb', group_by=1
 output: f"../doc/examples/{_input:bn}_report.html"
 
+has_header = '"## ' in open(_input).read()
 run: workdir='../doc/examples', expand=True
 	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --template sos-report
+	sos convert {_input:b} {_output:b} --template {'sos-report-toc' if has_header else 'sos-report'}
 
 [convert-large-examples]
 input:  '../src/examples/*/*.sos', group_by=1
