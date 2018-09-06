@@ -60,9 +60,10 @@ input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/
 	'../src/examples/RNASeqGTEx.ipynb', group_by=1
 output: f"../doc/examples/{_input:bn}_report.html"
 
+has_header = '"## ' in open(_input).read()
 run: workdir='../doc/examples', expand=True
 	cp {_input:a} .
-	sos convert {_input:b} {_output:b} --template sos-report
+	sos convert {_input:b} {_output:b} --template {'sos-report-toc' if has_header else 'sos-report'}
 
 [convert-large-examples]
 input:  '../src/examples/*/*.sos', group_by=1
