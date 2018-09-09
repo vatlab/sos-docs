@@ -12134,8 +12134,8 @@ $(document).ready(function() {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Before you run any script using singularity, please check if <code>singularity</code> is installed by checking the availability of command <code>singularity</code> (<code>which singularity</code>). Also, it would be helpful for you to read the <a href="https://www.sylabs.io/docs/">sigularity user's guide</a> or some online tutorial to understand how singularity works before you try to use singularity in SoS.</p>
-<p>Although running singularity images does not need root privilege, building singularity images often requires <code>sudo</code> access. SoS provides an option <code>sudo=True</code> to the <code>singularity_build</code> action (an equivalence to command <code>singularity build</code>) to execute the command in sudo mode, but it does not accept interactive input of password. So before running any <code>singularity_build</code> action with option <code>sudo=True</code>, please run <code>sudo -i</code> to enter sudo mode, or add your username as a sudo user without password (google "sudo without password" for instructions). The latter is not safe but can be very convenient if you are singularity on a personal linux workstation.</p>
+<p>Before you run any script using singularity, please check if <code>singularity</code> is installed by checking the availability of command <code>singularity</code>. Also, it would be helpful for you to read the <a href="https://www.sylabs.io/docs/">sigularity user's guide</a> or some online tutorial to understand how singularity works before you try to use singularity in SoS.</p>
+<p>Although running singularity images does not need root privilege, building singularity images often requires <code>sudo</code> access. SoS provides an option <code>sudo=True</code> to the <code>singularity_build</code> action (an equivalence to command <code>singularity build</code>) to execute the command in sudo mode, but it does not accept interactive input of password. So before running any <code>singularity_build</code> action with option <code>sudo=True</code>, please run <code>sudo -i</code> to enter sudo mode, or add your username as a sudo user without password (google "sudo without password" for instructions). The latter is not safe but can be very convenient for you to prepare singularity images on a personal linux workstation.</p>
 
 </div>
 </div>
@@ -12203,7 +12203,7 @@ $(document).ready(function() {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS executes scripts inside a singularity by calling command <code>singularity exec</code> with appropriate parameters. For example, if you specify a container with a <code>shub:</code> schema, sos will first pull the image, save it as a local image, and use <code>singularity exec</code> to run it:</p>
+<p>SoS executes scripts with a singularity container by calling command <code>singularity exec</code> with appropriate parameters. For example, if you specify a container with a <code>shub:</code> schema, sos will first pull the image, save it as a local image, and use <code>singularity exec</code> to run it:</p>
 
 </div>
 </div>
@@ -12333,8 +12333,8 @@ cat /etc/os-release
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>As you can see, the docker command looks similar to</p>
 
-<pre><code>singularity exec singularityhub-ubuntu.simg /bin/bash -ev /home/bpeng1/sos/sos-docs/src/tutorials/tmpr76ii92q/singularity_run_53574.sh</code></pre>
-<p>Basically, SoS pulls the image and runs command <code>singularity exec</code> to execte the script with <code>/bin/bash</code> inside the image.</p>
+<pre><code>singularity exec singularityhub-ubuntu.simg /bin/bash -ev /path/to/a/temp/script</code></pre>
+<p>Basically, SoS pulls the image and runs command <code>singularity exec</code> to execte the script with <code>/bin/bash</code> with the singularity image.</p>
 
 </div>
 </div>
@@ -12343,7 +12343,7 @@ cat /etc/os-release
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You can also use a docker image. However, because <code>docker://</code> images are by default executed by docker, you will need to specify the use of singularity using parameter <code>engine='singularity'</code>:</p>
+<p>You can also use a docker image with singularity. However, because <code>docker://</code> images are by default executed by docker, you will need to specify the use of singularity using parameter <code>engine='singularity'</code>:</p>
 
 </div>
 </div>
@@ -12402,7 +12402,7 @@ UBUNTU_CODENAME=bionic
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In summary, as listed <a href="https://vatlab.github.io/sos-docs/doc/documentation/Targets_and_Actions.html#container-and-engine-124">here</a>, you can invoke <code>singularity</code> with the following combinations of parameter <code>container</code> and <code>engine</code>:</p>
+<p>In summary, as listed <a href="https://vatlab.github.io/sos-docs/doc/documentation/Targets_and_Actions.html#container-and-engine-124">here</a>, you can invoke <code>singularity</code> with the following combinations of parameters <code>container</code> and <code>engine</code>:</p>
 <table>
 <thead><tr>
 <th><code>container</code></th>
@@ -12449,7 +12449,7 @@ UBUNTU_CODENAME=bionic
 </tr>
 </tbody>
 </table>
-<p>Simply put, singularity will be used by default with container <code>shub://</code>, <code>file://</code>, <code>filename.simg</code>, but you will have to specify <code>engine='singularity'</code> if you would like to use a docker image.</p>
+<p>Simply put, singularity will be used by default with container <code>shub://</code>, <code>file://</code>, and <code>filename.simg</code>, but you will have to specify <code>engine='singularity'</code> if you would like to use a docker image or a directory.</p>
 
 </div>
 </div>
@@ -12474,7 +12474,7 @@ UBUNTU_CODENAME=bionic
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Action <code>singularity_build</code> calls command <code>singularity build</code> with appropriate command line options. The SoS equivalence of the sample command</p>
+<p>Action <code>singularity_build</code> calls command <code>singularity build</code> with appropriate command line options. The SoS equivalence of the example in the singularity user's guide</p>
 
 <pre><code>singularity build lolcow.simg shub://GodloveD/lolcow</code></pre>
 <p>is the <code>singularity_build</code> action with options <code>src</code> and <code>dest</code>:</p>
@@ -12543,7 +12543,7 @@ Cleaning up...
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you need to build the image with root privilege, you can add option <code>sudo=True</code> when you are certain that the user is in SUDO (no password) mode:</p>
+<p>As you can see from the warning message, you are recommended to build the image with root privilege. In this case, you can add option <code>sudo=True</code> when you are certain that the user is in SUDO (no password) mode:</p>
 
 </div>
 </div>
@@ -12607,7 +12607,7 @@ Cleaning up...
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You can also use action <code>singularity_build</code> to build an image from a singularity definition file. Using the example from the user's guide:</p>
+<p>You can also use action <code>singularity_build</code> to build an image from a singularity definition file. Using an example from the user's guide:</p>
 
 </div>
 </div>
@@ -12727,7 +12727,7 @@ Cleaning up...
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Running-script-with-singularity-image-(singularity-exec)">Running script with singularity image (<code>singularity exec</code>)<a class="anchor-link" href="#Running-script-with-singularity-image-(singularity-exec)">&#182;</a></h2>
+<h2 id="Running-script-with-singularity-image">Running script with singularity image<a class="anchor-link" href="#Running-script-with-singularity-image">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12840,7 +12840,7 @@ boot  environment  home  lib64	mnt    proc  run   singularity	sys  usr
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>An interesting fact about singularity is that you can use the container almost as a local command with access to local file system,</p>
+<p>A very useful feature about singularity is that you can use the container almost as a local command with access to local file system,</p>
 
 </div>
 </div>
@@ -12887,7 +12887,7 @@ boot  environment  home  lib64	mnt    proc  run   singularity	sys  usr
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>However, singularity only binds current, <code>/tmp</code>, and home directories. Other directories would be from within the image, or appear to be missing even if they exist on the host file system. For example, the following command lists <code>/usr/local</code> inside the image:</p>
+<p>However, singularity only binds current working directory, <code>/tmp</code>, and your home directory. Other directories would be from within the image, or appear to be missing even if they exist on the host file system. For example, the following command lists <code>/usr/local</code> inside the image:</p>
 
 </div>
 </div>
