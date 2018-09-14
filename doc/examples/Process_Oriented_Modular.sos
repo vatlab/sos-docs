@@ -18,54 +18,36 @@ parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 [lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
 depends: R_library("MASS")
 # training and testing samples
-parameter: N = (40, 200) 
+parameter: N = (40, 200)
 parameter: rstd = 3
 parameter: replicate = [x+1 for x in range(5)]
+source='regression_modules/simulate.R'
 input: None, for_each = ['replicate'], concurrent = True
 output: f"data_{_replicate}.train.csv", f"data_{_replicate}.test.csv"
-R: expand = "${ }"
-  set.seed(${_replicate})
-  N = sum(c(${paths(N):,}))
-  p = length(c(${paths(beta):,}))
-  X = MASS::mvrnorm(n = N, rep(0, p), 0.5^abs(outer(1:p, 1:p, FUN = "-")))
-  Y = X %*% c(${paths(beta):,}) + rnorm(N, mean = 0, sd = ${rstd})
-  Xtrain = X[1:${N[0]},]; Xtest = X[(${N[0]}+1):(${N[0]}+${N[1]}),]
-  Ytrain = Y[1:${N[0]}]; Ytest = Y[(${N[0]}+1):(${N[0]}+${N[1]})]
-  write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
-  write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
+bash: expand = True
+  Rscript {source} seed={_replicate} N="c({paths(N):,})" b="c({paths(beta):,})" rstd={rstd} oftrain="'{_output[0]}'" oftest="'{_output[1]}'"
 
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 [ridge_2]
 depends: R_library("glmnet")
 parameter: nfolds = 5
+source='regression_modules/ridge.R'
 input: group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
-R: expand = "${ }"
-  train = read.csv(${_input[0]:r}, header = F)
-  test = read.csv(${_input[1]:r}, header = F)
-  model = glmnet::cv.glmnet(as.matrix(train[,-1]), train[,1], family = "gaussian", alpha = 0, nfolds = ${nfolds}, intercept = F)
-  betahat = as.vector(coef(model, s = "lambda.min")[-1])
-  Ypred = predict(model, as.matrix(test[,-1]), s = "lambda.min")
-  write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
-  write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
+bash: expand = True
+  Rscript {source} train="'{_input[0]}'" test="'{_input[1]}'" nfolds={nfolds} ofpred="'{_output[0]}'" ofcoef="'{_output[1]}'"
 
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso_2]
 depends: Py_Module("sklearn")
 parameter: nfolds = 5
+source='regression_modules/lasso.py'
 input: group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
-python: expand = "${ }"
-  import numpy as np
-  from sklearn.linear_model import LassoCV
-  train = np.genfromtxt(${_input[0]:r}, delimiter = ",")
-  test = np.genfromtxt(${_input[1]:r}, delimiter = ",")
-  model = LassoCV(cv = ${nfolds}, fit_intercept = False).fit(train[:,1:], train[:,1])
-  Ypred = model.predict(test[:,1:])
-  np.savetxt(${_output[0]:r}, Ypred)
-  np.savetxt(${_output[1]:r}, model.coef_)
+bash: expand = True
+  python {source} {_input[0]} {_input[1]} {nfolds} {_output[0]} {_output[1]}
 
 # Evaluate predictors by calculating mean squared error
 # of prediction vs truth (first line of output)
@@ -73,17 +55,12 @@ python: expand = "${ }"
 [lasso_3, ridge_3]
 depends: sos_variable('data_files')
 replicates = list(zip(*(iter(data_files),) * 2))
+source='regression_modules/evaluate.R'
 input: group_by = 2, group_with = 'replicates', concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
-R: expand = "${ }", stderr = False
-  b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${_replicates[1]:r}, header = F)[,-1]) %*% b
-  Ypred = scan(${_input[0]:r})
-  prediction_mse = mean((Ytruth - Ypred)^2)
-  betahat = scan(${_input[1]:r})
-  estimation_mse = mean((betahat - b) ^ 2)
-  cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
-  
+bash: expand = True
+  Rscript {source} b="c({paths(beta):,})" test="'{_replicates[1]}'" fpred="'{_input[0]}'" fcoef="'{_input[1]}'" output="'{_output}'"
+ 
 # Run default core analysis
 [default_1]
 sos_run('ridge')

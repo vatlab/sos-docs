@@ -21,48 +21,30 @@ lasso_result = [f'data_{x+1}.lasso.mse.csv' for x in range(5)]
 depends: R_library("MASS")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
+source='regression_modules/simulate.R'
 output: f"data_{id}.train.csv", f"data_{id}.test.csv"
-R: expand = "${ }"
-  set.seed(${id})
-  N = sum(c(${paths(N):,}))
-  p = length(c(${paths(beta):,}))
-  X = MASS::mvrnorm(n = N, rep(0, p), 0.5^abs(outer(1:p, 1:p, FUN = "-")))
-  Y = X %*% c(${paths(beta):,}) + rnorm(N, mean = 0, sd = ${rstd})
-  Xtrain = X[1:${N[0]},]; Xtest = X[(${N[0]}+1):(${N[0]}+${N[1]}),]
-  Ytrain = Y[1:${N[0]}]; Ytest = Y[(${N[0]}+1):(${N[0]}+${N[1]})]
-  write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
-  write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
+bash: expand = True
+  Rscript {source} seed={id} N="c({paths(N):,})" b="c({paths(beta):,})" rstd={rstd} oftrain="'{_output[0]}'" oftest="'{_output[1]}'"
 
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 [ridge: provides = ["data_{id}.ridge.predicted.csv", "data_{id}.ridge.coef.csv"]]
-parameter: nfolds = 5
 depends: f"data_{id}.train.csv", f"data_{id}.test.csv", R_library("glmnet")
+parameter: nfolds = 5
+source='regression_modules/ridge.R'
 output: f"data_{id}.ridge.predicted.csv", f"data_{id}.ridge.coef.csv"
-R: expand = "${ }"
-  train = read.csv(${_depends[0]:r}, header = F)
-  test = read.csv(${_depends[1]:r}, header = F)
-  model = glmnet::cv.glmnet(as.matrix(train[,-1]), train[,1], family = "gaussian", alpha = 0, nfolds = ${nfolds}, intercept = F)
-  betahat = as.vector(coef(model, s = "lambda.min")[-1])
-  Ypred = predict(model, as.matrix(test[,-1]), s = "lambda.min")
-  write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
-  write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
+bash: expand = True
+  Rscript {source} train="'{_depends[0]}'" test="'{_depends[1]}'" nfolds={nfolds} ofpred="'{_output[0]}'" ofcoef="'{_output[1]}'"
 
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso: provides = ["data_{id}.lasso.predicted.csv", "data_{id}.lasso.coef.csv"]]
-parameter: nfolds = 5
 depends: f"data_{id}.train.csv", f"data_{id}.test.csv", Py_Module("sklearn")
+parameter: nfolds = 5
+source='regression_modules/lasso.py'
 output: f"data_{id}.lasso.predicted.csv", f"data_{id}.lasso.coef.csv"
-python: expand = "${ }"
-  import numpy as np
-  from sklearn.linear_model import LassoCV
-  train = np.genfromtxt(${_depends[0]:r}, delimiter = ",")
-  test = np.genfromtxt(${_depends[1]:r}, delimiter = ",")
-  model = LassoCV(cv = ${nfolds}, fit_intercept = False).fit(train[:,1:], train[:,1])
-  Ypred = model.predict(test[:,1:])
-  np.savetxt(${_output[0]:r}, Ypred)
-  np.savetxt(${_output[1]:r}, model.coef_)
+bash: expand = True
+  python {source} {_depends[0]} {_depends[1]} {nfolds} {_output[0]} {_output[1]}
 
 # Evaluate predictors by calculating mean squared error
 # of prediction vs truth (first line of output)
@@ -70,14 +52,9 @@ python: expand = "${ }"
 [evaluation: provides = 'data_{id}.{method}.mse.csv']
 depends: f"data_{id}.test.csv", f"data_{id}.{method}.predicted.csv",
          f"data_{id}.{method}.coef.csv"
-R: expand = "${ }", stderr = False
-  b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${_depends[0]:r}, header = F)[,-1]) %*% b
-  Ypred = scan(${_depends[1]:r})
-  prediction_mse = mean((Ytruth - Ypred)^2)
-  betahat = scan(${_depends[2]:r})
-  estimation_mse = mean((betahat - b) ^ 2)
-  cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
+source='regression_modules/evaluate.R'
+bash: expand = True
+  Rscript {source} b="c({paths(beta):,})" test="'{_depends[0]}'" fpred="'{_depends[1]}'" fcoef="'{_depends[2]}'" output="'{_output}'"
 
 [get-pandoc-css: provides = 'pandoc.css']
 download:

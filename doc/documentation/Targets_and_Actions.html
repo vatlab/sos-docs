@@ -11928,9 +11928,7 @@ div.cell {
 
 
 <style>
-   .lan_R .input_prompt {
-      background-color: #DCDCDA !important;
-    }
+   
 </style>
 
 <script src="https://code.jquery.com/jquery-1.7.2.min.js"
@@ -12047,6 +12045,15 @@ textarea.sos-source {
 }
 </style>
 
+
+
+<style>
+  #notebook-container {
+    padding: 0px;
+    -webkit-box-shadow: 0px 0px 0px 0px;
+	box-shadow: 0px 0px 0px 0px;
+  }
+</style>
 
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
@@ -12744,7 +12751,7 @@ print('Step after run')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="container"><code>container</code><a class="anchor-link" href="#container">&#182;</a></h3>
+<h3 id="container-and-engine"><code>container</code> and <code>engine</code><a class="anchor-link" href="#container-and-engine">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12752,13 +12759,101 @@ print('Step after run')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Container used to execute the action in the format of <code>container_type://tag</code>. Because sos currently only supports docker, it currently accepts the following values:</p>
-
-<pre><code>tag
-docker://tag
-local://tag</code></pre>
-<p>where 
-<code>tag</code> is a shortcut for <code>docker://tag</code> and <code>local://tag</code> means do not use any container.</p>
+<p>Parameter <code>container</code> and <code>engine</code> specify name or URL and execution engine of the container used to execute the action. Parameter <code>engine</code> is usually derived from <code>container</code> but can be specified explicitly as one of</p>
+<ul>
+<li><code>engine='docker'</code>: Execute the script in specified container using <a href="https://www.docker.com/">docker</a></li>
+<li><code>engine='singularity'</code>: Execute the script with <a href="https://www.sylabs.io/">singularity</a></li>
+<li><code>engine='local'</code>: Execute the script locally, this is the default mode.</li>
+</ul>
+<p>Parameters <code>container</code> and <code>engine</code> accept the following values:</p>
+<table>
+<thead><tr>
+<th><code>container</code></th>
+<th><code>engine</code></th>
+<th>execute by</th>
+<th>example</th>
+<th>comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tag</code></td>
+<td><code></code></td>
+<td>docker</td>
+<td><code>container='ubuntu'</code></td>
+<td>docker is the default container engine</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>docker</code></td>
+<td>docker</td>
+<td><code>container='ubuntu', engine='docker'</code></td>
+<td>treat <code>name</code> as docker tag</td>
+</tr>
+<tr>
+<td><code>docker://tag</code></td>
+<td><code></code></td>
+<td>docker</td>
+<td><code>container='docker://ubuntu'</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>filename.simg</code></td>
+<td><code></code></td>
+<td>singularity</td>
+<td><code>container='ubuntu.simg'</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>shub://tag</code></td>
+<td><code></code></td>
+<td>singularity</td>
+<td><code>container='shub://GodloveD/lolcow'</code></td>
+<td>Image will be pulled to a local image</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>singularity</code></td>
+<td>singularity</td>
+<td><code>container='a_dir', engine='singularity'</code></td>
+<td>treat <code>name</code> as singularity image file or directory</td>
+</tr>
+<tr>
+<td><code>docker://tag</code></td>
+<td><code>singularity</code></td>
+<td>singularity</td>
+<td><code>container='docker://godlovdc/lolcow', engine='singularity'</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>file://filename</code></td>
+<td><code></code></td>
+<td>singularity</td>
+<td><code>container='file://ubuntu.simg'</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>local://name</code></td>
+<td><code></code></td>
+<td>local</td>
+<td><code>container='local:any_tag'</code></td>
+<td><code>local://any_tag</code> is equivalent to <code>engine='local'</code></td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>local</code></td>
+<td>local</td>
+<td><code>engine=engine</code> with <code>parameter: engine='docker'</code></td>
+<td>Usually used to override parameter <code>container</code></td>
+</tr>
+</tbody>
+</table>
+<p>Basically,</p>
+<ul>
+<li><code>container='tag'</code> pulls and uses docker image <code>tag</code></li>
+<li><code>container='filename.simg</code> uses an existing singularity image</li>
+<li><code>container='shub://tag'</code> pulls and uses singularity image <code>shub://tag</code>, which will generate a local <code>tag.simg</code> file</li>
+</ul>
 
 </div>
 </div>
@@ -12863,22 +12958,6 @@ is executed in a docker image. These options include</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="docker_file-(deprecated)"><code>docker_file</code> (deprecated)<a class="anchor-link" href="#docker_file-(deprecated)">&#182;</a></h3><p>This option allows you to import a docker from specified <code>docker_file</code>, which can be an archive file (<code>.tar</code>, <code>.tar.gz</code>, <code>.tgz</code>, <code>.bzip</code>, <code>.tar.xz</code>, <code>.txz</code>) or a URL to an archive file (e.g. <code>http://example.com/exampleimage.tgz</code>). SoS will use command <code>docker import</code> to import the <code>docker_file</code>. However, because SoS does not know the repository and tag names of the imported docker file, you will still need to use option <code>docker_image</code> to specify the image to use.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>It is easy to define your own actions. All you need to do is to define a function and decorate it with a <code>SoS_Action</code> decorator. For example</p>
-<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pysos</span> <span class="kn">import</span> <span class="n">SoS_Action</span>
-
-<span class="nd">@SoS_Action</span><span class="p">(</span><span class="n">run_mode</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="s1">&#39;interactive&#39;</span><span class="p">))</span>
-<span class="k">def</span> <span class="nf">my_action</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
-    <span class="n">do_something_with_parameters</span>
-    <span class="k">return</span> <span class="mi">1</span>
-</pre></div>
 
 </div>
 </div>
