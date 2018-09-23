@@ -12984,134 +12984,6 @@ with different <code>_input</code>. Here <code>_input</code> is a temporary vari
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-filetype">Option <code>filetype</code><a class="anchor-link" href="#Option-filetype">&#182;</a></h3><p><a id="Option_filetype"></a>
-SoS allows the specification of input options, which are appended to input file list as comma separated <code>name=value</code> pairs.</p>
-<p>Option <code>filetype</code> accepts one or more filetypes or a lambda function. For example,</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
-      class="sos-source" name="SoS">%sandbox
-!touch a.fastq b.fastq README.txt
-%run
-[step]
-input: '*', filetype='*.fastq'
-print(f"{input}")</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>README.txt a.fastq b.fastq
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This step passes three files to <code>step</code> with wildcard filename <code>*</code>. The filetype filter removes the text file from <code>input</code>.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Under the hood SoS treats the pattern as Unix shell-stype wildcard pattern (with <code>*</code>, <code>?</code>, <code>[seq]</code> and <code>[!seq]</code>, see <a href="https://docs.python.org/2/library/fnmatch.html#module-fnmatch">doc</a> for details) so</p>
-<ul>
-<li><strong><code>filetype='.txt'</code> does not match <code>file.txt</code></strong></li>
-<li><code>filetype='*.fastq*'</code> matches <code>a.fastq</code>, <code>a.fastq.gz</code> and <code>a.fastq.zip</code></li>
-<li><code>filetype='[!_]*.txt'</code> matches <code>file1.txt</code> but not <code>_file1.txt</code></li>
-</ul>
-<p>If you need more refined control over the selection of files, you can use lambda functions (a bit python knowledge is required). For example,</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
-   <textarea rows="8"
-      class="sos-source" name="SoS">%sandbox
-!echo '##fileformat=VCF4.1' > a.vcf
-!echo '#!/usr/bin/env python' > a.py
-%run
-
-[step]
-input: '*', filetype=lambda x: open(x).readline().startswith('##fileformat=VCF4.1')
-print(f"{_input}")</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>a.vcf
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The lambda function passes only files with the first line starting with string `##fileformat=VCF4.1``.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Option-group_by-">Option <code>group_by</code> <a id="Option_group_by" /><a class="anchor-link" href="#Option-group_by-">&#182;</a></h3>
 </div>
 </div>
@@ -14334,14 +14206,12 @@ steps have been completed.</p>
 <h3 id="Summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h3><p>Options of step <code>input</code> are evaluated in the following orders:</p>
 <ol>
 <li>A list of input files, if specified, would replace <code>input</code>, which is by default output from the previous step.</li>
-<li>Option <code>filetype</code> filters input files. <strong>The output becomes <code>input</code></strong>.</li>
 <li>Option <code>group_by</code> groups the files into several groups, named <code>_input</code></li>
 <li>Option <code>for_each</code> repeat <code>_input</code> for each loop var, named <code>_loopvar</code> if <code>for_each='loopvar'</code>.</li>
 <li>Option <code>paired_with</code> pairs one or more variables with <code>input</code>, variable <code>paired</code> is paired with <code>input</code>
  and variable <code>_paired</code> is paired with <code>_input</code> in each loop if <code>paired_with='paired'</code></li>
 <li>Option <code>pattern</code> extract variables from filenames in <code>input</code>. Variable <code>extracted</code> is paired with <code>input</code>
  and variable <code>_extracted</code> is paired with <code>_input</code> in each loop if <code>extract='{extracted}_other_part'</code>.</li>
-<li>Option <code>skip</code> optionally skip all or part of the substeps.</li>
 </ol>
 <p>The differences between looped and non-loop steps are sumarized in the following figure</p>
 <p><img src="../media/step_loop.jpg" alt="step_loop"></p>
