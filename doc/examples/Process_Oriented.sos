@@ -16,7 +16,7 @@ parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
 # Simulate sparse data-sets
 [lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
-depends: R_library("MASS")
+depends: R_library("MASS", "7.3+")
 # training and testing samples
 parameter: N = (40, 200) 
 parameter: rstd = 3
@@ -37,7 +37,7 @@ R: expand = "${ }"
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 [ridge_2]
-depends: R_library("glmnet")
+depends: R_library("glmnet", "2.0+")
 parameter: nfolds = 5
 input: group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
@@ -53,7 +53,7 @@ R: expand = "${ }"
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso_2]
-depends: Py_Module("sklearn")
+depends: Py_Module("scikit-learn")
 parameter: nfolds = 5
 input: group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
@@ -109,4 +109,4 @@ report: output = "report.md", expand = "${ }"
 download:
   https://vatlab.github.io/sos-docs/css/pandoc.css
 
-pandoc: input = "report.md", output = "report.html", args = '{input:q} -c pandoc.css -s --output {output:q}'
+pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pandoc.css --self-contained -s --output {output:q}'

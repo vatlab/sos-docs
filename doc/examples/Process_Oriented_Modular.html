@@ -365,7 +365,7 @@ parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
 # Simulate sparse data-sets
 [lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
-depends: R_library("MASS")
+depends: R_library("MASS", "7.3+")
 # training and testing samples
 parameter: N = (40, 200)
 parameter: rstd = 3
@@ -379,7 +379,7 @@ bash: expand = True
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 [ridge_2]
-depends: R_library("glmnet")
+depends: R_library("glmnet", "2.0+")
 parameter: nfolds = 5
 source='regression_modules/ridge.R'
 input: group_by = 2, concurrent = True
@@ -390,7 +390,7 @@ bash: expand = True
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso_2]
-depends: Py_Module("sklearn")
+depends: Py_Module("scikit-learn")
 parameter: nfolds = 5
 source='regression_modules/lasso.py'
 input: group_by = 2, concurrent = True
@@ -435,7 +435,7 @@ report: output = "report.md", expand = "${ }"
 download:
   https://vatlab.github.io/sos-docs/css/pandoc.css
 
-pandoc: input = "report.md", output = "report.html", args = '{input:q} -c pandoc.css -s --output {output:q}'
+pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pandoc.css --self-contained -s --output {output:q}'
 </textarea>
          </div>
       </div>

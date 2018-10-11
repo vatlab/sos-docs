@@ -15,9 +15,9 @@
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 data_files = [("data_{}.train.csv".format(x + 1), "data_{}.test.csv".format(x + 1)) for x in range(5)]
 
-[simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
 # Simulate sparse data-sets
-depends: R_library("MASS")
+[simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
+depends: R_library("MASS", "7.3+")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
 output: f"data_{id}.train.csv", f"data_{id}.test.csv"
@@ -32,9 +32,10 @@ R: expand = "${ }"
   write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[ridge_1 (model fitting)]
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
+[ridge_1 (model fitting)]
+depends: R_library("glmnet", "2.0+")
 parameter: nfolds = 5
 input: data_files, group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
@@ -47,9 +48,10 @@ R: expand = "${ }"
   write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
   write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-[lasso_1 (model fitting)]
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
+[lasso_1 (model fitting)]
+depends: Py_Module("scikit-learn")
 parameter: nfolds = 5
 input: data_files, group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
@@ -63,10 +65,10 @@ python: expand = "${ }"
   np.savetxt(${_output[0]:r}, Ypred)
   np.savetxt(${_output[1]:r}, model.coef_)
 
-[ridge_2, lasso_2 (evaluate)]
 # Evaluate predictors by calculating mean squared error
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
+[ridge_2, lasso_2 (evaluate)]
 depends: data_files
 input: group_by = 2, group_with = "data_files", concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
