@@ -12156,7 +12156,7 @@ $(document).ready(function() {
 <p>The following terms will be used throughout this documentation:</p>
 <ul>
 <li><strong>Script</strong>: A SoS script that defines one or more workflows.</li>
-<li><strong>section</strong>: A group of statements with a header that defines one or more SoS steps.</li>
+<li><strong>Section</strong>: A group of statements with a header that defines one or more SoS steps.</li>
 <li><strong>Workflow</strong>: A sequence of steps that can be executed to complete certain task.</li>
 <li><strong>Step</strong>: A step of a workflow that performs one piece of the workflow.</li>
 <li><strong>Target</strong>: Objects that are input or result of a SoS step, which are usually files, but can also be objects such as executable commands and SoS variables.</li>
@@ -12164,8 +12164,8 @@ $(document).ready(function() {
 <li><strong>Step input</strong>: Specifies the input files of the step.</li>
 <li><strong>Step output</strong>: Specifies the output files and targets of the step.</li>
 <li><strong>Step dependencies</strong>: Specifies the files and targets that are required by the step.</li>
-<li><strong>substep</strong>: A substep consists of all statements after the <code>input</code> specification. It can be executed multiple times each with a subset of input files and/or different parameters.</li>
-<li><strong>Task</strong>: Part or all step processes that will be executed outside of SoS, and potentially on a different server. These are usually resource intensive jobs that will take a long time to complete.</li>
+<li><strong>Substep</strong>: A substep consists of all statements after the <code>input</code> specification. It can be executed multiple times each with a subset of input files and/or different parameters.</li>
+<li><strong>Task</strong>: Part or all substep that will be executed outside of SoS, and potentially on a different server. These are usually resource intensive jobs that will take a long time to complete.</li>
 <li><strong>Action</strong>: SoS or user-defined Python functions. They differ from regular Python functions in that they may behave differently in different running mode of SoS (e.g. ignore when executed in dryrun mode).</li>
 </ul>
 
@@ -12284,7 +12284,7 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>A <strong>target</strong> is an object that can be created and detected. A SoS step can take a list of targets as input, check the existence of a list of dependent targets, and produce a list of targets as output. Targets can be created, removed, and their contents are tracked by SoS with <strong>signatures</strong>. For example, SoS can skip a workflow step if its output targets have been created, but will still rerun the step if the input or ouptut targets have been changed. A target can also be <strong>zapped</strong>, which is a special action to replace content of large files wit their signature, so a target can be considered "exist" for signature validation, but in the meantime "non-exist" if the actual content is needed.</p>
-<p>SoS provides a very flexible and intuitive set of methods to work with files and list of files, gearing towards converting and using different formats of filenames in different scripts. <strong>You do not have to understand the technical details of SoS variables such as <code>step_input</code> and <code>_input</code> in a majority of the cases</strong> but understanding what these variables are and how to use then would greatly facilitate the use of filenames in more complex scenarios.</p>
+<p>SoS provides a very flexible and intuitive set of methods to work with files and list of files, gearing towards converting and using different formats of filenames in different scripts. <strong>You do not have to understand the technical details of SoS variables such as <code>step_input</code> and <code>_input</code> in a majority of the cases</strong> but understanding what these variables are and how to use then would facilitate the use of filenames in more complex scenarios.</p>
 <p>In addition to <code>file_target</code>, SoS provides a number of built-in targets such as <code>file_target</code>, <code>sos_variable</code>, and <code>executable</code>, and targets defined by language modules such as <code>R_Library</code> for <code>R</code>. This section describes general usages of targets and syntax for the most frequently used target <code>file_target</code>. Please refer to Chapter <a href="Targets_and_Actions.html">Targets and Actions</a> for descriptions of other target types.</p>
 
 </div>
@@ -14421,9 +14421,26 @@ f"{single[0]} is the same as {single}"</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>sos_targets</code> is the type for all SoS system variables such as <code>step_input</code>, <code>_input</code>, <code>step_output</code>, <code>_output</code>, <code>step_depends</code>, <code>_depends</code>. These variables are created by SoS from <code>input:</code>, <code>output:</code> and <code>depends:</code> statements and are used to, for example, compose scripts in different languages.</p>
+<p><code>sos_targets</code> is the type for all SoS system variables (<code>step_input</code>, <code>_input</code>, <code>step_output</code>, <code>_output</code>, <code>step_depends</code>, and <code>_depends</code>). These variables are created by SoS from <code>input:</code>, <code>output:</code> and <code>depends:</code> statements and are used to, for example, compose scripts in different languages.</p>
 <p><code>sos_targets</code> shares the same design as <code>paths</code> although its content is a list of <code>BaseTargets</code>. it can be created from <code>str</code>, <code>list</code>, <code>path</code>, <code>paths</code>, <code>file_targets</code>, and many other <code>BaseTarget</code> types. Although this type is very flexible, it closely resembles <code>paths</code> and share all its features.</p>
-<p>For example, variable <code>_input</code> of the following step is a <code>sos_targets</code> object with a single <code>file_target</code> object, so it will be interpolated as a <code>file_target</code> object (without <code>[ ]</code> for a normal list):</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="step_input-and-_input"><code>step_input</code> and <code>_input</code><a class="anchor-link" href="#step_input-and-_input">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Variable <code>step_input</code> represents the input targets of the entire step, variable <code>_input</code> represents the input targets for each substep.</p>
+<p>In the simple case, <code>step_input</code> is the same as <code>_input</code>. For example, variables <code>step_input</code> and <code>_input</code> of the following step are <code>sos_targets</code> objects with a single <code>file_target</code> object:</p>
 
 </div>
 </div>
@@ -14433,11 +14450,11 @@ f"{single[0]} is the same as {single}"</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
       class="sos-source" name="SoS">input: 'SoS_Syntax.ipynb'
-print(f"input={input:r}")
+print(f"step_input={step_input:r}")
 print(f"_input={_input:r}")
 sh: expand=True
     wc -l {_input}</textarea>
@@ -14456,9 +14473,9 @@ sh: expand=True
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input=&#39;SoS_Syntax.ipynb&#39;
+<pre>step_input=&#39;SoS_Syntax.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39;
-    3440 SoS_Syntax.ipynb
+    4197 SoS_Syntax.ipynb
 </pre>
 </div>
 </div>
@@ -14484,15 +14501,15 @@ _input=&#39;SoS_Syntax.ipynb&#39;
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
    <textarea rows="6"
       class="sos-source" name="SoS">input: 'SoS_Syntax.ipynb', 'SoS_Magics.ipynb'
 print(f"step_input={step_input:r}")
 print(f"_input={_input:r}")
 sh: expand=True
-    wc -l {input[0]}
-    wc -l {input[1]}</textarea>
+    wc -l {_input[0]}
+    wc -l {_input[1]}</textarea>
   </div>
 </div>
 
@@ -14510,8 +14527,8 @@ sh: expand=True
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>step_input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
-       0 SoS_Syntax.ipynb
-    3407 SoS_Magics.ipynb
+    4197 SoS_Syntax.ipynb
+    3747 SoS_Magics.ipynb
 </pre>
 </div>
 </div>
@@ -14537,7 +14554,7 @@ _input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
       class="sos-source" name="SoS">input: 'SoS_Syntax.ipynb', 'SoS_Magics.ipynb', group_by=1
@@ -14562,10 +14579,10 @@ sh: expand=True
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>step_input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Syntax.ipynb&#39;
-    3424 SoS_Syntax.ipynb
+    4197 SoS_Syntax.ipynb
 step_input=&#39;SoS_Syntax.ipynb&#39; &#39;SoS_Magics.ipynb&#39;
 _input=&#39;SoS_Magics.ipynb&#39;
-    3407 SoS_Magics.ipynb
+    3747 SoS_Magics.ipynb
 </pre>
 </div>
 </div>
@@ -14597,7 +14614,631 @@ _input = sos_targets('SoS_Magics.ipynb')</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>sos_targets</code> accepts the <code>zap()</code> function which simply zap all file targets in ths list. This technique is usually used to remove large intermediate files during the execution of the workflow. For example, if you have a workflow that downloads and processs large files, you can do something like</p>
+<h4 id="source-of-targets"><code>source</code> of targets<a class="anchor-link" href="#source-of-targets">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Targets in a <code>sos_targets</code> has an attribute <code>source</code>, which correspond to the step that the target is specified (input) or generated (output). For example, the <code>source</code> of a <code>sos_targets</code> that is directly specified in a step is the name of step.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run
+[hi]
+input: 'SoS_Syntax.ipynb'
+print(_input.source)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;hi&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the input target is inherited from another step, the source will the name of that step.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
+      class="sos-source" name="SoS">%run
+[10]
+output: 'a.txt'
+_output.touch()
+
+[11]
+print(_input.source)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;10&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In a more complex case when the source comes from multiple input steps and the present step, the <code>source</code> attribute points out the source of each target:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+output: 'b.txt'
+_output.touch()
+
+
+[step_30]
+input: 'c.txt', from_steps=['step_10', 'step_20']
+print(_input)
+print(_input.source)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>c.txt a.txt b.txt
+[&#39;step_30&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>source</code> information is usually ignored but it can be used to group input targets for substeps, or be used in conditions. For example, if we specify <code>group_by='source'</code>, the substeps would have <code>_input</code> from different sources. Another <code>group_by</code> option that makes use of <code>source</code> information is <code>pairsource</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+output: 'b.txt'
+_output.touch()
+
+
+[step_30]
+input: 'c.txt', from_steps=['step_10', 'step_20'], group_by='source'
+print(_input)
+print(_input.source)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>c.txt
+[&#39;step_30&#39;]
+a.txt
+[&#39;step_10&#39;]
+b.txt
+[&#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="slice-of-sos_targets"><code>slice</code> of <code>sos_targets</code><a class="anchor-link" href="#slice-of-sos_targets">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As the case for objects of type <code>paths</code>, you can treat <code>sos_targets</code> as an array and use operator <code>[]</code> to get one or a <code>list</code> of elements from it:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">objs = sos_targets('a.txt', 'b.txt', 'c.txt', 'd.txt')
+objs[0]</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[1]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>file_target(&#39;a.txt&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">objs[0:-1]</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[file_target(&#39;a.txt&#39;), file_target(&#39;b.txt&#39;), file_target(&#39;c.txt&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">type(objs[0:-1])</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>list</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When an <code>sos_targets</code> consists of targets with different <code>source</code>, you can use <code>[source]</code> to obtain a <code>list</code> of target with matching <code>source</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+input: 'b.txt', 'c.txt', from_steps='step_10'
+print(step_input['step_10'])
+print(step_input['step_20'])</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[file_target(&#39;a.txt&#39;)]
+[file_target(&#39;b.txt&#39;), file_target(&#39;c.txt&#39;)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>[]</code> operator can return results with different types (<code>BaseTarget</code> or <code>list</code>) and the <code>source</code> information would be lost. If you would like to always return a subset of input <code>sos_targets</code>, you can use the <code>slice</code> function, which takes a single index,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">objs.slice(0)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[file_target(&#39;a.txt&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>a <code>slice</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">objs.slice(slice(0,2))</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[file_target(&#39;a.txt&#39;), file_target(&#39;b.txt&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>a list of index in <code>list</code> or <code>tuple</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">objs.slice([0, 2])</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[file_target(&#39;a.txt&#39;), file_target(&#39;c.txt&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or a <code>str</code> for a slice of <code>sos_targets</code> with matching <code>source</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+input: 'b.txt', 'c.txt', from_steps='step_10'
+print(step_input.slice('step_10'))
+print(step_input.slice('step_20'))
+print(step_input.slice('step_20').source)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a.txt
+b.txt c.txt
+[&#39;step_20&#39;, &#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="zap-file-targets"><code>zap</code> file targets<a class="anchor-link" href="#zap-file-targets">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>sos_targets</code> accepts the <code>zap()</code> function which <code>zap</code> all file targets in ths list. This technique is usually used to remove large intermediate files during the execution of the workflow. For example, if you have a workflow that downloads and processs large files, you can do something like</p>
 
 <pre><code>[download: provides='{file}.fastq']
 download: expand=True
@@ -14612,6 +15253,14 @@ sh: expand=True
 _input.zap()</code></pre>
 <p>In this example, 1000 <code>fastq</code> files are downloaded and processed, but the input files are zapped  after they are processed. Although the files have been removed, re-running the workflow will not download and process the files again because the downloaded files still considered to exist by SoS.</p>
 
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Using-sos_targets">Using <code>sos_targets</code><a class="anchor-link" href="#Using-sos_targets">&#182;</a></h3>
 </div>
 </div>
 </div>

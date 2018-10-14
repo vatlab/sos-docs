@@ -12943,7 +12943,8 @@ print(summed)</textarea>
 <h3 id="Input-files">Input files<a class="anchor-link" href="#Input-files">&#182;</a></h3><p>The input of SoS step follows the following rules:</p>
 <ul>
 <li><strong>the input of a SoS step is by default the output of the previous step</strong>, which is <code>None</code> for the first step.</li>
-<li><strong><code>input</code> option</strong>, which could be <strong>a list</strong> of filenames (string literal, variables, or expressions that return filenames).  Wildcard characters (<code>*</code>, which matches everything and <code>?</code>, which matches any single character) are acceptable. Nested lists are flattened.</li>
+<li><strong><code>input:</code></strong>, which could be <strong>a list</strong> of filenames (string literal, variables, or expressions that return filenames).  Wildcard characters (<code>*</code>, which matches everything and <code>?</code>, which matches any single character) are acceptable. Nested lists are flattened.</li>
+<li><strong><code>from_steps</code></strong>, output from specified steps.</li>
 </ul>
 <p>Examples of input specification are as follows:</p>
 
@@ -12984,6 +12985,142 @@ with different <code>_input</code>. Here <code>_input</code> is a temporary vari
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-from_steps">Option <code>from_steps</code><a class="anchor-link" href="#Option-from_steps">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option specifies one or more step names and will take their output as the input of the present step. These input will be appended to the input files specified for the step. For example, the <code>step_input</code> of <code>step_30</code> of the following example is <code>c.txt</code> (from <code>step_30</code>, directly specified), <code>a.txt</code> (from <code>step_10</code>), and <code>b.txt</code> (from <code>step_20</code>).</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+output: 'b.txt'
+_output.touch()
+
+
+[step_30]
+input: 'c.txt', from_steps=['step_10', 'step_20']
+print(step_input)
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>c.txt a.txt b.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The source input targets, meaning from which step the targets are generated, can be traced by the <code>source</code> attriute of <code>step_input</code> and <code>_input</code>, and can be used to group inputs. For example, <code>group_by='source'</code> groups the input by its source steps.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 20.528640000000003em">
+   <textarea rows="16"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+output: 'b.txt'
+_output.touch()
+
+
+[step_30]
+input: 'c.txt', from_steps=['step_10', 'step_20'], group_by='source'
+print()
+print(f'"step_input" {step_input} has source {step_input.source}')
+print(f'substep "_input" {_input} has source {_input.source}')
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+&#34;step_input&#34; c.txt a.txt b.txt has source [&#39;step_30&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+substep &#34;_input&#34; c.txt has source [&#39;step_30&#39;]
+
+&#34;step_input&#34; c.txt a.txt b.txt has source [&#39;step_30&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+substep &#34;_input&#34; a.txt has source [&#39;step_10&#39;]
+
+&#34;step_input&#34; c.txt a.txt b.txt has source [&#39;step_30&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+substep &#34;_input&#34; b.txt has source [&#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Option-group_by-">Option <code>group_by</code> <a id="Option_group_by" /><a class="anchor-link" href="#Option-group_by-">&#182;</a></h3>
 </div>
 </div>
@@ -12992,7 +13129,65 @@ with different <code>_input</code>. Here <code>_input</code> is a temporary vari
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS by default passes all input files to step process as a single list. Option <code>group_by</code> pass input files in groups, each time with a subset of input files named <code>_input</code>. SoS allows you to group input by <code>single</code> (individual file), <code>pairs</code> (match first half of files with the second half),  <code>combinations</code> (all unordered combinations of 2-sets), <code>pairwise</code> (all adjacent 2-sets), or chunks of size <code>N</code> (integer <code>group_by=3</code> or string <code>group_by='4'</code>, the last group might have few files if the number of input files is not a multiple of <code>group_by</code>). For example, with the following sos script</p>
+<p>SoS by default passes all input files to step process as a single list. Option <code>group_by</code> pass input files in groups, each time with a subset of input files named <code>_input</code>. SoS allows you the following <code>group_by</code> options</p>
+<table>
+<thead><tr>
+<th>option</th>
+<th>group by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>all</code></td>
+<td>all in a single group, the default</td>
+</tr>
+<tr>
+<td><code>single</code></td>
+<td>individual target</td>
+</tr>
+<tr>
+<td><code>pairs</code></td>
+<td>match first half of files with the second half, take one from each half each time</td>
+</tr>
+<tr>
+<td><code>combinations</code></td>
+<td>all unordered combinations of 2-sets</td>
+</tr>
+<tr>
+<td><code>pairwise</code></td>
+<td>all adjacent 2-sets</td>
+</tr>
+<tr>
+<td><code>source</code></td>
+<td>by source of input</td>
+</tr>
+<tr>
+<td><code>pairsource</code></td>
+<td>pair input files by their sources and take one from each source each time</td>
+</tr>
+<tr>
+<td><code>N</code> = <code>1</code>, <code>2</code>, ...</td>
+<td>chunks of size <code>N</code></td>
+</tr>
+<tr>
+<td><code>pairsN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
+<td>match first half of files with the second half, take <code>N</code> from each half each time</td>
+</tr>
+<tr>
+<td><code>pairsourceN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
+<td>pair input files by their sources and take <code>N</code> from each source each time</td>
+</tr>
+<tr>
+<td><code>pairwiseN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
+<td>all adjacent 2-sets, but each set has <code>N</code> items</td>
+</tr>
+<tr>
+<td><code>combinationsN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
+<td>all unorderd combinations of <code>N</code> items</td>
+</tr>
+</tbody>
+</table>
+<p>For example, with the following sos script</p>
 
 </div>
 </div>
@@ -13044,7 +13239,7 @@ file3 file4
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is very important to understand that the <code>group_by</code> option does not change <code>{input}</code>. It creates a looping variable <code>{_input}</code> that changes with each substep. To demonstrate more acceptable values, the following example uses <code>sos_run</code> action to execute this a step with different grouping method.</p>
+<p>It is very important to understand that the <code>group_by</code> option does not change variable <code>step_input</code>. It creates a looping variable <code>_input</code> that changes with each substep. To demonstrate more acceptable values, the following example uses <code>sos_run</code> action to execute this a step with different grouping method.</p>
 
 </div>
 </div>
@@ -13054,9 +13249,9 @@ file3 file4
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
-   <textarea rows="17"
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
+   <textarea rows="18"
       class="sos-source" name="SoS">%sandbox
 !touch file1 file2 file3 file4
 %run
@@ -13074,7 +13269,7 @@ sos_run('group', group='single')
 sos_run('group', group='pairs')
 sos_run('group', group='pairwise')
 sos_run('group', group='combinations')
-</textarea>
+sos_run('group', group='combinations3')</textarea>
   </div>
 </div>
 
@@ -13117,6 +13312,11 @@ group_by=combinations
 3: file2 file3
 4: file2 file4
 5: file3 file4
+group_by=combinations3
+0: file1 file2 file3
+1: file1 file2 file4
+2: file1 file3 file4
+3: file2 file3 file4
 </pre>
 </div>
 </div>
@@ -13132,7 +13332,7 @@ group_by=combinations
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Obviously, the output of the <code>pairs</code> cases depends on the order of files. If you need to pair files in any particular order, you can control it in input. For example</p>
+<p>We did not include options <code>pairsN</code> and <code>pairwiseN</code> in the example because we need more input files to see what is going on. As you can see from the following example, the <code>N</code> groups input targets as small groups of size <code>N</code> before <code>pairs</code> and <code>pairwise</code> are applied.</p>
 
 </div>
 </div>
@@ -13142,23 +13342,23 @@ group_by=combinations
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
-   <textarea rows="14"
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
+   <textarea rows="13"
       class="sos-source" name="SoS">%sandbox
+!touch A1 B1 A2 B2 A3 B3 A4 B4
 %run
-!touch A_R1_0.fastq A_R2_0.fastq B_R1_0.fastq B_R2_0.fastq
-!touch A_R1_1.fastq A_R2_1.fastq B_R1_1.fastq B_R2_1.fastq
 
-fastq_files = glob.glob('*')
+[group]
+parameter: group = str
+print(f"group_by={group}")
+input: 'A1', 'B1', 'A2', 'B2', 'A3', 'B3', 'A4', 'B4', group_by=group
+print(f"{_index}: {_input}")
 
-[step]
-input:
-	sorted([x for x in fastq_files if '_R1_' in x]),
-	sorted([x for x in fastq_files if '_R2_' in x]),
-	group_by='pairs'
-
-print(_input)</textarea>
+[default]
+sos_run('group', group='pairs2')
+sos_run('group', group='pairwise2')
+</textarea>
   </div>
 </div>
 
@@ -13174,10 +13374,13 @@ print(_input)</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>A_R1_0.fastq A_R2_0.fastq
-A_R1_1.fastq A_R2_1.fastq
-B_R1_0.fastq B_R2_0.fastq
-B_R1_1.fastq B_R2_1.fastq
+<pre>group_by=pairs2
+0: A1 B1 A3 B3
+1: A2 B2 A4 B4
+group_by=pairwise2
+0: A1 B1 A2 B2
+1: A2 B2 A3 B3
+2: A3 B3 A4 B4
 </pre>
 </div>
 </div>
@@ -13193,11 +13396,78 @@ B_R1_1.fastq B_R2_1.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>will take all input files and sort them by <code>_R1_</code> and <code>_R2_</code> and by filename, and pair them.</p>
+<p>Finally, as we recall from the <code>source</code> attribute of <code>sos_targets</code>, input targets can have <code>source</code> of the present step (if specified directly), or as the output of previouly executed steps. <code>group_by</code> allows you to group input by sources <code>group_by='source'</code>, or pair sources (<code>group_by='pairsource'</code> and <code>group_by='pairsourceN'</code>). For example,</p>
 
 </div>
 </div>
 </div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 26.60009em">
+   <textarea rows="21"
+      class="sos-source" name="SoS">!touch c1 c2 c3 c4
+%run
+[step_10]
+output: 'a1', 'a2', 'a3', 'a4'
+_output.touch()
+
+[step_20]
+output: 'b1', 'b2', 'b3', 'b4'
+_output.touch()
+
+
+[group]
+parameter: group = str
+print(f"group_by={group}")
+input: 'c1', 'c2', 'c3', 'c4', from_steps=['step_10', 'step_20'], group_by=group
+print(f"{_index}: {_input} from {_input.source}")
+
+[default]
+sos_run('group', group='source')
+sos_run('group', group='pairsource')
+sos_run('group', group='pairsource2')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>group_by=source
+0: c1 c2 c3 c4 from [&#39;group&#39;, &#39;group&#39;, &#39;group&#39;, &#39;group&#39;]
+1: a1 a2 a3 a4 from [&#39;step_10&#39;, &#39;step_10&#39;, &#39;step_10&#39;, &#39;step_10&#39;]
+2: b1 b2 b3 b4 from [&#39;step_20&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
+group_by=pairsource
+0: c1 a1 b1 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+1: c2 a2 b2 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+2: c3 a3 b3 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+3: c4 a4 b4 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+group_by=pairsource2
+0: c1 c2 a1 a2 b1 b2 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
+1: c3 c4 a3 a4 b3 b4 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">

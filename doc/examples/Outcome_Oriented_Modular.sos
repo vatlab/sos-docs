@@ -18,7 +18,7 @@ lasso_result = [f'data_{x+1}.lasso.mse.csv' for x in range(5)]
 
 # Simulate sparse data-sets
 [simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
-depends: R_library("MASS")
+depends: R_library("MASS", "7.3+")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
 source='regression_modules/simulate.R'
@@ -29,7 +29,7 @@ bash: expand = True
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 [ridge: provides = ["data_{id}.ridge.predicted.csv", "data_{id}.ridge.coef.csv"]]
-depends: f"data_{id}.train.csv", f"data_{id}.test.csv", R_library("glmnet")
+depends: f"data_{id}.train.csv", f"data_{id}.test.csv", R_library("glmnet", "2.0+")
 parameter: nfolds = 5
 source='regression_modules/ridge.R'
 output: f"data_{id}.ridge.predicted.csv", f"data_{id}.ridge.coef.csv"
@@ -39,7 +39,7 @@ bash: expand = True
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso: provides = ["data_{id}.lasso.predicted.csv", "data_{id}.lasso.coef.csv"]]
-depends: f"data_{id}.train.csv", f"data_{id}.test.csv", Py_Module("sklearn")
+depends: f"data_{id}.train.csv", f"data_{id}.test.csv", Py_Module("scikit-learn")
 parameter: nfolds = 5
 source='regression_modules/lasso.py'
 output: f"data_{id}.lasso.predicted.csv", f"data_{id}.lasso.coef.csv"
@@ -76,4 +76,4 @@ report: expand = "${ }", output = "report.md"
 | LASSO | ${lasso_summary[1]} | ${lasso_summary[0]} |
 | Ridge | ${ridge_summary[1]} | ${ridge_summary[0]} |
 
-pandoc: input = "report.md", output = "report.html", args = '{input:q} -c pandoc.css -s --output {output:q}'
+pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pandoc.css --self-contained -s --output {output:q}'
