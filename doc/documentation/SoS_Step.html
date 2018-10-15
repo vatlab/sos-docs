@@ -13052,7 +13052,7 @@ print(step_input)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The source input targets, meaning from which step the targets are generated, can be traced by the <code>source</code> attriute of <code>step_input</code> and <code>_input</code>, and can be used to group inputs. For example, <code>group_by='source'</code> groups the input by its source steps.</p>
+<p>The source input targets, meaning from which step the targets are generated, can be traced by the <code>source</code> attriute of <code>step_input</code> and <code>_input</code>. Just to clarify some common cases, we note that <code>step_input</code> of a step in a process-oritented workflow is by default the output of its previous step:</p>
 
 </div>
 </div>
@@ -13062,7 +13062,183 @@ print(step_input)
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
+   <textarea rows="13"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+output: 'b.txt'
+_output.touch()
+
+[step_30]
+print(step_input)
+print(step_input.source)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>b.txt
+[&#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This default behavior will be overridden with direct specification of step input</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+output: 'b.txt'
+_output.touch()
+
+[step_30]
+input: 'c.txt'
+print(step_input)
+print(step_input.source)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>c.txt
+[&#39;step_30&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or by the specification of option <code>from_steps</code>:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+output: 'b.txt'
+_output.touch()
+
+[step_30]
+input: from_steps='step_10'
+print(step_input)
+print(step_input.source)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a.txt
+[&#39;step_10&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>source</code> of input and can be used to group inputs. For example, <code>group_by='source'</code> groups the input by its source steps.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 20.528640000000003em">
    <textarea rows="16"
       class="sos-source" name="SoS">!touch c.txt
@@ -13175,7 +13351,7 @@ substep &#34;_input&#34; b.txt has source [&#39;step_20&#39;]
 </tr>
 <tr>
 <td><code>pairsourceN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
-<td>pair input files by their sources and take <code>N</code> from each source each time</td>
+<td>pair input files by their sources and take <code>N</code> from each source (if equal size) each time</td>
 </tr>
 <tr>
 <td><code>pairwiseN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
@@ -13184,6 +13360,10 @@ substep &#34;_input&#34; b.txt has source [&#39;step_20&#39;]
 <tr>
 <td><code>combinationsN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
 <td>all unorderd combinations of <code>N</code> items</td>
+</tr>
+<tr>
+<td>function (e.g. <code>lamba x: ...</code>)</td>
+<td>a function that returns groups of inputs</td>
 </tr>
 </tbody>
 </table>
@@ -13406,19 +13586,18 @@ group_by=pairwise2
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 26.60009em">
-   <textarea rows="21"
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 25.385800000000003em">
+   <textarea rows="20"
       class="sos-source" name="SoS">!touch c1 c2 c3 c4
 %run
 [step_10]
-output: 'a1', 'a2', 'a3', 'a4'
+output: 'a1'
 _output.touch()
 
 [step_20]
-output: 'b1', 'b2', 'b3', 'b4'
+output: 'b1', 'b2'
 _output.touch()
-
 
 [group]
 parameter: group = str
@@ -13447,16 +13626,82 @@ sos_run('group', group='pairsource2')</textarea>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>group_by=source
 0: c1 c2 c3 c4 from [&#39;group&#39;, &#39;group&#39;, &#39;group&#39;, &#39;group&#39;]
-1: a1 a2 a3 a4 from [&#39;step_10&#39;, &#39;step_10&#39;, &#39;step_10&#39;, &#39;step_10&#39;]
-2: b1 b2 b3 b4 from [&#39;step_20&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
+1: a1 from [&#39;step_10&#39;]
+2: b1 b2 from [&#39;step_20&#39;, &#39;step_20&#39;]
 group_by=pairsource
 0: c1 a1 b1 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
-1: c2 a2 b2 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
-2: c3 a3 b3 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
-3: c4 a4 b4 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+1: c2 a1 b1 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+2: c3 a1 b2 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+3: c4 a1 b2 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
 group_by=pairsource2
-0: c1 c2 a1 a2 b1 b2 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
-1: c3 c4 a3 a4 b3 b4 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
+0: c1 c2 a1 b1 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+1: c3 c4 a1 b2 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The options <code>pairsource</code> and <code>pairsource2</code> need some explanation here because our groups do not have the same size. What these options do are</p>
+<ol>
+<li>Determine number of groups <code>m</code> from <code>N</code> and longest source.</li>
+<li>Either group or repeat items in sources to create <code>m</code> groups</li>
+</ol>
+<p>For example, with <code>pairsource2</code>, we are creating two groups because the largest source have 4 targets (<code>m=4/2=2</code>). Then, <code>a1</code> is repeated twice, <code>b1</code>, <code>b2</code> are in two groups, and <code>c1</code>, <code>c2</code> and <code>c3</code>, <code>c4</code> are in two groups.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, if none of the predefined grouping mechanism works, you can specify a function that takes <code>step_input</code> and returns a list of <code>sos_targets</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">!touch c1 c2 c3 c4 c5 c6
+input: 'c1', 'c2', 'c3', 'c4', 'c5', 'c6',
+    group_by=lambda x: [x.slice(0), x.slice([1,2]), x.slice([3,4,5])]
+    
+print(f"{_index}: {_input} from {_input.source}")
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: c1 from [&#39;scratch_0&#39;]
+1: c2 c3 from [&#39;scratch_0&#39;, &#39;scratch_0&#39;]
+2: c4 c5 c6 from [&#39;scratch_0&#39;, &#39;scratch_0&#39;, &#39;scratch_0&#39;]
 </pre>
 </div>
 </div>
