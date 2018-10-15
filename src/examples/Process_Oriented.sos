@@ -15,7 +15,7 @@
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
 # Simulate sparse data-sets
-[lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
+[lasso_1, ridge_1]
 depends: R_library("MASS", "7.3+")
 # training and testing samples
 parameter: N = (40, 200) 
@@ -71,16 +71,14 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 [lasso_3, ridge_3]
-depends: sos_variable('data_files')
-replicates = list(zip(*(iter(data_files),) * 2))
-input: group_by = 2, group_with = 'replicates', concurrent = True
+input: from_steps = [f'{step_name[:-2]}_1', f'{step_name[:-2]}_2'], group_by = 'pairsource2', concurrent = True
 output: f"{_input[0]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${_replicates[1]:r}, header = F)[,-1]) %*% b
-  Ypred = scan(${_input[0]:r})
+  Ytruth = as.matrix(read.csv(${_input[1]:r}, header = F)[,-1]) %*% b
+  Ypred = scan(${_input[2]:r})
   prediction_mse = mean((Ytruth - Ypred)^2)
-  betahat = scan(${_input[1]:r})
+  betahat = scan(${_input[3]:r})
   estimation_mse = mean((betahat - b) ^ 2)
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
   
