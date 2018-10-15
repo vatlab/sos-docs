@@ -53,7 +53,7 @@ R: expand = "${ }"
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso_2]
-depends: Py_Module("scikit-learn")
+depends: Py_Module("sklearn")
 parameter: nfolds = 5
 input: group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
@@ -72,7 +72,7 @@ python: expand = "${ }"
 # and of betahat vs truth (2nd line of output)
 [lasso_3, ridge_3]
 input: from_steps = [f'{step_name[:-2]}_1', f'{step_name[:-2]}_2'], group_by = 'pairsource2', concurrent = True
-output: f"{_input[0]:nn}.mse.csv"
+output: f"{_input[2]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
   Ytruth = as.matrix(read.csv(${_input[1]:r}, header = F)[,-1]) %*% b
