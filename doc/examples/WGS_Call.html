@@ -12521,7 +12521,7 @@ parameter: keep_coord = path()</textarea>
 output: ref_genome
 download: dest_file = f'{_output}.gz', expand = True
     {genome_url}
-bash: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand = True
+bash: container='gaow/debian-ngs:1.0', volumes=[f'{wd:a}:{wd:a}'], expand = True
     gunzip -f {ref_genome}.gz</textarea>
   </div>
 </div>
@@ -12555,7 +12555,7 @@ bash: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand = True
 output: f'{ref_genome:n}.dict', f'{ref_genome}.fai', f'{ref_genome}.bwt',
         f'{ref_genome}.pac', f'{ref_genome}.ann', f'{ref_genome}.amb', f'{ref_genome}.sa'
 stop_if(all([path(x).is_file() for x in _output]))
-run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{ref_genome}.err', stdout=f'{ref_genome}.out'
+run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{ref_genome}.err', stdout=f'{ref_genome}.out'
     rm -f {_output}
     samtools faidx {_input} && \
     bwa index {_input} && \
@@ -12622,7 +12622,7 @@ download: dest_file = f'{_output}', expand = True
       class="sos-source" name="SoS"># Index known variants
 [get_known_variants_2]
 output: ref_variants
-bash: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+bash: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk SortVcf -I {_input} -O {_output} \
         --SEQUENCE_DICTIONARY {ref_genome:n}.dict \
         --COMPRESSION_LEVEL 9 && \
@@ -12711,7 +12711,7 @@ sample_files = list(set(get_output(f"awk '{{print $1}}' {samples:e}").strip().sp
 fail_if(len(sample_files) == 0, msg = 'Need input sample files!')
 input: [(f'{samples:d}/{x}_1.fq.gz', f'{samples:d}/{x}_2.fq.gz') for x in sample_files], group_by = 2, concurrent = True
 output: f'{wd:a}/{samples:bn}_bam/{_input[0]:bnn}.fixmate.bam'
-run: container='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs:1.0', volumes=[f'{samples:da}:{samples:da}', f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bwa mem -t {ncpu} -M -R "@RG\\tID:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tSM:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tLB:library1\\tPL:ILLUMINA\\tPU:{os.path.basename(sample_files[_index].replace('-', '_'))}.library1" {ref_genome} {_input[0]} {_input[1]} | samtools sort -n - | samtools fixmate -O bam - {_output}</textarea>
   </div>
 </div>
@@ -12746,7 +12746,7 @@ run: container='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{wd:a
 # https://software.broadinstitute.org/gatk/blog?id=9644
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.sorted.bam'
-run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk SortSam -I {_input} -O {_output} -SO coordinate
 if zap:
     _input.zap()</textarea>
@@ -12781,7 +12781,7 @@ if zap:
 [3]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.cleaned.bam'
-run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     samtools index {_input}
     samtools view -@ {ncpu} -b {_input} {chroms} > {_output}
 if zap:
@@ -12807,7 +12807,7 @@ if zap:
 [4]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.reordered.bam'
-run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk ReorderSam -I {_input} -O {_output} -R {ref_genome} \
         --CREATE_INDEX TRUE \
         --ALLOW_INCOMPLETE_DICT_CONCORDANCE TRUE
@@ -12845,7 +12845,7 @@ if zap:
 [5]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.realigned.bam'
-run: container='gaow/gatk3', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/gatk3:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     java -jar /opt/GenomeAnalysisTK.jar -T RealignerTargetCreator \
         -R {ref_genome} \
         -I {_input} \
@@ -12890,7 +12890,7 @@ if zap:
 [6]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.recal.bam'
-run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output}.err', stdout=f'{_output}.out'
+run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output}.err', stdout=f'{_output}.out'
     gatk BaseRecalibrator \
         -R {ref_genome} \
         --known-sites {ref_variants} \
@@ -12930,7 +12930,7 @@ if zap:
 [7]
 input: group_by = 1, concurrent = True
 output: f'{_input:n}.dedup.bam'
-run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk MarkDuplicates \
         --VALIDATION_STRINGENCY LENIENT \
         --INPUT {_input} --OUTPUT {_output} \
@@ -12969,7 +12969,7 @@ if zap:
 [8]
 # the 2nd line can have many samples separated by space
 output: f'{wd:a}/{samples:bn}_vcf/{samples:bn}.bcf'
-run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools mpileup -Ob -f {ref_genome} --threads {ncpu} -o {_output} {_input}</textarea>
   </div>
 </div>
@@ -12991,7 +12991,7 @@ run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stder
       class="sos-source" name="SoS"># Multi-sample variant calling -- call
 [9]
 output: f'{_input:n}.vcf.gz'
-run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools call -{"v" if variants_only else ""}mO z --threads {ncpu} -o {_output} {_input} \
     && tabix -p vcf {_output}</textarea>
   </div>
@@ -13024,7 +13024,7 @@ run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stder
       class="sos-source" name="SoS"># Quality summary plots for VCF file
 [10]
 output: f'{_input:n}.stats'
-run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools stats -F {ref_genome} -s - {_input} > {_output}
     mkdir -p {_input:nn}_plots
     plot-vcfstats -P -p {_input:nn}_plots {_output}</textarea>
@@ -13058,7 +13058,7 @@ run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True,
       class="sos-source" name="SoS"># Quality filtering
 [11]
 output: f'{_input:nn}.filtered.vcf.gz'
-run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools filter -O z -o {_output} \
         -s LOWQUAL -i'{bcftools_filter}' {_input:nn}.vcf.gz \
     && tabix -p vcf {_output}</textarea>
@@ -13093,7 +13093,7 @@ run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stder
 [12]
 stop_if(not keep_coord.is_file(), msg = 'Skip extracting selected SNPs because no list (--keep_coord coord.list) was provided to extract from.')
 output: f'{_input:nn}.extracted.vcf.gz'
-run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+run: container='gaow/debian-ngs:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     tabix -H {_input} > {_output:n}
     tabix {_input} -R {keep_coord} >> {_output:n}
     bgzip {_output:n}</textarea>

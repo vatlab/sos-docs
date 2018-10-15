@@ -12180,18 +12180,17 @@ li.tocify-item.active {
 </div>
 </div>
 
+<div class="lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-   
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">5</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%revisions -s -n 5</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 <div class="output_wrapper">
@@ -12236,6 +12235,7 @@ li.tocify-item.active {
 </div>
 </div>
 
+</div>
 </div>
 
 
@@ -12411,7 +12411,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 [sra (dump SRA to fastq): provides=['{data}_1.fastq', '{data}_2.fastq']]
 depends: Py_Module('docker')
 output: f'{data}_1.fastq', f'{data}_2.fastq'
-run: docker_image = 'gaow/debian-ngs', workdir = cwd, expand=True
+run: container = 'gaow/debian-ngs:1.0', workdir = cwd, expand=True
     fastq-dump -I --split-files {os.path.basename(data)}</textarea>
   </div>
 </div>
@@ -12467,7 +12467,7 @@ download: dest_dir = resource_dir, expand = True
 # Quite time & resource consuming (3hrs, 32GB memory if sparse_star is False)
 depends: Py_Module('docker'), sos_step('hg19_reference')
 output: f"{resource_dir}/genomeParameters.txt"
-run: workdir = '/tmp', docker_image = 'gaow/debian-ngs', volumes = [f'{resource_dir}:{resource_dir}'], expand=True
+run: workdir = '/tmp', container = 'gaow/debian-ngs:1.0', volumes = [f'{resource_dir}:{resource_dir}'], expand=True
      STAR --runMode genomeGenerate \
         --genomeDir {resource_dir} \
         --genomeFastaFiles {resource_dir}/{ref_fa} \
@@ -12505,7 +12505,7 @@ run: workdir = '/tmp', docker_image = 'gaow/debian-ngs', volumes = [f'{resource_
 depends: Py_Module('docker'), f"{resource_dir}/genomeParameters.txt"
 input: [(f'{cwd:a}/{s}_1.fastq', f'{cwd:a}/{s}_2.fastq') for s in samples], group_by = "pairs", concurrent = True
 output: [f"{cwd:a}/{s}.Aligned.out.sam" for s in samples], group_by = 1
-run: docker_image = 'gaow/debian-ngs', volumes = [f'{resource_dir}:{resource_dir}'], expand=True, workdir = cwd
+run: container = 'gaow/debian-ngs:1.0', volumes = [f'{resource_dir}:{resource_dir}'], expand=True, workdir = cwd
     STAR --genomeDir {resource_dir} \
         --readFilesIn {_input[0]} {_input[1]} \
         --runThreadN {ncpu} --outFileNamePrefix {_output:nnn}.</textarea>
@@ -12540,7 +12540,7 @@ run: docker_image = 'gaow/debian-ngs', volumes = [f'{resource_dir}:{resource_dir
 depends: Py_Module('docker')
 input: group_by = 1, pattern = '{name}.Aligned.out.sam', concurrent = True
 output: expand_pattern('{_name}.bam')
-run: docker_image = 'gaow/debian-ngs', expand=True, workdir = cwd
+run: container = 'gaow/debian-ngs:1.0', expand=True, workdir = cwd
     samtools view -bS {_input} -o {_output}
 _input.zap()</textarea>
   </div>
@@ -12574,20 +12574,20 @@ _input.zap()</textarea>
 </div>
 </div>
 
+<div class="lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-   
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="n">align</span> <span class="o">-</span><span class="n">j</span> <span class="mi">2</span>
-</pre></div>
-
-</div>
-</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%sosrun align -j 2</textarea>
+  </div>
 </div>
 
+</div>
+
+</div>
 </div>
 
 

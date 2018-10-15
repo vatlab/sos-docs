@@ -12210,6 +12210,7 @@ li.tocify-item.active {
 </div>
 </div>
 
+<div class="lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12269,6 +12270,7 @@ li.tocify-item.active {
 </div>
 </div>
 
+</div>
 </div>
 
 
@@ -12452,7 +12454,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <span class="p">[</span><span class="n">sra</span> <span class="p">(</span><span class="n">dump</span> <span class="n">SRA</span> <span class="n">to</span> <span class="n">fastq</span><span class="p">):</span> <span class="kp">provides</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;{data}_2.fastq&#39;</span><span class="p">]]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{data}_2.fastq&#39;</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
     <span class="n">fastq</span><span class="o">-</span><span class="n">dump</span> <span class="o">-</span><span class="n">I</span> <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">files</span> <span class="p">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
 </pre></div>
 
@@ -12509,7 +12511,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <span class="c1"># Quite time &amp; resource consuming (3hrs, 32GB memory if sparse_star is False)</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">),</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;hg19_reference&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
-<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}:{resource_dir}&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}:{resource_dir}&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
      <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
         <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> \
@@ -12548,7 +12550,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">),</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
 <span class="kn">input:</span> <span class="p">[(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_2.fastq&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{cwd:a}/{s}.Aligned.out.sam&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}:{resource_dir}&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}:{resource_dir}&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
         <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nnn</span><span class="p">}</span><span class="o">.</span>
@@ -12584,7 +12586,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;docker&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.Aligned.out.sam&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{_name}.bam&#39;</span><span class="p">)</span>
-<span class="kn">run:</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bS</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 <span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
 </pre></div>
@@ -12619,6 +12621,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 </div>
 </div>
 
+<div class="lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12634,6 +12637,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
         </div>
 </div>
 
+</div>
 </div>
 
 
