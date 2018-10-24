@@ -11889,6 +11889,100 @@ div.cell {
 }
 
 
+
+table.workflow_table,
+table.task_table {
+  border: 0px;
+}
+
+table.workflow_table i,
+table.task_table i  {
+  margin-right: 5px;
+}
+
+td.workflow_name
+{
+  width: 10em;
+  text-align: left;
+}
+
+td.workflow_name pre,
+td.task_name pre {
+  font-size: 1.2em;
+}
+
+td.workflow_id,
+td.task_id
+{
+  width: 15em;
+  text-align: left;
+}
+
+td.workflow_index
+{
+  width: 5em;
+  text-align: left;
+}
+
+td.workflow_status,
+td.task_timer
+{
+  width: 20em;
+  text-align: left;
+}
+
+td.task_icon {
+    font-size: 0.75em;
+}
+
+td.task_status,
+{
+  width: 15em;
+  text-align: left;
+}
+
+table.workflow_table span {
+  text-transform: uppercase;
+  font-family: monospace;
+}
+
+table.task_table span {
+  text-transform: uppercase;
+  font-family: monospace;
+}
+
+table.workflow_table.pending pre,
+table.task_table.pending pre,
+table.task_table.submitted pre,
+table.task_table.missing pre {
+  color: #9d9d9d; /* gray */
+}
+
+table.workflow_table.running pre,
+table.task_table.running pre {
+  color: #cdb62c; /* yellow */
+}
+
+table.workflow_table.completed pre,
+table.task_table.completed pre {
+  color: #39aa56; /* green */
+}
+
+table.workflow_table.aborted pre,
+table.task_table.aborted pre {
+  color: #FFA07A; /* salmon */
+}
+
+table.workflow_table.failed pre,
+table.task_table.failed pre {
+  color: #db4545; /* red */
+}
+
+table.task_table {
+  border: 0px;
+  border-style: solid;
+}
+
 </style>
 
 
@@ -12132,18 +12226,17 @@ $(document).ready(function() {
 </div>
 </div>
 
+<div class="lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-   
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">--</span><span class="n">source</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%revisions --source</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 <div class="output_wrapper">
@@ -12191,6 +12284,7 @@ $(document).ready(function() {
 </div>
 </div>
 
+</div>
 </div>
 
 
@@ -12270,11 +12364,11 @@ my_action = mypackage.mymodule:my_action</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The most important feature of an SoS actions is that they can behave different in different run_mode, which can be <code>dryrun</code>, <code>run</code>, or <code>interactive</code> (for SoS Notebook). Depending on the nature of your action, you might want to do nothing for in <code>dryrun</code> mode and give more visual feedback in <code>interactive</code> mode. The relevant code would usually look like</p>
+<p>The most important feature of an SoS actions is that they can behave differently in different <code>run_mode</code>, which can be <code>dryrun</code>, <code>run</code>, or <code>interactive</code> (for SoS Notebook). Depending on the nature of your action, you might want to do nothing for in <code>dryrun</code> mode and give more visual feedback in <code>interactive</code> mode. The relevant code would usually look like</p>
 
-<pre><code>if env['config']['run_mode'] == 'dryrun':
+<pre><code>if env.config['run_mode'] == 'dryrun':
     return None</code></pre>
-<p>Note that because actions are often used in script format with ignored return value, actions usually return <code>None</code> for success, and raise an exception when error happens.</p>
+<p>Because actions are often used in script format with ignored return value, actions usually return <code>None</code> for success, and raise an exception when error happens.</p>
 
 </div>
 </div>
@@ -12285,12 +12379,12 @@ my_action = mypackage.mymodule:my_action</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>If the execution of action depends on some other targets, you can raise an <code>UnknownTarget</code> with the target so that the target can be obtained, and the SoS step and the action will be re-executed after the target is obtained. For example, if your action depends on a particular <code>R_library</code>, you can test the existence of the target as follows:</p>
 
-<pre><code>from sos.target import UnknownTarget
-from sos_R.target import R_library
+<pre><code>from sos.targets import UnknownTarget
+from sos.targets_r import R_library
 
 @SoS_Action()
 def my_action(script, *args, **kwargs):
-    if not R_library('somelib').exists():
+    if not R_library('somelib').target_exists():
         raise UnknownTarget(R_library('somelib'))
     # ...</code></pre>
 
@@ -12309,16 +12403,30 @@ def my_action(script, *args, **kwargs):
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Adding additional target is similar with a class derived from <a href="https://github.com/vatlab/SOS/blob/master/src/sos/target.py"><code>BaseTarget</code></a>.</p>
+<p>Additional target should be derived from <a href="https://github.com/vatlab/SoS/blob/master/src/sos/targets.py"><code>BaseTarget</code></a>.</p>
 
 <pre><code>from sos.targets import BaseTarget
 
 class my_target(BaseTarget):
     def __init__(self, *args, **kwargs):
-        super(my_target, self).__init__(self)</code></pre>
-<p>You will need to define several member functions for this class, most notably <code>target_exists</code> that checks the existence of the target. This function accept a parameter <code>mode</code>, which can be <code>target</code>, <code>signature</code>, or <code>any</code>. Like a file target, a target can be considered exist as long as its signature exists, and if the real target is not needed for the execution of the workflow.</p>
-<p>The details of this class can be found at the source code of <a href="https://github.com/vatlab/SoS/blob/master/src/sos/targets.py"><code>BaseTarget</code></a>. The <a href="https://github.com/vatlab/sos-r/blob/master/src/sos_R/targets.py"><code>R_Library</code></a> provides a good example of a <strong>virtual target</strong> that does not have a fixed corresponding file, can be checked for existence, and actually attempts to obtain (install a R library) the target when it is checked.</p>
-<p>After you defined your target, you can make it available to SOS by adding an appropriate entry point</p>
+        super(my_target, self).__init__(self)
+
+    def target_name(self):
+        ...
+
+    def target_exists(self, mode='any'):
+        ...
+
+    def target_signature(self):
+        ...</code></pre>
+<p>Any target type should define the three functions:</p>
+<ul>
+<li><code>target_name</code>: name of the target for reporting purpose.</li>
+<li><code>target_exists</code>: check if the target exists. This function accepts a parameter <code>mode</code> which can <code>target</code>, <code>signature</code>, or <code>any</code>, which you can safely ignore.</li>
+<li><code>target_signature</code>: returns any immutable Python object (usually a string) that uniquely identifies the target so that two targets can be considered the same (different) if their signatures are the same (different). The signature is used to detect if a target has been changed.</li>
+</ul>
+<p>The details of this class can be found at the source code of <a href="https://github.com/vatlab/SoS/blob/master/src/sos/targets.py"><code>BaseTarget</code></a>. The <a href="https://github.com/vatlab/SoS/blob/master/src/sos/targets_r.py"><code>R_Library</code></a> provides a good example of a <strong>virtual target</strong> that does not have a fixed corresponding file, can be checked for existence, and actually attempts to obtain (install a R library) the target when it is checked.</p>
+<p>After you defined your target, you will need to add an appropriate entry point to make it available to SoS:</p>
 
 <pre><code>[sos-targets]
 my_target = mypackage.targets:my_target</code></pre>

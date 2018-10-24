@@ -15,7 +15,7 @@
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
 # Simulate sparse data-sets
-[lasso_1, ridge_1: shared = {'data_files': 'step_output'}]
+[lasso_1, ridge_1]
 depends: R_library("MASS", "7.3+")
 # training and testing samples
 parameter: N = (40, 200)
@@ -41,7 +41,7 @@ bash: expand = True
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso_2]
-depends: Py_Module("scikit-learn")
+depends: Py_Module("sklearn")
 parameter: nfolds = 5
 source='regression_modules/lasso.py'
 input: group_by = 2, concurrent = True
@@ -53,13 +53,11 @@ bash: expand = True
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 [lasso_3, ridge_3]
-depends: sos_variable('data_files')
-replicates = list(zip(*(iter(data_files),) * 2))
 source='regression_modules/evaluate.R'
-input: group_by = 2, group_with = 'replicates', concurrent = True
-output: f"{_input[0]:nn}.mse.csv"
+input: from_steps = [f'{step_name[:-2]}_1', f'{step_name[:-2]}_2'], group_by = 'pairsource2', concurrent = True
+output: f"{_input[2]:nn}.mse.csv"
 bash: expand = True
-  Rscript {source} b="c({paths(beta):,})" test="'{_replicates[1]}'" fpred="'{_input[0]}'" fcoef="'{_input[1]}'" output="'{_output}'"
+  Rscript {source} b="c({paths(beta):,})" test="'{_input[1]}'" fpred="'{_input[2]}'" fcoef="'{_input[3]}'" output="'{_output}'"
  
 # Run default core analysis
 [default_1]
