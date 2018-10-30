@@ -17,7 +17,7 @@ data_files = [("data_{}.train.csv".format(x + 1), "data_{}.test.csv".format(x + 
 
 # Simulate sparse data-sets
 [simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
-depends: R_library("MASS", "7.3+")
+depends: R_library("MASS>=7.3")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
 output: f"data_{id}.train.csv", f"data_{id}.test.csv"
@@ -35,7 +35,7 @@ R: expand = "${ }"
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 [ridge_1 (model fitting)]
-depends: R_library("glmnet", "2.0+")
+depends: R_library("glmnet>=8.0")
 parameter: nfolds = 5
 input: data_files, group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
@@ -51,7 +51,7 @@ R: expand = "${ }"
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso_1 (model fitting)]
-depends: Py_Module("sklearn", version = '0.18.1')
+depends: Py_Module("sklearn>=0.18.1")
 parameter: nfolds = 5
 input: data_files, group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
