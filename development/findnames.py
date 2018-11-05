@@ -13,7 +13,7 @@ import sys
 
 def fileDict(docFile, folder):
     docString="var " + os.path.basename(folder) + "Dict={"
-    for file in glob.glob(os.path.join(folder, "*.ipynb")):
+    for file in sorted(glob.glob(os.path.join(folder, "*.ipynb"))):
         name=file.replace(".ipynb", "").split("/")[-1]
         with open(file, encoding='utf-8') as json_data:
              try:
@@ -31,7 +31,7 @@ def fileDict(docFile, folder):
 
 def findImages(docFile, folder):
     docString="var images=["
-    for file in glob.glob(os.path.join(folder, "img", "banner_*")):
+    for file in sorted(glob.glob(os.path.join(folder, "img", "banner_*"))):
         docString += '"'+os.path.basename(file)+'",'
     docString=docString[:-1]
     docString+="]"
