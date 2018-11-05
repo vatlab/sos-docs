@@ -367,7 +367,7 @@ lasso_result = [f'data_{x+1}.lasso.mse.csv' for x in range(5)]
 
 # Simulate sparse data-sets
 [simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
-depends: R_library("MASS", "7.3+")
+depends: R_library("MASS>=7.3")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
 source='regression_modules/simulate.R'
@@ -378,7 +378,7 @@ bash: expand = True
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 [ridge: provides = ["data_{id}.ridge.predicted.csv", "data_{id}.ridge.coef.csv"]]
-depends: f"data_{id}.train.csv", f"data_{id}.test.csv", R_library("glmnet", "2.0+")
+depends: f"data_{id}.train.csv", f"data_{id}.test.csv", R_library("glmnet>=2.0")
 parameter: nfolds = 5
 source='regression_modules/ridge.R'
 output: f"data_{id}.ridge.predicted.csv", f"data_{id}.ridge.coef.csv"
@@ -388,7 +388,7 @@ bash: expand = True
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso: provides = ["data_{id}.lasso.predicted.csv", "data_{id}.lasso.coef.csv"]]
-depends: f"data_{id}.train.csv", f"data_{id}.test.csv", Py_Module("sklearn")
+depends: f"data_{id}.train.csv", f"data_{id}.test.csv", Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9")
 parameter: nfolds = 5
 source='regression_modules/lasso.py'
 output: f"data_{id}.lasso.predicted.csv", f"data_{id}.lasso.coef.csv"
@@ -418,7 +418,7 @@ ridge_summary = np.mean(np.array([sum([x.strip().split() for x in open(f).readli
 lasso_summary = np.mean(np.array([sum([x.strip().split() for x in open(f).readlines()], []) for f in lasso_result], dtype = float).T, axis = 1).tolist()
 
 report: expand = "${ }", output = "report.md"
-% Comparison summary
+%% Comparison summary
 
 | Method | Avg. Estimation Error | Avg. Prediction Error |
 |:------:|:-------:|:-------:|
@@ -433,7 +433,7 @@ pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pan
          <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
          </a> &nbsp;See the output of command <samp>sos run Outcome_Oriented_Modular.sos -h</samp> for usage information</div>
-         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.16.12</samp></div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.17.3</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>

@@ -12259,18 +12259,17 @@ li.tocify-item.active {
 </div>
 </div>
 
+<div class="lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-   
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">5</span>
-</pre></div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%revisions -s -n 5</textarea>
+  </div>
+</div>
 
-</div>
-</div>
 </div>
 
 <div class="output_wrapper">
@@ -12315,6 +12314,7 @@ li.tocify-item.active {
 </div>
 </div>
 
+</div>
 </div>
 
 
@@ -12399,10 +12399,11 @@ parameter: cwd = path('~/Documents/GTEx')</code></pre>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 41.17157em">
-   <textarea rows="33"
-      class="sos-source" name="SoS">[RNASeq_to_HDF5]
-# Convert RNASeq data to HDF5
+  <div class="input_area cm-s-ipython" style="min-height: 42.38586em">
+   <textarea rows="34"
+      class="sos-source" name="SoS"># Convert RNA-seq data to HDF5 matrices
+[RNASeq_to_HDF5]
+# RNA-seq count data encoding
 parameter: dtype = 'np.uint32'
 output: f"{_input[0]:nb}.hdf5"
 task: workdir = cwd
@@ -12470,12 +12471,15 @@ python: expand='${ }'
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 223.31507000000002em">
-   <textarea rows="183"
-      class="sos-source" name="SoS">[rnaseq_1]
-# Normalization and format conversion
+  <div class="input_area cm-s-ipython" style="min-height: 226.95794em">
+   <textarea rows="186"
+      class="sos-source" name="SoS"># Various versions of normalization
+[rnaseq_1]
+# Minimum RPKM required
 parameter: rpkm_cutoff = 0.1
+# Minimum read counts required
 parameter: read_cutoff = 5
+# Minimum sample counts required
 parameter: sample_cutoff = 10
 input: rna_rpkm, rna_cnts, genotype, sample_attr
 output: f"{cwd:a}/rna_processed/{_input[0]:nnb}.qnorm.std.flat.h5",
@@ -12680,9 +12684,10 @@ python: expand='${ }'
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
-   <textarea rows="8"
-      class="sos-source" name="SoS">[peer]
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS"># PEER package automatic installation
+[peer]
 output: f"{cwd:a}/R_peer_source_1.3.tgz"
 task: workdir = cwd
 download:
@@ -12718,8 +12723,8 @@ run:
 <div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 123.74329em">
    <textarea rows="101"
-      class="sos-source" name="SoS">[rnaseq_2]
-# PEER analysis
+      class="sos-source" name="SoS"># Removing unwanted variation
+[rnaseq_2]
 depends: R_library('rhdf5'), R_library('peer')
 parameter: tissues = paths(get_output(f"h5ls {_input[2]} | awk '{{print $1}}'").strip().split('\n'))
 input: for_each = ['tissues']

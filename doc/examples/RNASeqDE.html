@@ -12499,11 +12499,10 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
       class="sos-source" name="SoS"># decrypt SRA files
 [sra (dump SRA to fastq): provides=['{data}_1.fastq', '{data}_2.fastq']]
-depends: Py_Module('docker')
 output: f'{data}_1.fastq', f'{data}_2.fastq'
 run: container = 'gaow/debian-ngs:1.0', workdir = cwd, expand=True
     fastq-dump -I --split-files {os.path.basename(data)}</textarea>
@@ -12559,7 +12558,7 @@ download: dest_dir = resource_dir, expand = True
 # Prepare STAR reference data
 [star: provides = f"{resource_dir}/genomeParameters.txt"]
 # Quite time & resource consuming (3hrs, 32GB memory if sparse_star is False)
-depends: Py_Module('docker'), sos_step('hg19_reference')
+depends: sos_step('hg19_reference'), system_resource(mem='40G', disk='200G')
 output: f"{resource_dir}/genomeParameters.txt"
 run: workdir = '/tmp', container = 'gaow/debian-ngs:1.0', volumes = [f'{resource_dir}:{resource_dir}'], expand=True
      STAR --runMode genomeGenerate \
@@ -12596,7 +12595,7 @@ run: workdir = '/tmp', container = 'gaow/debian-ngs:1.0', volumes = [f'{resource
    <textarea rows="9"
       class="sos-source" name="SoS"># Align to SAM file
 [align_1 (STAR alignment)]
-depends: Py_Module('docker'), f"{resource_dir}/genomeParameters.txt"
+depends: f"{resource_dir}/genomeParameters.txt"
 input: [(f'{cwd:a}/{s}_1.fastq', f'{cwd:a}/{s}_2.fastq') for s in samples], group_by = "pairs", concurrent = True
 output: [f"{cwd:a}/{s}.Aligned.out.sam" for s in samples], group_by = 1
 run: container = 'gaow/debian-ngs:1.0', volumes = [f'{resource_dir}:{resource_dir}'], expand=True, workdir = cwd
@@ -12627,11 +12626,10 @@ run: container = 'gaow/debian-ngs:1.0', volumes = [f'{resource_dir}:{resource_di
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
-   <textarea rows="8"
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
       class="sos-source" name="SoS"># Convert SAM to BAM file & zap the input
 [align_2 (SAM to BAM)]
-depends: Py_Module('docker')
 input: group_by = 1, pattern = '{name}.Aligned.out.sam', concurrent = True
 output: expand_pattern('{_name}.bam')
 run: container = 'gaow/debian-ngs:1.0', expand=True, workdir = cwd

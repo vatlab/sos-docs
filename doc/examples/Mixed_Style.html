@@ -366,7 +366,7 @@ data_files = [("data_{}.train.csv".format(x + 1), "data_{}.test.csv".format(x + 
 
 # Simulate sparse data-sets
 [simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
-depends: R_library("MASS", "7.3+")
+depends: R_library("MASS>=7.3")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
 output: f"data_{id}.train.csv", f"data_{id}.test.csv"
@@ -384,7 +384,7 @@ R: expand = "${ }"
 # Ridge regression model implemented in R
 # Build predictor via cross-validation and make prediction
 [ridge_1 (model fitting)]
-depends: R_library("glmnet", "2.0+")
+depends: R_library("glmnet>=2.0")
 parameter: nfolds = 5
 input: data_files, group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
@@ -400,7 +400,7 @@ R: expand = "${ }"
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
 [lasso_1 (model fitting)]
-depends: Py_Module("sklearn")
+depends: Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9") 
 parameter: nfolds = 5
 input: data_files, group_by = 2, concurrent = True
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
@@ -440,7 +440,7 @@ sos_run('lasso')
          <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
          </a> &nbsp;See the output of command <samp>sos run Mixed_Style.sos -h</samp> for usage information</div>
-         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.16.12</samp></div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.17.3</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
