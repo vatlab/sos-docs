@@ -12574,7 +12574,10 @@ Sections
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="&quot;Process-oriented&quot;-style-example:-feature-selection-in-machine-learning">"Process oriented" style example: feature selection in machine learning<a class="anchor-link" href="#&quot;Process-oriented&quot;-style-example:-feature-selection-in-machine-learning"></a></h2><p><code>sos run</code> executes the SoS file <code>*.sos</code>. Here we demonstrate additional options to report the execution status of each step (<code>-p</code>) and produce the DAG to summarize execution logic (<code>-d</code>).</p>
-<p>In order for these options to work, Python packages <code>graphviz</code>, <code>pillow</code> and <code>imageio</code> are required. They can be installed via <code>pip install</code>, eg, <code>pip install graphviz pillow imageio</code>.</p>
+<p>In order for these options to work, Python packages <code>graphviz</code>, <code>pillow</code> and <code>imageio</code> are required. They can be installed via <code>pip install</code>, eg, <code>pip install graphviz pillow imageio</code>. Additionally you need to ensure <code>dot</code> executable is available. Oh Debian based Linux it can be installed via</p>
+
+<pre><code>apt-get install graphviz</code></pre>
+<p>Of course you can choose not to bother with these dependencies by dropping the <code>-p</code> and <code>-d</code> options. They will not effect the execution of the workflow.</p>
 
 </div>
 </div>
@@ -12639,6 +12642,20 @@ INFO: Summary of workflow saved to Process_Oriented_Report.html
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Notice that each workflow step processes in parallel 5 replicates, generating 5 or 10 output files concurrently. This is what it is meant by "substeps" in the output message above.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Package-dependencies-for-this-workflow">Package dependencies for this workflow<a class="anchor-link" href="#Package-dependencies-for-this-workflow"></a></h3><h4 id="R-and-Python">R and Python<a class="anchor-link" href="#R-and-Python"></a></h4><p>The workflow requires R packages <code>MASS</code> and <code>glmnet</code>, and Python packages <code>sklearn</code>. If you do not have these packages on your system SoS will quit on error for relevant steps.</p>
+<p>There are many ways to install these packages in R and Python. But caution that in Python to install <code>sklearn</code> via <code>pip</code> you need to type in <code>scikit-learn</code> instead, eg:</p>
+
+<pre><code>pip install scikit-learn==0.20.0</code></pre>
+<h4 id="pandoc-for-generating-reports"><code>pandoc</code> for generating reports<a class="anchor-link" href="#pandoc-for-generating-reports"></a></h4><p><code>pandoc</code> (version 2+) is needed to generate the HTML report.</p>
 
 </div>
 </div>
@@ -13316,7 +13333,16 @@ INFO: Workflow default (ID=05d879a856a11273) is executed successfully with 8 com
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Whole-genome-sequencing-genotype-calling-pipeline">Whole-genome sequencing genotype calling pipeline<a class="anchor-link" href="#Whole-genome-sequencing-genotype-calling-pipeline"></a></h2><p><a href="https://vatlab.github.io/sos-docs/doc/examples/WGS_Call.html"><strong>View the complete notebook here</strong></a>.</p>
-<p>This pipeline implements <a href="http://www.htslib.org/workflow/#mapping_to_variant">a samtools tutorial of WGS calling</a>. The major feature of SoS implementation is that one can summarize and preview intermediate results (see link above for details where we showed preview for a BAM file and a diagnostic plot). For this pipeline all steps are executed using pre-configured containers. Users do not have to deal with WGS genotyping software installations. <strong>However, docker is required to run this workflow</strong>. The installation process has in fact been documented in the <a href="https://vatlab.github.io/sos-docs/doc/examples/WGS_Call.html#Software-configuration">WGS genotyping workflow</a>.</p>
+<p>This pipeline implements <a href="http://www.htslib.org/workflow/#mapping_to_variant">a samtools tutorial of WGS calling</a>. The major feature of SoS implementation is that one can summarize and preview intermediate results (see link above for details where we showed preview for a BAM file and a diagnostic plot). For this pipeline all steps are executed using pre-configured containers. Users do not have to deal with WGS genotyping software installations. <strong>However, docker is required to run this workflow</strong>. The installation process has in fact been documented in the <a href="https://vatlab.github.io/sos-docs/doc/examples/WGS_Call.html#Software-configuration">WGS genotyping workflow</a>. To reiterate here:</p>
+<h3 id="Docker-installation-on-Linux">Docker installation on Linux<a class="anchor-link" href="#Docker-installation-on-Linux"></a></h3><ol>
+<li>Run commands below:
+<pre><code>curl -fsSL get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER</code></pre>
+</li>
+<li>Log out and log back in</li>
+<li>Type <code>docker run hello-world</code> to verify installation</li>
+</ol>
 
 </div>
 </div>
@@ -13425,7 +13451,7 @@ Sections
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We have provided a toy data-set to run this pipeline,</p>
+<p>We have provided a toy data-set to run this pipeline. All steps in the pipeline are executed by docker. It will take a while to download them at some steps, if it is your first time running this pipeline.</p>
 
 </div>
 </div>

@@ -12651,10 +12651,11 @@ bash: container='gaow/debian-ngs:1.0', volumes=[f'{wd:a}:{wd:a}'], expand = True
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
-   <textarea rows="10"
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
       class="sos-source" name="SoS"># Index reference genome
 [get_ref_genome_2]
+depends: system_resource(mem = '4G')
 output: f'{ref_genome:n}.dict', f'{ref_genome}.fai', f'{ref_genome}.bwt',
         f'{ref_genome}.pac', f'{ref_genome}.ann', f'{ref_genome}.amb', f'{ref_genome}.sa'
 stop_if(all([path(x).is_file() for x in _output]))
@@ -12720,10 +12721,11 @@ download: dest_file = f'{_output}', expand = True
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
-   <textarea rows="10"
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
       class="sos-source" name="SoS"># Index known variants
 [get_known_variants_2]
+depends: system_resource(mem = '4G')
 output: ref_variants
 bash: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk SortVcf -I {_input} -O {_output} \
@@ -12805,10 +12807,11 @@ bash: expand=True, stderr=False
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
       class="sos-source" name="SoS"># BWA mapping & samtools postprocessing
 [1]
+depends: system_resource(mem = '4G')
 fail_if(not samples.is_file(), msg = 'Need sample name list file!')
 sample_files = list(set(get_output(f"awk '{{print $1}}' {samples:e}").strip().split('\n')))
 fail_if(len(sample_files) == 0, msg = 'Need input sample files!')
