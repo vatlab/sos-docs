@@ -20364,7 +20364,13 @@ var _ie64 = _info.indexOf("x64") > 0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Stata, similar SAS, has one and only one "current dataset".</p>
+<p>Stata, similar to SAS, has one and only one unnamed "current dataset" in memory so it can only exchange this default dataset with other kernels as follows:</p>
+<ol>
+<li>Stata can only <code>put</code> and <code>get</code> data in type <code>DataFrame</code> or its equivalences.</li>
+<li>When Stata <code>%get</code> a dataframe, it replaces the current dataset with the new one.</li>
+<li>When Stata <code>%put var --to kernel</code>, it creates a <code>DataFrame</code> in <code>kernel</code> with name <code>var</code>.</li>
+</ol>
+<p>For example, let us start a Stata session and load a dataset from a local file:</p>
 
 </div>
 </div>
@@ -20374,7 +20380,7 @@ var _ie64 = _info.indexOf("x64") > 0
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="Stata">cd ~/Downloads/StataIntro/dataSets
@@ -20415,7 +20421,7 @@ marital  age      educ     sex      inc      happy    region
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When the Stata kernel is started, we can get the dataset from another kernel, for example,</p>
+<p>The dataset can be sent to another kernel in any name:</p>
 
 </div>
 </div>
@@ -20425,11 +20431,11 @@ marital  age      educ     sex      inc      happy    region
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="Python3">%get gss --from Stata
-gss</textarea>
+      class="sos-source" name="Python3">%get mydata --from Stata
+mydata</textarea>
   </div>
 </div>
 
@@ -20441,7 +20447,7 @@ gss</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[12]:</div>
+<div class="prompt output_prompt">Out[2]:</div>
 
 
 
@@ -21103,7 +21109,7 @@ gss</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Or, we can get another data set from another kernel</p>
+<p>If we get a data set from another kernel, the current dataset of Stata will be replaced with the new content:</p>
 
 </div>
 </div>
@@ -21113,7 +21119,7 @@ gss</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="Stata">%get mtcars --from R
@@ -21161,7 +21167,7 @@ ds</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="Stata">hist(wt)</textarea>
@@ -21255,6 +21261,118 @@ ds</textarea>
 
 </pre>
 </div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%sessioninfo</code> magic lists the version of Stata when the <code>stata</code> kernel is used:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_Stata">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="Stata">%sessioninfo</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<p class="session_section">SoS</p>
+<table class="session_info">
+<tr>
+<th>SoS Version</th><td><pre>0.17.7</pre></td>
+</tr>
+</table>
+<p class="session_section">Stata</p>
+<table class="session_info">
+<tr>
+<th>Kernel</th><td><pre>stata</pre></td>
+</tr>
+<tr>
+<th>Language</th><td><pre>Stata</pre></td>
+</tr>
+<tr>
+<td colspan="2"><pre>version 15.1
+</pre></td>
+</tr>
+</table>
+<p class="session_section">Python3</p>
+<table class="session_info">
+<tr>
+<th>Kernel</th><td><pre>python3</pre></td>
+</tr>
+<tr>
+<th>Language</th><td><pre>Python3</pre></td>
+</tr>
+<tr>
+<th>Version</th><td><pre>3.6.6 |Anaconda, Inc.| (default, Jun 28 2018, 11:07:29) 
+[GCC 4.2.1 Compatible Clang 4.0.1 (tags/RELEASE_401/final)]</pre></td>
+</tr>
+</table>
+<p class="session_section">R</p>
+<table class="session_info">
+<tr>
+<th>Kernel</th><td><pre>ir</pre></td>
+</tr>
+<tr>
+<th>Language</th><td><pre>R</pre></td>
+</tr>
+<tr>
+<td colspan="2"><pre>R version 3.5.0 (2018-04-23)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS/LAPACK: /Users/bpeng1/anaconda3/envs/sos/lib/libopenblasp-r0.2.20.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] feather_0.3.1
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.16    digest_0.6.15   crayon_1.3.4    IRdisplay_0.4.4
+ [5] repr_0.13       jsonlite_1.5    magrittr_1.5    evaluate_0.10.1
+ [9] pillar_1.2.1    rlang_0.2.0     stringi_1.1.7   uuid_0.1-2     
+[13] IRkernel_0.8.11 tools_3.5.0     stringr_1.3.0   hms_0.4.2      
+[17] compiler_3.5.0  pkgconfig_2.0.1 base64enc_0.1-3 htmltools_0.3.6
+[21] pbdZMQ_0.3-2    tibble_1.4.2   </pre></td>
+</tr>
+</table>
+
+</div>
+
 </div>
 
 </div>
