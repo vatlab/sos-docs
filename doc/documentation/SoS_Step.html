@@ -13034,6 +13034,22 @@ print(summed)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>What you will learn from the following section</p>
+<ol>
+<li>Input statement is optional. In a process-oriented workflow, the default input is the output of its previous step.</li>
+<li>Variables <code>step_input</code> and <code>step_output</code> reprents the input and output targets of a step.</li>
+<li>Sources of targets can be specified with named arguments and be used to differentiate input targets.</li>
+<li>Function <code>output_from</code> can be used to represent complete or partial outputs from other steps.</li>
+<li>Function <code>sos_groups</code> groups input targets into multiple groups, creating multiple substeps with input represented by variable <code>_input</code>.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Default-input-of-a-step">Default input of a step<a class="anchor-link" href="#Default-input-of-a-step">&#182;</a></h3>
 </div>
 </div>
@@ -13042,7 +13058,7 @@ print(summed)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In a process-oriented workflow, the default input of a step is the output of its previous step. For example, in the following workflow, the first step (step <code>1</code>) does not have any input file but produces output <code>a.txt</code>, which becomes the input of the second step (step <code>2</code>) even if no <code>input:</code> statement is specified for step <code>2</code>.</p>
+<p>In a process-oriented workflow, <strong>the default input of a step is the output of its previous step</strong>. For example, in the following workflow, the first step (step <code>10</code>) produces output <code>a.txt</code>, which becomes the input of the second step (step <code>20</code>).</p>
 
 </div>
 </div>
@@ -13052,14 +13068,13 @@ print(summed)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
       class="sos-source" name="SoS">%run
 
 [10]
 output: 'a.txt'
-print(f'Input of step {step_name} is {step_input}')
 _output.touch()
 
 [20]
@@ -13092,7 +13107,7 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
         </td>
         <td class="workflow_id">
           <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_06ba28acca2542fcae6363cf95fd4ed7">cf575231c2f2815a</span></pre>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_06ba28acca2542fcae6363cf95fd4ed7">763b03b0293e70ac</span></pre>
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
@@ -13100,7 +13115,7 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
         </td>
         <td class="workflow_status">
           <span id="status_text_06ba28acca2542fcae6363cf95fd4ed7">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_06ba28acca2542fcae6363cf95fd4ed7" class="completed" datetime="1545076361381.144">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_06ba28acca2542fcae6363cf95fd4ed7" class="completed" datetime="1545079136169.634">Ran for < 5 seconds</time></pre>
         </td>
   </tr>
 </table>
@@ -13131,15 +13146,6 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that <code>step_input</code>, <code>step_output</code> etc are of type <code>sos_targets</code>, which can now be considered as a list of files.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Unnamed-input-files">Unnamed input files<a class="anchor-link" href="#Unnamed-input-files">&#182;</a></h3>
 </div>
 </div>
@@ -13158,10 +13164,11 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">!touch a.txt b.txt c.txt d.txt</textarea>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS"># create some sample files
+!touch a.txt b.txt c.txt d.txt</textarea>
   </div>
 </div>
 
@@ -13176,7 +13183,7 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="SoS">input: 'a.txt'
@@ -13212,7 +13219,7 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If the filenames are listed in a variable or a parameter, you can also use it here</p>
+<p>Multiple files can be listed as multiple paramters, sequences (<code>list</code>, <code>tuple</code> etc), or variables of string or sequence types. For example, you can define a parameter <code>in_files</code> of type <code>paths</code> (list of <code>path</code>) and specify input files from command line:</p>
 
 </div>
 </div>
@@ -13222,7 +13229,7 @@ print(f'step_input is {step_input}')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
       class="sos-source" name="SoS">%run --in-files a.txt b.txt
@@ -13266,7 +13273,7 @@ print(f'step_input is {step_input}')</textarea>
         </td>
         <td class="workflow_status">
           <span id="status_text_0c54a6299335435f8f7d2a76d7e4110b">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_0c54a6299335435f8f7d2a76d7e4110b" class="completed" datetime="1545076368414.345">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_0c54a6299335435f8f7d2a76d7e4110b" class="completed" datetime="1545079298431.9749">Ran for < 5 seconds</time></pre>
         </td>
   </tr>
 </table>
@@ -13345,7 +13352,7 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that the user-specified input will override default input, so steps with explicit input does not have to depend on its previous step.</p>
+<p>Note that the user-specified input will override default input, so steps with explicit input target does not inherit output from its previous step.</p>
 
 </div>
 </div>
@@ -13362,7 +13369,7 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>All input target of SoS steps have a <strong>source</strong>, which specifies where the target comes from. The <code>sources</code> of a <code>step_input</code> variable can be used to inspect the <code>source</code> of each target. By default, targets specified directly have the <code>source</code> of the name of the step in which they are specified.</p>
+<p>All input targets of SoS steps have a <strong>source</strong>, which specifies where the target comes from. The <code>sources</code> of a <code>step_input</code> variable can be used to inspect the source of each target. By default, targets specified directly have the source of the name of the step in which they are specified.</p>
 
 </div>
 </div>
@@ -13417,7 +13424,7 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
         </td>
         <td class="workflow_status">
           <span id="status_text_bda2b9cbf9b7435c99fa06335e110cde">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_bda2b9cbf9b7435c99fa06335e110cde" class="completed" datetime="1545076374222.811">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_bda2b9cbf9b7435c99fa06335e110cde" class="completed" datetime="1545079414801.133">Ran for 0 sec</time></pre>
         </td>
   </tr>
 </table>
@@ -13448,7 +13455,7 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You can specify the sources of inputs with keyword arguments. For example, in the following step, the first two files are given  a name <code>grp1</code> and the latter two are given a name <code>grp2</code>.</p>
+<p>You can specify the sources of inputs with keyword arguments. For example, in the following step, the first two files are given a name <code>grp1</code> and the latter two are given a name <code>grp2</code>.</p>
 
 </div>
 </div>
@@ -13495,7 +13502,7 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <strong>sources of the targets can be used to partition input files and refer them separately</strong>. You can access groups of input files with <code>step_input.group_name</code> or <code>step_input[group_name]</code>. The former is a little easier to type but can only be used for groups with proper names. For example, only <code>step_input["1"]</code> can be used to access the group <code>1</code> of <code>step_input</code> because <code>step_input.1</code> is not allows.</p>
+<p>The <strong>sources of the targets can be used to partition input targets and refer them separately</strong>. You can access groups of input files with with syntax <code>step_input[group_name]</code>.</p>
 
 </div>
 </div>
@@ -13505,16 +13512,16 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
    <textarea rows="7"
-      class="sos-source" name="SoS">input: grp1 = ['a.txt', 'b.txt'], grp2=['c.txt', 'd.txt']
+      class="sos-source" name="SoS">!touch ref.txt
 
-print(f'step input is {step_input}')
-print(f'grp1 is {step_input.grp1}')
-print(f'grp2 is {step_input.grp2}')
-print(f'grp1 is {step_input["grp1"]}')
-print(f'grp2 is {step_input["grp2"]}')</textarea>
+input: data = ['a.txt', 'b.txt'], reference='ref.txt'
+
+print(f'Input of step is {step_input} with sources {step_input.sources}')
+print(f'Data is {step_input["data"]}')
+print(f'Reference is {step_input["reference"]}')</textarea>
   </div>
 </div>
 
@@ -13530,11 +13537,9 @@ print(f'grp2 is {step_input["grp2"]}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>step input is a.txt b.txt c.txt d.txt
-grp1 is a.txt b.txt
-grp2 is c.txt d.txt
-grp1 is a.txt b.txt
-grp2 is c.txt d.txt
+<pre>Input of step is a.txt b.txt ref.txt with sources [&#39;data&#39;, &#39;data&#39;, &#39;reference&#39;]
+Data is a.txt b.txt
+Reference is ref.txt
 </pre>
 </div>
 </div>
@@ -13558,7 +13563,7 @@ grp2 is c.txt d.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The default input of a step is the output from its previous step but you can use function <code>output_from</code> to specify the input of a step to be the output from one or more other steps. For example,</p>
+<p>The default input of a step is the output from its previous step but you can use function <code>output_from</code> to specify the input of a step asthe output from one or more other steps. For example,</p>
 
 </div>
 </div>
@@ -13568,13 +13573,12 @@ grp2 is c.txt d.txt
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
-   <textarea rows="15"
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
       class="sos-source" name="SoS">%run
 [step_10]
 output: 'a.txt'
-print(f'input of step {step_name} is {step_input}')
 _output.touch()
 
 [step_20]
@@ -13585,8 +13589,7 @@ _output.touch()
 [step_30]
 input:  output_from(['step_10', 'step_20']), 'c.txt'
 print(f'input of step {step_name} is {step_input} with sources {step_input.sources}')
-print(f'Output of step_20 is {step_input.step_20}')
-</textarea>
+print(f'Output of step_20 is {step_input["step_20"]}')</textarea>
   </div>
 </div>
 
@@ -13615,15 +13618,15 @@ print(f'Output of step_20 is {step_input.step_20}')
         </td>
         <td class="workflow_id">
           <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_5aed3eb024814d4ba9b741eebda447e8">9fc1930d192319f7</span></pre>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_5aed3eb024814d4ba9b741eebda447e8">f3820d6d856346af</span></pre>
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_5aed3eb024814d4ba9b741eebda447e8">4</span></pre>
+          <pre>#<span id="workflow_index_5aed3eb024814d4ba9b741eebda447e8">5</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_5aed3eb024814d4ba9b741eebda447e8">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_5aed3eb024814d4ba9b741eebda447e8" class="completed" datetime="1545076381036.595">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_5aed3eb024814d4ba9b741eebda447e8" class="completed" datetime="1545079654135.4648">Ran for < 5 seconds</time></pre>
         </td>
   </tr>
 </table>
@@ -13638,7 +13641,8 @@ print(f'Output of step_20 is {step_input.step_20}')
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_30&#39;]
+<pre>input of step step_20 is a.txt
+input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_30&#39;]
 Output of step_20 is b.txt
 </pre>
 </div>
@@ -13674,7 +13678,7 @@ Output of step_20 is b.txt
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
    <textarea rows="14"
       class="sos-source" name="SoS">%run
@@ -13724,11 +13728,11 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_ab70cde6d82f4f6f8610b3644abebd4a">5</span></pre>
+          <pre>#<span id="workflow_index_ab70cde6d82f4f6f8610b3644abebd4a">6</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_ab70cde6d82f4f6f8610b3644abebd4a">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_ab70cde6d82f4f6f8610b3644abebd4a" class="completed" datetime="1545076383985.3599">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_ab70cde6d82f4f6f8610b3644abebd4a" class="completed" datetime="1545079788968.7258">Ran for < 5 seconds</time></pre>
         </td>
   </tr>
 </table>
@@ -13743,7 +13747,9 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39;s20&#39;, &#39;s30&#39;]
+<pre>input of step step_10 is 
+input of step step_20 is a.txt
+input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39;s20&#39;, &#39;s30&#39;]
 </pre>
 </div>
 </div>
@@ -13759,7 +13765,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can learn later, output from other steps can also have their own sources. In this case, the <code>sources</code> of the step is carried over.</p>
+<p>As you can learn later, output from other steps can also have their own sources. In this case, the <code>sources</code> of the output is carried over.</p>
 
 </div>
 </div>
@@ -13769,12 +13775,12 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
    <textarea rows="8"
       class="sos-source" name="SoS">%run
 [step_10]
-output: a='a.txt', b='b.txt'
+output: output='out.txt', summary='summary.txt'
 _output.touch()
 
 [step_30]
@@ -13812,11 +13818,11 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_2799669f1d174fb595914d5b6336a401">6</span></pre>
+          <pre>#<span id="workflow_index_2799669f1d174fb595914d5b6336a401">8</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_2799669f1d174fb595914d5b6336a401">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_2799669f1d174fb595914d5b6336a401" class="completed" datetime="1545076386298.836">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_2799669f1d174fb595914d5b6336a401" class="completed" datetime="1545079867817.051">Ran for < 5 seconds</time></pre>
         </td>
   </tr>
 </table>
@@ -13831,7 +13837,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_30 is a.txt b.txt c.txt with sources [&#39;a&#39;, &#39;b&#39;, &#39;step_30&#39;]
+<pre>input of step step_30 is out.txt summary.txt c.txt with sources [&#39;output&#39;, &#39;summary&#39;, &#39;step_30&#39;]
 </pre>
 </div>
 </div>
@@ -13847,7 +13853,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You can refer to only part of the outputs</p>
+<p>Now, if you are only interested to the <code>summary</code> part of the output of <code>step_10</code>, you can use <code>['summary']</code> to get a subset of the output from <code>output_from(10)</code>:</p>
 
 </div>
 </div>
@@ -13857,16 +13863,16 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
    <textarea rows="8"
       class="sos-source" name="SoS">%run
 [step_10]
-output: a='a.txt', b='b.txt'
+output: output='out.txt', summary='summary.txt'
 _output.touch()
 
 [step_30]
-input:  output_from(10).a, 'c.txt'
+input:  output_from(10)['summary'], 'c.txt'
 print(f'input of step {step_name} is {step_input} with sources {step_input.sources}')</textarea>
   </div>
 </div>
@@ -13900,11 +13906,11 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_0df6051c4c0f4d8487ef7ba049349dcc">7</span></pre>
+          <pre>#<span id="workflow_index_0df6051c4c0f4d8487ef7ba049349dcc">11</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_0df6051c4c0f4d8487ef7ba049349dcc">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_0df6051c4c0f4d8487ef7ba049349dcc" class="completed" datetime="1545076397882.1602">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_0df6051c4c0f4d8487ef7ba049349dcc" class="completed" datetime="1545079982459.1238">Ran for < 5 seconds</time></pre>
         </td>
   </tr>
 </table>
@@ -13919,7 +13925,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_30 is a.txt c.txt with sources [&#39;a&#39;, &#39;step_30&#39;]
+<pre>input of step step_30 is summary.txt c.txt with sources [&#39;summary&#39;, &#39;step_30&#39;]
 </pre>
 </div>
 </div>
@@ -13945,7 +13951,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
    <textarea rows="12"
       class="sos-source" name="SoS">%run
@@ -13958,7 +13964,7 @@ output: c='c.txt', d='d.txt'
 _output.touch()
 
 [step_30]
-input:  a_all=output_from(10), c=output_from(20).c
+input:  s10=output_from(10), c=output_from(20)["c"]
 print(f'input of step {step_name} is {step_input} with sources {step_input.sources}')</textarea>
   </div>
 </div>
@@ -13992,11 +13998,11 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_d4aaac690f0048d985ed3452caa5e97d">8</span></pre>
+          <pre>#<span id="workflow_index_d4aaac690f0048d985ed3452caa5e97d">15</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_d4aaac690f0048d985ed3452caa5e97d">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_d4aaac690f0048d985ed3452caa5e97d" class="completed" datetime="1545076402068.0818">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_d4aaac690f0048d985ed3452caa5e97d" class="completed" datetime="1545080069587.991">Ran for 0 sec</time></pre>
         </td>
   </tr>
 </table>
@@ -14011,7 +14017,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_30 is a.txt b.txt c.txt with sources [&#39;a_all&#39;, &#39;a_all&#39;, &#39;c&#39;]
+<pre>input of step step_30 is a.txt b.txt c.txt with sources [&#39;s10&#39;, &#39;s10&#39;, &#39;c&#39;]
 </pre>
 </div>
 </div>
@@ -14027,7 +14033,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that both source <code>a</code> and <code>b</code> from <code>output_from(10)</code> are overriden by <code>a_all</code> so you can no longer differentiate sources <code>a</code> and <code>b</code> from <code>output_from(10)</code>.</p>
+<p>Note that both source <code>a</code> and <code>b</code> from <code>output_from(10)</code> are overriden by <code>s10</code> so you can no longer differentiate sources <code>a</code> and <code>b</code> from <code>output_from(10)</code>.</p>
 
 </div>
 </div>
@@ -14044,7 +14050,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Up till now all input targets are processed all at once by the step. However, what if you need to process input files one by one, or in pair? Here you need to understand a concept called <strong>substep</strong>, which basically applies the step to subgroups of input targets, represented by variable <code>_input</code>.</p>
+<p>Up till now all input targets are processed all at once by the step. If you need to process input files one by one or in pair, you can define <strong>substeps</strong> that basically applies the step to subgroups of input targets, represented by variable <code>_input</code>.</p>
 <p>In the trivial case when all input targets are processed together, <code>_input</code> is the same as <code>step_input</code>.</p>
 
 </div>
@@ -14055,7 +14061,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">input: 'a.txt', 'b.txt'
@@ -14103,7 +14109,7 @@ substep input is a.txt b.txt
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">input: sos_groups('a.txt', 'b.txt', by=1)
@@ -14274,7 +14280,7 @@ file3 file4
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[25]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
    <textarea rows="17"
       class="sos-source" name="SoS">!touch file1 file2 file3 file4
@@ -14282,7 +14288,7 @@ file3 file4
 
 [group]
 parameter: group = str
-print(f"group_by={group}")
+print(f"\ngroup_by={group}")
 input: sos_groups('file1', 'file2', 'file3', 'file4', by=group)
 print(f"{_index}: {_input}")
 
@@ -14326,11 +14332,11 @@ sos_run('group', group='combinations3')</textarea>
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_15853e5a0f324dd5b5af52784dcfabd6">9</span></pre>
+          <pre>#<span id="workflow_index_15853e5a0f324dd5b5af52784dcfabd6">16</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_15853e5a0f324dd5b5af52784dcfabd6">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_15853e5a0f324dd5b5af52784dcfabd6" class="completed" datetime="1545076413492.9412">Ran for 2 sec</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_15853e5a0f324dd5b5af52784dcfabd6" class="completed" datetime="1545080284186.375">Ran for 1 sec</time></pre>
         </td>
   </tr>
 </table>
@@ -14345,26 +14351,32 @@ sos_run('group', group='combinations3')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>group_by=1
+<pre>
+group_by=1
 0: file1
 1: file2
 2: file3
 3: file4
+
 group_by=2
 0: file1 file2
 1: file3 file4
+
 group_by=single
 0: file1
 1: file2
 2: file3
 3: file4
+
 group_by=pairs
 0: file1 file3
 1: file2 file4
+
 group_by=pairwise
 0: file1 file2
 1: file2 file3
 2: file3 file4
+
 group_by=combinations
 0: file1 file2
 1: file1 file3
@@ -14372,6 +14384,7 @@ group_by=combinations
 3: file2 file3
 4: file2 file4
 5: file3 file4
+
 group_by=combinations3
 0: file1 file2 file3
 1: file1 file2 file4
@@ -14402,7 +14415,7 @@ group_by=combinations3
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[26]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
    <textarea rows="12"
       class="sos-source" name="SoS">!touch A1 B1 A2 B2 A3 B3 A4 B4
@@ -14410,7 +14423,7 @@ group_by=combinations3
 
 [group]
 parameter: group = str
-print(f"group_by={group}")
+print(f"\ngroup_by={group}")
 input: sos_groups('A1', 'B1', 'A2', 'B2', 'A3', 'B3', 'A4', 'B4', by=group)
 print(f"{_index}: {_input}")
 
@@ -14450,11 +14463,11 @@ sos_run('group', group='pairwise2')
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_b4b388205fc041a7890f03d4f81b2e49">10</span></pre>
+          <pre>#<span id="workflow_index_b4b388205fc041a7890f03d4f81b2e49">17</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_b4b388205fc041a7890f03d4f81b2e49">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_b4b388205fc041a7890f03d4f81b2e49" class="completed" datetime="1545076418461.072">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_b4b388205fc041a7890f03d4f81b2e49" class="completed" datetime="1545080312249.9478">Ran for < 5 seconds</time></pre>
         </td>
   </tr>
 </table>
@@ -14469,9 +14482,11 @@ sos_run('group', group='pairwise2')
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>group_by=pairs2
+<pre>
+group_by=pairs2
 0: A1 B1 A3 B3
 1: A2 B2 A4 B4
+
 group_by=pairwise2
 0: A1 B1 A2 B2
 1: A2 B2 A3 B3
@@ -14501,7 +14516,7 @@ group_by=pairwise2
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 25.385800000000003em">
    <textarea rows="20"
       class="sos-source" name="SoS">!touch c1 c2 c3 c4
@@ -14516,7 +14531,7 @@ _output.touch()
 
 [group]
 parameter: group = str
-print(f"group_by={group}")
+print(f"\ngroup_by={group}")
 input: sos_groups('c1', 'c2', 'c3', 'c4', output_from(['step_10', 'step_20']), by=group)
 print(f"{_index}: {_input} from {_input.sources}")
 
@@ -14556,11 +14571,11 @@ sos_run('group', group='pairsource2')</textarea>
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_7c13a7256e8840a18dc59a54b93aa337">11</span></pre>
+          <pre>#<span id="workflow_index_7c13a7256e8840a18dc59a54b93aa337">2</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_7c13a7256e8840a18dc59a54b93aa337">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_7c13a7256e8840a18dc59a54b93aa337" class="completed" datetime="1545076421369.2842">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_7c13a7256e8840a18dc59a54b93aa337" class="completed" datetime="1545080524494.3591">Ran for 0 sec</time></pre>
         </td>
   </tr>
 </table>
@@ -14575,18 +14590,21 @@ sos_run('group', group='pairsource2')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>group_by=source
-0: c1 c2 c3 c4 from [&#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;]
+<pre>
+group_by=source
+0: c1 c2 c3 c4 from [&#39;group&#39;, &#39;group&#39;, &#39;group&#39;, &#39;group&#39;]
 1: a1 from [&#39;step_10&#39;]
 2: b1 b2 from [&#39;step_20&#39;, &#39;step_20&#39;]
+
 group_by=pairsource
-0: c1 a1 b1 from [&#39;&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
-1: c2 a1 b1 from [&#39;&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
-2: c3 a1 b2 from [&#39;&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
-3: c4 a1 b2 from [&#39;&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+0: c1 a1 b1 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+1: c2 a1 b1 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+2: c3 a1 b2 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+3: c4 a1 b2 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+
 group_by=pairsource2
-0: c1 c2 a1 b1 from [&#39;&#39;, &#39;&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
-1: c3 c4 a1 b2 from [&#39;&#39;, &#39;&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+0: c1 c2 a1 b1 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+1: c3 c4 a1 b2 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
 </pre>
 </div>
 </div>
@@ -14676,7 +14694,7 @@ print(f"{_index}: {_input}")
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Pairing input from multiple sources is complicated when we apply <code>sos_groups()</code> to a list of targets with different sources. It is actually a lot easier if you apply <code>sos_groups()</code> to the sources separately.  For example, in the following example, <code>step_10</code> has two output files, <code>step_20</code> has 4, by applying <code>sos_groups(by=1)</code> to <code>output_from('step_10')</code> and <code>sos_groups(by=2)</code> to <code>output_from('step_20')</code>, we create two <code>sos_groups</code> with two subgroups each. As long as the two <code>sos_groups</code> have the same number of groups, they will be joined to create a single <code>_input</code>.</p>
+<p>Pairing input from multiple sources is complicated when we apply <code>sos_groups()</code> to a list of targets with different sources. It is actually a lot easier if you apply <code>sos_groups()</code> to the sources separately.  For example, in the following example, <code>step_10</code> has two output files, <code>step_20</code> has 4, by applying <code>sos_groups(by=1)</code> to <code>output_from('step_10')</code> and <code>sos_groups(by=2)</code> to <code>output_from('step_20')</code>, we create two <code>sos_groups</code> each with two subgroups. The two <code>sos_groups</code> will be joined to create a single <code>_input</code> for each substep.</p>
 
 </div>
 </div>
@@ -14686,7 +14704,7 @@ print(f"{_index}: {_input}")
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
    <textarea rows="14"
       class="sos-source" name="SoS">%run group
@@ -14735,11 +14753,11 @@ print(f"{_index}: {_input} from {_input.sources}")</textarea>
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_a82fdd2dd6c9463680c87c62a79c474c">12</span></pre>
+          <pre>#<span id="workflow_index_a82fdd2dd6c9463680c87c62a79c474c">3</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_a82fdd2dd6c9463680c87c62a79c474c">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_a82fdd2dd6c9463680c87c62a79c474c" class="completed" datetime="1545076428006.422">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_a82fdd2dd6c9463680c87c62a79c474c" class="completed" datetime="1545080634710.591">Ran for 0 sec</time></pre>
         </td>
   </tr>
 </table>
@@ -14781,7 +14799,7 @@ print(f"{_index}: {_input} from {_input.sources}")</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
    <textarea rows="14"
       class="sos-source" name="SoS">%run group
@@ -14830,11 +14848,11 @@ print(f"{_index}: {_input} from {_input.sources}")</textarea>
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_d78c68841b6e4aa4845c8d8219ddefad">13</span></pre>
+          <pre>#<span id="workflow_index_d78c68841b6e4aa4845c8d8219ddefad">4</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_d78c68841b6e4aa4845c8d8219ddefad">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_d78c68841b6e4aa4845c8d8219ddefad" class="completed" datetime="1545076433035.699">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_d78c68841b6e4aa4845c8d8219ddefad" class="completed" datetime="1545080675746.279">Ran for < 5 seconds</time></pre>
         </td>
   </tr>
 </table>
@@ -14866,7 +14884,7 @@ print(f"{_index}: {_input} from {_input.sources}")</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Things can become tricky if you specify both regular <code>sos_targets</code> and <code>sos_groups</code>. In this case, <code>_input</code> only takes groups from <code>sos_groups</code> but the regular targets are still accessible from <code>step_input</code>.</p>
+<p>Things can become tricky if you specify both regular <code>sos_targets</code> and <code>sos_groups</code>. In this case, <code>sos_targets</code> will be considered as a <code>sos_groups</code> with a single group, and be merged to every group of the <code>sos_groups</code>.</p>
 
 </div>
 </div>
@@ -14876,9 +14894,9 @@ print(f"{_index}: {_input} from {_input.sources}")</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
-   <textarea rows="18"
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
       class="sos-source" name="SoS">!touch e1 e2
 %run group
 
@@ -14895,7 +14913,6 @@ input: sos_groups(output_from('step_10'), by=1),
        sos_groups(output_from('step_20'), by=2),
        my=('e1', 'e2')
 print(f'\nSubstep {_index}')
-print(f"step input is {step_input} with sources {step_input.sources}")
 print(f"substep input is {_input} from {_input.sources}")</textarea>
   </div>
 </div>
@@ -14925,15 +14942,15 @@ print(f"substep input is {_input} from {_input.sources}")</textarea>
         </td>
         <td class="workflow_id">
           <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_720fbc2009cf4a56991e32dc629f978c">b00efd82be773cec</span></pre>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_720fbc2009cf4a56991e32dc629f978c">ac135058d33d47ab</span></pre>
         </td>
         <td class="workflow_index">
           <span>Index</span></br>
-          <pre>#<span id="workflow_index_720fbc2009cf4a56991e32dc629f978c">14</span></pre>
+          <pre>#<span id="workflow_index_720fbc2009cf4a56991e32dc629f978c">1</span></pre>
         </td>
         <td class="workflow_status">
           <span id="status_text_720fbc2009cf4a56991e32dc629f978c">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_720fbc2009cf4a56991e32dc629f978c" class="completed" datetime="1545076437967.183">Ran for < 5 seconds</time></pre>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_720fbc2009cf4a56991e32dc629f978c" class="completed" datetime="1545085984667.723">Ran for 0 sec</time></pre>
         </td>
   </tr>
 </table>
@@ -14950,117 +14967,10 @@ print(f"substep input is {_input} from {_input.sources}")</textarea>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 Substep 0
-step input is a1 a2 c1 c2 c3 c4 e1 e2 with sources [&#39;step_10&#39;, &#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;my&#39;, &#39;my&#39;]
-substep input is a1 c1 c2 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
+substep input is a1 c1 c2 e1 e2 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;my&#39;, &#39;my&#39;]
 
 Substep 1
-step input is a1 a2 c1 c2 c3 c4 e1 e2 with sources [&#39;step_10&#39;, &#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;my&#39;, &#39;my&#39;]
-substep input is a2 c3 c4 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If you would like to make a <code>sos_targets</code> available in each substep, you can create a group of size <code>1</code> for it. In this case,</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
-   <textarea rows="18"
-      class="sos-source" name="SoS">!touch e1 e2
-%run group
-
-[step_10]
-output: 'a1', 'a2'
-_output.touch()
-
-[step_20]
-output: 'c1', 'c2', 'c3', 'c4'
-_output.touch()
-
-[group]
-input: s10=sos_groups(output_from('step_10'), by=1),
-       s20=sos_groups(output_from('step_20'), by=2),
-       my=sos_groups('e1', 'e2', by='all')
-print(f'\nSubstep {_index}')
-print(f"step input is {step_input} with sources {step_input.sources}")
-print(f"substep input is {_input} from {_input.sources}")</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_356a1931fb2b44b88ec63ca23706a3cb" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_356a1931fb2b44b88ec63ca23706a3cb" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_356a1931fb2b44b88ec63ca23706a3cb">group</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_356a1931fb2b44b88ec63ca23706a3cb">b00efd82be773cec</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_356a1931fb2b44b88ec63ca23706a3cb">15</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_356a1931fb2b44b88ec63ca23706a3cb">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_356a1931fb2b44b88ec63ca23706a3cb" class="completed" datetime="1545076444504.8477">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-Substep 0
-step input is a1 a2 c1 c2 c3 c4 e1 e2 with sources [&#39;s10&#39;, &#39;s10&#39;, &#39;s20&#39;, &#39;s20&#39;, &#39;s20&#39;, &#39;s20&#39;, &#39;my&#39;, &#39;my&#39;]
-substep input is a1 c1 c2 e1 e2 from [&#39;s10&#39;, &#39;s20&#39;, &#39;s20&#39;, &#39;my&#39;, &#39;my&#39;]
-
-Substep 1
-step input is a1 a2 c1 c2 c3 c4 e1 e2 with sources [&#39;s10&#39;, &#39;s10&#39;, &#39;s20&#39;, &#39;s20&#39;, &#39;s20&#39;, &#39;s20&#39;, &#39;my&#39;, &#39;my&#39;]
-substep input is a2 c3 c4 e1 e2 from [&#39;s10&#39;, &#39;s20&#39;, &#39;s20&#39;, &#39;my&#39;, &#39;my&#39;]
+substep input is a2 c3 c4 e1 e2 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;my&#39;, &#39;my&#39;]
 </pre>
 </div>
 </div>
