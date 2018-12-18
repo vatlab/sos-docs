@@ -5,22 +5,24 @@ This is an archive of SoS workflow examples used in the SoS workflow system manu
 Please follow instructions in the file
 `Workflow_Manuscript_Examples.html` to reproduce the examples.
 This document was exported from a notebook file, `Workflow_Manuscript_Examples.ipynb` 
-(also found in this repository), via SoS command 
+(also found in this repository), via command 
 
 ```
 sos convert Workflow_Manuscript_Examples.ipynb Workflow_Manuscript_Examples.html --template sos-cm-toc
 ```
 
+(all notebook files under this repo can similarly be converted to HTML using `sos convert` command as demonstrated above)
+
+
 The file is also available online at:
 
 https://vatlab.github.io/sos-docs/doc/examples/Workflow_Manuscript_Examples.html
 
-whose source notebooks are found at:
+with source notebooks found at:
 
 https://github.com/vatlab/sos-docs/tree/master/src/examples
 
 The zenodo repo is a snapshot of these documents to accompany the SoS workflow manuscript.
-
 For the most recent version of SoS workflow system implementation, please visit 
 
 https://vatlab.github.io/sos-docs/#workflow_documentation
