@@ -2,7 +2,7 @@
 
 This is an archive of SoS workflow examples used in the SoS workflow system manuscript (Wang and Peng 2018).
 
-To reproduce examples, please follow instructions in the file
+Please follow instructions in the file
 `Workflow_Manuscript_Examples.html` to reproduce the examples.
 This document was exported from a notebook file, `Workflow_Manuscript_Examples.ipynb` 
 (also found in this repository), via SoS command 
