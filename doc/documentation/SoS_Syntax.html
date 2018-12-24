@@ -12377,9 +12377,16 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A <strong>target</strong> is an object that can be created and detected. A SoS step can take a list of targets as input, check the existence of a list of dependent targets, and produce a list of targets as output. Targets can be created, removed, and their contents are tracked by SoS with <strong>signatures</strong>. For example, SoS can skip a workflow step if its output targets have been created, but will still rerun the step if the input or ouptut targets have been changed. A target can also be <strong>zapped</strong>, which is a special action to replace content of large files wit their signature, so a target can be considered "exist" for signature validation, but in the meantime "non-exist" if the actual content is needed.</p>
-<p>SoS provides a very flexible and intuitive set of methods to work with files and list of files, gearing towards converting and using different formats of filenames in different scripts. <strong>You do not have to understand the technical details of SoS variables such as <code>step_input</code> and <code>_input</code> in a majority of the cases</strong> but understanding what these variables are and how to use then would facilitate the use of filenames in more complex scenarios.</p>
-<p>In addition to <code>file_target</code>, SoS provides a number of built-in targets such as <code>file_target</code>, <code>sos_variable</code>, and <code>executable</code>, and targets defined by language modules such as <code>R_Library</code> for <code>R</code>. This section describes general usages of targets and syntax for the most frequently used target <code>file_target</code>. Please refer to Chapter <a href="Targets_and_Actions.html">Targets and Actions</a> for descriptions of other target types.</p>
+<p>A <strong>target</strong> is an object that can be created and detected. A SoS step can take a list of targets as input, check the existence of a list of dependent targets, and produce a list of targets as output. In addition, a target can have arbitrary attached "attributes" that provides additional information about the targets.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The most common target type is a <code>file_target</code>, which represent a file on the file system. <code>file_target</code> is derived from <a href="https://docs.python.org/3.6/library/pathlib.html?highlight=pathlib#module-pathlib">pathlib.Path</a> with some additional functions. In addition to <code>file_target</code>, SoS provides a number of built-in targets such as <code>file_target</code>, <code>sos_variable</code>, and <code>executable</code>, and targets defined by language modules such as <code>R_Library</code>. This section describes general usages of targets and syntax for the most frequently used target <code>file_target</code>. Please refer to Chapter <a href="Targets_and_Actions.html">Targets and Actions</a> for descriptions of other target types.</p>
 
 </div>
 </div>
@@ -12398,6 +12405,120 @@ step_pattern   = {letter | digit | "*" | "?" | "-" | "_"}</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><small>Class hierachy for all target related classes. Basically, all targets are derived from a virtual <code>BaseTarget</code> class. A <code>file_target</code> stands for a disk file and is presented by a <code>path</code> object, which is an extension of <code>Path</code> object from <code>pathlib</code>. A <code>sos_targets</code> object is a collection of <code>BaseTargets</code>, which can be created from individual or lists of <code>BaseTarget</code> and <code>path</code> (class <code>paths</code>).<small></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="BaseTarget-"><code>BaseTarget</code> <a id="BaseTarget" /><a class="anchor-link" href="#BaseTarget-">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>BaseTarget</code> is the parent class of all SoS targets. It cannot be used directly but it provides an interface for all targets to get and set attributes.</p>
+<p>For example, the <code>input</code> statement of the following example creates an <code>sos_targets</code> object with two children  <code>file_target('a.txt')</code> and <code>file_target('b.txt')</code>. Option <code>paired_with</code> accepts a dictionary and assigns attributes <code>sample</code> to each of the targets with specified values.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt', paired_with={'sample': ['A', 'B']}
+print(_input[0].sample)
+print(_input[1].sample)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A
+B
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although targets and their attributes are usually set in an <code>input</code> statement, you can create targets and set attributes directly. For example</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">file_a = file_target('a.txt').set('sample', 'A')
+print(file_a.sample)
+print(file_a.get('sample'))</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A
+A
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here the <code>target.set(name, value)</code> function sets an attribute to the <code>target</code>, <code>target.get(name, default=None)</code> get the value of attribute <code>name</code>, and returns <code>default</code> if <code>name</code> is not a valid attribute. It is therefore a safer way to retrieve an attribute than <code>target.name</code> if you are uncertain if attribute <code>name</code> exists for <code>target</code>.</p>
 
 </div>
 </div>
@@ -14498,7 +14619,7 @@ f"{single[0]} is the same as {single}"</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A <code>file_target</code> is <code>path</code> with additional <code>BaseTarget</code> interface. A <code>file_target</code> object can be created from a string or a <code>path</code> and it behaves exactly like a <code>path</code> object from an user point of view. For this reason, <code>file_target</code> is rarely used explicitly in SoS scripts.</p>
+<p>A <code>file_target</code> is <code>path</code> with additional <code>BaseTarget</code> interface. Because it is derived from <code>path</code>, it can be created from a string or a <code>path</code> and behaves exactly like a <code>path</code> object. Because it is also derived from <code>BaseTarget</code>, you can set and get aribitrary attributes to a <code>file_target</code>.</p>
 
 </div>
 </div>
@@ -14516,7 +14637,7 @@ f"{single[0]} is the same as {single}"</textarea>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><code>sos_targets</code> is the type for all SoS system variables (<code>step_input</code>, <code>_input</code>, <code>step_output</code>, <code>_output</code>, <code>step_depends</code>, and <code>_depends</code>). These variables are created by SoS from <code>input:</code>, <code>output:</code> and <code>depends:</code> statements and are used to, for example, compose scripts in different languages.</p>
-<p><code>sos_targets</code> shares the same design as <code>paths</code> although its content is a list of <code>BaseTargets</code>. it can be created from <code>str</code>, <code>list</code>, <code>path</code>, <code>paths</code>, <code>file_targets</code>, and many other <code>BaseTarget</code> types. Although this type is very flexible, it closely resembles <code>paths</code> and share all its features.</p>
+<p><code>sos_targets</code> shares the same design as <code>paths</code> although its content is a list of <code>BaseTargets</code>. it can be created from <code>str</code>, <code>list</code>, <code>path</code>, <code>paths</code>, <code>file_targets</code>, <code>sos_targets</code>, and many other <code>BaseTarget</code> types. In addition, a <code>sos_targets</code> can contain <code>groups</code>, which is a list of <code>sos_targets</code> consisting of subsets of targets.</p>
 
 </div>
 </div>
@@ -14533,7 +14654,22 @@ f"{single[0]} is the same as {single}"</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Variable <code>step_input</code> represents the input targets of the entire step, variable <code>_input</code> represents the input targets for each substep.</p>
+<p>In SoS, the <code>input</code> statement mostly creates a <code>step_input</code> object with provided parameters. That is to say,</p>
+
+<pre><code>input: 'a.txt', 'b.txt', group_by=1</code></pre>
+<p>is almost equivalent to</p>
+
+<pre><code>step_input = sos_targets('a.txt', 'b.txt', group_by=1)</code></pre>
+<p>and we can use <code>sos_targets</code> objects directly in an <code>input</code> statement in more complicated cases.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Variable <code>_input</code> represents the input targets for each substep (<code>groups</code> of <code>sos_targets</code> as we will see later).</p>
 <p>In the simple case, <code>step_input</code> is the same as <code>_input</code>. For example, variables <code>step_input</code> and <code>_input</code> of the following step are <code>sos_targets</code> objects with a single <code>file_target</code> object:</p>
 
 </div>
@@ -14764,7 +14900,7 @@ print(_input.sources)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you have multiple inputs, you can sparate them into different groups with different sources.</p>
+<p>If you have multiple inputs, you can sparate them into different groups using keyword arguments</p>
 
 </div>
 </div>
@@ -14774,16 +14910,13 @@ print(_input.sources)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
       class="sos-source" name="SoS">!touch a.bam b.bam a.bai b.bai
-%run
-[hi]
-input: {
-    'bam': ['a.bam', 'b.bam'],
-    'bai': ['a.bai', 'a.bai']
-    }
+
+input: bam=['a.bam', 'b.bam'], bai=['a.bai', 'a.bai']
+
 print(_input)
 print(_input.sources)</textarea>
   </div>
@@ -14879,9 +15012,9 @@ print(_input.sources)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
-   <textarea rows="15"
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
       class="sos-source" name="SoS">!touch c.txt
 %run
 [step_10]
@@ -14892,9 +15025,8 @@ _output.touch()
 output: 'b.txt'
 _output.touch()
 
-
 [step_30]
-input: 'c.txt', from_steps=['step_10', 'step_20']
+input: 'c.txt', output_from(['step_10', 'step_20'])
 print(_input)
 print(_input.sources)</textarea>
   </div>
@@ -14905,6 +15037,42 @@ print(_input.sources)</textarea>
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_2384b9808aa0443b802769234606d79a" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_2384b9808aa0443b802769234606d79a" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_2384b9808aa0443b802769234606d79a">step</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_2384b9808aa0443b802769234606d79a">2cc805e966b4890b</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_2384b9808aa0443b802769234606d79a">2</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_2384b9808aa0443b802769234606d79a">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_2384b9808aa0443b802769234606d79a" class="completed" datetime="1545540836633.5627">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
 
 <div class="output_area">
 
@@ -14929,7 +15097,7 @@ print(_input.sources)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>source</code> information can be used to group input targets for substeps, or be used in conditions. For example, if we specify <code>group_by='source'</code>, the substeps would have <code>_input</code> from different sources. Another <code>group_by</code> option that makes use of <code>source</code> information is <code>pairsource</code>.</p>
+<p>Although the use of keyword argument will override the default source</p>
 
 </div>
 </div>
@@ -14939,9 +15107,9 @@ print(_input.sources)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
-   <textarea rows="15"
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
       class="sos-source" name="SoS">!touch c.txt
 %run
 [step_10]
@@ -14952,9 +15120,8 @@ _output.touch()
 output: 'b.txt'
 _output.touch()
 
-
 [step_30]
-input: 'c.txt', from_steps=['step_10', 'step_20'], group_by='source'
+input: 'c.txt', prev=output_from(['step_10', 'step_20'])
 print(_input)
 print(_input.sources)</textarea>
   </div>
@@ -14971,13 +15138,203 @@ print(_input.sources)</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_b409da80019e4d148669108ad300ce5d" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_b409da80019e4d148669108ad300ce5d" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_b409da80019e4d148669108ad300ce5d">step</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_b409da80019e4d148669108ad300ce5d">2cc805e966b4890b</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_b409da80019e4d148669108ad300ce5d">3</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_b409da80019e4d148669108ad300ce5d">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_b409da80019e4d148669108ad300ce5d" class="completed" datetime="1545540898120.4749">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>c.txt
-[&#39;step_30&#39;]
-a.txt
+<pre>c.txt a.txt b.txt
+[&#39;step_30&#39;, &#39;prev&#39;, &#39;prev&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>source</code> information can be used to select subsets of targets according to their sources. For example, <code>_intput['prev']</code> would generate a <code>sos_targets</code> with all targets from source <code>prev</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">!touch c.txt
+%run
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+output: 'b.txt'
+_output.touch()
+
+[step_30]
+input: 'c.txt', output_from(['step_10', 'step_20'])
+print(_input['step_10'])
+print(_input['step_10'].sources)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_930125e09f61438380168fce5ca74634" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_930125e09f61438380168fce5ca74634" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_930125e09f61438380168fce5ca74634">step</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_930125e09f61438380168fce5ca74634">8ca6d85f4843b9f8</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_930125e09f61438380168fce5ca74634">5</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_930125e09f61438380168fce5ca74634">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_930125e09f61438380168fce5ca74634" class="completed" datetime="1545541099705.5737">Ran for 0 sec</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a.txt
 [&#39;step_10&#39;]
-b.txt
-[&#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="groups-of-sos_targets"><code>groups</code> of <code>sos_targets</code><a class="anchor-link" href="#groups-of-sos_targets">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we have seen, targets in a <code>sos_targets</code> can be grouped in many ways and <code>_input</code> contains subsets of the targets and is the input for each substep. For example, in the following example, the 4 input files are grouped into two groups of the same size. The step is executed twice, each time for a different group.  <code>step_input.groups</code> contains a list of <code>sos_targets</code> that becomes <code>_input</code> of the substep.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt', 'c.txt', 'd.txt', group_by=2
+print(f'\nGroup {_index}')
+print(step_input.groups)
+print(_input)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Group 0
+[[file_target(&#39;a.txt&#39;), file_target(&#39;b.txt&#39;)], [file_target(&#39;c.txt&#39;), file_target(&#39;d.txt&#39;)]]
+a.txt b.txt
+
+Group 1
+[[file_target(&#39;a.txt&#39;), file_target(&#39;b.txt&#39;)], [file_target(&#39;c.txt&#39;), file_target(&#39;d.txt&#39;)]]
+c.txt d.txt
 </pre>
 </div>
 </div>
