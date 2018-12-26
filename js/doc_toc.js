@@ -121,14 +121,14 @@ var create_navigate_menu = function (callback) {
 }
 
 function setNotebookWidth(cfg, st) {
-    //cfg.widenNotebook  = false; 
+    //cfg.widenNotebook  = false;
     if ($('#toc-wrapper').is(':visible')) {
-        $('#notebook-container').css('margin-left', $('#toc-wrapper').width() + 30)
-        $('#notebook-container').css('width', $('#notebook').width() - $('#toc-wrapper').width() - 30)
+        $('#notebook-container').css('margin-left', $('#toc-wrapper').width() + 45)
+        $('#notebook-container').css('width', $('#notebook').width() - $('#toc-wrapper').width() - 80)
     } else {
         if (cfg.widenNotebook) {
-            $('#notebook-container').css('margin-left', 30);
-            $('#notebook-container').css('width', $('#notebook').width() - 30);
+            $('#notebook-container').css('margin-left', 45);
+            $('#notebook-container').css('width', $('#notebook').width() - 80);
         } else { // original width
             $("#notebook-container").css({
                 'width': "82%",
@@ -170,7 +170,7 @@ var create_toc_div = function (cfg, st) {
         handles: 'e',
         resize: function (event, ui) {
             setNotebookWidth(cfg, st)
-            $(this).css('height', '100%');
+            // $(this).css('height', '100%');
         },
         start: function (event, ui) {
             $(this).width($(this).width());
@@ -179,8 +179,8 @@ var create_toc_div = function (cfg, st) {
         stop: function (event, ui) {
             // Ensure position is fixed (again)
             //$(this).css('position', 'fixed');
-            $(this).css('height', '100%');
-            $('#toc').css('height', $('#toc-wrapper').height() - $("#toc-header").height());
+            // $(this).css('height', '100%');
+            // $('#toc').css('height', $('#toc-wrapper').height() - $("#toc-header").height());
 
         }
     })
@@ -203,8 +203,8 @@ var create_toc_div = function (cfg, st) {
 
     $('#toc-wrapper').css('width', '230px');
     $('#notebook-container').css('margin-left', '230px');
-    $('#toc-wrapper').css('height', '100%');
-    $('#toc').css('height', $('#toc-wrapper').height() - $("#toc-header").height());
+    // $('#toc-wrapper').css('height', '100%');
+    // $('#toc').css('height', $('#toc-wrapper').height() - $("#toc-header").height());
 
     setTimeout(function () {
         $('#toc-wrapper').css('top', 0);
@@ -214,7 +214,7 @@ var create_toc_div = function (cfg, st) {
 }
 
 //------------------------------------------------------------------
-// TOC CELL -- if cfg.toc_cell=true, add and update a toc cell in the notebook. 
+// TOC CELL -- if cfg.toc_cell=true, add and update a toc cell in the notebook.
 //             This cell, initially at the very beginning, can be moved.
 //             Its contents are automatically updated.
 //             Optionnaly, the sections in the toc can be numbered.
@@ -227,7 +227,7 @@ function look_for_cell_toc(callb) { // look for a possible toc cell
         if (cells[i].metadata.toc == "true") {
             cell_toc = cells[i];
             toc_index = i;
-            //console.log("Found a cell_toc",i); 
+            //console.log("Found a cell_toc",i);
             break;
         }
     }
@@ -243,13 +243,13 @@ function process_cell_toc(cfg, st) {
         if (cells[i].metadata.toc == "true") {
             st.cell_toc = cells[i];
             st.toc_index = i;
-            //console.log("Found a cell_toc",i); 
+            //console.log("Found a cell_toc",i);
             break;
         }
     }
-    //if toc_cell=true, we want a cell_toc. 
+    //if toc_cell=true, we want a cell_toc.
     //  If it does not exist, create it at the beginning of the notebook
-    //if toc_cell=false, we do not want a cell-toc. 
+    //if toc_cell=false, we do not want a cell-toc.
     //  If one exists, delete it
     if (cfg.toc_cell) {
         if (st.cell_toc == undefined) {
@@ -267,7 +267,7 @@ function process_cell_toc(cfg, st) {
 // Table of Contents =================================================================
 var table_of_contents = function (cfg, st) {
 
-    if (st.rendering_toc_cell) { // if toc_cell is rendering, do not call  table_of_contents,                             
+    if (st.rendering_toc_cell) { // if toc_cell is rendering, do not call  table_of_contents,
         st.rendering_toc_cell = false; // otherwise it will loop
         return
     }
@@ -286,17 +286,17 @@ var table_of_contents = function (cfg, st) {
 
 
     st.cell_toc = undefined;
-    // if cfg.toc_cell=true, add and update a toc cell in the notebook. 
+    // if cfg.toc_cell=true, add and update a toc cell in the notebook.
 
     if (liveNotebook) {
-        ///look_for_cell_toc(process_cell_toc);        
+        ///look_for_cell_toc(process_cell_toc);
         process_cell_toc(cfg, st);
     }
     //process_cell_toc();
 
     var cell_toc_text = "# Table of Contents\n <p>";
     var depth = 1; //var depth = ol_depth(ol);
-    var li = ul; //yes, initialize li with ul! 
+    var li = ul; //yes, initialize li with ul!
     var all_headers = $("#notebook").find(":header");
     var min_lvl = 1,
         lbl_ary = [];
@@ -344,18 +344,18 @@ var table_of_contents = function (cfg, st) {
                 ul = ul.parent();
             }
         }
-        // Change link id -- append current num_str so as to get a kind of unique anchor 
+        // Change link id -- append current num_str so as to get a kind of unique anchor
         // A drawback of this approach is that anchors are subject to change and thus external links can fail if toc changes
-        // Anyway, one can always add a <a name="myanchor"></a> in the heading and refer to that anchor, eg [link](#myanchor) 
-        // This anchor is automatically removed when building toc links. The original id is also preserved and an anchor is created 
-        // using it. 
+        // Anyway, one can always add a <a name="myanchor"></a> in the heading and refer to that anchor, eg [link](#myanchor)
+        // This anchor is automatically removed when building toc links. The original id is also preserved and an anchor is created
+        // using it.
         // Finally a heading line can be linked to by [link](#initialID), or [link](#initialID-num_str) or [link](#myanchor)
         h.id = h.id.replace(/\$/g, '').replace('\\', '')
         if (!$(h).attr("saveid")) {
             $(h).attr("saveid", h.id)
         } //save original id
         h.id = $(h).attr("saveid") + '-' + num_str.replace(/\./g, '');
-        // change the id to be "unique" and toc links to it 
+        // change the id to be "unique" and toc links to it
         // (and replace '.' with '' in num_str since it poses some pb with jquery)
         var saveid = $(h).attr('saveid')
         //escape special chars: http://stackoverflow.com/questions/3115150/
