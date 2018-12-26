@@ -11,7 +11,7 @@
     padding: 0px;
     -webkit-box-shadow: 0px 0px 0px 0px;
 	box-shadow: 0px 0px 0px 0px;
-    margin-left: 218px;
+     display: none;
   }
 </style>
 

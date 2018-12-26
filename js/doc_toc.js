@@ -186,7 +186,7 @@ var create_toc_div = function (cfg, st) {
     $('#toc-wrapper').addClass('sidebar-wrapper');
 
     $('#toc-wrapper').css('width', '230px');
-    $('#notebook-container').css('margin-left', '230px');
+    $('#notebook-container').css('display', 'block');
     // $('#toc-wrapper').css('height', '100%');
     // $('#toc').css('height', $('#toc-wrapper').height() - $("#toc-header").height());
 
