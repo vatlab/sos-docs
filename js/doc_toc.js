@@ -122,20 +122,8 @@ var create_navigate_menu = function (callback) {
 
 function setNotebookWidth(cfg, st) {
     //cfg.widenNotebook  = false;
-    if ($('#toc-wrapper').is(':visible')) {
-        $('#notebook-container').css('margin-left', $('#toc-wrapper').width() + 45)
-        $('#notebook-container').css('width', $('#notebook').width() - $('#toc-wrapper').width() - 80)
-    } else {
-        if (cfg.widenNotebook) {
-            $('#notebook-container').css('margin-left', 45);
-            $('#notebook-container').css('width', $('#notebook').width() - 80);
-        } else { // original width
-            $("#notebook-container").css({
-                'width': "82%",
-                'margin-left': 'auto'
-            })
-        }
-    }
+    $('#notebook-container').css('margin-left', $('#toc-wrapper').width() + 45)
+    $('#notebook-container').css('width', $('#notebook').width() - $('#toc-wrapper').width() - 80)
 }
 
 var create_toc_div = function (cfg, st) {
@@ -189,11 +177,7 @@ var create_toc_div = function (cfg, st) {
     // Ensure position is fixed
     $('#toc-wrapper').css('position', 'fixed');
 
-    // if toc-wrapper is undefined (first run(?), then hide it)
-    if ($('#toc-wrapper').css('display') == undefined) $('#toc-wrapper').css('display', "none") //block
-    //};
-
-    $('#site').bind('siteHeight', function () {
+   $('#site').bind('siteHeight', function () {
         if (cfg.sideBar) $('#toc-wrapper').css('height', $('#site').height());
     })
 
@@ -231,7 +215,7 @@ function look_for_cell_toc(callb) { // look for a possible toc cell
             break;
         }
     }
-    callb && callb(i);
+                                            callb && callb(i);
 }
 // then process the toc cell:
 
