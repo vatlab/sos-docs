@@ -21,6 +21,14 @@ run: expand='${ }'
 	cd ../src/tutorials
 	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_tut.tpl
 
+[convert-guide]
+input:  '../src/user_guide/*.ipynb', group_by=1
+output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
+
+run: expand='${ }'
+	cd ../src/tutorials
+	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_tut.tpl
+
 [convert-homepage]
 input:  '../src/homepage/*.ipynb', group_by=1
 output: f"../{_input:bn}.html"
