@@ -1,10 +1,12 @@
 
+
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>sos_magics</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<title>sos_magics</title>
 
 <style type="text/css">
     /*!
@@ -12289,8 +12291,8 @@ font-style: italic;
 
 
 <style>
-   .lan_Bash .input_prompt {
-      background-color: #E6EEFF !important;
+   .lan_Python3 .input_prompt {
+      background-color: #FFD91A !important;
     }.lan_R .input_prompt {
       background-color: #DCDCDA !important;
     }
@@ -12412,99 +12414,131 @@ textarea.sos-source {
 
 
 
-<style>
-  #notebook-container {
-    padding: 0px;
-    -webkit-box-shadow: 0px 0px 0px 0px;
-	box-shadow: 0px 0px 0px 0px;
-     display: none;
-  }
+
+<style type="text/css">
+/*
+ * jquery.tocify.css 1.9.0
+ * Author: @gregfranko
+ */
+
+/* The Table of Contents container element */
+.tocify {
+    width: 20%;
+    max-height: 90%;
+    overflow: auto;
+    margin-left: 2%;
+    position: fixed;
+    border: 1px solid #ccc;
+    webkit-border-radius: 6px;
+    moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+/* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
+.tocify ul, .tocify li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 30px;
+}
+
+/* Top level header elements */
+.tocify-header {
+    text-indent: 10px;
+}
+
+/* Top level subheader elements.  These are the first nested items underneath a header element. */
+.tocify-subheader {
+    text-indent: 20px;
+    display: none;
+}
+
+/* Makes the font smaller for all subheader elements. */
+.tocify-subheader li {
+    font-size: 12px;
+}
+
+/* Further indents second level subheader elements. */
+.tocify-subheader .tocify-subheader {
+    text-indent: 30px;
+}
+
+/* Further indents third level subheader elements. You can continue this pattern if you have more nested elements. */
+.tocify-subheader .tocify-subheader .tocify-subheader {
+    text-indent: 40px;
+}
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a, .nav-list .nav-header {
+    margin: 0px;
+}
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a {
+    padding: 5px;
+}
 </style>
+<style>
+#notebook-container {
+  box-shadow: none;
+}
+li.tocify-item.active {
+  background-color: #6197d5;
+}
+.tocify-item.active a {
+  color: white;
+}
 
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="https://vatlab.github.io/sos-docs/css/toc2.css">
-
-
-
-<script src="https://vatlab.github.io/sos-docs/js/doc_toc.js"></script>
-<script src="https://vatlab.github.io/sos-docs/js/docs.js"></script>
-<script>
-$(document).ready(function() {
-    var cfg = {
-        'threshold': 3,
-        'number_sections': false,
-        'toc_cell': false, // useless here
-        'toc_window_display': true, // display the toc window
-        "toc_section_display": "block", // display toc contents in the window
-        'sideBar': true, // sidebar or floating window
-        'navigate_menu': false // navigation menu (only in liveNotebook -- do not change)
-    }
-
-    var st = {}; // some variables used in the script
-    st.rendering_toc_cell = false;
-    st.config_loaded = false;
-    st.extension_initialized = false;
-    st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-    st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-    st.nbcontainer_width = $('#notebook-container').css('width')
-    st.oldTocHeight = undefined
-    st.cell_toc = undefined;
-    st.toc_index = 0;
-
-    // fire the main function with these parameters
-    table_of_contents(cfg, st);
-
-    var file = tutorialsDict[$("h1:first").attr("id")];
-    var path = "http://vatlab.github.io/sos-docs"
-    $("#toc-level0 a").css("color", "#126dce");
-    $('a[href="#' + $("h1:first").attr("id") + '"]').hide()
-    var docs = tutorials;
-    var pos = tutorials.indexOf(file);
-
-    for (var a = pos; a >= 0; a--) {
-        var name = docs[a]
-        $('<li><a href="' + path + '/doc/tutorials/' + name + '.html">' + name.replace(/_/g, " ") +
-            '&nbsp ' + '<i class="fa ' +
-            (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' + '</a></li>').insertBefore("#toc-level0 li:eq(0)");
-    }
-    $('a[href="' + path + '/doc/tutorials/' + file + '.html' + '"]').css("color", "#126dce");
-
-
-    for (var a = pos + 1; a < docs.length; a++) {
-        var name = docs[a]
-        $(".toc #toc-level0").append('<li><a href="' + path + '/doc/tutorials/' + name + '.html">' + name.replace(/_/g, " ") +
-            '&nbsp' + '<i class="fa fa-caret-right"></i>' + '</a></li>');
-    }
-});
-</script>
-
-
+.tocify {
+  margin-top: 60px;
+}
+.tocify ul, .tocify li {
+    line-height: 1.5em;
+}
+.nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+    color: #337ab7;
+}
+</style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.9.1/themes/smoothness/jquery-ui.css">
 
 </head>
-
 <body>
-  <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
+  <div class="row-fluid">
+    <div class="col-xs-12 col-sm-4 col-md-3">
+      <div id="toc" class="tocify">
+      </div><!--/.well -->
+    </div><!--/span-->
+    <div class="col-xs-12 col-sm-8 col-md-9">
+      
 
+
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="notebook-container" id="notebook-container">
+
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title">&#182;</a></h1>
+<h1 id="SoS-Magics">SoS Magics<a class="anchor-link" href="#SoS-Magics"></a></h1>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Difficulty level</strong>: hard</li>
+<li><strong>Time need to lean</strong>: refer to this document only when needed</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>Use <code>%&lt;tab&gt;</code> to get a list of magics</li>
+<li>Use <code>%MAGIC -h</code> to get the help messages  </li>
 </ul>
 </li>
 </ul>
@@ -12512,26 +12546,1560 @@ $(document).ready(function() {
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2">&#182;</a></h2>
+<h2 id="Getting-help">Getting help<a class="anchor-link" href="#Getting-help"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading">&#182;</a></h2><p>*</p>
+<p>In addition to SoS statements, you can use a few SoS magics in Jupyter notebooks with a SoS kernel. Note that</p>
+<ul>
+<li>SoS magics have to be specified at the beginning of a cell, although they can be specified after empty lines and comments.</li>
+<li>Lines ending with <code>"\"</code> will be joined so you can break long magics into multiple lines</li>
+<li>Multiple magics can be used in a single cell.</li>
+</ul>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In any SoS cell, you can type <code>%</code> and use the <code>&lt;TAB&gt;</code> key to get a list of SoS magics. Then, for any magic you need to use, you can type <code>%MAGIC -h</code> to get the help information. This reference manual is simply a composition of these help messages.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="List-of-Magics">List of Magics<a class="anchor-link" href="#List-of-Magics"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%capture"><a id="magic_capture" /><code>%capture</code><a class="anchor-link" href="#%capture"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%capture -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %capture [-h] [--as [{text,json,csv,tsv}]] [-t VAR | -a VAR]
+                [{stdout,stderr,text,markdown,html,raw}]
+
+Capture output (stdout) or output file from a subkernel as variable in SoS
+
+positional arguments:
+  {stdout,stderr,text,markdown,html,raw}
+                        Message type to capture, default to standard output.
+                        In terms of Jupyter message types, &#34;stdout&#34; refers to
+                        &#34;stream&#34; message with &#34;stdout&#34; type, &#34;stderr&#34; refers
+                        to &#34;stream&#34; message with &#34;stderr&#34; type, &#34;text&#34;,
+                        &#34;markdown&#34; and &#34;html&#34; refers to &#34;display_data&#34; message
+                        with &#34;text/plain&#34;, &#34;text/markdown&#34; and &#34;text/html&#34;
+                        type respectively. If &#34;raw&#34; is specified, all returned
+                        messages will be returned in a list format.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --as [{text,json,csv,tsv}]
+                        How to interpret the captured text. This only
+                        applicable to stdout, stderr and text message type
+                        where the text from cell output will be collected. If
+                        this option is given, SoS will try to parse the text
+                        as json, csv (comma separated text), tsv (tab
+                        separated text), and store text (from text), Pandas
+                        DataFrame (from csv or tsv), dict or other types (from
+                        json) to the variable.
+  -t VAR, --to VAR      Name of variable to which the captured content will be
+                        saved. If no varialbe is specified, the return value
+                        will be saved to variable &#34;__captured&#34; and be
+                        displayed at the side panel.
+  -a VAR, --append VAR  Name of variable to which the captured content will be
+                        appended. This option is equivalent to --to if VAR
+                        does not exist. If VAR exists and is of the same type
+                        of new content (str or dict or DataFrame), the new
+                        content will be appended to VAR if VAR is of str (str
+                        concatenation), dict (dict update), or DataFrame
+                        (DataFrame.append) types. If VAR is of list type, the
+                        new content will be appended to the end of the list.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%cd"><a id="magic_cd" /><code>%cd</code><a class="anchor-link" href="#%cd"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%cd -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to change dir to -h: [Errno 2] No such file or directory: &#39;-h&#39;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%clear"><a id="magic_clear" /><code>%clear</code><a class="anchor-link" href="#%clear"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%clear -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %clear [-h] [-a] [-s STATUS [STATUS ...] | -c ELEM_CLASS
+              [ELEM_CLASS ...]]
+
+Clear the output of the current cell, or the current active cell if executed
+in the sidepanel.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a, --all             Clear all output or selected status or class of the
+                        current notebook.
+  -s STATUS [STATUS ...], --status STATUS [STATUS ...]
+                        Clear tasks that match specifie status (e.g.
+                        completed).
+  -c ELEM_CLASS [ELEM_CLASS ...], --class ELEM_CLASS [ELEM_CLASS ...]
+                        Clear all HTML elements with specified classes (e.g.
+                        sos_hint)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%dict"><a id="magic_dict" /><code>%dict</code><a class="anchor-link" href="#%dict"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%dict -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %dict [-h] [-k] [-r] [-a] [-d VAR [VAR ...]] [vars [vars ...]]
+
+Inspect or reset SoS dictionary
+
+positional arguments:
+  vars
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -k, --keys            Return only keys
+  -r, --reset           Rest SoS dictionary (clear all user variables)
+  -a, --all             Return all variales, including system functions and
+                        variables
+  -d VAR [VAR ...], --del VAR [VAR ...]
+                        Remove specified variables from SoS dictionary
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%expand"><a id="magic_expand" /><code>%expand</code><a class="anchor-link" href="#%expand"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%expand -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %expand [-h] [sigil] [right_sigil]
+
+Expand the script in the current cell with default ({}) or specified sigil.
+
+positional arguments:
+  sigil        Sigil to be used to interpolated the texts. It can be quoted,
+               or be specified as two options.
+  right_sigil  Right sigil if the sigil is specified as two pieces.
+
+optional arguments:
+  -h, --help   show this help message and exit
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%get"><a id="magic_get" /><code>%get</code><a class="anchor-link" href="#%get"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%get -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %get [-h] [--from __FROM__] [vars [vars ...]]
+
+Get specified variables from another kernel, which is by default the SoS
+kernel.
+
+positional arguments:
+  vars             Names of SoS variables
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --from __FROM__  Name of kernel from which the variables will be obtained.
+                   Default to the SoS kernel.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%matplotlib"><a id="magic_matplotlib" /><code>%matplotlib</code><a class="anchor-link" href="#%matplotlib"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%matplotlib -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %matplotlib [-h] [-l]
+                   [{agg,gtk,gtk3,inline,ipympl,nbagg,notebook,osx,pdf,ps,qt,qt4,qt5,svg,tk,widget,wx}]
+
+Set matplotlib parser type
+
+positional arguments:
+  {agg,gtk,gtk3,inline,ipympl,nbagg,notebook,osx,pdf,ps,qt,qt4,qt5,svg,tk,widget,wx}
+                        Name of the matplotlib backend to use (‘agg’, ‘gtk’,
+                        ‘gtk3’,
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l, --list            Show available matplotlib backends
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%put"><a id="magic_put" /><code>%put</code><a class="anchor-link" href="#%put"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%put -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %put [-h] [--to __TO__] [vars [vars ...]]
+
+Put specified variables in the subkernel to another kernel, which is by
+default the SoS kernel.
+
+positional arguments:
+  vars         Names of SoS variables
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --to __TO__  Name of kernel from which the variables will be obtained.
+               Default to the SoS kernel.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%preview"><a id="magic_preview" /><code>%preview</code><a class="anchor-link" href="#%preview"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%preview -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %preview [-h] [-k KERNEL] [-w] [-o] [-s {table,scatterplot,png}]
+                [-r HOST] [-p | -n] [-c CONFIG]
+                [items [items ...]]
+
+Preview files, sos variables, or expressions in the side panel, or notebook if
+side panel is not opened, unless options --panel or --notebook is specified.
+
+positional arguments:
+  items                 Filename, variable name, or expression. Wildcard
+                        characters such as &#39;*&#39; and &#39;?&#39; are allowed for
+                        filenames.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -k KERNEL, --kernel KERNEL
+                        kernel in which variables will be previewed. By
+                        default the variable will be previewed in the current
+                        kernel of the cell.
+  -w, --workflow        Preview notebook workflow
+  -o, --keep-output     Do not clear the output of the side panel.
+  -s {table,scatterplot,png}, --style {table,scatterplot,png}
+                        Option for preview file or variable, which by default
+                        is &#34;table&#34; for Pandas DataFrame. The %preview magic
+                        also accepts arbitrary additional keyword arguments,
+                        which would be interpreted by individual style.
+                        Passing &#39;-h&#39; with &#39;--style&#39; would display the usage
+                        information of particular style.
+  -r HOST, --host HOST  Preview files on specified remote host, which should
+                        be one of the hosts defined in sos configuration
+                        files.
+  -p, --panel           Preview in side panel even if the panel is currently
+                        closed
+  -n, --notebook        Preview in the main notebook.
+  -c CONFIG, --config CONFIG
+                        A configuration file with host definitions, in case
+                        the definitions are not defined in global or local sos
+                        config.yml files.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%render"><a id="magic_render" /><code>%render</code><a class="anchor-link" href="#%render"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%render -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %render [-h] [--as [AS_TYPE]] [{stdout,text}]
+
+Treat the output of a SoS cell as another format, default to markdown.
+
+positional arguments:
+  {stdout,text}   Message type to capture, default to standard output. In
+                  terms of Jupyter message types, &#34;stdout&#34; refers to &#34;stream&#34;
+                  message with &#34;stdout&#34; type, and &#34;text&#34; refers to
+                  &#34;display_data&#34; message with &#34;text/plain&#34; type.
+
+optional arguments:
+  -h, --help      show this help message and exit
+  --as [AS_TYPE]  Format to render output of cell, default to Markdown, but
+                  can be any format that is supported by the IPython.display
+                  module such as HTML, Math, JSON, JavaScript and SVG.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%rerun"><a id="magic_rerun" /><code>%rerun</code><a class="anchor-link" href="#%rerun"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%rerun -h
+</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%revisions"><a id="magic_revisions" /><code>%revisions</code><a class="anchor-link" href="#%revisions"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%revisions -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %revision [-h] [-s [SOURCE]] [-l LINKS [LINKS ...]]
+
+Revision history of the document, parsed from the log message of the notebook
+if it is kept in a git repository. Additional parameters to &#34;git log&#34; command
+(e.g. -n 5 --since --after) could be specified to limit the revisions to
+display.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s [SOURCE], --source [SOURCE]
+                        Source URL to to create links for revisions. SoS
+                        automatically parse source URL of the origin and
+                        provides variables &#34;repo&#34; for complete origin URL
+                        without trailing &#34;.git&#34; (e.g.
+                        https://github.com/vatlab/sos-notebook), &#34;path&#34; for
+                        complete path name (e.g. src/document/doc.ipynb),
+                        &#34;filename&#34; for only the name of the &#34;path&#34;, and
+                        &#34;revision&#34; for revisions. Because sos interpolates
+                        command line by default, variables in URL template
+                        should be included with double braceses (e.g. --source
+                        {{repo}}/blob/{{revision}}/{{path}})). If this option
+                        is provided without value and the document is hosted
+                        on github, a default template will be provided.
+  -l LINKS [LINKS ...], --links LINKS [LINKS ...]
+                        Name and URL or additional links for related files
+                        (e.g. --links report URL_to_repo ) with URL
+                        interpolated as option --source.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%run"><a id="magic_run" /><code>%run</code><a class="anchor-link" href="#%run"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%run -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_e9dc30da-c8ec-4938-84af-2b9495cfb314" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_e9dc30da-c8ec-4938-84af-2b9495cfb314" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_e9dc30da-c8ec-4938-84af-2b9495cfb314">undefined</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_e9dc30da-c8ec-4938-84af-2b9495cfb314">undefined</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_e9dc30da-c8ec-4938-84af-2b9495cfb314">1</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_e9dc30da-c8ec-4938-84af-2b9495cfb314">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_e9dc30da-c8ec-4938-84af-2b9495cfb314" class="completed" datetime="undefined">Ran for < 5 seconds</time></pre>
+      </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos run .sos/interactive.sos [workflow_name | -t targets] [options] [workflow_options]
+  workflow_name:        Single or combined workflows defined in this script
+  targets:              One or more targets to generate
+  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
+  workflow_options:     Double-hyphen workflow-specific parameters
+
+Workflows:
+  default
+
+Sections
+  default:
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%save"><a id="magic_save" /><code>%save</code><a class="anchor-link" href="#%save"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%save</code> saves the content of the current cell (after the magic itself) to specified file. It accepts the following options:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%save -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %save [-h] [-f] [-a] [-x] filename
+
+Save the content of the cell (after the magic itself) to specified file
+
+positional arguments:
+  filename              Filename of saved report or script.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f, --force           If destination file already exists, overwrite it.
+  -a, --append          If destination file already exists, append to it.
+  -x, --set-executable  Set `executable` permission to saved script.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%sosrun"><a id="magic_sosrun" /><code>%sosrun</code><a class="anchor-link" href="#%sosrun"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%sosrun -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_b61eb595-010d-442d-bbe9-f2e595c70811" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_b61eb595-010d-442d-bbe9-f2e595c70811" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_b61eb595-010d-442d-bbe9-f2e595c70811">undefined</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_b61eb595-010d-442d-bbe9-f2e595c70811">undefined</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_b61eb595-010d-442d-bbe9-f2e595c70811">2</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_b61eb595-010d-442d-bbe9-f2e595c70811">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_b61eb595-010d-442d-bbe9-f2e595c70811" class="completed" datetime="undefined">Ran for < 5 seconds</time></pre>
+      </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos run .sos/interactive.sos [workflow_name | -t targets] [options] [workflow_options]
+  workflow_name:        Single or combined workflows defined in this script
+  targets:              One or more targets to generate
+  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
+  workflow_options:     Double-hyphen workflow-specific parameters
+
+Workflows:
+  cat
+  mouse
+
+Sections
+  cat_10:
+  cat_20:
+  mouse_10:
+  mouse_20:
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%sossave"><a id="magic_sossave" /><code>%sossave</code><a class="anchor-link" href="#%sossave"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%sossave -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %sossave [-h] [-t {sos,html}] [-c] [-a] [-m MESSAGE] [-p] [-f] [-x]
+                [--template TEMPLATE]
+                [filename]
+
+Save the jupyter notebook as workflow (consisting of all sos steps defined in
+cells starting with section header) or a HTML report to specified file.
+
+positional arguments:
+  filename              Filename of saved report or script. Default to
+                        notebookname with file extension determined by option
+                        --to.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t {sos,html}, --to {sos,html}
+                        Destination format, default to sos.
+  -c, --commit          Commit the saved file to git directory using command
+                        git commit FILE
+  -a, --all             The --all option for sos convert script.ipynb
+                        script.sos, which saves all cells and their metadata
+                        to a .sos file, that contains all input information of
+                        the notebook but might not be executable in batch
+                        mode.
+  -m MESSAGE, --message MESSAGE
+                        Message for git commit. Default to &#34;save FILENAME&#34;
+  -p, --push            Push the commit with command &#34;git push&#34;
+  -f, --force           If destination file already exists, overwrite it.
+  -x, --set-executable  Set `executable` permission to saved script.
+  --template TEMPLATE   Template to generate HTML output. The default template
+                        is a template defined by configuration key default-
+                        sos-template, or sos-report if such a key does not
+                        exist.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%set"><a id="magic_set" /><code>%set</code><a class="anchor-link" href="#%set"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%set -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set sos options to &#34;-h&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%sandbox"><a id="magic_sandbox" /><code>%sandbox</code><a class="anchor-link" href="#%sandbox"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%sandbox -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %sandbox [-h] [-d DIR] [-k] [-e]
+
+Execute content of a cell in a temporary directory with fresh dictionary (by
+default).
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -d DIR, --dir DIR   Execute workflow in specified directory. The directory
+                      will be created if does not exist, and will not be
+                      removed after the completion.
+  -k, --keep-dict     Keep current sos dictionary.
+  -e, --expect-error  If set, expect error from the excution and report
+                      success if an error occurs.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%sessioninfo"><a id="magic_sessioninfo" /><code>%sessioninfo</code><a class="anchor-link" href="#%sessioninfo"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%sessioninfo -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %sessioninfo [-h]
+
+List the session info of all subkernels, and information stored in variable
+sessioninfo
+
+optional arguments:
+  -h, --help  show this help message and exit
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%shutdown-"><code>%shutdown</code> <a id="magic_shutdown" /><a class="anchor-link" href="#%shutdown-"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%shutdown -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %shutdown [-h] [-r] [kernel]
+
+Shutdown or restart specified subkernel
+
+positional arguments:
+  kernel         Name of the kernel to be restarted, default to the current
+                 running kernel.
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -r, --restart  Restart the kernel
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%task"><a id="magic_task" /><code>%task</code><a class="anchor-link" href="#%task"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%task -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %task [-h] {status,execute,kill,purge} ...
+
+Get information on specified task. By default sos would query against all
+running task queues but it would start a task queue and query status if option
+-q is specified.
+
+positional arguments:
+  {status,execute,kill,purge}
+                        actions
+    status              task status
+    execute             execute task
+    kill                kill single task or tasks with the same tags
+    purge               kill and purge task
+
+optional arguments:
+  -h, --help            show this help message and exit
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%toc"><a id="magic_toc" /><code>%toc</code><a class="anchor-link" href="#%toc"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%toc -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %toc [-h] [-p | -n] [--id ID]
+
+Generate a table of content from the current notebook.
+
+optional arguments:
+  -h, --help      show this help message and exit
+  -p, --panel     Show the TOC in side panel even if the panel is currently
+                  closed
+  -n, --notebook  Show the TOC in the main notebook.
+  --id ID         Optional ID of the generated TOC.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%use"><a id="magic_use" /><code>%use</code><a class="anchor-link" href="#%use"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%use -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %use [-h] [-k KERNEL] [-l LANGUAGE] [-c COLOR] [-r] [name]
+
+Switch to an existing subkernel or start a new subkernel.
+
+positional arguments:
+  name                  Displayed name of kernel to start (if no kernel with
+                        name is specified) or switch to (if a kernel with this
+                        name is already started). The name is usually a kernel
+                        name (e.g. %use ir) or a language name (e.g. %use R)
+                        in which case the language name will be used. One or
+                        more parameters --language or --kernel will need to be
+                        specified if a new name is used to start a separate
+                        instance of a kernel.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -k KERNEL, --kernel KERNEL
+                        kernel name as displayed in the output of jupyter
+                        kernelspec list. Default to the default kernel of
+                        selected language (e.g. ir for language R.
+  -l LANGUAGE, --language LANGUAGE
+                        Language extension that enables magics such as %get
+                        and %put for the kernel, which should be in the name
+                        of a registered language (e.g. R), or a specific
+                        language module in the format of package.module:class.
+                        SoS maitains a list of languages and kernels so this
+                        option is only needed for starting a new instance of a
+                        kernel.
+  -c COLOR, --color COLOR
+                        Background color of new or existing kernel, which
+                        overrides the default color of the language. A special
+                        value &#34;default&#34; can be used to reset color to default.
+  -r, --restart         Restart the kernel if it is running.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%with"><a id="magic_with" /><code>%with</code><a class="anchor-link" href="#%with"></a></h3>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%with -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %with [-h] [-i [IN_VARS [IN_VARS ...]]] [-o [OUT_VARS [OUT_VARS ...]]]
+             [name]
+
+Use specified subkernel to evaluate current cell, with optional input and
+output variables
+
+positional arguments:
+  name                  Name of an existing kernel.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i [IN_VARS [IN_VARS ...]], --in [IN_VARS [IN_VARS ...]]
+                        Input variables (variables to get from SoS kernel)
+  -o [OUT_VARS [OUT_VARS ...]], --out [OUT_VARS [OUT_VARS ...]]
+                        Output variables (variables to put back to SoS kernel
+                        before switching back to the SoS kernel
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="!shell-command"><a href="shell_command" /><code>!shell-command</code><a class="anchor-link" href="#!shell-command"></a></h3><p>If any other command is entered after <code>!</code>, sos will treat the rest of the line as a shell command and execute it. Only single-line commands are supported. String interpolation is supported. Note that <code>!cd</code> does not change the current working directory because the command is executed in a separate process. Use magic <code>%cd</code> for that purpose.</p>
 
 </div>
 </div>
 </div>
     </div>
   </div>
-</body>
+
+
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
@@ -13122,6 +14690,31 @@ $(document).ready(function() {
 
 
 
+
+<script
+  src="https://code.jquery.com/jquery-1.7.2.min.js"
+  integrity="sha256-R7aNzoy2gFrVs+pNJ6+SokH04ppcEqJ0yFLkNGoFALQ="
+  crossorigin="anonymous"></script>
+<script
+  src="https://code.jquery.com/ui/1.9.1/jquery-ui.min.js"
+  integrity="sha256-UezNdLBLZaG/YoRcr48I68gr8pb5gyTBM+di5P8p6t8="
+  crossorigin="anonymous"></script>
+<script>
+!function(e){"use strict";!function(e,t,s,i){var o="tocify",n="tocify-hide",a="tocify-header",l="."+a,r="tocify-subheader",h="."+r,d="tocify-item",c="."+d,f="tocify-extend-page";e.widget("toc.tocify",{version:"1.9.0",options:{context:"body",ignoreSelector:null,selectors:"h1, h2, h3",showAndHide:!0,showEffect:"slideDown",showEffectSpeed:"medium",hideEffect:"slideUp",hideEffectSpeed:"medium",smoothScroll:!0,smoothScrollSpeed:"medium",scrollTo:0,showAndHideOnScroll:!0,highlightOnScroll:!0,highlightOffset:40,theme:"bootstrap",extendPage:!0,extendPageOffset:100,history:!0,scrollHistory:!1,hashGenerator:"compact",highlightDefault:!0},_create:function(){var s=this;s.extendPageScroll=!0,s.items=[],s._generateToc(),s._addCSSClasses(),s.webkit=function(){for(var e in t)if(e&&-1!==e.toLowerCase().indexOf("webkit"))return!0;return!1}(),s._setEventHandlers(),e(t).load(function(){s._setActiveElement(!0),e("html, body").promise().done(function(){setTimeout(function(){s.extendPageScroll=!1},0)})})},_generateToc:function(){var t,s,i=this,l=i.options.ignoreSelector;if((t=-1!==this.options.selectors.indexOf(",")?e(this.options.context).find(this.options.selectors.replace(/ /g,"").substr(0,this.options.selectors.indexOf(","))):e(this.options.context).find(this.options.selectors.replace(/ /g,""))).length){i.element.addClass(o);var r=e(this.options.context).find(this.options.selectors),h=0;t.each(function(t){if(!e(this).is(l)){for(s=e("<ul/>",{id:a+t,class:a}).append(i._nestElements(e(this),t)),i.element.append(s);r[h]!==this;)h+=1;for(var o=h+1;o<r.length&&r[o].nodeName.toLowerCase()!==r[h].nodeName.toLowerCase();)o+=1;for(h+=1;h<o;){var n=r[h];e(n).is(l)||i._appendSubheaders.call(n,i,s),h+=1}}})}else i.element.addClass(n)},_setActiveElement:function(e){var s=this,i=t.location.hash.substring(1),o=s.element.find('li[data-unique="'+i+'"]');return i.length?(s.element.find("."+s.focusClass).removeClass(s.focusClass),o.addClass(s.focusClass),s.options.showAndHide&&o.click()):(s.element.find("."+s.focusClass).removeClass(s.focusClass),!i.length&&e&&s.options.highlightDefault&&s.element.find(c).first().addClass(s.focusClass)),s},_nestElements:function(t,s){var i,o,n;return(i=e.grep(this.items,function(e){return e===t.text()})).length?this.items.push(t.text()+s):this.items.push(t.text()),n=this._generateHashValue(i,t,s),o=e("<li/>",{class:d,"data-unique":n}).append(e("<a/>",{text:t.text()})),t.before(e("<div/>",{name:n,"data-unique":n})),o},_generateHashValue:function(e,t,s){var i="",o=this.options.hashGenerator;if("pretty"===o){for(i=t.text().toLowerCase().replace(/\s/g,"-");i.indexOf("--")>-1;)i=i.replace(/--/g,"-");for(;i.indexOf(":-")>-1;)i=i.replace(/:-/g,"-")}else i="function"==typeof o?o(t.text(),t):t.text().replace(/\s/g,"");return e.length&&(i+=""+s),i},_appendSubheaders:function(t,s){var i=e(this).index(t.options.selectors),o=e(t.options.selectors).eq(i-1),n=+e(this).prop("tagName").charAt(1),a=+o.prop("tagName").charAt(1);n<a?t.element.find(h+"[data-tag="+n+"]").last().append(t._nestElements(e(this),i)):n===a?s.find(c).last().after(t._nestElements(e(this),i)):s.find(c).last().after(e("<ul/>",{class:r,"data-tag":n})).next(h).append(t._nestElements(e(this),i))},_setEventHandlers:function(){var i=this;this.element.on("click.tocify","li",function(s){if(i.options.history&&(t.location.hash=e(this).attr("data-unique")),i.element.find("."+i.focusClass).removeClass(i.focusClass),e(this).addClass(i.focusClass),i.options.showAndHide){var o=e('li[data-unique="'+e(this).attr("data-unique")+'"]');i._triggerShow(o)}i._scrollTo(e(this))}),this.element.find("li").on({"mouseenter.tocify":function(){e(this).addClass(i.hoverClass),e(this).css("cursor","pointer")},"mouseleave.tocify":function(){"bootstrap"!==i.options.theme&&e(this).removeClass(i.hoverClass)}}),(i.options.extendPage||i.options.highlightOnScroll||i.options.scrollHistory||i.options.showAndHideOnScroll)&&e(t).on("scroll.tocify",function(){e("html, body").promise().done(function(){var o,n,a,l,r=e(t).scrollTop(),h=e(t).height(),d=e(s).height(),u=e("body")[0].scrollHeight;if(i.options.extendPage&&(i.webkit&&r>=u-h-i.options.extendPageOffset||!i.webkit&&h+r>d-i.options.extendPageOffset)&&!e(".tocify-extend-page").length){if(!(n=e('div[data-unique="'+e(c).last().attr("data-unique")+'"]')).length)return;a=n.offset().top,e(i.options.context).append(e("<div />",{class:f,height:Math.abs(a-r)+"px","data-unique":f})),i.extendPageScroll&&(l=i.element.find("li.active"),i._scrollTo(e('div[data-unique="'+l.attr("data-unique")+'"]')))}setTimeout(function(){var s,n=null,a=null,l=e(i.options.context).find("div[data-unique]");l.each(function(t){var s=Math.abs((e(this).next().length?e(this).next():e(this)).offset().top-r-i.options.highlightOffset);if(!(null==n||s<n))return!1;n=s,a=t}),s=e(l[a]).attr("data-unique"),o=e('li[data-unique="'+s+'"]'),i.options.highlightOnScroll&&o.length&&(i.element.find("."+i.focusClass).removeClass(i.focusClass),o.addClass(i.focusClass)),i.options.scrollHistory&&t.location.hash!=="#"+s&&t.location.replace("#"+s),i.options.showAndHideOnScroll&&i.options.showAndHide&&i._triggerShow(o,!0)},0)})})},show:function(t,s){var i=this;if(!t.is(":visible"))switch(t.find(h).length||t.parent().is(l)||t.parent().is(":visible")?t.children(h).length||t.parent().is(l)||(t=t.closest(h)):t=t.parents(h).add(t),i.options.showEffect){case"none":t.show();break;case"show":t.show(i.options.showEffectSpeed);break;case"slideDown":t.slideDown(i.options.showEffectSpeed);break;case"fadeIn":t.fadeIn(i.options.showEffectSpeed);break;default:t.show()}return t.parent().is(l)?i.hide(e(h).not(t)):i.hide(e(h).not(t.closest(l).find(h).not(t.siblings()))),i},hide:function(e){var t=this;switch(t.options.hideEffect){case"none":e.hide();break;case"hide":e.hide(t.options.hideEffectSpeed);break;case"slideUp":e.slideUp(t.options.hideEffectSpeed);break;case"fadeOut":e.fadeOut(t.options.hideEffectSpeed);break;default:e.hide()}return t},_triggerShow:function(e,t){return e.parent().is(l)||e.next().is(h)?this.show(e.next(h),t):e.parent().is(h)&&this.show(e.parent(),t),this},_addCSSClasses:function(){return"jqueryui"===this.options.theme?(this.focusClass="ui-state-default",this.hoverClass="ui-state-hover",this.element.addClass("ui-widget").find(".toc-title").addClass("ui-widget-header").end().find("li").addClass("ui-widget-content")):"bootstrap"===this.options.theme?(this.element.find(l+","+h).addClass("nav nav-list"),this.focusClass="active"):(this.focusClass="tocify-focus",this.hoverClass="tocify-hover"),this},setOption:function(){e.Widget.prototype._setOption.apply(this,arguments)},setOptions:function(){e.Widget.prototype._setOptions.apply(this,arguments)},_scrollTo:function(t){var s=this.options.smoothScroll||0,i=this.options.scrollTo,o=e('div[data-unique="'+t.attr("data-unique")+'"]');return o.length?(e("html, body").promise().done(function(){e("html, body").animate({scrollTop:o.offset().top-(e.isFunction(i)?i.call():i)+"px"},{duration:s})}),this):this}})}(window.jQuery,window,document)}();
+</script>
+<script>
+    $(function() {
+        var toc = $("#toc").tocify({
+          selectors: "h2,h3,h4,h5"
+        });
+    });
+</script>
+
+
+
+    </div>
+  </div>
+</body>
 
 
  
