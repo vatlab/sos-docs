@@ -12524,7 +12524,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="Inclusion-of-scripts-in-SoS-workflows">Inclusion of scripts in SoS workflows<a class="anchor-link" href="#Inclusion-of-scripts-in-SoS-workflows"></a></h1>
 </div>
 </div>
 </div>
@@ -12537,7 +12537,11 @@ li.tocify-item.active {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>A Python function with a string as the first parameter can be written in a script style</li>
+<li>Scripts are included in verbatim by default</li>
+<li>Indentation is not required but recommended</li>
+<li><code>expand=True</code> turns the script into a Python f-string</li>
+<li><code>expand="l r"</code> can be used to specify another delimiter for string interpolation</li>
 </ul>
 </li>
 </ul>
@@ -12550,7 +12554,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Script-style-function-call-">Script style function call <a id="Script_style_function_call" /><a class="anchor-link" href="#Script-style-function-call-"></a></h2>
+<h2 id="SoS-&quot;Actions&quot;">SoS "Actions"<a class="anchor-link" href="#SoS-&quot;Actions&quot;"></a></h2>
 </div>
 </div>
 </div>
@@ -12559,92 +12563,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS allows you to write Python functions that accept a script (string) as the first parameter in a special script format. For example, an SoS function <code>R</code> that executes a script</p>
-<div class="highlight"><pre><span></span><span class="n">R</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">pdf(&#39;output.pdf&#39;)</span>
-<span class="s2">plot(0, 0)</span>
-<span class="s2">dev.off()</span>
-<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span> <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span><span class="p">)</span>
-</pre></div>
-<p>can be written as</p>
-<div class="highlight"><pre><span></span><span class="kn">R:</span>  <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
-<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>
-<span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS <strong>automatically dedents scripts in script format</strong> so that you can indent the scripts (add equal amount of leading white spaces to all lines) and write the above example as</p>
-<div class="highlight"><pre><span></span><span class="kn">R:</span>  <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
-   <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>
-   <span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-   <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-</pre></div>
-<p>The latter is much preferred because it avoids trouble if the script contains SoS-like syntax such as <code>[1]</code> and <code>option:</code> and be treated as SoS directives, and more importantly, allows starting a new statement from a non-indented line. For example, <code>print('Hello world')</code> would be considered part of a R script in</p>
-<div class="highlight"><pre><span></span><span class="kn">R:</span>  <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
-<span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>
-<span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">)</span>
-</pre></div>
-<p>but a separate statement in</p>
-<div class="highlight"><pre><span></span><span class="kn">R:</span>  <span class="kp">workdir</span><span class="o">=</span><span class="s1">&#39;result&#39;</span>
-   <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;output.pdf&#39;</span><span class="p">)</span>
-   <span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-   <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The script format also accepts an option <code>expand</code> that <strong>expands expressions enclosed in specified sigils</strong> (<a href="https://www.python.org/dev/peps/pep-0498/">literal string interpolation</a>). Using <code>expand=True</code>, the included script is converted to a Python f-string so that the string will be interpolated when it is executed. For example,</p>
-
-<pre><code>output = 'output.pdf'
-R: workdir='result', expand=True
-   pdf('{output}')
-   plot(0, 0)
-   dev.off()</code></pre>
-<p>will be translated to</p>
-
-<pre><code>output = 'output.pdf'
-R(f'''\
-pdf('{output}')
-plot(0, 0)
-dev.off()
-''', workdir='result')</code></pre>
-<p>which will be expanded to</p>
-
-<pre><code>R('''\
-pdf('output.pdf')
-plot(0, 0)
-dev.off()
-''', workdir='result')</code></pre>
-<p>when the action is executed.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Although the use of expressions in literal string (<code>{ }</code> parts) is very convenient, the braces might conflict with the braces in languages such as R for which braces are widely used. The official method to include braces in such literal strings is to double the braces (<code>{{ }}</code>)  as in the following example</p>
+<p>SoS defines a number of <strong>actions</strong>, which are simply Python functions that follows a specific set of conventions. For example, an action <code>sh</code> is a python function that executes its first parameter as a shell script:</p>
 
 </div>
 </div>
@@ -12654,16 +12573,10 @@ dev.off()
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
-   <textarea rows="7"
-      class="sos-source" name="SoS">a = 1
-R: expand=True
-    if ({a} == 1) {{
-      cat("This is 1\n");
-    }} else {{
-      cat("This is not 1\n");
-    }}</textarea>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">sh('echo Hello world')</textarea>
   </div>
 </div>
 
@@ -12679,7 +12592,7 @@ R: expand=True
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>This is 1
+<pre>Hello world
 </pre>
 </div>
 </div>
@@ -12696,7 +12609,7 @@ R: expand=True
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>However, as you can imagine, inclusion of long scripts with lots of braces like this could be tedious and error-prone. For this reason, SoS allows you to use an alternative sigil for the format string. For example, using <code>expand='${ }'</code>, you can expand expressions inside <code>${ }</code> instead of <code>{ }</code> for string interpolation and do not have to double the braces.</p>
+<p>When you execute a SoS script from command line or SoS Notebook, these functions are automatically imported and can be used directly, and you can use them just like any other Python functions. For example,</p>
 
 </div>
 </div>
@@ -12706,15 +12619,308 @@ R: expand=True
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">greeting = "Hello world"
+sh(f'echo {greeting}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Hello world
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we define a Python string <code>greeting</code> and use the <code>sh</code> action to execute a shell script. A <a href="https://www.python.org/dev/peps/pep-0498/">Python f-string</a> is used to compose the script with the defined variable.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-info" role="alert">
+  <h4>Python f-string</h4>
+  <p>SoS uses Python f-string extensively. Please read <a href="https://www.python.org/dev/peps/pep-0498/">PEP498</a> or one of the online tutorials on how to use Python f-strings if you are not familiar with it.</p>  
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When the scripts get longer, you will have to use Python multi-line strings to pass them to the action. Here is an example for the use of a <code>R</code> action to execute a longer <code>R</code> script:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">R("""\
+x <- 5
+if(x >= 0) {
+    print("Non-negative number")
+} else {
+    print("Negative number")
+}
+""")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;Non-negative number&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The use of format string in these cases become more complicated. First, you will need to use multi-line f-string (<code>f'''x'''</code> and <code>f"""x"""</code>). Second, when the script itself contains braces, they will be interpreted as Python expressions unless they are doubled.</p>
+<p>Consequently, a <code>R</code> script that uses a Python variable <code>my_num</code> needs to be written as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">my_num = -1
+
+R(f"""\
+x <- {my_num}
+if(x >= 0) {{
+    print("Non-negative number")
+}} else {{
+    print("Negative number")
+}}
+""")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;Negative number&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Script-style-function-calls-">Script style function calls <a id="Script_style_function_call" /><a class="anchor-link" href="#Script-style-function-calls-"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The f-string in the last example is not quite readable, error-prone, and difficult to maintaine, especially when the script contains multiple braces and variables. For this reason, SoS introduces a special syntax that allows you to write Python functions that accept a script (string) as the first parameter in a special script format.</p>
+<p>For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">R("""\
+x <- 5
+if(x >= 0) {
+    print("Non-negative number")
+} else {
+    print("Negative number")
+}
+""")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;Non-negative number&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>can be written as</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
    <textarea rows="7"
-      class="sos-source" name="SoS">a = 1
-R: expand='${ }'
-    if (${a} == 1) {
-      cat("This is 1\n");
+      class="sos-source" name="SoS">R:
+x <- 5
+if(x >= 0) {
+    print("Non-negative number")
+} else {
+    print("Negative number")
+}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;Non-negative number&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or better as</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
+      class="sos-source" name="SoS">R:
+    x <- 5
+    if(x >= 0) {
+        print("Non-negative number")
     } else {
-      cat("This is not 1\n");
+        print("Negative number")
     }</textarea>
   </div>
 </div>
@@ -12731,7 +12937,7 @@ R: expand='${ }'
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>This is 1
+<pre>[1] &#34;Non-negative number&#34;
 </pre>
 </div>
 </div>
@@ -12748,7 +12954,7 @@ R: expand='${ }'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The sigil specified by parameter <code>expand</code> should be a string with a single space separating left and right sigils (e.g. <code>"[ ]"</code>, <code>"s( )"</code>, <code>"&lt; &gt;"</code>). Note that the use of alternative sigils is just a convenient way for you to include large trunks of scripts with braces. Under the hood SoS will convert the string to properly formatted f-strings with doubled braces and <code>{ }</code> sigils.</p>
+<p>Indentation is optional and SoS will automatically dedent the included scripts.</p>
 
 </div>
 </div>
@@ -12758,7 +12964,35 @@ R: expand='${ }'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As a final note, the SoS script format could be confused with Python's type hint syntax but SoS is able to tell the differences and treat them correctly:</p>
+<div class="bs-callout bs-callout-info" role="alert">
+  <h4>Indentation of scripts</h4>
+  <p>The indentation of scripts in the script style is optional but recommended, because it allows the separation of multiple function calls such as</p>
+    <pre>
+    R:
+       cat('this is R')
+
+    python:
+       print('this is python')
+    </pre>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-expand-option">The <code>expand</code> option<a class="anchor-link" href="#The-expand-option"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When option <code>expand=True</code> is specified, the included script will be treated as a Python f-string. For example,</p>
 
 </div>
 </div>
@@ -12768,11 +13002,55 @@ R: expand='${ }'
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[52]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">var : str = 5
-var</textarea>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">my_num = -1
+
+R(f"""\
+x <- {my_num}
+if(x >= 0) {{
+    print("Non-negative number")
+}} else {{
+    print("Negative number")
+}}
+""")</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>can be written as</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">my_num = -1
+
+R: expand=True
+    x <- {my_num}
+    if(x >= 0) {{
+        print("Non-negative number")
+    }} else {{
+        print("Negative number")
+    }}</textarea>
   </div>
 </div>
 
@@ -12784,15 +13062,13 @@ var</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[52]:</div>
+<div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>5</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;Negative number&#34;
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -12807,8 +13083,7 @@ var</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-sigil">Option <code>sigil</code><a class="anchor-link" href="#Option-sigil"></a></h3><p><a id="Option_sigil"></a>
-Option <code>sigil</code> accepts a string for an alternative sigil, or <code>None</code> to disable string interpolation in the step. The sigil must be two strings separated by a space, such as <code>%( )</code>, <code>&lt; &gt;</code>, and <code>#{ }</code>. Sigils with equal left and right symbol such as <code># #</code> can be used although they do not support features such as nested interpolation. Please refer to section <a href="SoS_Syntax.html">SoS Syntax</a> for details of this option.</p>
+<p>Note that SoS Notebook automatically highlights the interpolated parts of the included script, which makes it much easier to differentiate Python expressions from the original R script.</p>
 
 </div>
 </div>
@@ -12818,7 +13093,85 @@ Option <code>sigil</code> accepts a string for an alternative sigil, or <code>No
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<p>Because the included script has two pairs of braces, it is necessary to double them so that they are not treated as Python expressions. In these cases, it is actually easier to use a different set of sigil (delimiters) for string interpolation. This can be done using the <code>expand</code> option as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">my_num = -1
+
+R: expand='${ }'
+    x <- ${my_num}
+    if(x >= 0) {
+        print("Non-negative number")
+    } else {
+        print("Negative number")
+    }</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;Negative number&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The sigil should be specified as a string with left and right sigil separated by a space. You can use any pair of sigils as long as they do not cause confusion.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-info" role="alert">
+  <h4>Use of alternative sigils</h4>
+  <p>When the included scripts have braces, it is easier to use a set of alternative sigils for string interpolation.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/sos_actions.html">SoS Actions and common action options</a></li>
+</ul>
 
 </div>
 </div>
