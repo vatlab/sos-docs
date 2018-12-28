@@ -41,7 +41,7 @@ def generate_doc_toc(docs_dir):
 
     tutString="var tutorials=["
     docString="var documentation=["
-    with open(os.path.join(docs_dir, "src", "homepage", "Notebook_Documentation.ipynb")) as json_data:
+    with open(os.path.join(docs_dir, "src", "homepage", "notebook.ipynb")) as json_data:
          d = json.load(json_data)
     for cell in d["cells"]:
         for sentence in cell["source"]:
@@ -53,7 +53,7 @@ def generate_doc_toc(docs_dir):
             if doc:
                 name=doc.group(1)
                 docString+='"'+name+'", '
-    with open(os.path.join(docs_dir, "src", "homepage", "Workflow_Documentation.ipynb")) as json_data:
+    with open(os.path.join(docs_dir, "src", "homepage", "workflow.ipynb")) as json_data:
          d = json.load(json_data)
     for cell in d["cells"]:
         for sentence in cell["source"]:
