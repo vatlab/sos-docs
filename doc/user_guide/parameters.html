@@ -12553,7 +12553,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Parameter-and-environment-specification-">Parameter and environment specification <a id="Parameter_and_environment_specification" /><a class="anchor-link" href="#Parameter-and-environment-specification-"></a></h2>
+<h2 id="Global-and-local-variables">Global and local variables<a class="anchor-link" href="#Global-and-local-variables"></a></h2>
 </div>
 </div>
 </div>
@@ -12562,39 +12562,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Command-line-options-">Command line options <a id="Command_line_options" /><a class="anchor-link" href="#Command-line-options-"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS allows you to define parameters that accept values from command line options easily.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Optional-arguments-">Optional arguments <a id="Optional_arguments" /><a class="anchor-link" href="#Optional-arguments-"></a></h4>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Any variable assignment prefixed with <code>parameter:</code> can accept values from command  line. The format of such lines are</p>
-
-<pre><code># comment
-parameter: var_name = default_value</code></pre>
-<p>The default value can be integer, float, boolean, string, list of string, or expressions that return values of these types. Other types can be used as long as they can be converted to these types from user-provided values. For example</p>
+<p>Now let us have a look at the example workflow from <a href="sos_in_notebook.html">our first tutorial</a> in more detail.</p>
 
 </div>
 </div>
@@ -12604,51 +12572,26 @@ parameter: var_name = default_value</code></pre>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[53]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS"># path to tool gatk
-parameter: gatk_path = '~/bin/GATK'</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>defines a variable <code>gatk_path</code> with default value <code>'~/bin/GATK'</code>.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If you execute a workflow without defining <code>gatk_path</code>, the default value will be used</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[54]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
       class="sos-source" name="SoS">%run
-parameter: gatk_path = '~/bin/GATK'
-print(gatk_path)</textarea>
+
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
   </div>
 </div>
 
@@ -12663,8 +12606,59 @@ print(gatk_path)</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>~/bin/GATK
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
 </pre>
 </div>
 </div>
@@ -12681,7 +12675,44 @@ print(gatk_path)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You can set this parameter from command line using option <code>--gatk_path</code></p>
+<p>This workflow has a <code>global</code> section, which defines variables that are visible to all workflow steps. The three variables are available in <code>plot_10</code> and <code>plot_20</code>, so they can be used in actions <code>run</code> and <code>R</code> with the option <code>expand=True</code>. More explicitly, the <code>plot_10</code> can be considered as the following python script</p>
+<div class="highlight"><pre><span></span><span class="n">excel_file</span> <span class="o">=</span> <span class="s1">&#39;data/DEG.xlsx&#39;</span>
+<span class="n">csv_file</span> <span class="o">=</span> <span class="s1">&#39;DEG.csv&#39;</span>
+<span class="n">figure_file</span> <span class="o">=</span> <span class="s1">&#39;output.pdf&#39;</span>
+
+<span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">xlsx2csv {excel_file} &gt; {csv_file}</span>
+<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+  <h4>The global section</h4>
+  <p>The content of the global section can be considered as part of all workflow steps</p>  
+</div>
+<div class="bs-callout bs-callout-info" role="alert">
+  <h4>Unnamed and multiple global sections (advanced)</h4>
+    <ul>
+        <li>The <code>[global]</code> section header can be ignored if it is the first section of a SoS script. In another word, statements before the definition of any SoS section constitute an unnamed global section.</li>  
+        <li>Multiple named and unnamed global sections are allowed and their contents are merged to a single <code>[global]</code> section of the workflow.</li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In contrast, <strong>variables defined in individual steps are not available to other steps</strong>. For example, the following workflow would fail because</p>
 
 </div>
 </div>
@@ -12691,12 +12722,26 @@ print(gatk_path)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run --gatk_path /my/GATK
-parameter: gatk_path = '~/bin/GATK'
-print(gatk_path)</textarea>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">%run
+
+[plot_10]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+figure_file = 'output.pdf'
+
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
   </div>
 </div>
 
@@ -12711,8 +12756,43 @@ print(gatk_path)</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=221e15922696f853) is executed successfully with 2 completed steps.
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/my/GATK
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+<span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[plot_20]: 
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+script_8039746696757261604 in &lt;module&gt;
+      plot(data$log2FoldChange, data$stat)
+      dev.off()
+----&gt; &#34;&#34;&#34;)
+
+NameError: name &#39;csv_file&#39; is not defined</span>
 </pre>
 </div>
 </div>
@@ -12729,7 +12809,38 @@ print(gatk_path)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You can also use <code>-</code> in place of <code>_</code> in command line, although the variable name cannot have <code>-</code> in it.</p>
+<div class="bs-callout bs-callout-warning" role="alert">
+  <h4>Local (step-level) variables</h4>
+  <p>Variables defines at the step level are local to the step and are not accessible from other SoS steps.</p>  
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you really need to pass locally defined variables to other steps, you will have to return it as the part of the result of the output, or explicitly share the variable with others. Please refer to the <a href="#further_reading">Further reading</a> section of this tutorial for details.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Workflow-parameters-">Workflow parameters <a id="parameter" /><a class="anchor-link" href="#Workflow-parameters-"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS allows you to define parameters that accept values from command line options.</p>
 
 </div>
 </div>
@@ -12739,12 +12850,26 @@ print(gatk_path)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run --gatk-path /my/GATK
-parameter: gatk_path = '~/bin/GATK'
-print(gatk_path)</textarea>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">%run --excel-file data/DEG.xlsx
+
+[global]
+parameter: excel_file = str
+parameter: csv_file = 'DEG.csv'
+parameter: figure_file = 'output.pdf'
+
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
   </div>
 </div>
 
@@ -12759,8 +12884,36 @@ print(gatk_path)</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/my/GATK
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+null device 
+          1 
 </pre>
 </div>
 </div>
@@ -12777,7 +12930,25 @@ print(gatk_path)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Actually, because the input is a path, it can be more convenient to create a <code>path</code> object</p>
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>The <code>parameter</code> statement</h4>
+ <ul>
+     <li>Parameters are defined with a <code>parameter</code> statement if the format of <br><code>parameter: name = value</code></li>
+     <li>Parameter <code>name</code> is the name of the parameter</li>
+     <li>Parameter <code>value</code> can be a type (`str` in the example) or a default value</li>
+<li>The parameter is specified with a double dash syntax from command line, which can be from <code>%run</code> or <code>%sosrun</code> magics, or from command line after <code>sos run</code> command</li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the above example, three parameters <code>excel_file</code>, <code>csv_file</code>, <code>figure_file</code> are defined. Parameter <code>excel_file</code> is required and is specified as an command line option of the <code>%run</code> magic. The other two parameters have their default values. Note that parameter <code>excel_file</code> can be specified as both <code>--excel_file</code> or <code>--excel-file</code> from command line.</p>
+<p>If you execute the workflow without option, an error will be raised.</p>
 
 </div>
 </div>
@@ -12787,12 +12958,27 @@ print(gatk_path)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run --gatk-path /my/GATK
-parameter: gatk_path = path('~/bin/GATK')
-print(f"gatk_path={gatk_path!r}")</textarea>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
+   <textarea rows="18"
+      class="sos-source" name="SoS">%run 
+
+[global]
+parameter: excel_file = str
+parameter: csv_file = 'DEG.csv'
+parameter: figure_file = 'output.pdf'
+
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()
+  </textarea>
   </div>
 </div>
 
@@ -12807,8 +12993,33 @@ print(f"gatk_path={gatk_path!r}")</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>gatk_path=path(&#39;/my/GATK&#39;)
+<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">Argument excel_file of type str is required</span>
 </pre>
 </div>
 </div>
@@ -12825,7 +13036,35 @@ print(f"gatk_path={gatk_path!r}")</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The default value of the parameter determines the type of values it accepts. For example, the following command yields an error because the parameter expects an integer (from default value <code>0</code>) but a string is passed.</p>
+<h2 id="Type-of-parameters">Type of parameters<a class="anchor-link" href="#Type-of-parameters"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The types of parameters are determined by the default value or type specification, and determines how they should be passed from command line.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Simple-Python-types">Simple Python types<a class="anchor-link" href="#Simple-Python-types"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS automatically determines the type of default values and convert your input data to the type. For example, the type of <code>cutoff</code> is determined to be an integer so it accepts an integer value from command line:</p>
 
 </div>
 </div>
@@ -12835,13 +13074,196 @@ print(f"gatk_path={gatk_path!r}")</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
-      class="sos-source" name="SoS">%sandbox --expect-error
+      class="sos-source" name="SoS">%run --cutoff 5
+parameter: cutoff = 0
 
-%run --cutoff zero
-parameter: cutoff = 0</textarea>
+print(cutoff)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>5
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An error will be raised if you pass a string,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run --cutoff zero
+parameter: cutoff = 0
+
+print(cutoff)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[default]: argument --cutoff: invalid int value: &#39;zero&#39;</span>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>even a float value</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run --cutoff 5.1
+parameter: cutoff = 0
+
+print(cutoff)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[default]: argument --cutoff: invalid int value: &#39;5.1&#39;</span>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">If you intended to accept an float value, use a default value in float:</textarea>
   </div>
 </div>
 
@@ -12857,15 +13279,61 @@ parameter: cutoff = 0</textarea>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>
----------------------------------------------------------------------------
-ArgumentError                             Traceback (most recent call last)
-script_7619312906926821593 in &lt;module&gt;
-      if &#34;sos_handle_parameter_&#34; in globals():
-----&gt;     cutoff = sos_handle_parameter_(&#39;cutoff&#39;,  0
-      )
+<pre>File contains parsing errors: 
+	[line  2]: If you intended to accept an float value, use a default value in float:
 
-ArgumentError: argument --cutoff: invalid int value: &#39;zero&#39;
+Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#39;, 1, 6, &#39;If you intended to accept an float value, use a default value in float:\n&#39;))
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run --cutoff 5.1
+parameter: cutoff = 0.
+
+print(cutoff)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>5.1
 </pre>
 </div>
 </div>
@@ -12882,7 +13350,16 @@ ArgumentError: argument --cutoff: invalid int value: &#39;zero&#39;
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Simiarly, a list would be created if the parameter has a default value of type list</p>
+<h3 id="List-of-strings">List of strings<a class="anchor-link" href="#List-of-strings"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A list would be created if the parameter has a default value of type list. For example, a list <code>['A']</code> is returned because the default value has a list type.</p>
 
 </div>
 </div>
@@ -12892,11 +13369,12 @@ ArgumentError: argument --cutoff: invalid int value: &#39;zero&#39;
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
       class="sos-source" name="SoS">%run --sample-names A
 parameter: sample_names = []
+
 print(sample_names)</textarea>
   </div>
 </div>
@@ -12906,6 +13384,18 @@ print(sample_names)</textarea>
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
 
 <div class="output_area">
 
@@ -12930,7 +13420,7 @@ print(sample_names)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>and you can specify default values of type <code>paths</code> if you are expecting multiple filenames:</p>
+<p>SoS even understands the type of the values of the list and tries to follow it:</p>
 
 </div>
 </div>
@@ -12940,70 +13430,13 @@ print(sample_names)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run --input-files a.txt b.txt
-parameter: input_files = paths('a.txt')
-print(f"input_files={input_files!r}")</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>input_files=[path(&#39;a.txt&#39;), path(&#39;b.txt&#39;)]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Required-arguments-">Required arguments <a id="Required_arguments" /><a class="anchor-link" href="#Required-arguments-"></a></h4>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In cases where there is no suitable default values and/or command line arguments are mandatory, you can specify a parameter without initial value, and the parameter will be considered required. By default, the parameter will be considered to be of a single value with <code>str</code> type.</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
-      class="sos-source" name="SoS">%sandbox --expect-error
+      class="sos-source" name="SoS">%run --values 4 5
+parameter: values = [1, 2, 3]
 
-parameter: cutoff 
-print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
+print(values)</textarea>
   </div>
 </div>
 
@@ -13018,46 +13451,12 @@ print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>
----------------------------------------------------------------------------
-ArgumentError                             Traceback (most recent call last)
-script_5036437366813650181 in &lt;module&gt;
-      if &#34;sos_handle_parameter_&#34; in globals():
-----&gt;     cutoff = sos_handle_parameter_(&#39;cutoff&#39;, str)
-      print(f&#34;cutoff = {cutoff} of type {type(cutoff).__name__}&#34;)
 
-ArgumentError: Argument cutoff of type str is required
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run --cutoff 100
-parameter: cutoff 
-print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
-  </div>
-</div>
+<div class="output_html rendered_html output_subarea ">
 
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
+</div>
 
 <div class="output_area">
 
@@ -13065,7 +13464,7 @@ print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>cutoff = 100 of type str
+<pre>[4, 5]
 </pre>
 </div>
 </div>
@@ -13082,7 +13481,7 @@ print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you would like to specify a type, you can use the Python type hint to annotate the variable with a type</p>
+<p>However, it is not yet possible to specify the type of values when you specify a required parameter of type list so all the values will be passed as strings:</p>
 
 </div>
 </div>
@@ -13092,61 +13491,13 @@ print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run --cutoff 100
-parameter: cutoff : int
-print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>cutoff = 100 of type int
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Currently SoS only accepts simple type hints such as <code>int</code>, <code>str</code>, <code>float</code>, <code>list</code> (only list of strings are supported), and target types such as <code>path</code>, <code>paths</code>, <code>file_target</code>, and <code>sos_targets</code>. For example</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
-      class="sos-source" name="SoS">%run --bam-files A.bam B.bam
-# input bam files
-parameter: bam_files : paths
-print(bam_files)</textarea>
+      class="sos-source" name="SoS">%run --values 4 5
+parameter: values = list
+
+print(values)</textarea>
   </div>
 </div>
 
@@ -13161,8 +13512,33 @@ print(bam_files)</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>A.bam B.bam
+<pre>[&#39;4&#39;, &#39;5&#39;]
 </pre>
 </div>
 </div>
@@ -13179,7 +13555,17 @@ print(bam_files)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is worth noting that you can specify type hint also for parameters with initial values but SoS will use type of the default values and ignore type hints in this case. For example, in the following case when a parameter with default value 10 are given a type hint of <code>list</code>, it will accept input as integers.</p>
+<h3 id="SoS-types-*">SoS types *<a class="anchor-link" href="#SoS-types-*"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is a bit advanced but for completeness we also show parameters with SoS types such as <code>path</code>, <code>paths</code>, <code>file_targets</code>. Generally speaking you can pass filenames as <code>str</code> or list of <code>str</code>, but passing SoS types such as <code>path</code> allow you to create variable in these types without type coercion.</p>
+<p>For example, the <code>path</code> type is derived from <a href="https://docs.python.org/3.6/library/pathlib.html"><code>pathlib.Path</code></a> with automatic expansion of <code>~</code> and other features. If you pass a parameter with type <code>path</code>, SoS will convert passed string into a <code>path</code> object so that you can use it directly.</p>
 
 </div>
 </div>
@@ -13189,12 +13575,15 @@ print(bam_files)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[65]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run --cutoff 100
-parameter: cutoff : list = 10
-print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">%run --infile ~/project/a.txt
+parameter: infile = path
+
+print(infile.name)
+print(infile.parent)
+print(infile.exists())</textarea>
   </div>
 </div>
 
@@ -13209,8 +13598,22 @@ print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>cutoff = 100 of type int
+<pre>a.txt
+/Users/bpeng1/project
+False
 </pre>
 </div>
 </div>
@@ -13227,7 +13630,83 @@ print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<p>Similarly, if you pass a <code>paths</code> (a sequence of <code>path</code>), you parameter will be of type <code>paths</code>:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run --infiles a.txt b.txt
+parameter: infiles = paths('a.txt')
+
+print(infiles)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=c71c227fecbe0460) is executed successfully with 1 completed step.
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a.txt b.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading-">Further reading <a id="further_reading" /><a class="anchor-link" href="#Further-reading-"></a></h2><ul>
+<li><a href="doc/user_guide/sos_datatypes.html">SoS Data Types</a></li>
+</ul>
 
 </div>
 </div>
@@ -13602,18 +14081,15 @@ print(f"cutoff = {cutoff} of type {type(cutoff).__name__}")</textarea>
           if (stream.sol()) {
             let sl = stream.peek();
             if (sl == '[') {
-              // header, move to the end
               if (stream.match(/^\[.*\]$/, false)) {
-                // if there is no :, the easy case
-                if (stream.match(/^\[[^:]*\]$/)) {
+                // if there is :
+                if (stream.match(/^\[[\s\w_,-]+:/)) {
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                } else if (stream.match(/^\[[\s\w,-]+\]$/)) {
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header line-section-header";
-                } else {
-                  // match up to :
-                  stream.match(/^\[[^:]*:/);
-                  state.sos_state = 'header_option';
                   return "header line-section-header";
                 }
               }

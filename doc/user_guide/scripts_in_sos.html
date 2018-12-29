@@ -12666,7 +12666,7 @@ sh(f'echo {greeting}')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-info" role="alert">
+<div class="bs-callout bs-callout-primary" role="alert">
   <h4>Python f-string</h4>
   <p>SoS uses Python f-string extensively. Please read <a href="https://www.python.org/dev/peps/pep-0498/">PEP498</a> or one of the online tutorials on how to use Python f-strings if you are not familiar with it.</p>  
 </div>
@@ -13546,18 +13546,15 @@ R: expand='${ }'
           if (stream.sol()) {
             let sl = stream.peek();
             if (sl == '[') {
-              // header, move to the end
               if (stream.match(/^\[.*\]$/, false)) {
-                // if there is no :, the easy case
-                if (stream.match(/^\[[^:]*\]$/)) {
+                // if there is :
+                if (stream.match(/^\[[\s\w_,-]+:/)) {
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                } else if (stream.match(/^\[[\s\w,-]+\]$/)) {
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header line-section-header";
-                } else {
-                  // match up to :
-                  stream.match(/^\[[^:]*:/);
-                  state.sos_state = 'header_option';
                   return "header line-section-header";
                 }
               }

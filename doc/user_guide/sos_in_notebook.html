@@ -12745,7 +12745,7 @@ dev.off()</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-info" role="alert">
+<div class="bs-callout bs-callout-primary" role="alert">
   <h4>%run</h4>
     <p> The <code>%run</code> magic execute the content of the cell as a complete SoS workflow.</p>  
 </div>
@@ -13020,7 +13020,7 @@ R: expand=True
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-info" role="alert">
+<div class="bs-callout bs-callout-primary" role="alert">
   <h4>Embedded SoS script</h4>
   <p>An embed SoS script consists of SoS sections in all SoS cells of a notebook.</p>  
 </div>
@@ -13079,7 +13079,7 @@ R: expand=True
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-info" role="alert">
+<div class="bs-callout bs-callout-primary" role="alert">
   <h4>%sosrun</h4>
   <p> The <code>%sosrun</code> magic execute workflows defined in the embedded SoS script of a notebook.</p>  
 </div>
@@ -13687,18 +13687,15 @@ INFO: Workflow plot (ID=262714c9215ce33a) is executed successfully with 2 comple
           if (stream.sol()) {
             let sl = stream.peek();
             if (sl == '[') {
-              // header, move to the end
               if (stream.match(/^\[.*\]$/, false)) {
-                // if there is no :, the easy case
-                if (stream.match(/^\[[^:]*\]$/)) {
+                // if there is :
+                if (stream.match(/^\[[\s\w_,-]+:/)) {
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                } else if (stream.match(/^\[[\s\w,-]+\]$/)) {
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header line-section-header";
-                } else {
-                  // match up to :
-                  stream.match(/^\[[^:]*:/);
-                  state.sos_state = 'header_option';
                   return "header line-section-header";
                 }
               }
