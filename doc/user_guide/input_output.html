@@ -12770,6 +12770,782 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Inherited-input-with-groups">Inherited input with groups<a class="anchor-link" href="#Inherited-input-with-groups"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Remember that the purpose of <code>input</code> statement is to create <code>step_input</code> with appropriate targets and groups, but what will happen to <code>sos_targets</code> inherited from previous step, from <code>output_from</code> and <code>named_output</code>? The simple answer is that the existing groups will be honored.</p>
+<p>Let us first look at one example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">%run
+[10]
+input: for_each=dict(i=range(3))
+output: f'out_{i}.txt'
+_output.touch()
+
+[20]
+print(_input)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_963ebfa2719c4e2a85344c2c728d161d" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_963ebfa2719c4e2a85344c2c728d161d" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_963ebfa2719c4e2a85344c2c728d161d">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_963ebfa2719c4e2a85344c2c728d161d">00e512747f48765d</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_963ebfa2719c4e2a85344c2c728d161d">3</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_963ebfa2719c4e2a85344c2c728d161d">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_963ebfa2719c4e2a85344c2c728d161d" class="completed" datetime="1545611386397.4988">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>out_0.txt
+out_2.txt
+out_1.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>What happens here is that there are three substeps in step <code>10</code>, creating outputs <code>out_0.txt</code>, <code>out_1.txt</code> and <code>out_2.txt</code>. The <code>step_output</code> object contains three targets in three groups.</p>
+<p>When this <code>step_output</code> target is inherited by step <code>20</code> and becomes the <code>step_input</code> of the next step, step <code>20</code> is executed with the three existing substeps with <code>_input</code> being the <code>_output</code> of step <code>10</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If this is what you want, you can regroup the input with option <code>group_by</code>. For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">%run
+[10]
+input: for_each=dict(i=range(3))
+output: f'out_{i}.txt'
+_output.touch()
+
+[20]
+input: group_by='all'
+print(_input)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_6fde36b98ca74ad384c506f68885a209" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_6fde36b98ca74ad384c506f68885a209" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_6fde36b98ca74ad384c506f68885a209">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_6fde36b98ca74ad384c506f68885a209">00e512747f48765d</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_6fde36b98ca74ad384c506f68885a209">4</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_6fde36b98ca74ad384c506f68885a209">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_6fde36b98ca74ad384c506f68885a209" class="completed" datetime="1545611620458.7751">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>out_0.txt out_1.txt out_2.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The same logic applies to output obtained from <code>output_from</code> and <code>named_output</code>. In the following example, the <code>output_from</code> function inherited 4 groups of outputs from step 'A', and 2 groups of outputs from step <code>B</code>. It then regroup outputs from step <code>A</code> into 2 groups and merge it with output from <code>B</code>. The final <code>_input</code> of step <code>20</code> therefore has two groups, each with 2 from step <code>A</code> and 1 from step <code>B</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">%run
+[A]
+input: for_each=dict(i=range(4))
+output: f'A_{i}.txt'
+_output.touch()
+
+[B]
+input: for_each=dict(i=range(2))
+output: f'B_{i}.txt'
+_output.touch()
+
+[20]
+input: output_from('A', group_by=2), output_from('B')
+print(_input)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_9de591f48fc34c289c65e471c0bd9de5" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_9de591f48fc34c289c65e471c0bd9de5" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_9de591f48fc34c289c65e471c0bd9de5">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_9de591f48fc34c289c65e471c0bd9de5">36316057dc19cf7a</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_9de591f48fc34c289c65e471c0bd9de5">5</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_9de591f48fc34c289c65e471c0bd9de5">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_9de591f48fc34c289c65e471c0bd9de5" class="completed" datetime="1545611731042.863">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A_0.txt A_1.txt B_0.txt
+A_2.txt A_3.txt B_1.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is worth noting that <code>named_output</code> can have groups as well. Because a step can produce multiple named outputs, <code>named_output('a')</code> will essentially get a subset of targets with source <code>a</code>, and all targets from groups with source <code>a</code>. For example, step <code>K</code> generates 8 outputs in 4 groups. With <code>named_output('B')</code>, output and all targets in groups with name <code>B</code> are returned so <code>_input</code> will be <code>B_0.txt</code>, <code>B_1.txt</code> and so on.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">%run
+[K]
+input: for_each=dict(i=range(4))
+output: A=f'A_{i}.txt', B=f'B_{i}.txt'
+_output.touch()
+
+[20]
+input: named_output('B')
+print(_input)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_b93d43c9fc2c41558913c128cf461e41" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_b93d43c9fc2c41558913c128cf461e41" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_b93d43c9fc2c41558913c128cf461e41">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_b93d43c9fc2c41558913c128cf461e41">d80ff4278bad6c40</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_b93d43c9fc2c41558913c128cf461e41">8</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_b93d43c9fc2c41558913c128cf461e41">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_b93d43c9fc2c41558913c128cf461e41" class="completed" datetime="1545613365692.245">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>B_0.txt
+B_2.txt
+B_1.txt
+B_3.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Output files of a step can be specified by step <code>output</code>. Similar to <code>input</code>, step output accepts strings, variables, expressions, and allows wildcard characters. For example, the following are acceptable output files</p>
+<div class="highlight"><pre><span></span><span class="n">output</span><span class="p">:</span>  <span class="p">[]</span>
+
+<span class="n">output</span><span class="p">:</span>  <span class="s1">&#39;accepted_hits.bam&#39;</span>
+
+<span class="n">output</span><span class="p">:</span>  <span class="n">aligned_reads</span><span class="p">,</span> <span class="n">bam_stats</span>
+
+<span class="n">output</span><span class="p">:</span>  <span class="s1">&#39;aligned/*.bam&#39;</span>
+
+<span class="n">output</span><span class="p">:</span>  <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;aligned_{samples}.bam&#39;</span><span class="p">)</span>
+</pre></div>
+<p>In the last example, function <code>expand_pattern</code> is used to contruct list of files from items of a sequence <code>samples</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Step process could be repeated multiple times with <strong>substeps</strong> defined by options <code>for_each</code> or <code>group_by</code>. Whereas <code>input</code> represents the complete set of input files, each substep has its own input files stored in variable <code>_input</code>.</p>
+<p>When there is no substep, <code>output</code> and <code>_output</code> are the same. Otherwise, the <code>output:</code> statement produces <code>_output</code> for each substep, and <code>_output</code> for all substeps form <code>output</code> after the completion of all substeps.</p>
+<p>For example, the following step accepts one or more bam files and index them using command <code>samtools index</code>. The input files are passed one by one and output from each substep is determined by <code>_input</code>.</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="nb">input</span><span class="p">:</span>
+    <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span>
+
+<span class="n">output</span><span class="p">:</span>
+    <span class="n">f</span><span class="s1">&#39;{_input}.bai&#39;</span>
+
+<span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+<p>The use of variable <code>output</code> in this scenario is discouraged because <code>output</code>, as the collection of all <code>_output</code> increases with each substep.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Specifying output of the entire step when there are multiple substeps can lead to error. For example,</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="nb">input</span><span class="p">:</span>
+    <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="n">output</span><span class="p">:</span>
+    <span class="n">output</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;.bai&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bamfiles</span><span class="p">]</span>
+
+<span class="n">task</span><span class="p">:</span>
+<span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+<p>will fail because tasks in this step produce the same set of output files (equal <code>_output</code> for all substeps), and none of the task produces all specified output files.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-group_by-">Option <code>group_by</code> <a id="Option_group_by" /><a class="anchor-link" href="#Option-group_by-"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>output</code> statement usually generate a <code>sos_targets</code> object without groups. This object will become <code>_output</code>, which then becomes one of the groups of <code>step_output</code>.</p>
+<p>However, the <code>output</code> statement can also generate a <code>sos_targets</code> object with groups, in which case the <code>_index</code> group will be become the <code>_output</code> of subgroup <code>_index</code>. For this reason, the object should have the same number of groups as <code>step_input</code>.</p>
+<p>For example, if you have list of pre-determined input and output files and you would like to pair them, you can create list all output files and use option <code>group_by</code> to create an equal number of output groups as input groups.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">%run
+in_files = [f'a_{i}.txt' for i in range(4)]
+out_files = [f'b_{i}.txt' for i in range(4)]
+
+[1]
+input: in_files, group_by=1
+output: out_files, group_by=1
+_output.touch()
+
+[2]
+print(_input)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_fd75d9a6702b495a81de2d9b5442e179" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_fd75d9a6702b495a81de2d9b5442e179" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_fd75d9a6702b495a81de2d9b5442e179">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_fd75d9a6702b495a81de2d9b5442e179">41c862e5b9a946e4</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_fd75d9a6702b495a81de2d9b5442e179">5</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_fd75d9a6702b495a81de2d9b5442e179">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_fd75d9a6702b495a81de2d9b5442e179" class="completed" datetime="1545612611265.95">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>b_0.txt
+b_2.txt
+b_3.txt
+b_1.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the previous example might not produce <code>b_0.txt</code>, <code>b_1.txt</code> in order because the substeps are executed concurrently so substeps can complete the <code>print</code> statement in any order.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Options-paired_with,-group_with,-pattern,-and-for_each">Options <code>paired_with</code>, <code>group_with</code>, <code>pattern</code>, and <code>for_each</code><a class="anchor-link" href="#Options-paired_with,-group_with,-pattern,-and-for_each"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Just like <code>input</code> statements, options <code>paired_with</code>, <code>group_with</code>, <code>pattern</code>, and <code>for_each</code> are all allowed in the <code>output</code> statement and can be used to create <code>_output</code> that can be passed to the next step, or from <code>output_from</code> or <code>named_output</code>.</p>
+<p>The most useful usages of the <code>paired_with</code> and <code>group_with</code> options are to attached variables to output targets and the output group.</p>
+<p>Say we know that particular input and output files are associated with a sample name, and we have paired each input file with a sample name using option <code>paired_with=dict(sample=samples)</code>. Consequently, <code>_input.sample</code> is available for each substep.</p>
+<p>The output statement</p>
+
+<pre><code>output: f'{_input}.result', paired_with=dict(sample=_input.sample)</code></pre>
+<p>generates <code>f'{_input}.result'</code> for each <code>_input</code> but the sample information will be lost. For this reason an option <code>paired_with=dict(sample=_input.sample)</code> is added to attach attribute <code>sample</code> with value <code>_input.sample</code> to each output file name. With this step each input file of step <code>20</code> has an attribute that points to its sample name.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
+   <textarea rows="13"
+      class="sos-source" name="SoS">!touch a.txt b.txt
+
+%run
+[10]
+samples = ['A', 'B']
+input_files = ['a.txt', 'b.txt']
+
+input: input_files, group_by=1, paired_with=dict(sample=samples)
+output: f'{_input}.result', paired_with=dict(sample=_input.sample)
+_output.touch()
+
+[20]
+print(f'{_input} with sample name {_input.sample}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_c8f0f23a2a034a3f95ad6d452cbb1176" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_c8f0f23a2a034a3f95ad6d452cbb1176" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_c8f0f23a2a034a3f95ad6d452cbb1176">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_c8f0f23a2a034a3f95ad6d452cbb1176">c1f4c407fcb8ccd6</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_c8f0f23a2a034a3f95ad6d452cbb1176">16</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_c8f0f23a2a034a3f95ad6d452cbb1176">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_c8f0f23a2a034a3f95ad6d452cbb1176" class="completed" datetime="1545614645470.9958">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a.txt.result with sample name A
+b.txt.result with sample name B
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similarly, in the following example,</p>
+
+<pre><code>output: f'a_{i}.txt', group_with=dict(i=i)</code></pre>
+<p>creates four <code>sos_targets</code> object with variable <code>i</code> attached. These objects becomes <code>_output</code> of step <code>10</code>, and <code>_input</code> of the next step. <code>i</code> becomes available in step <code>20</code> because it was attached to <code>_input</code>. This feature is pretty powerful but can be dangerous as well because of the "contamination" of namespace of step <code>20</code> from <code>_input</code> variables.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">%run
+[10]
+input: for_each=dict(i=range(4))
+output: f'a_{i}.txt', group_with=dict(i=i)
+_output.touch()
+
+[20]
+print(f'{_input} with variable i={i}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_ae8ef6ef16a5409982ef1f1e269bb4cc" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_ae8ef6ef16a5409982ef1f1e269bb4cc" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_ae8ef6ef16a5409982ef1f1e269bb4cc">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_ae8ef6ef16a5409982ef1f1e269bb4cc">09c0428018532656</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_ae8ef6ef16a5409982ef1f1e269bb4cc">13</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_ae8ef6ef16a5409982ef1f1e269bb4cc">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_ae8ef6ef16a5409982ef1f1e269bb4cc" class="completed" datetime="1545613871139.179">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a_0.txt with variable i=0
+a_2.txt with variable i=2
+a_1.txt with variable i=1
+a_3.txt with variable i=3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
 
 </div>
@@ -13145,18 +13921,15 @@ print(f'step_input is {step_input}')</textarea>
           if (stream.sol()) {
             let sl = stream.peek();
             if (sl == '[') {
-              // header, move to the end
               if (stream.match(/^\[.*\]$/, false)) {
-                // if there is no :, the easy case
-                if (stream.match(/^\[[^:]*\]$/)) {
+                // if there is :
+                if (stream.match(/^\[[\s\w_,-]+:/)) {
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                } else if (stream.match(/^\[[\s\w,-]+\]$/)) {
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header line-section-header";
-                } else {
-                  // match up to :
-                  stream.match(/^\[[^:]*:/);
-                  state.sos_state = 'header_option';
                   return "header line-section-header";
                 }
               }

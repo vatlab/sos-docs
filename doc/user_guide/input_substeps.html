@@ -12524,7 +12524,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-specify-input-and-output-files-and-process-input-files-in-groups">How to specify input and output files and process input files in groups<a class="anchor-link" href="#How-to-specify-input-and-output-files-and-process-input-files-in-groups"></a></h1>
 </div>
 </div>
 </div>
@@ -12537,7 +12537,9 @@ li.tocify-item.active {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>Input files are specified with the <code>input</code> statement, which defines variable <code>_input</code></li>
+<li>Output files are specified with the <code>output</code> statement, which defines variable <code>_output</code></li>
+<li>Input files can be processed in groups with the <code>group_by</code> option</li>
 </ul>
 </li>
 </ul>
@@ -12550,7 +12552,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<h2 id="Specifying-step-input-and-output">Specifying step input and output<a class="anchor-link" href="#Specifying-step-input-and-output"></a></h2>
 </div>
 </div>
 </div>
@@ -12559,7 +12561,262 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<p>Taking again the example workflow from <a href="sos_in_notebook.html">our first tutorial</a>, we have defined variables such as <code>excel_file</code> and used them directly in the scripts.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can add an <code>input</code> and an <code>output</code> statement to the steps and write the workflow as</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 26.60009em">
+   <textarea rows="21"
+      class="sos-source" name="SoS">[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[plot_10]
+input: excel_file
+output: csv_file
+
+run: expand=True
+    xlsx2csv {_input} > {_output}
+
+[plot_20]
+input: csv_file
+output: figure_file
+
+R: expand=True
+    data <- read.csv('{_input}')
+    pdf('{_output}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Comparing the two workflows, you will notice that steps in the new workflow have <code>input</code> and <code>output</code> statements that define the input and output of the steps, and two magic variables <code>_input</code> and <code>_output</code> are used in the scripts.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Substeps-and-input-option-group_by">Substeps and input option <code>group_by</code><a class="anchor-link" href="#Substeps-and-input-option-group_by"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>input</code> and <code>output</code> statements notify SoS the input and output of the steps and allow SoS to handle them in a much more intelligent way. The most useful one, however, is the definition of substeps that allows SoS to process groups of input one by one, and/or the same groups of input with different sets of variables (option <code>for_each</code>, which will be discussed later).</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let us assume that we have two input files <code>data/S20_R1.fastq</code> and <code>data/S20_R2.fastq</code> and we would like to check the quality of them using a tool called <a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/">fastqc</a>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">for infile in ['data/S20_R1.fastq', 'data/S20_R2.fastq']:
+    sh(f'fastqc {infile}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Started analysis of S20_R1.fastq
+Analysis complete for S20_R1.fastq
+Started analysis of S20_R2.fastq
+Analysis complete for S20_R2.fastq
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are a few problems with this approach,</p>
+<ul>
+<li>The action <code>sh</code> cannot be written in the script format because it is called in a for loop</li>
+<li>The input files are handled one by one although they are independent and can be processed in parallel</li>
+</ul>
+<p>To address these problems, you can write the step as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">input: 'data/S20_R1.fastq', 'data/S20_R2.fastq', group_by=1
+
+sh: expand=True
+    fastqc {_input}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Started analysis of S20_R1.fastq
+Analysis complete for S20_R1.fastq
+Started analysis of S20_R2.fastq
+Analysis complete for S20_R2.fastq
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Substeps created by the <code>group_by</code> input option</h4>
+    <ul>
+        <li>The <code>group_by</code> option groups input files and creates multiple groups of input files</li>  
+        <li>Multiple <em>substeps</em> are created for each group of input files</li>
+        <li>The input of each substep is stored in variable <code>_input</code></li>
+        <li>The substeps are by default executed in parallel</li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this example, option <code>group_by=1</code> divides the two input files into two groups, each with one input file. Two substeps are created from the groups. They execute the same step process (statements after the <code>input</code> statement) but with different values of variable <code>_input</code>. The <code>sh</code> action is written in the script format, which can be a lot more readable if the script is long. The substeps are executed in parallel so the step could be completed a lot faster than the <code>for</code> look version.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/ref_group_by.html">Parameter <code>group_by</code> of <code>sos_targets</code></a></li>
+</ul>
 
 </div>
 </div>
@@ -12934,18 +13191,15 @@ li.tocify-item.active {
           if (stream.sol()) {
             let sl = stream.peek();
             if (sl == '[') {
-              // header, move to the end
               if (stream.match(/^\[.*\]$/, false)) {
-                // if there is no :, the easy case
-                if (stream.match(/^\[[^:]*\]$/)) {
+                // if there is :
+                if (stream.match(/^\[[\s\w_,-]+:/)) {
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                } else if (stream.match(/^\[[\s\w,-]+\]$/)) {
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header line-section-header";
-                } else {
-                  // match up to :
-                  stream.match(/^\[[^:]*:/);
-                  state.sos_state = 'header_option';
                   return "header line-section-header";
                 }
               }
