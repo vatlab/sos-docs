@@ -12557,7 +12557,8 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When a step is executed without substeps, the step input and output are not grouped. The variable <code>_input</code> is identical to <code>step_input</code> and the variable <code>_output</code> is identical to <code>step_output</code>, and we can only see the content of <code>step_output</code> as the input of another step because <code>step_output</code> is the result of a step and cannot be viewed during the exeuction of the step.</p>
+<p>If a SoS step contains multiple substeps, defined by options <code>group_by</code> or <code>for_each</code>, the <code>_input</code> becomes the groups of <code>step_input</code> and <code>_output</code> becomes the groups of <code>step_output</code>, and the steps are executed for each of the groups.</p>
+<p>Moreover, the group information of <code>step_output</code> will be passed as the default input to the next step in a simple forward-style workflow, or as input to another step with functions <code>output_from</code> or <code>named_output</code>. As shown in the following example, the <code>step_output</code> of step <code>A</code> becomes the input of step <code>B</code>, creating two substeps.</p>
 
 </div>
 </div>
@@ -12567,93 +12568,22 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
-   <textarea rows="13"
-      class="sos-source" name="SoS">!touch a.txt
-
-%run -v0
-
-[1]
-input: 'a.txt'
-output: _input.with_suffix('.bak')
-
-_output.touch()
-print(f'step_input={step_input}, _input={_input}, _output={_output}')
-
-[2]
-print(f'step_output={step_input}, _output={_input}')
-</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>step_input=a.txt, _input=a.txt, _output=a.bak
-step_output=a.bak, _output=a.bak
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If the step contains multiple substeps, defined by options <code>group_by</code> or <code>for_each</code>, the <code>_input</code> becomes the groups of <code>step_input</code> and <code>_output</code> becomes the groups of <code>step_output</code>, and the steps are executed for each of the groups.</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
-   <textarea rows="13"
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
       class="sos-source" name="SoS">!touch a.txt b.txt
 
-%run -v0
+%run B -v0
 
-[1]
+[A]
 input: 'a.txt', 'b.txt', group_by=1
 output: _input.with_suffix('.bak')
 
 _output.touch()
 print(f'step_input={step_input}, _input={_input}, _output={_output}')
 
-[2]
+[B]
+input: output_from('A')
 print(f'step_output={step_input}, _output={_input}')
 </textarea>
   </div>
@@ -12673,6 +12603,30 @@ print(f'step_output={step_input}, _output={_input}')
 
 <div class="output_html rendered_html output_subarea ">
 
+<table id="workflow_73e0bad7-816e-415c-9071-7e52088d9d1f" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_73e0bad7-816e-415c-9071-7e52088d9d1f" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_73e0bad7-816e-415c-9071-7e52088d9d1f">B</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_73e0bad7-816e-415c-9071-7e52088d9d1f">62023b76ae137fa8</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_73e0bad7-816e-415c-9071-7e52088d9d1f">3</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_73e0bad7-816e-415c-9071-7e52088d9d1f">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_73e0bad7-816e-415c-9071-7e52088d9d1f" class="completed" datetime="1546364503166.309">Ran for < 5 seconds</time></pre>
+      </td>
+</tr>
+</table>
+
 </div>
 
 </div>
@@ -12683,8 +12637,8 @@ print(f'step_output={step_input}, _output={_input}')
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>step_input=a.txt b.txt, _input=a.txt, _output=a.bak
-step_input=a.txt b.txt, _input=b.txt, _output=b.bak
+<pre>step_input=a.txt b.txt, _input=b.txt, _output=b.bak
+step_input=a.txt b.txt, _input=a.txt, _output=a.bak
 step_output=a.bak b.bak, _output=a.bak
 step_output=a.bak b.bak, _output=b.bak
 </pre>
@@ -12703,8 +12657,60 @@ step_output=a.bak b.bak, _output=b.bak
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can see, because the <code>step_input</code> of step <code>2</code> (which is the <code>step_output</code> of step <code>1</code> contains two groups, step <code>2</code> are executed twice for each group.</p>
+<h2 id="Attaching-group-information-to-step_output">Attaching group information to <code>step_output</code><a class="anchor-link" href="#Attaching-group-information-to-step_output"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we</p>
 
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
+   <textarea rows="13"
+      class="sos-source" name="SoS">
+%run B -v0
+
+[A]
+input: 'a.txt', 'b.txt', group_by=1
+output: _input.with_suffix('.bak')
+
+_output.touch()
+print(f'step_input={step_input}, _input={_input}, _output={_output}')
+
+[B]
+input: output_from('A')
+print(f'step_output={step_input}, _output={_input}')
+</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>The <code>group_with</code> output option</h4>
+  <p></p>  
+</div>
 </div>
 </div>
 </div>
