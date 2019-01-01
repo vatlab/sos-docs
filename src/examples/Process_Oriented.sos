@@ -72,8 +72,8 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 [lasso_3, ridge_3]
-input: y = named_output('test'), yhat = named_output('pred'), coef = named_output('coef')
-output: f"{_input[1]:nn}.mse.csv"
+input: y = output_from(1)['test'], yhat = output_from(2)['pred'], coef = output_from(2)['coef']
+output: f"{_input['yhat']:nn}.mse.csv"
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
   Ytruth = as.matrix(read.csv(${_input['y']:r}, header = F)[,-1]) %*% b
