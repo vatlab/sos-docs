@@ -21,8 +21,8 @@ depends: R_library("MASS>=7.3")
 parameter: N = (40, 200) 
 parameter: rstd = 3
 parameter: replicate = [x+1 for x in range(5)]
-input: None, for_each = ['replicate'], concurrent = True
-output: f"data_{_replicate}.train.csv", f"data_{_replicate}.test.csv"
+input: for_each = ['replicate']
+output: train = f"data_{_replicate}.train.csv", test = f"data_{_replicate}.test.csv"
 R: expand = "${ }"
   set.seed(${_replicate})
   N = sum(c(${paths(N):,}))
@@ -39,24 +39,25 @@ R: expand = "${ }"
 [ridge_2]
 depends: R_library("glmnet>=2.0")
 parameter: nfolds = 5
-input: group_by = 2, concurrent = True
-output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
+output: pred = f"{_input[0]:nn}.ridge.predicted.csv", coef = f"{_input[0]:nn}.ridge.coef.csv"
 R: expand = "${ }"
-  train = read.csv(${_input[0]:r}, header = F)
-  test = read.csv(${_input[1]:r}, header = F)
+  train = read.csv(${_input['train']:r}, header = F)
+  test = read.csv(${_input['test']:r}, header = F)
   model = glmnet::cv.glmnet(as.matrix(train[,-1]), train[,1], family = "gaussian", alpha = 0, nfolds = ${nfolds}, intercept = F)
   betahat = as.vector(coef(model, s = "lambda.min")[-1])
   Ypred = predict(model, as.matrix(test[,-1]), s = "lambda.min")
-  write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
-  write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
+  write.table(Ypred, ${_output['pred']:r}, row.names = F, col.names = F, sep = ',')
+  write.table(betahat, ${_output['coef']:r}, row.names = F, col.names = F, sep = ',')
 
 # LASSO model implemented in Python
 # Build predictor via cross-validation and make prediction
+# Here I use numerical indices rather than variable names for input and output
+# to demonstrate alternative syntax for `_input[]` and `_output[]`
 [lasso_2]
 depends: Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9")
 parameter: nfolds = 5
 input: group_by = 2, concurrent = True
-output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
+output: pred = f"{_input[0]:nn}.lasso.predicted.csv", coef = f"{_input[0]:nn}.lasso.coef.csv"
 python: expand = "${ }"
   import numpy as np
   from sklearn.linear_model import LassoCV
@@ -71,14 +72,14 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 [lasso_3, ridge_3]
-input: from_steps = [1, 2], group_by = 'pairsource2', concurrent = True
-output: f"{_input[2]:nn}.mse.csv"
+input: y = named_output('test'), yhat = named_output('pred'), coef = named_output('coef')
+output: f"{_input[1]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${_input[1]:r}, header = F)[,-1]) %*% b
-  Ypred = scan(${_input[2]:r})
+  Ytruth = as.matrix(read.csv(${_input['y']:r}, header = F)[,-1]) %*% b
+  Ypred = scan(${_input['yhat']:r})
   prediction_mse = mean((Ytruth - Ypred)^2)
-  betahat = scan(${_input[3]:r})
+  betahat = scan(${_input['coef']:r})
   estimation_mse = mean((betahat - b) ^ 2)
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
   
