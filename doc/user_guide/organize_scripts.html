@@ -12524,7 +12524,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-use-SoS-Notebook-to-organize-and-share-your-project">How to use SoS Notebook to organize and share your project<a class="anchor-link" href="#How-to-use-SoS-Notebook-to-organize-and-share-your-project"></a></h1>
 </div>
 </div>
 </div>
@@ -12537,7 +12537,9 @@ li.tocify-item.active {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>Use SoS workflow system to record multi-script, multi-language data analysis</li>
+<li>Adding comments and help messages</li>
+<li>Using command line option to apply the workflow to new batches of data  </li>
 </ul>
 </li>
 </ul>
@@ -12550,7 +12552,8 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<p>This tutorial is a re-cap of what we have learned from other tutorials, with an emphasis on how to organize your data analysis for easy sharing and reproducing.</p>
+
 </div>
 </div>
 </div>
@@ -12559,11 +12562,512 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Using-SoS-to-record-your-data-analysis">Using SoS to record your data analysis<a class="anchor-link" href="#Using-SoS-to-record-your-data-analysis"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we have shown in the <a href="doc/user_guide/sos_in_notebook.html">Using SoS workflow system in Jupyter and from command line</a> and the following tutorials, SoS allows you to perform your data analysis in Jupyter or record the scripts you developed in other environments in a Jupyter notebook, without a steep learning curve.</p>
 
 </div>
 </div>
 </div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Using-SoS-Notebook-for-interactive-multi-language-data-analysis">Using SoS Notebook for interactive multi-language data analysis<a class="anchor-link" href="#Using-SoS-Notebook-for-interactive-multi-language-data-analysis"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Firstly, you can perform your data analysis in Jupyter using multiple kernels in one notebook. Without going into the details on how SoS Notebook can assist the interactive data analysis, here is what the end result might look like.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Multi-language notebook</h4>
+  <ul>
+      <li>Data analysis is performed by multiple kernels</li>
+      <li>Analysis in each kernel can be separated into multiple cells</li>
+      <li>The <code>%expand</code> magic can be used to pass variables from SoS to subkernels</li>
+      <li>The entire data analysis can be rerun using the <code>Kernel</code> => <code>Restart Kernel and Run All Cells</code></li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_Bash">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Bash">%expand
+xlsx2csv {excel_file} > {csv_file}</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="R">%expand
+data <- read.csv('{csv_file}')
+pdf('{figure_file}')
+plot(data$log2FoldChange, data$stat)
+dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<strong>pdf:</strong> 2
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This tutorial does not introduce any</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simple-SoS-workflow">Simple SoS workflow<a class="anchor-link" href="#Simple-SoS-workflow"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Simple workflows with numerically numbered steps</h4>
+  <ul>
+      <li>Workflows with numerically numbered steps</li>
+      <li>Definition of input and output is optional</li>
+      <li>Execute the workflow from within the notebook using magics <code>%run</code>, <code>%sosrun</code>, or from command line using <code>sos run</code></li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The multi-language data analysis can be converted almost trivially to the following SoS workflow. In contrast to analysis in SoS notebook, each step must contain complete scripts that can be executed independent of other steps. One of the benfits of the conversion is that the workflow can be execute from command line.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Allow-command-line-options">Allow command line options<a class="anchor-link" href="#Allow-command-line-options"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Adding command line options</h4>
+  <ul>
+      <li>Command line options are defined with the <code>parameter</code> statement.</li>
+      <li>Both optional and mandatory options are supported</li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Adding command line options allows you to apply the workflow to other sets of data, usually from command line:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">%run --excel-file data/DEG.xlsx
+
+[global]
+parameter: excel_file = str
+parameter: csv_file = 'DEG.csv'
+parameter: figure_file = 'output.pdf'
+
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adding-help-messages">Adding help messages<a class="anchor-link" href="#Adding-help-messages"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Adding comments to scripts</h4>
+  <ul>
+      <li>The second comment block is the description of the script. This is where you introduce the purpose of the workflows.
+</li>
+      <li>Comments immediately before section header and parameter: definitions decome the descriptions of the sections and parameters.</li>
+      <li>Workflow, step, and parameter descriptions are displayed in the output of `-h` of the script.
+    </ul>
+</div>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 37.52870000000001em">
+   <textarea rows="30"
+      class="sos-source" name="SoS">%run -h
+
+# This workflow converts input excel file
+# into a .csv file and plot fields log2FoldChange
+# again stat
+
+[global]
+# input excel file
+parameter: excel_file = str
+
+# intermediate csv file
+parameter: csv_file = 'DEG.csv'
+
+# output figure file
+parameter: figure_file = 'output.pdf'
+
+# Uses command xlsx2csv to convert
+# excel file to csv format
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+# Load data in csv format and plot log2FoldChange
+# again stat
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_e23345ff-a3df-45a9-9af0-dc2a392d7fea" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_e23345ff-a3df-45a9-9af0-dc2a392d7fea" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_e23345ff-a3df-45a9-9af0-dc2a392d7fea">undefined</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_e23345ff-a3df-45a9-9af0-dc2a392d7fea">undefined</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_e23345ff-a3df-45a9-9af0-dc2a392d7fea">5</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_e23345ff-a3df-45a9-9af0-dc2a392d7fea">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_e23345ff-a3df-45a9-9af0-dc2a392d7fea" class="completed" datetime="undefined">Ran for < 5 seconds</time></pre>
+      </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos run .sos/interactive.sos [workflow_name | -t targets] [options] [workflow_options]
+  workflow_name:        Single or combined workflows defined in this script
+  targets:              One or more targets to generate
+  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
+  workflow_options:     Double-hyphen workflow-specific parameters
+
+Workflows:
+  plot
+
+Global Workflow Options:
+  --excel-file VAL (as str, required)
+                        input excel file
+  --csv-file &#39;DEG.csv&#39;
+                        intermediate csv file
+  --figure-file &#39;output.pdf&#39;
+                        output figure file
+
+Sections
+  plot_10:              Uses command xlsx2csv to convert excel file to csv
+                        format
+  plot_20:              Load data in csv format and plot log2FoldChange again
+                        stat
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adding-multiple-workflows-in-one-SoS-notebook">Adding multiple workflows in one SoS notebook<a class="anchor-link" href="#Adding-multiple-workflows-in-one-SoS-notebook"></a></h2>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[convert]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adding-step-input-and-output-to-analysis-input-files-in-parallel">Adding step input and output to analysis input files in parallel<a class="anchor-link" href="#Adding-step-input-and-output-to-analysis-input-files-in-parallel"></a></h2>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 20.528640000000003em">
+   <textarea rows="16"
+      class="sos-source" name="SoS">[10]
+input: 'data/S20_R1.fastq', 'data/S20_R2.fastq', group_by=1
+output: f'{_input:n}_fastqc.html'
+
+sh: expand=True
+    fastqc {_input}
+    
+[20]
+
+from bs4 import BeautifulSoup
+
+with open(_input) as html:
+    soup = BeautifulSoup(html)
+    for h2 in soup.findAll('h2'):
+        if h2.img:
+            print(f"{_input:bn} {h2.text}: {h2.img['alt']}")</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
     </div>
   </div>
 
