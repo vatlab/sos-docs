@@ -12524,7 +12524,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-define-and-execute-basic-forward-style-workflows">How to define and execute basic forward-style workflows<a class="anchor-link" href="#How-to-define-and-execute-basic-forward-style-workflows"></a></h1>
 </div>
 </div>
 </div>
@@ -12537,7 +12537,10 @@ li.tocify-item.active {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>A forward-style workflow consists of numerically numbered steps</li>
+<li>Multiple workflows can be defined in a single SoS script or notebook</li>
+<li>Optional input and output statements can be added to change how workflows are executed</li>
+<li>The default input of a step if the output of its previous step  </li>
 </ul>
 </li>
 </ul>
@@ -12550,7 +12553,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Default-input-of-a-step">Default input of a step<a class="anchor-link" href="#Default-input-of-a-step"></a></h3>
+<h2 id="Simple-workflows-with-numerically-numbered-steps">Simple workflows with numerically numbered steps<a class="anchor-link" href="#Simple-workflows-with-numerically-numbered-steps"></a></h2>
 </div>
 </div>
 </div>
@@ -12559,8 +12562,25 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In a process-oriented workflow, <strong>the default input of a step is the output of its previous step</strong>. For example, in the following workflow, the first step (step <code>10</code>) produces output <code>a.txt</code>, which becomes the input of the second step (step <code>20</code>).</p>
+<p>The workflows you have seen so far have numerically numbered steps. For example, this example from the <a href="sos_in_notebook.html">first tutorial</a> have a single workflow <code>plot</code> with steps <code>plot_10</code> and <code>plot_20</code> and SoS will execute the steps in numeric ordering.</p>
 
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Workflows with numerically numbered steps</h4>
+    <ul>
+        <li>Steps have the format of <code>name_index</code> (e.g. <code>step_10</code>) where <code>name</code> is the name of the workflow, and <code>index</code> is a numeric number</li>
+        <li>Step indexes are usually not consecutive to allow easy insertion of new steps</li>
+        <li>Both workflow <code>name</code> and <code>index</code> can be ignored. <code>10</code>, <code>20</code> etc are considered as steps of an unnamed workflow, <code>step</code> is considered as a one-step workflow</li>
+        <li>Workflow can be executed by workflow name (e.g. <code>%run name</code> in Jupyter, <code>sos run name</code> from command line). A default workflow will be execute if only one workflow is defined, or a default workflow is defined</li>
+    </ul>
+</div>
 </div>
 </div>
 </div>
@@ -12569,17 +12589,26 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
-   <textarea rows="8"
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
       class="sos-source" name="SoS">%run
 
-[10]
-output: 'a.txt'
-_output.touch()
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
 
-[20]
-print(f'Input of step {step_name} is {step_input}')</textarea>
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
   </div>
 </div>
 
@@ -12597,28 +12626,388 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
 
 <div class="output_html rendered_html output_subarea ">
 
-<table id="workflow_06ba28acca2542fcae6363cf95fd4ed7" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_06ba28acca2542fcae6363cf95fd4ed7" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_06ba28acca2542fcae6363cf95fd4ed7">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_06ba28acca2542fcae6363cf95fd4ed7">763b03b0293e70ac</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_06ba28acca2542fcae6363cf95fd4ed7">1</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_06ba28acca2542fcae6363cf95fd4ed7">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_06ba28acca2542fcae6363cf95fd4ed7" class="completed" datetime="1545079136169.634">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=221e15922696f853) is executed successfully with 2 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The workflow is executed by default with magic <code>%run</code> because only one workflow is defined in the script. You can also define multiple workflows and execute them by their names. For example, the following script defines two single-step workflows <code>convert</code> and <code>plot</code>. Because there is no default workflow, you will have to refer to them with their names:</p>
+
+<pre><code>%run convert</code></pre>
+<p>and</p>
+
+<pre><code>%run plot</code></pre>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">%run convert
+
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[convert]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">convert</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow convert (ID=d799ecdba11b5554) is executed successfully with 1 completed step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">%run plot
+
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[convert]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=d9b491e59a96a0d0) is executed successfully with 1 completed step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Default-input-of-steps">Default input of steps<a class="anchor-link" href="#Default-input-of-steps"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As shown in in <a href="doc/user_guide/input_substeps.html">How to specify input and output files and process input files in groups</a>, you can define <code>input</code> and <code>output</code> for each step.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Default <code>input</code> of numerically numbered workflows</h4>
+    <p>The default input of a step in a numerically numbered workflow is the output of its previous step</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Therefore, in the following workflow, the <code>input</code> statement of <code>plot_20</code> can be ignored.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 29.028670000000005em">
+   <textarea rows="23"
+      class="sos-source" name="SoS">%run
+
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[plot_10]
+input: excel_file
+output: csv_file
+
+run: expand=True
+    xlsx2csv {_input} > {_output}
+
+[plot_20]
+# input: csv_file
+output: figure_file
+
+R: expand=True
+    data <- read.csv('{_input}')
+    pdf('{_output}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_2e9d3aca-ece1-42a4-8983-472728791aa7" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_2e9d3aca-ece1-42a4-8983-472728791aa7" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_2e9d3aca-ece1-42a4-8983-472728791aa7">plot</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_2e9d3aca-ece1-42a4-8983-472728791aa7">1ca0da08be0c3ea0</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_2e9d3aca-ece1-42a4-8983-472728791aa7">4</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_2e9d3aca-ece1-42a4-8983-472728791aa7">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_2e9d3aca-ece1-42a4-8983-472728791aa7" class="completed" datetime="1546401369290.883">Ran for 0 sec</time></pre>
+      </td>
+</tr>
 </table>
 
 </div>
@@ -12630,8 +13019,356 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Input of step 20 is a.txt
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">DEG.csv</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">output.pdf</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=1ca0da08be0c3ea0) is executed successfully with 2 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Passing-output-of-steps-with-substeps-*">Passing output of steps with substeps *<a class="anchor-link" href="#Passing-output-of-steps-with-substeps-*"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-warning" role="alert">
+    <h4>Output of a step with substeps</h4>
+    <p>If a step has multiple substeps, the step output consists of <code>_output</code> from each substep, which will be by default passed to the next step and create multiple substeps.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Things can get a little bit complicated when a step has multiple substeps. As you can recall from <a href="doc/user_guide/input_substeps.html">How to specify input and output files and process input files in groups</a>, multiple substeps can be defined by input option <code>group_by</code>, each with its own <code>_input</code> and <code>_output</code>. When the output of such a step is inherited by another step, these <code>_output</code> will become the <code>_input</code> of the substeps.</p>
+<p>For example, after running <code>fastqc</code> on the input fastq files, we would like to process the generated HTML file and check if the qualities are ok. We use the <code>beautifulsoup</code> Python module and find all the <code>&lt;h2&gt;</code> headers. Without going into the details of the use of <code>beautifulsoup</code> to parse HTML files, you should notice that</p>
+<ul>
+<li>No <code>input</code> is defined for step <code>20</code> so it takes the output of step <code>10</code> as its input.</li>
+<li>The output of step <code>10</code> contains two groups, <code>data/S20_R1_fastqc.html</code> and <code>data/S20_R2_fastqc.html</code>, which becomes the input of two substeps of step <code>20</code>.</li>
+<li>The input of step <code>20</code> are processed one by one</li>
+</ul>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
+   <textarea rows="18"
+      class="sos-source" name="SoS">%run 
+
+[10]
+input: 'data/S20_R1.fastq', 'data/S20_R2.fastq', group_by=1
+output: f'{_input:n}_fastqc.html'
+
+sh: expand=True
+    fastqc {_input}
+    
+[20]
+
+from bs4 import BeautifulSoup
+
+with open(_input) as html:
+    soup = BeautifulSoup(html)
+    for h2 in soup.findAll('h2'):
+        if h2.img:
+            print(f"{_input:bn} {h2.text}: {h2.img['alt']}")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">10</span> (index=0) is <span class="sos_highlight">ignored</span> due to saved signature
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">10</span> (index=1) is <span class="sos_highlight">ignored</span> due to saved signature
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">data/S20_R1_fastqc.html data/S20_R2_fastqc.html in 2 groups</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>S20_R1_fastqc Basic Statistics: [OK]
+S20_R1_fastqc Per base sequence quality: [OK]
+S20_R1_fastqc Per tile sequence quality: [OK]
+S20_R1_fastqc Per sequence quality scores: [OK]
+S20_R1_fastqc Per base sequence content: [FAIL]
+S20_R1_fastqc Per sequence GC content: [FAIL]
+S20_R1_fastqc Per base N content: [OK]
+S20_R1_fastqc Sequence Length Distribution: [WARN]
+S20_R1_fastqc Sequence Duplication Levels: [OK]
+S20_R1_fastqc Overrepresented sequences: [FAIL]
+S20_R1_fastqc Adapter Content: [OK]
+S20_R2_fastqc Basic Statistics: [OK]
+S20_R2_fastqc Per base sequence quality: [OK]
+S20_R2_fastqc Per tile sequence quality: [OK]
+S20_R2_fastqc Per sequence quality scores: [OK]
+S20_R2_fastqc Per base sequence content: [FAIL]
+S20_R2_fastqc Per sequence GC content: [FAIL]
+S20_R2_fastqc Per base N content: [OK]
+S20_R2_fastqc Sequence Length Distribution: [WARN]
+S20_R2_fastqc Sequence Duplication Levels: [OK]
+S20_R2_fastqc Overrepresented sequences: [FAIL]
+S20_R2_fastqc Adapter Content: [OK]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=ee0072d3ce4e9adc) is executed successfully with 1 completed step, 2 completed substeps, 1 ignored step and 2 ignored substeps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like to re-group the default input, you can redefine the <code>input</code> explicitly, or apply option <code>group_by</code> to the default input:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
+   <textarea rows="12"
+      class="sos-source" name="SoS">%run -v0
+
+[10]
+input: 'data/S20_R1.fastq', 'data/S20_R2.fastq', group_by=1
+output: f'{_input:n}_fastqc.html'
+
+sh: expand=True
+    fastqc {_input}
+    
+[20]
+input: group_by='all'
+print(f'Input of step 20 is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of step 20 is data/S20_R1_fastqc.html data/S20_R2_fastqc.html
 </pre>
 </div>
 </div>
@@ -12648,7 +13385,9 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/input_substeps.html">How to specify input and output files and process input files in groups</a></li>
+</ul>
 
 </div>
 </div>

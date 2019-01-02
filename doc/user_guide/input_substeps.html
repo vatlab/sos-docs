@@ -12814,8 +12814,187 @@ Analysis complete for S20_R2.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Output-of-substeps">Output of substeps<a class="anchor-link" href="#Output-of-substeps"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>The <code>output</code> statement</h4>
+    <ul>
+        <li>The <code>output</code> statement defines the output of each substep</li>
+        <li>The output of the entire step consists of output from each substep</li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>input</code> statement defines input of the entire step, and optionally input of each substep as variable <code>_input</code>. <strong>The <code>output</code> statement, however, defines the output of each substep</strong>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the following example, the two input files are divided into two groups, reprented by <code>_input</code> for each substep. The output statement defines a variable <code>_output</code> for each substep.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">input: 'data/S20_R1.fastq', 'data/S20_R2.fastq', group_by=1
+output: f'{_input:n}_fastqc.html'
+
+sh: expand=True
+    fastqc {_input}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Started analysis of S20_R1.fastq
+Started analysis of S20_R2.fastq
+Analysis complete for S20_R1.fastq
+Analysis complete for S20_R2.fastq
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">data/S20_R1_fastqc.html data/S20_R2_fastqc.html in 2 groups</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=a8c5236861912452) is executed successfully with 1 completed step and 2 completed substeps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Special format specification for <code>_input</code> objects</h4>
+    <p>SoS variables <code>_input</code> and <code>_output</code> are of type <code>sos_targets</code> and accept additional <a href="https://docs.python.org/3/reference/lexical_analysis.html#f-strings">format specifications</a>. For example, 
+    <ul>
+        <li><code>:n</code> is the name of the path. e.g. <code>f'{_input:n}'</code> returns <code>/path/to/a</code> if <code>_input</code> is <code>/path/to/a.txt</code></li>
+         <li><code>:b</code> is the basename of the path. e.g. <code>a.txt</code> from <code>/path/to/a.txt</code></li>
+        <li><code>:d</code> is the directory name of the path. e.g. <code>/path/to</code> from <code>/path/to/a.txt</code></li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The output statement of this example is</p>
+<div class="highlight"><pre><span></span><span class="n">output</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}_fastqc.html&#39;</span>
+</pre></div>
+<p>which takes the name of <code>_input</code> and add <code>_fastqc.html</code>. For example, if <code>_input = 'data/S20_R1.fastq'</code>, the corresponding <code>_output = 'data/S20_R1_fastqc.html</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With this output statement, SoS will, among many other things, check if the output is properly generated after the completion of each substep, and returns an output object with the <code>_output</code> of each substep.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
 <li><a href="doc/user_guide/ref_group_by.html">Parameter <code>group_by</code> of <code>sos_targets</code></a></li>
+<li><a href="doc/user_guide/sos_datatypes.html">SoS Data Types</a><br></li>
 </ul>
 
 </div>
