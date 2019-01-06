@@ -23,7 +23,7 @@ lasso_result = [f'data_{x}.lasso.mse.csv' for x in id]
 depends: R_library("MASS>=7.3")
 parameter: N = (40, 200) # training and testing samples
 parameter: rstd = 3
-input: for_each = 'id', concurrent = True 
+input: for_each = 'id'
 output: [(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id], group_by = 2
 R: expand = "${ }"
   set.seed(${_id})
@@ -41,7 +41,7 @@ R: expand = "${ }"
 [ridge]
 parameter: nfolds = 5
 depends: sos_step('simulation'), R_library("glmnet>=2.0")
-input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2, concurrent = True
+input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2
 output: [(f"data_{x}.ridge.predicted.csv", f"data_{x}.ridge.coef.csv") for x in id], group_by = 2
 R: expand = "${ }"
   train = read.csv(${_input[0]:r}, header = F)
@@ -57,7 +57,7 @@ R: expand = "${ }"
 [lasso]
 parameter: nfolds = 5
 depends: sos_step('simulation'), Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9")
-input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2, concurrent = True
+input: dynamic(paths([(f"data_{x}.train.csv", f"data_{x}.test.csv") for x in id])), group_by = 2
 output: [(f"data_{x}.lasso.predicted.csv", f"data_{x}.lasso.coef.csv") for x in id], group_by = 2
 python: expand = "${ }"
   import numpy as np
@@ -75,7 +75,7 @@ python: expand = "${ }"
 [evaluation_core]
 parameter: input_files = list
 parameter: output_files = list
-input: dynamic(input_files), group_by = 3, concurrent = True
+input: dynamic(input_files), group_by = 3
 output: output_files, group_by = 1
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})

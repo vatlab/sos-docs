@@ -12863,7 +12863,7 @@ run: workdir = '/tmp', container = 'gaow/debian-ngs:1.0', volumes = [f'{resource
       class="sos-source" name="SoS"># Align to SAM file
 [align_1 (STAR alignment)]
 depends: f"{resource_dir}/genomeParameters.txt"
-input: [(f'{cwd:a}/{s}_1.fastq', f'{cwd:a}/{s}_2.fastq') for s in samples], group_by = "pairs", concurrent = True
+input: [(f'{cwd:a}/{s}_1.fastq', f'{cwd:a}/{s}_2.fastq') for s in samples], group_by = "pairs"
 output: [f"{cwd:a}/{s}.Aligned.out.sam" for s in samples], group_by = 1
 run: container = 'gaow/debian-ngs:1.0', volumes = [f'{resource_dir}:{resource_dir}'], expand=True, workdir = cwd
     STAR --genomeDir {resource_dir} \
@@ -12897,7 +12897,7 @@ run: container = 'gaow/debian-ngs:1.0', volumes = [f'{resource_dir}:{resource_di
    <textarea rows="7"
       class="sos-source" name="SoS"># Convert SAM to BAM file & zap the input
 [align_2 (SAM to BAM)]
-input: group_by = 1, pattern = '{name}.Aligned.out.sam', concurrent = True
+input: pattern = '{name}.Aligned.out.sam'
 output: expand_pattern('{_name}.bam')
 run: container = 'gaow/debian-ngs:1.0', expand=True, workdir = cwd
     samtools view -bS {_input} -o {_output}

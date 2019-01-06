@@ -13082,7 +13082,7 @@ depends: system_resource(mem = '4G')
 fail_if(not samples.is_file(), msg = 'Need sample name list file!')
 sample_files = list(set(get_output(f"awk '{{print $1}}' {samples:e}").strip().split('\n')))
 fail_if(len(sample_files) == 0, msg = 'Need input sample files!')
-input: [(f'{samples:d}/{x}_1.fq.gz', f'{samples:d}/{x}_2.fq.gz') for x in sample_files], group_by = 2, concurrent = True
+input: [(f'{samples:d}/{x}_1.fq.gz', f'{samples:d}/{x}_2.fq.gz') for x in sample_files], group_by = 2
 output: f'{wd:a}/{samples:bn}_bam/{_input[0]:bnn}.fixmate.bam'
 run: container='gaow/debian-ngs:1.0', volumes=[f'{samples:da}:{samples:da}', f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bwa mem -t {ncpu} -M -R "@RG\\tID:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tSM:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tLB:library1\\tPL:ILLUMINA\\tPU:{os.path.basename(sample_files[_index].replace('-', '_'))}.library1" {ref_genome} {_input[0]} {_input[1]} | samtools sort -n - | samtools fixmate -O bam - {_output}</textarea>
@@ -13111,13 +13111,12 @@ run: container='gaow/debian-ngs:1.0', volumes=[f'{samples:da}:{samples:da}', f'{
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
-   <textarea rows="10"
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
       class="sos-source" name="SoS"># Sort BAM files
 [2]
 # sort via GATK4 is way faster
 # https://software.broadinstitute.org/gatk/blog?id=9644
-input: group_by = 1, concurrent = True
 output: f'{_input:n}.sorted.bam'
 run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk SortSam -I {_input} -O {_output} -SO coordinate
@@ -13148,11 +13147,10 @@ if zap:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
       class="sos-source" name="SoS"># Extract relevant chromosomes for analysis
 [3]
-input: group_by = 1, concurrent = True
 output: f'{_input:n}.cleaned.bam'
 run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     samtools index {_input}
@@ -13174,11 +13172,10 @@ if zap:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
-   <textarea rows="10"
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
       class="sos-source" name="SoS"># Re-order bam files
 [4]
-input: group_by = 1, concurrent = True
 output: f'{_input:n}.reordered.bam'
 run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk ReorderSam -I {_input} -O {_output} -R {ref_genome} \
@@ -13212,11 +13209,10 @@ if zap:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
-   <textarea rows="18"
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
       class="sos-source" name="SoS"># Indel re-alignment
 [5]
-input: group_by = 1, concurrent = True
 output: f'{_input:n}.realigned.bam'
 run: container='gaow/gatk3:2.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     java -jar /opt/GenomeAnalysisTK.jar -T RealignerTargetCreator \
@@ -13257,11 +13253,10 @@ if zap:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
-   <textarea rows="12"
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
       class="sos-source" name="SoS"># Base recalibration
 [6]
-input: group_by = 1, concurrent = True
 output: f'{_input:n}.recal.bam'
 run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output}.err', stdout=f'{_output}.out'
     gatk BaseRecalibrator \
@@ -13297,11 +13292,10 @@ if zap:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
-   <textarea rows="12"
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
       class="sos-source" name="SoS"># Mark duplicates
 [7]
-input: group_by = 1, concurrent = True
 output: f'{_input:n}.dedup.bam'
 run: container='gaow/debian-ngs-gatk4:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     gatk MarkDuplicates \
@@ -13417,11 +13411,12 @@ SQ:
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
       class="sos-source" name="SoS"># Multi-sample variant calling -- pileup
 [8]
 # the 2nd line can have many samples separated by space
+input: group_by = 'all'
 output: f'{wd:a}/{samples:bn}_vcf/{samples:bn}.bcf'
 run: container='gaow/debian-ngs:1.0', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
     bcftools mpileup -Ob -f {ref_genome} --threads {ncpu} -o {_output} {_input}</textarea>
