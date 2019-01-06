@@ -1,6 +1,6 @@
 # SoS workflow examples
 
-This is an archive of SoS workflow examples used in the SoS workflow system manuscript (Wang and Peng 2018).
+This is an archive of SoS workflow examples used in the SoS workflow system manuscript (Wang and Peng 2019).
 
 Please follow instructions in the file
 `Workflow_Manuscript_Examples.html` to reproduce the examples.
@@ -37,5 +37,5 @@ pip install -r requirements.txt
 ```
 
 Though not guaranteed, future version of SoS are still likely to work with these examples. 
-The goal of this repository is to reproduce results from Wang and Peng (2018). In practice
+The goal of this repository is to reproduce results from Wang and Peng (2019). In practice
 we generally recommend upgrading to the latest stable release of SoS.
