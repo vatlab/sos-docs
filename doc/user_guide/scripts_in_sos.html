@@ -12541,7 +12541,7 @@ li.tocify-item.active {
 <li>Scripts are included in verbatim by default</li>
 <li>Indentation is not required but recommended</li>
 <li><code>expand=True</code> turns the script into a Python f-string</li>
-<li><code>expand="l r"</code> can be used to specify another delimiter for string interpolation</li>
+<li><code>expand="l r"</code> can be used to specify an alternative delimiter for string interpolation</li>
 </ul>
 </li>
 </ul>
@@ -12609,7 +12609,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When you execute a SoS script from command line or SoS Notebook, these functions are automatically imported and can be used directly, and you can use them just like any other Python functions. For example,</p>
+<p>When you execute a SoS script from command line or SoS Notebook, these functions are automatically imported and can be used directly, and you can use them just like any other Python functions. For example, you can compose a script using Python string formatting:</p>
 
 </div>
 </div>
@@ -12731,7 +12731,7 @@ if(x >= 0) {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The use of format string in these cases become more complicated. First, you will need to use multi-line f-string (<code>f'''x'''</code> and <code>f"""x"""</code>). Second, when the script itself contains braces, they will be interpreted as Python expressions unless they are doubled.</p>
+<p>The use of format string in these cases become more complicated. First, you will need to use multi-line f-string (<code>f'''x'''</code> and <code>f"""x"""</code>). Second, when the script itself contains braces, they will need to be doubled to avoid being interpreted as Python expressions.</p>
 <p>Consequently, a <code>R</code> script that uses a Python variable <code>my_num</code> needs to be written as follows:</p>
 
 </div>
@@ -12796,7 +12796,7 @@ if(x >= 0) {{
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The f-string in the last example is not quite readable, error-prone, and difficult to maintaine, especially when the script contains multiple braces and variables. For this reason, SoS introduces a special syntax that allows you to write Python functions that accept a script (string) as the first parameter in a special script format.</p>
+<p>The f-string in the last example is not quite readable, error-prone, and difficult to maintain, especially when the script contains multiple braces and variables. For this reason, SoS introduces a special syntax that allows you to write Python functions that accept a script (string) as the first parameter in a special script format.</p>
 <p>For example,</p>
 
 </div>
@@ -12966,11 +12966,12 @@ if(x >= 0) {
 <div class="text_cell_render border-box-sizing rendered_html">
 <div class="bs-callout bs-callout-info" role="alert">
   <h4>Indentation of scripts</h4>
-  <p>The indentation of scripts in the script style is optional but recommended, because it allows the separation of multiple function calls such as</p>
+  <p>The indentation of scripts in the script style is optional but recommended because it makes the end scripts easier to read </p>
     <pre>
     R:
        cat('this is R')
-
+    </pre>
+    <pre>
     python:
        print('this is python')
     </pre>
@@ -13093,6 +13094,18 @@ R: expand=True
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-info" role="alert">
+  <h4>Use of alternative sigils</h4>
+  <p>When the included scripts have braces, it is easier to use an alternative sigil for string interpolation.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Because the included script has two pairs of braces, it is necessary to double them so that they are not treated as Python expressions. In these cases, it is actually easier to use a different set of sigil (delimiters) for string interpolation. This can be done using the <code>expand</code> option as follows:</p>
 
 </div>
@@ -13157,9 +13170,9 @@ R: expand='${ }'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-info" role="alert">
-  <h4>Use of alternative sigils</h4>
-  <p>When the included scripts have braces, it is easier to use an alternative sigil for string interpolation.</p>
+<div class="bs-callout bs-callout-warning" role="alert">
+  <h4>Limitations of script format of function calls</h4>
+  <p>Because the action name starts from the first column, you will have to use the regular function call format as shown in the first section of this tutorial if you would like to use the function in a <code>if/else</code> block, or in a <code>for</code> loop.</p>
 </div>
 </div>
 </div>

@@ -12651,7 +12651,7 @@ R: expand=True
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Comparing the two workflows, you will notice that steps in the new workflow have <code>input</code> and <code>output</code> statements that define the input and output of the steps, and two magic variables <code>_input</code> and <code>_output</code> are used in the scripts.</p>
+<p>Comparing the two workflows, you will notice that steps in the new workflow have <code>input</code> and <code>output</code> statements that define the input and output of the steps, and two magic variables <code>_input</code> and <code>_output</code> are used in the scripts. These two variables are of type <code>sos_targets</code> and are of vital importance to the use of SoS.</p>
 
 </div>
 </div>
@@ -12670,7 +12670,7 @@ R: expand=True
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>input</code> and <code>output</code> statements notify SoS the input and output of the steps and allow SoS to handle them in a much more intelligent way. The most useful one, however, is the definition of substeps that allows SoS to process groups of input one by one, and/or the same groups of input with different sets of variables (option <code>for_each</code>, which will be discussed later).</p>
+<p>The <code>input</code> and <code>output</code> statements notify SoS the input and output of the steps and allow SoS to handle them in a much more intelligent way. One of the most useful usages is the definition of substeps that allows SoS to process groups of input one by one, and/or the same groups of input with different sets of variables (option <code>for_each</code>, which will be discussed later).</p>
 
 </div>
 </div>
@@ -12680,7 +12680,7 @@ R: expand=True
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let us assume that we have two input files <code>data/S20_R1.fastq</code> and <code>data/S20_R2.fastq</code> and we would like to check the quality of them using a tool called <a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/">fastqc</a>.</p>
+<p>Let us assume that we have two input files <code>data/S20_R1.fastq</code> and <code>data/S20_R2.fastq</code> and we would like to check the quality of them using a tool called <a href="https://www.bioinformatics.babraham.ac.uk/projects/fastqc/">fastqc</a>. Using a plain Python approach and the <code>sh</code> action, the analysis can be performed by</p>
 
 </div>
 </div>
@@ -12730,9 +12730,61 @@ Analysis complete for S20_R2.fastq
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>There are a few problems with this approach,</p>
+<p>Or using the <code>input</code> statement to define variable <code>_input</code> with two files:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">input: 'data/S20_R1.fastq', 'data/S20_R2.fastq'
+
+for infile in _input:
+    sh(f'fastqc {infile}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Started analysis of S20_R1.fastq
+Analysis complete for S20_R1.fastq
+Started analysis of S20_R2.fastq
+Analysis complete for S20_R2.fastq
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are two problems with this approach,</p>
 <ul>
-<li>The action <code>sh</code> cannot be written in the script format because it is called in a for loop</li>
+<li>The action <code>sh</code> cannot be written in the script format because it is called in a for loop, which can be troublesome if the script is long</li>
 <li>The input files are handled one by one although they are independent and can be processed in parallel</li>
 </ul>
 <p>To address these problems, you can write the step as follows:</p>
@@ -12826,7 +12878,7 @@ Analysis complete for S20_R2.fastq
 <div class="bs-callout bs-callout-primary" role="alert">
     <h4>The <code>output</code> statement</h4>
     <ul>
-        <li>The <code>output</code> statement defines the output of each substep, represented by variable <code>_output</code>.</li>
+        <li>The <code>output</code> statement defines the output of each <b>substep</b>, represented by variable <code>_output</code>.</li>
         <li>The output of the entire step consists of <code>_output</code> from each substep.</li>
     </ul>
 </div>
@@ -12995,6 +13047,7 @@ Analysis complete for S20_R2.fastq
 <h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
 <li><a href="doc/user_guide/ref_group_by.html">Parameter <code>group_by</code> of <code>sos_targets</code></a></li>
 <li><a href="doc/user_guide/sos_datatypes.html">SoS Data Types</a> for a complete list of format specification</li>
+<li><a href="doc/user_guide/forward_workflow.html">How to define and execute basic forward-style workflows</a> for more on <code>output</code> groups</li>
 </ul>
 
 </div>
