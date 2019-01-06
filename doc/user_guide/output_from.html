@@ -12524,7 +12524,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-include-output-from-another-step-in-a-SoS-step">How to include output from another step in a SoS step<a class="anchor-link" href="#How-to-include-output-from-another-step-in-a-SoS-step"></a></h1>
 </div>
 </div>
 </div>
@@ -12534,10 +12534,11 @@ li.tocify-item.active {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><strong>Difficulty level</strong>: easy</li>
+<li><strong>Difficulty level</strong>: intermediate</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>Function <code>output_from(step)</code> refers to output from another <code>step</code></li>
+<li><code>output_from(step)[name]</code> can be used to refer to named output from <code>step</code></li>
 </ul>
 </li>
 </ul>
@@ -12550,7 +12551,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Function--output_from-">Function  <code>output_from</code> <a id="output_from" /><a class="anchor-link" href="#Function--output_from-"></a></h3>
+<h2 id="Referring-to-output-from-another-step">Referring to output from another step<a class="anchor-link" href="#Referring-to-output-from-another-step"></a></h2>
 </div>
 </div>
 </div>
@@ -12559,7 +12560,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The default input of a step is the output from its previous step but you can use function <code>output_from</code> to specify the input of a step asthe output from one or more other steps. For example,</p>
+<p>As shown in the example from tutorial <a href="doc/user_guide/named_output.html">How to use named output in data-flow style workflows</a>, function <code>named_output</code> can be used to refer to named output from another step:</p>
 
 </div>
 </div>
@@ -12569,10 +12570,308 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 30.242960000000004em">
+   <textarea rows="24"
+      class="sos-source" name="SoS">!rm -f data/DEG.csv
+%run plot
+
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'data/DEG.csv'
+figure_file = 'output.pdf'
+
+[convert]
+input: excel_file
+output: csv = _input.with_suffix('.csv')
+
+run: expand=True
+    xlsx2csv {_input} > {_output}
+
+[plot]
+input: named_output('csv')
+output: figure_file
+
+R: expand=True
+    data <- read.csv('{_input}')
+    pdf('{_output}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_20f0bfc5-791e-45a3-8b62-7732e45114fa" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_20f0bfc5-791e-45a3-8b62-7732e45114fa" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_20f0bfc5-791e-45a3-8b62-7732e45114fa">plot</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_20f0bfc5-791e-45a3-8b62-7732e45114fa">4dcd3205dd8ea4c0</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_20f0bfc5-791e-45a3-8b62-7732e45114fa">1</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_20f0bfc5-791e-45a3-8b62-7732e45114fa">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_20f0bfc5-791e-45a3-8b62-7732e45114fa" class="completed" datetime="1546786004281.364">Ran for 1 sec</time></pre>
+      </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">convert</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>xlsx2csv data/DEG.xlsx &gt; data/DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">data/DEG.csv</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">plot</span> (index=0) is <span class="sos_highlight">ignored</span> due to saved signature
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">output.pdf</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=4dcd3205dd8ea4c0) is executed successfully with 1 completed step and 1 ignored step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One obvious limitation of <code>named_output()</code> is that the name has to be unique in the workflow. For example, in the following workflow where another step <code>test_csv</code> also gives its output a name <code>csv</code>, the workflow would fail due to ambiguity. This is usually not a concern with small workflows but when workflows get more and more complex, it is sometimes desired to anchor named output more precisely.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 38.742990000000006em">
+   <textarea rows="31"
+      class="sos-source" name="SoS">!rm -f data/DEG.csv
+%run plot
+
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'data/DEG.csv'
+figure_file = 'output.pdf'
+
+[convert]
+input: excel_file
+output: csv = _input.with_suffix('.csv')
+
+run: expand=True
+    xlsx2csv {_input} > {_output}
+
+[test_csv]
+input: excel_file
+output: csv = f'{_input:n}_test.csv'
+
+run: expand=True
+    xlsx2csv {_input} | head -10 > {_output}
+    
+[plot]
+input: named_output('csv')
+output: figure_file
+
+R: expand=True
+    data <- read.csv('{_input}')
+    pdf('{_output}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">Multiple steps convert, test_csv to generate target named_output(&#34;csv&#34;)</span>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Function--output_from-">Function  <code>output_from</code> <a id="output_from" /><a class="anchor-link" href="#Function--output_from-"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Function <code>output_from(steps, group_by, ...)</code></h4>
+    <p>Function <code>output_from</code> refers to the output of <code>step</code>. The returned the object is the complete output from <code>step</code> with its own sources and groups. Therefore,</p>
+    <ul>
+        <li>More than one steps can be specified as a list of step names</li>
+        <li>Option <code>group_by</code> can be used to regroup the returned files</li>
+        <li><code>output_from(step)[name]</code> refers to all output with source <code>name</code></li>
+    </ul>
+ </div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Function <code>output_from</code> imports the output from one or more other steps. For example, in the following workflow <code>output_from(['step_10', 'step_20'])</code> takes the output from steps <code>step_10</code> and <code>step_20</code> as input. The <code>sources</code> of these input are <code>step_10</code> and <code>step_20</code> respectively. In a process-oriented workflow, <code>output_from(['step_10', 'step_20'])</code> can be simplified as <code>output_from([10, 20])</code> (integers).</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
    <textarea rows="14"
-      class="sos-source" name="SoS">%run
+      class="sos-source" name="SoS">%run -v0
 [step_10]
 output: 'a.txt'
 _output.touch()
@@ -12583,7 +12882,7 @@ print(f'input of step {step_name} is {step_input}')
 _output.touch()
 
 [step_30]
-input:  output_from(['step_10', 'step_20']), 'c.txt'
+input:  output_from(['step_10', 'step_20'])
 print(f'input of step {step_name} is {step_input} with sources {step_input.sources}')
 print(f'Output of step_20 is {step_input["step_20"]}')</textarea>
   </div>
@@ -12603,28 +12902,28 @@ print(f'Output of step_20 is {step_input["step_20"]}')</textarea>
 
 <div class="output_html rendered_html output_subarea ">
 
-<table id="workflow_5aed3eb024814d4ba9b741eebda447e8" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_5aed3eb024814d4ba9b741eebda447e8" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_5aed3eb024814d4ba9b741eebda447e8">step</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_5aed3eb024814d4ba9b741eebda447e8">f3820d6d856346af</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_5aed3eb024814d4ba9b741eebda447e8">5</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_5aed3eb024814d4ba9b741eebda447e8">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_5aed3eb024814d4ba9b741eebda447e8" class="completed" datetime="1545079654135.4648">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
+<table id="workflow_b5303da8-1532-4eab-a73f-29bf247de8bb" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_b5303da8-1532-4eab-a73f-29bf247de8bb" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_b5303da8-1532-4eab-a73f-29bf247de8bb">step</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_b5303da8-1532-4eab-a73f-29bf247de8bb">c54cbfdea24d3f6b</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_b5303da8-1532-4eab-a73f-29bf247de8bb">5</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_b5303da8-1532-4eab-a73f-29bf247de8bb">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_b5303da8-1532-4eab-a73f-29bf247de8bb" class="completed" datetime="1546786591487.1401">Ran for 0 sec</time></pre>
+      </td>
+</tr>
 </table>
 
 </div>
@@ -12637,8 +12936,7 @@ print(f'Output of step_20 is {step_input["step_20"]}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_20 is a.txt
-input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_30&#39;]
+<pre>input of step step_30 is a.txt b.txt with sources [&#39;step_10&#39;, &#39;step_20&#39;]
 Output of step_20 is b.txt
 </pre>
 </div>
@@ -12656,16 +12954,6 @@ Output of step_20 is b.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this example, <code>output_from(['step_10', 'step_20'])</code> takes the output of steps <code>step_10</code> and <code>step_20</code> as input. The <code>sources</code> of these input are <code>step_10</code> and <code>step_20</code> respectively. In a process-oriented workflow, <code>output_from(['step_10', 'step_20'])</code> can be simplified as <code>output_from([10, 20])</code> (integers).</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>You can override the <code>sources</code> of input files with keyword arguments</p>
 
 </div>
@@ -12676,10 +12964,10 @@ Output of step_20 is b.txt
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
    <textarea rows="14"
-      class="sos-source" name="SoS">%run
+      class="sos-source" name="SoS">%run -v0
 [step_10]
 output: 'a.txt'
 print(f'input of step {step_name} is {step_input}')
@@ -12691,7 +12979,7 @@ print(f'input of step {step_name} is {step_input}')
 _output.touch()
 
 [step_30]
-input:  output_from(10), s20=output_from(20), s30='c.txt'
+input:  output_from(10), s20=output_from(20)
 print(f'input of step {step_name} is {step_input} with sources {step_input.sources}')
 </textarea>
   </div>
@@ -12711,28 +12999,28 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 <div class="output_html rendered_html output_subarea ">
 
-<table id="workflow_ab70cde6d82f4f6f8610b3644abebd4a" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_ab70cde6d82f4f6f8610b3644abebd4a" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_ab70cde6d82f4f6f8610b3644abebd4a">step</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_ab70cde6d82f4f6f8610b3644abebd4a">5b1a7c8203ac5355</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_ab70cde6d82f4f6f8610b3644abebd4a">6</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_ab70cde6d82f4f6f8610b3644abebd4a">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_ab70cde6d82f4f6f8610b3644abebd4a" class="completed" datetime="1545079788968.7258">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
+<table id="workflow_408f6459-11b6-4867-af00-9941c4fb3fcf" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_408f6459-11b6-4867-af00-9941c4fb3fcf" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_408f6459-11b6-4867-af00-9941c4fb3fcf">step</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_408f6459-11b6-4867-af00-9941c4fb3fcf">ab3252c1255a6928</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_408f6459-11b6-4867-af00-9941c4fb3fcf">7</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_408f6459-11b6-4867-af00-9941c4fb3fcf">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_408f6459-11b6-4867-af00-9941c4fb3fcf" class="completed" datetime="1546786625622.539">Ran for 0 sec</time></pre>
+      </td>
+</tr>
 </table>
 
 </div>
@@ -12745,9 +13033,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_10 is 
-input of step step_20 is a.txt
-input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39;s20&#39;, &#39;s30&#39;]
+<pre>input of step step_30 is a.txt b.txt with sources [&#39;step_10&#39;, &#39;s20&#39;]
 </pre>
 </div>
 </div>
@@ -12764,7 +13050,16 @@ input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can learn later, output from other steps can also have their own sources. In this case, the <code>sources</code> of the output is carried over.</p>
+<h3 id="source-of-outputs-returned-from-output_from"><code>source</code> of outputs returned from <code>output_from</code><a class="anchor-link" href="#source-of-outputs-returned-from-output_from"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Output from other steps can also have their own sources. In this case, the <code>sources</code> of the output is carried over.</p>
 
 </div>
 </div>
@@ -12774,16 +13069,16 @@ input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
    <textarea rows="8"
-      class="sos-source" name="SoS">%run
+      class="sos-source" name="SoS">%run -v0
 [step_10]
 output: output='out.txt', summary='summary.txt'
 _output.touch()
 
 [step_30]
-input:  output_from(10), 'c.txt'
+input:  output_from(10)
 print(f'input of step {step_name} is {step_input} with sources {step_input.sources}')</textarea>
   </div>
 </div>
@@ -12802,28 +13097,28 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 <div class="output_html rendered_html output_subarea ">
 
-<table id="workflow_2799669f1d174fb595914d5b6336a401" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_2799669f1d174fb595914d5b6336a401" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_2799669f1d174fb595914d5b6336a401">step</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_2799669f1d174fb595914d5b6336a401">b2d5163796f0f4f8</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_2799669f1d174fb595914d5b6336a401">8</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_2799669f1d174fb595914d5b6336a401">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_2799669f1d174fb595914d5b6336a401" class="completed" datetime="1545079867817.051">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
+<table id="workflow_2993764f-8c5b-4c85-bfeb-fc2f0b4adeb7" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_2993764f-8c5b-4c85-bfeb-fc2f0b4adeb7" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_2993764f-8c5b-4c85-bfeb-fc2f0b4adeb7">step</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_2993764f-8c5b-4c85-bfeb-fc2f0b4adeb7">741f2c5f77bde980</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_2993764f-8c5b-4c85-bfeb-fc2f0b4adeb7">15</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_2993764f-8c5b-4c85-bfeb-fc2f0b4adeb7">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_2993764f-8c5b-4c85-bfeb-fc2f0b4adeb7" class="completed" datetime="1546788024772.3643">Ran for 0 sec</time></pre>
+      </td>
+</tr>
 </table>
 
 </div>
@@ -12836,7 +13131,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_30 is out.txt summary.txt c.txt with sources [&#39;output&#39;, &#39;summary&#39;, &#39;step_30&#39;]
+<pre>input of step step_30 is out.txt summary.txt with sources [&#39;output&#39;, &#39;summary&#39;]
 </pre>
 </div>
 </div>
@@ -12866,13 +13161,13 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 <div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
    <textarea rows="8"
-      class="sos-source" name="SoS">%run
+      class="sos-source" name="SoS">%run -v0
 [step_10]
 output: output='out.txt', summary='summary.txt'
 _output.touch()
 
 [step_30]
-input:  output_from(10)['summary'], 'c.txt'
+input:  output_from(10)['summary']
 print(f'input of step {step_name} is {step_input} with sources {step_input.sources}')</textarea>
   </div>
 </div>
@@ -12891,28 +13186,28 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 <div class="output_html rendered_html output_subarea ">
 
-<table id="workflow_0df6051c4c0f4d8487ef7ba049349dcc" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_0df6051c4c0f4d8487ef7ba049349dcc" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_0df6051c4c0f4d8487ef7ba049349dcc">step</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_0df6051c4c0f4d8487ef7ba049349dcc">b2d5163796f0f4f8</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_0df6051c4c0f4d8487ef7ba049349dcc">11</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_0df6051c4c0f4d8487ef7ba049349dcc">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_0df6051c4c0f4d8487ef7ba049349dcc" class="completed" datetime="1545079982459.1238">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
+<table id="workflow_39826e9a-b511-486a-b635-501ba1e47387" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_39826e9a-b511-486a-b635-501ba1e47387" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_39826e9a-b511-486a-b635-501ba1e47387">step</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_39826e9a-b511-486a-b635-501ba1e47387">e749542e45a8a28e</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_39826e9a-b511-486a-b635-501ba1e47387">17</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_39826e9a-b511-486a-b635-501ba1e47387">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_39826e9a-b511-486a-b635-501ba1e47387" class="completed" datetime="1546788046821.378">Ran for 0 sec</time></pre>
+      </td>
+</tr>
 </table>
 
 </div>
@@ -12925,7 +13220,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>input of step step_30 is summary.txt c.txt with sources [&#39;summary&#39;, &#39;step_30&#39;]
+<pre>input of step step_30 is summary.txt with sources [&#39;summary&#39;]
 </pre>
 </div>
 </div>
@@ -12952,10 +13247,10 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
    <textarea rows="12"
-      class="sos-source" name="SoS">%run
+      class="sos-source" name="SoS">%run -v0
 [step_10]
 output: a='a.txt', b='b.txt'
 _output.touch()
@@ -12984,28 +13279,28 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 
 <div class="output_html rendered_html output_subarea ">
 
-<table id="workflow_d4aaac690f0048d985ed3452caa5e97d" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_d4aaac690f0048d985ed3452caa5e97d" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_d4aaac690f0048d985ed3452caa5e97d">step</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_d4aaac690f0048d985ed3452caa5e97d">84533aaef4b9d9dd</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_d4aaac690f0048d985ed3452caa5e97d">15</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_d4aaac690f0048d985ed3452caa5e97d">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_d4aaac690f0048d985ed3452caa5e97d" class="completed" datetime="1545080069587.991">Ran for 0 sec</time></pre>
-        </td>
-  </tr>
+<table id="workflow_3b1935cc-e961-495a-b583-37a2485e8206" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_3b1935cc-e961-495a-b583-37a2485e8206" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_3b1935cc-e961-495a-b583-37a2485e8206">step</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_3b1935cc-e961-495a-b583-37a2485e8206">9c6283740131138c</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_3b1935cc-e961-495a-b583-37a2485e8206">19</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_3b1935cc-e961-495a-b583-37a2485e8206">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_3b1935cc-e961-495a-b583-37a2485e8206" class="completed" datetime="1546788062385.0398">Ran for 0 sec</time></pre>
+      </td>
+</tr>
 </table>
 
 </div>
@@ -13045,7 +13340,305 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h3 id="groups-of-outputs-returned-from-output_from">groups of outputs returned from <code>output_from</code><a class="anchor-link" href="#groups-of-outputs-returned-from-output_from"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to the case with <code>named_output</code>, the returned object from <code>output_from()</code> keeps its original groups. For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">%run B -v0
+[A]
+input: for_each=dict(i=range(4))
+output: f'a_{i}.txt'
+_output.touch()
+
+[B]
+input: output_from('A')
+output: _input.with_suffix('.bak')
+print(f'Converting {_input} to {_output}')
+_output.touch()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Converting a_0.txt to a_0.bak
+Converting a_1.txt to a_1.bak
+Converting a_2.txt to a_2.bak
+Converting a_3.txt to a_3.bak
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Using-output_from-in-place-of-named_output">Using <code>output_from</code> in place of <code>named_output</code><a class="anchor-link" href="#Using-output_from-in-place-of-named_output"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Going back to our <code>conver</code>, <code>plot</code> example. When another step is added to have the same named output, it is no longer possible to use <code>named_output(name)</code>. In this case you can explicitly specify the step from which the named output is defined, and use</p>
+
+<pre><code>output_from(step)[name]</code></pre>
+<p>instead of</p>
+
+<pre><code>named_output(name)</code></pre>
+<p>as shown in the following example:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 38.742990000000006em">
+   <textarea rows="31"
+      class="sos-source" name="SoS">!rm -f data/DEG.csv
+%run plot 
+
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'data/DEG.csv'
+figure_file = 'output.pdf'
+
+[convert]
+input: excel_file
+output: csv = _input.with_suffix('.csv')
+
+run: expand=True
+    xlsx2csv {_input} > {_output}
+
+[test_csv]
+input: excel_file
+output: csv = f'{_input:n}_test.csv'
+
+run: expand=True
+    xlsx2csv {_input} | head -10 > {_output}
+    
+[plot]
+input: output_from('convert')['csv']
+output: figure_file
+
+R: expand=True
+    data <- read.csv('{_input}')
+    pdf('{_output}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_e64b92d4-6ac8-48b4-af4e-4dc7d98413e6" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_e64b92d4-6ac8-48b4-af4e-4dc7d98413e6" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_e64b92d4-6ac8-48b4-af4e-4dc7d98413e6">plot</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_e64b92d4-6ac8-48b4-af4e-4dc7d98413e6">08791179e094b892</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_e64b92d4-6ac8-48b4-af4e-4dc7d98413e6">11</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_e64b92d4-6ac8-48b4-af4e-4dc7d98413e6">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_e64b92d4-6ac8-48b4-af4e-4dc7d98413e6" class="completed" datetime="1546787013830.6428">Ran for 0 sec</time></pre>
+      </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">convert</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>xlsx2csv data/DEG.xlsx &gt; data/DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">data/DEG.csv</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">plot</span> (index=0) is <span class="sos_highlight">ignored</span> due to saved signature
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">output.pdf</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=08791179e094b892) is executed successfully with 1 completed step and 1 ignored step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that <code>output_from</code> is better than <code>named_output</code> for its ability to referring to a specific step, but is also worse than <code>named_output</code> for the same reason because it makes the workflow more difficult to maintain. We generally recommend the use of <code>named_output</code> for its simplicity.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/named_output.html">How to use named output in data-flow style workflows</a></li>
+</ul>
 
 </div>
 </div>
