@@ -12524,7 +12524,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-group-input-and-output-targets-by-names">How to group input and output targets by names<a class="anchor-link" href="#How-to-group-input-and-output-targets-by-names"></a></h1>
 </div>
 </div>
 </div>
@@ -12535,9 +12535,12 @@ li.tocify-item.active {
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Time need to learn</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li><code>_input</code> or <code>_output</code> can be grouped by the <strong>sources</strong> of input and output targets</li>
+<li>Use keyword arguments to specify sources of input or output arguments</li>
+<li><code>_input[name]</code> and <code>_output[name]</code> return subset of <code>_input</code> or <code>_output</code> with source <code>name</code></li>
+<li>Outputs returned from <code>output_from</code> and <code>named_output</code> can have their own sources  </li>
 </ul>
 </li>
 </ul>
@@ -12550,7 +12553,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Named-input-files">Named input files<a class="anchor-link" href="#Named-input-files"></a></h3>
+<h2 id="Sources-of-sos_targets">Sources of <code>sos_targets</code><a class="anchor-link" href="#Sources-of-sos_targets"></a></h2>
 </div>
 </div>
 </div>
@@ -12559,7 +12562,35 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>All input targets of SoS steps have a <strong>source</strong>, which specifies where the target comes from. The <code>sources</code> of a <code>step_input</code> variable can be used to inspect the source of each target. By default, targets specified directly have the source of the name of the step in which they are specified.</p>
+<p>All input targets of SoS steps have a <strong>source</strong>, which specifies where the target comes from. The <code>sources</code> of variables in type <code>sos_targets</code> (e.g. variables <code>_input</code>, <code>_output</code>, and <code>step_input</code>) can be used to inspect the source of each target.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>The <code>sources</code> of <code>sos_targets</code></h4>
+    <p>Each element in a <code>sos_targets</code> object (e.g. <code>_input</code>) has a <em>source</em> attribute.</p>
+    <ul>
+        <li>The sources of <code>sos_targets</code> can be retrieved by attribute <code>.sources</code></li>
+        <li>A slice of the <code>sos_targets</code>, namely all elements having a specified source, can be obtained by <code>[name]</code>. Groups of the <code>sos_targets</code> will also be sliced</li>
+        <li>The default source of input and output files are the steps from which they are inputted or generated</li>
+        <li>Keyword arguments (e.g. <code>summary='summary.html'</code>) overrides the default sources</li>        
+    </ul>
+ </div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>By default, targets specified directly have the source of the name of the step in which they are specified.</p>
 
 </div>
 </div>
@@ -12569,12 +12600,29 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
-      class="sos-source" name="SoS">%run
-[step_10]
-in_files = ['a.txt', 'b.txt']
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS"># create a few input files to satisfy the input of sample workflows
+!touch a.txt b.txt ref.txt</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">in_files = ['a.txt', 'b.txt']
 input: in_files, 'c.txt', 'd.txt'
 
 print(f'step_input is {step_input} with sources {step_input.sources}')</textarea>
@@ -12592,44 +12640,8 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
 <div class="prompt"></div>
 
 
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_bda2b9cbf9b7435c99fa06335e110cde" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_bda2b9cbf9b7435c99fa06335e110cde" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_bda2b9cbf9b7435c99fa06335e110cde">step</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_bda2b9cbf9b7435c99fa06335e110cde">6a10bf848352d104</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_bda2b9cbf9b7435c99fa06335e110cde">3</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_bda2b9cbf9b7435c99fa06335e110cde">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_bda2b9cbf9b7435c99fa06335e110cde" class="completed" datetime="1545079414801.133">Ran for 0 sec</time></pre>
-        </td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>step_input is a.txt b.txt c.txt d.txt with sources [&#39;step_10&#39;, &#39;step_10&#39;, &#39;step_10&#39;, &#39;step_10&#39;]
+<pre>step_input is a.txt b.txt c.txt d.txt with sources [&#39;scratch_0&#39;, &#39;scratch_0&#39;, &#39;scratch_0&#39;, &#39;scratch_0&#39;]
 </pre>
 </div>
 </div>
@@ -12656,7 +12668,7 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">input: grp1 = ['a.txt', 'b.txt'], grp2=['c.txt', 'd.txt']
@@ -12704,16 +12716,14 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
-   <textarea rows="7"
-      class="sos-source" name="SoS">!touch ref.txt
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">input: data = ['a.txt', 'b.txt'], reference='ref.txt'
 
-input: data = ['a.txt', 'b.txt'], reference='ref.txt'
-
-print(f'Input of step is {step_input} with sources {step_input.sources}')
-print(f'Data is {step_input["data"]}')
-print(f'Reference is {step_input["reference"]}')</textarea>
+print(f'Input of step is {_input} with sources {step_input.sources}')
+print(f'Data is {_input["data"]}')
+print(f'Reference is {_input["reference"]}')</textarea>
   </div>
 </div>
 
@@ -12748,7 +12758,215 @@ Reference is ref.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Named-inputs-and-outputs">Named inputs and outputs<a class="anchor-link" href="#Named-inputs-and-outputs"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Named inputs and outputs</h4>
+    <p>Keyword arguments in input and output statements allows referring to subsets of inputs and outputs with names</p>
+ </div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, in the following workflow, the input files are labelled with <code>data</code> and the reference is labelled with <code>reference</code>. In the output statement, the <code>data</code> part of the input (<code>_input["data"]</code>) is used to generate results with label <code>result</code>.</p>
+<p>In the following <code>print</code> statement,  <code>_input["reference"]</code>, <code>_output['result']</code> etc are used to obtain subsets of <code>_input</code> and <code>_output</code>. These subsets of inputs or outputs are usually called <strong>named inputs</strong> and <strong>named outputs</strong>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
+   <textarea rows="13"
+      class="sos-source" name="SoS">input: data = ['a.txt', 'b.txt'], reference='ref.txt'
+output: result=[x.with_suffix('.res') for x in _input["data"]]
+_output.touch()                              
+
+print(f'''\
+Input of step is {_input} with sources {step_input.sources}
+
+Input data is {_input["data"]}
+Reference is {_input["reference"]}
+
+Output is {_output}
+Result of output is {_output['result']}
+''')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of step is a.txt b.txt ref.txt with sources [&#39;data&#39;, &#39;data&#39;, &#39;reference&#39;]
+
+Input data is a.txt b.txt
+Reference is ref.txt
+
+Output is a.res b.res
+Result of output is a.res b.res
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Slices-of-sos_targets-with-groups-*">Slices of <code>sos_targets</code> with groups *<a class="anchor-link" href="#Slices-of-sos_targets-with-groups-*"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If a step has multiple substeps, variables <code>step_input</code> and <code>step_output</code> will consist of multiple groups. For example, the <code>_output</code> of step <code>[10]</code> has named output <code>A</code> and <code>B</code>. The output of the entire step consists of 4 groups, which are retrieved by function <code>output_from(-1)</code> (<code>-1</code> means last step). The expression</p>
+<div class="highlight"><pre><span></span><span class="nb">input</span><span class="p">:</span> <span class="n">output_from</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span>
+</pre></div>
+<p>obtains all targets with source <code>A</code>, including the groups, so <code>_input</code> of step <code>20</code> consists of only targets with source <code>A</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">%run -v0
+[10]
+input: for_each=dict(i=range(4))
+output: A=f'a_{i}.txt', B=f'b_{i}.txt'
+_output.touch()       
+
+print(f'Output step is {_output} with sources {_output.sources}')
+
+[20]
+input: output_from(-1)['A']
+print(f'input of substep is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_2c6a7093-d410-49ab-8875-d13cb8432888" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_2c6a7093-d410-49ab-8875-d13cb8432888" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_2c6a7093-d410-49ab-8875-d13cb8432888">default</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_2c6a7093-d410-49ab-8875-d13cb8432888">1d31d133dbc5cb66</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_2c6a7093-d410-49ab-8875-d13cb8432888">3</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_2c6a7093-d410-49ab-8875-d13cb8432888">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_2c6a7093-d410-49ab-8875-d13cb8432888" class="completed" datetime="1546891644529.9368">Ran for < 5 seconds</time></pre>
+      </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>input of substep is a_0.txt
+input of substep is a_1.txt
+input of substep is a_2.txt
+input of substep is a_3.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/named_output.html">How to use named output in data-flow style workflows</a></li>
+</ul>
 
 </div>
 </div>
