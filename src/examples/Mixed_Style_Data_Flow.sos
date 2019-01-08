@@ -1,0 +1,86 @@
+#!/usr/bin/env sos-runner
+# fileformat=SOS1.0
+# Author: Gao Wang and Bo Peng
+
+#
+# Linear-model based prediction
+#
+# This script fits linear models
+# using Lasso and Ridge regression
+# and summarizes their prediction performance
+# This script is written in a "mixed" style,
+# a mixture of process and outcome oriented styles
+
+[global]
+parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
+
+# Simulate sparse data-sets
+[simulation]
+depends: R_library("MASS>=7.3")
+parameter: N = (40, 200) # training and testing samples
+parameter: rstd = 3
+id = [x for x in range(1,6)]
+input: for_each = 'id'
+output: train = f"data_{_id}.train.csv", test = f"data_{_id}.test.csv"
+R: expand = "${ }"
+  set.seed(${_id})
+  N = sum(c(${paths(N):,}))
+  p = length(c(${paths(beta):,}))
+  X = MASS::mvrnorm(n = N, rep(0, p), 0.5^abs(outer(1:p, 1:p, FUN = "-")))
+  Y = X %*% c(${paths(beta):,}) + rnorm(N, mean = 0, sd = ${rstd})
+  Xtrain = X[1:${N[0]},]; Xtest = X[(${N[0]}+1):(${N[0]}+${N[1]}),]
+  Ytrain = Y[1:${N[0]}]; Ytest = Y[(${N[0]}+1):(${N[0]}+${N[1]})]
+  write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
+  write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
+
+# Ridge regression model implemented in R
+# Build predictor via cross-validation and make prediction
+[ridge_1 (model fitting)]
+depends: R_library("glmnet>=2.0")
+parameter: nfolds = 5
+input: named_output('train'), named_output('test')
+output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
+R: expand = "${ }"
+  train = read.csv(${_input[0]:r}, header = F)
+  test = read.csv(${_input[1]:r}, header = F)
+  model = glmnet::cv.glmnet(as.matrix(train[,-1]), train[,1], family = "gaussian", alpha = 0, nfolds = ${nfolds}, intercept = F)
+  betahat = as.vector(coef(model, s = "lambda.min")[-1])
+  Ypred = predict(model, as.matrix(test[,-1]), s = "lambda.min")
+  write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
+  write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
+
+# LASSO model implemented in Python
+# Build predictor via cross-validation and make prediction
+[lasso_1 (model fitting)]
+depends: Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9") 
+parameter: nfolds = 5
+input: named_output('train'), named_output('test')
+output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
+python: expand = "${ }"
+  import numpy as np
+  from sklearn.linear_model import LassoCV
+  train = np.genfromtxt(${_input[0]:r}, delimiter = ",")
+  test = np.genfromtxt(${_input[1]:r}, delimiter = ",")
+  model = LassoCV(cv = ${nfolds}, fit_intercept = False).fit(train[:,1:], train[:,1])
+  Ypred = model.predict(test[:,1:])
+  np.savetxt(${_output[0]:r}, Ypred)
+  np.savetxt(${_output[1]:r}, model.coef_)
+
+# Evaluate predictors by calculating mean squared error
+# of prediction vs truth (first line of output)
+# and of betahat vs truth (2nd line of output)
+[ridge_2, lasso_2 (evaluate)]
+input: y = named_output('test'), yhat = output_from(-1)[0], coef = output_from(-1)[1]
+output: f"{_input[0]:nn}.mse.csv"
+R: expand = "${ }", stderr = False
+  b = c(${paths(beta):,})
+  Ytruth = as.matrix(read.csv(${path(_input[0]):r}, header = F)[,-1]) %*% b
+  Ypred = scan(${_input[1]:r})
+  prediction_mse = mean((Ytruth - Ypred)^2)
+  betahat = scan(${_input[2]:r})
+  estimation_mse = mean((betahat - b) ^ 2)
+  cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
+ 
+[default]
+sos_run('ridge')
+sos_run('lasso')
