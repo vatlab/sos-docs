@@ -69,12 +69,11 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 [ridge_2, lasso_2 (evaluate)]
-depends: data_files
-input: group_with = "data_files"
+depends: f'{_input[0]:nnn}.test.csv'
 output: f"{_input[0]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${path(_data_files[1]):r}, header = F)[,-1]) %*% b
+  Ytruth = as.matrix(read.csv(${_depends[0]:r}, header = F)[,-1]) %*% b
   Ypred = scan(${_input[0]:r})
   prediction_mse = mean((Ytruth - Ypred)^2)
   betahat = scan(${_input[1]:r})
