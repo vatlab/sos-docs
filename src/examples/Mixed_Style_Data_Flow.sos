@@ -39,7 +39,7 @@ R: expand = "${ }"
 depends: R_library("glmnet>=2.0")
 parameter: nfolds = 5
 input: named_output('train'), named_output('test')
-output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
+output: pred = f"{_input[0]:nn}.ridge.predicted.csv", coef = f"{_input[0]:nn}.ridge.coef.csv"
 R: expand = "${ }"
   train = read.csv(${_input[0]:r}, header = F)
   test = read.csv(${_input[1]:r}, header = F)
@@ -55,7 +55,7 @@ R: expand = "${ }"
 depends: Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9") 
 parameter: nfolds = 5
 input: named_output('train'), named_output('test')
-output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
+output: pred = f"{_input[0]:nn}.lasso.predicted.csv", coef = f"{_input[0]:nn}.lasso.coef.csv"
 python: expand = "${ }"
   import numpy as np
   from sklearn.linear_model import LassoCV
@@ -70,7 +70,7 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 [ridge_2, lasso_2 (evaluate)]
-input: y = named_output('test'), yhat = output_from(-1)[0], coef = output_from(-1)[1]
+input: y = named_output('test'), yhat = output_from(-1)['pred'], coef = output_from(-1)['coef']
 output: f"{_input[0]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
