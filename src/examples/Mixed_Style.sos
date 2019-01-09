@@ -13,7 +13,7 @@
 
 [global]
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
-data_files = [("data_{}.train.csv".format(x + 1), "data_{}.test.csv".format(x + 1)) for x in range(5)]
+parameter: id = 0
 
 # Simulate sparse data-sets
 [simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
@@ -37,7 +37,7 @@ R: expand = "${ }"
 [ridge_1 (model fitting)]
 depends: R_library("glmnet>=2.0")
 parameter: nfolds = 5
-input: data_files, group_by = 2
+input: f"data_{id}.train.csv", f"data_{id}.test.csv"
 output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
 R: expand = "${ }"
   train = read.csv(${_input[0]:r}, header = F)
@@ -53,7 +53,7 @@ R: expand = "${ }"
 [lasso_1 (model fitting)]
 depends: Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9") 
 parameter: nfolds = 5
-input: data_files, group_by = 2
+input: f"data_{id}.train.csv", f"data_{id}.test.csv"
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
 python: expand = "${ }"
   import numpy as np
@@ -69,7 +69,7 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 [ridge_2, lasso_2 (evaluate)]
-depends: f'{_input[0]:nnn}.test.csv'
+depends: f"data_{id}.test.csv"
 output: f"{_input[0]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
@@ -81,5 +81,6 @@ R: expand = "${ }", stderr = False
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
  
 [default]
-sos_run('ridge')
-sos_run('lasso')
+input: for_each = {'id': range(1,6)}
+sos_run('ridge', id=id)
+sos_run('lasso', id=id)
