@@ -333,117 +333,112 @@ pre.section-header.CodeMirror-line {
       </style>
    </head>
    <body>
-      <h2 class='mt-0'>Fusion_sequences.sos
+      <h2 class='mt-0'>Mixed_Style_Data_Flow.sos
          
-         <a href="Fusion_sequences.sos"><i class="fas fa-external-link-alt"></i></a>
+         <a href="Mixed_Style_Data_Flow.sos"><i class="fas fa-external-link-alt"></i></a>
          
       </h2>
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               90 lines
+               85 lines
                <span class="file-info-divider"></span>
-               2.7 kB
+               3.6 kB
             </div>
          </div>
          <div class="filecontent">
-            <textarea rows="90" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
-#fileformat=SOS1.0
+            <textarea rows="85" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
+# fileformat=SOS1.0
+# Author: Gao Wang and Bo Peng
 
 #
-# This script uses command `vtools_report sequence` to retrieve DNA and mRNA sequence around
-# break points of fusions.
+# Linear-model based prediction
 #
+# This script fits linear models
+# using Lasso and Ridge regression
+# and summarizes their prediction performance
+# This script is written in a "mixed" style,
+# a mixture of process and outcome oriented styles
 
+[global]
+parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
 
-[RNA]
-#
-#  Get RNA sequence for a particular fusion candidate with parameter
-#  break_point:  break point in the format of chr1:pos1>chr2:pos2
-#  gene1:  5-prime gene
-#  gene2:  3-prime gene
-#
-parameter: break_point = str
-parameter: gene1 = str
-parameter: gene2 = str
-parameter: filename = '/dev/stdout'
-parameter: lead = 50
+# Simulate sparse data-sets
+[simulation]
+depends: R_library("MASS>=7.3")
+parameter: N = (40, 200) # training and testing samples
+parameter: rstd = 3
+id = [x for x in range(1,6)]
+input: for_each = 'id'
+output: train = f"data_{_id}.train.csv", test = f"data_{_id}.test.csv"
+R: expand = "${ }"
+  set.seed(${_id})
+  N = sum(c(${paths(N):,}))
+  p = length(c(${paths(beta):,}))
+  X = MASS::mvrnorm(n = N, rep(0, p), 0.5^abs(outer(1:p, 1:p, FUN = "-")))
+  Y = X %*% c(${paths(beta):,}) + rnorm(N, mean = 0, sd = ${rstd})
+  Xtrain = X[1:${N[0]},]; Xtest = X[(${N[0]}+1):(${N[0]}+${N[1]}),]
+  Ytrain = Y[1:${N[0]}]; Ytest = Y[(${N[0]}+1):(${N[0]}+${N[1]})]
+  write.table(cbind(Ytrain, Xtrain), ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
+  write.table(cbind(Ytest, Xtest), ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
-five_prime, three_prime = break_point.split('>')
-five_chr, five_pos = five_prime.split(':')
-three_chr, three_pos = three_prime.split(':')
+# Ridge regression model implemented in R
+# Build predictor via cross-validation and make prediction
+[ridge_1 (model fitting)]
+depends: R_library("glmnet>=2.0")
+parameter: nfolds = 5
+input: named_output('train'), named_output('test')
+output: pred = f"{_input[0]:nn}.ridge.predicted.csv", coef = f"{_input[0]:nn}.ridge.coef.csv"
+R: expand = "${ }"
+  train = read.csv(${_input[0]:r}, header = F)
+  test = read.csv(${_input[1]:r}, header = F)
+  model = glmnet::cv.glmnet(as.matrix(train[,-1]), train[,1], family = "gaussian", alpha = 0, nfolds = ${nfolds}, intercept = F)
+  betahat = as.vector(coef(model, s = "lambda.min")[-1])
+  Ypred = predict(model, as.matrix(test[,-1]), s = "lambda.min")
+  write.table(Ypred, ${_output[0]:r}, row.names = F, col.names = F, sep = ',')
+  write.table(betahat, ${_output[1]:r}, row.names = F, col.names = F, sep = ',')
 
+# LASSO model implemented in Python
+# Build predictor via cross-validation and make prediction
+[lasso_1 (model fitting)]
+depends: Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9") 
+parameter: nfolds = 5
+input: named_output('train'), named_output('test')
+output: pred = f"{_input[0]:nn}.lasso.predicted.csv", coef = f"{_input[0]:nn}.lasso.coef.csv"
+python: expand = "${ }"
+  import numpy as np
+  from sklearn.linear_model import LassoCV
+  train = np.genfromtxt(${_input[0]:r}, delimiter = ",")
+  test = np.genfromtxt(${_input[1]:r}, delimiter = ",")
+  model = LassoCV(cv = ${nfolds}, fit_intercept = False).fit(train[:,1:], train[:,1])
+  Ypred = model.predict(test[:,1:])
+  np.savetxt(${_output[0]:r}, Ypred)
+  np.savetxt(${_output[1]:r}, model.coef_)
 
-gene1_strand = get_output("vtools_report transcript ${five_chr}:${int(five_pos)-lead}-${five_pos} --first-transcript --strand-only -v0").strip()
-if gene1_strand == '-':
-    # | <==== 
-    gene1_range = "${int(five_pos)}-${int(five_pos)+lead-1}"
-else:
-    # =====> |
-    gene1_range = "${int(five_pos)-lead+1}-${five_pos}"
-
-gene2_strand = get_output("vtools_report transcript ${three_chr}:${int(three_pos)}-${int(three_pos)+lead} --first-transcript --strand-only -v0").strip()
-if gene2_strand == '-':
-    # <==== |
-    gene2_range = "${int(three_pos)-lead+1}-${int(three_pos)}"
-else:
-    # | ====>
-    gene2_range = "${three_pos}-${int(three_pos)+lead - 1}"
-
-run: allow_error=True
-    echo >> ${filename}
-    echo "==> ${gene1} > ${gene2}  ${break_point} (${gene1_strand} ${gene2_strand})" >> ${filename}
-    vtools_report sequence ${five_chr}:${gene1_range} --transcribe --zero-based \
-         --show-transcript \
-         --mark ${five_chr}:${gene1_range} --marked-region -v0 >> ${filename}
-    echo  >> ${filename}
-    vtools_report sequence ${three_chr}:${gene2_range} --transcribe \
-        --zero-based --show-transcript \
-         --mark ${three_chr}:${gene2_range} --marked-region -v0 >> ${filename}
-
-[RNA_all]
-#
-# Print RNA sequence for all fusions in all fusion report files under current directory
-#
-parameter: filename= '/dev/stdout'
-parameter: lead= 50
-
-import pandas as pd
-fusion_files = glob.glob('*/fusion/fusions_oncofuse.xls')
-input: for_each={'fusion_file': fusion_files}
-
-run:
-    echo >> ${filename}
-    echo >> ${filename}
-    echo "Sample ID: ${fusion_file!dd}" >> ${filename}
-
-fusions = pd.read_csv(fusion_file, sep='\t')
-for idx, row in fusions.iterrows():
-    sos_run('RNA', break_point=row['GENOMIC'], gene1=row['5_FPG_GENE_NAME'], 
-		gene2=row['3_FPG_GENE_NAME'], filename=filename, lead=lead)
-
-[init: provides='fusion.proj']
-
-run:
-    vtools init fusion -f --build hg19
-
+# Evaluate predictors by calculating mean squared error
+# of prediction vs truth (first line of output)
+# and of betahat vs truth (2nd line of output)
+[ridge_2, lasso_2 (evaluate)]
+input: y = named_output('test'), yhat = output_from(-1)['pred'], coef = output_from(-1)['coef']
+output: f"{_input[0]:nn}.mse.csv"
+R: expand = "${ }", stderr = False
+  b = c(${paths(beta):,})
+  Ytruth = as.matrix(read.csv(${path(_input[0]):r}, header = F)[,-1]) %*% b
+  Ypred = scan(${_input[1]:r})
+  prediction_mse = mean((Ytruth - Ypred)^2)
+  betahat = scan(${_input[2]:r})
+  estimation_mse = mean((betahat - b) ^ 2)
+  cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
+ 
 [default]
-#
-# Print fusion sequence for all files with different lead length.
-#
-depends: 'fusion.proj'
-
-sos_run('RNA_all', filename='RNA50.txt', lead=50)
-sos_run('RNA_all', filename='RNA300.txt', lead=300)
-
-
+sos_run(['ridge', 'lasso'])
 </textarea>
          </div>
       </div>
       <footer>
          <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
-         </a> &nbsp;See the output of command <samp>sos run Fusion_sequences.sos -h</samp> for usage information</div>
+         </a> &nbsp;See the output of command <samp>sos run Mixed_Style_Data_Flow.sos -h</samp> for usage information</div>
          <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.18.1</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

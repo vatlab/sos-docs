@@ -11718,19 +11718,6 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
-<style type="text/css">
-    /*This file contains any manual css for this page that needs to override the global styles.
-This is only required when different pages style the same element differently. This is just
-a hack to deal with our current css styles and no new styling should be added in this file.*/
-
-#ipython-main-app {
-    position: relative;
-}
-#jupyter-main-app {
-    position: relative;
-}
-
-    </style>
 
 
 <style type="text/css">
@@ -12537,7 +12524,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-execute-workflow-to-generate-specific-output">How to execute workflow to generate specific output<a class="anchor-link" href="#How-to-execute-workflow-to-generate-specific-output"></a></h1>
 </div>
 </div>
 </div>
@@ -12547,10 +12534,12 @@ li.tocify-item.active {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Difficulty level</strong>: intemediate</li>
+<li><strong>Time need to lean</strong>: 20 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>Instead of executing workflows, you can use option <code>-t</code> to specify targets to generate</li>
+<li>Targets can be filenames or names of named output</li>
+<li>Steps that provides targets can be process-oriented steps with static or named outputs, or outcome-oriented with pattern matching</li>
 </ul>
 </li>
 </ul>
@@ -12563,7 +12552,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<h2 id="Process-oriented-and-outcome-oriented-workflows">Process-oriented and outcome-oriented workflows<a class="anchor-link" href="#Process-oriented-and-outcome-oriented-workflows"></a></h2>
 </div>
 </div>
 </div>
@@ -12572,7 +12561,177 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Process- vs outcome-oriented workflows</h4>
+    <p>SoS supports both process-oriented and outcome-oriented workflow styles</p>
+    <ul>    
+    <li><b>Process-oriented workflows</b> execute user-specified workflows or steps. For example, <code>sos run script A</code> would execute a workflow named <code>A</code>, which can be a single-step workflow with step <code>A</code>, or a multi-step workflow with steps such as <code>A_10</code>, <code>A_20</code>. The workflow may or may not generate any output. </li>
+    <li><b>Outcome-oriented workflows</b> aims at generating specified outcomes. For example, <code>sos run script -t result.html</code> would execute any step needed to genearte <code>result.html</code>.</li>
+    </ul>
+    The distinction between these two styles are mostly conceptual, and on how workflows are executed. In SoS, the same workflow can be executed in both process-oriented and outcome-oriented styles.
+ </div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Process-oriented</strong> workflows execute steps. For example, the first example in our tutorial on <a href="doc/user_guide/sos_in_notebook.html">Using SoS workflow system in Jupyter and from command line</a> defines a workflow <code>plot</code> with two steps <code>plot_10</code> and <code>plot_20</code>. The magic <code>%run plot</code> or command <code>sos run script plot</code> executes all steps in the workflow, regardless of these steps produce any output.</p>
+
+</div>
+</div>
+</div>
+
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+   
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">run</span> <span class="n">plot</span>
+
+<span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">excel_file</span> <span class="o">=</span> <span class="s1">&#39;data/DEG.xlsx&#39;</span>
+<span class="n">csv_file</span> <span class="o">=</span> <span class="s1">&#39;DEG.csv&#39;</span>
+<span class="n">figure_file</span> <span class="o">=</span> <span class="s1">&#39;output.pdf&#39;</span>
+
+<span class="p">[</span><span class="n">plot_10</span><span class="p">]</span>
+<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">xlsx2csv</span> <span class="p">{</span><span class="n">excel_file</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">csv_file</span><span class="p">}</span>
+
+<span class="p">[</span><span class="n">plot_20</span><span class="p">]</span>
+<span class="kn">R:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">data</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">&#39;{csv_file}&#39;</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;{figure_file}&#39;</span><span class="p">)</span>
+    <span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="err">$</span><span class="n">log2FoldChange</span><span class="p">,</span> <span class="n">data</span><span class="err">$</span><span class="n">stat</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Outcome-oriented</strong> workflows aim at generating particular outcomes. For example,</p>
+
+</div>
+</div>
+</div>
+
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+   
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sos</span> <span class="o">-</span><span class="n">t</span> <span class="n">data</span><span class="o">/</span><span class="n">DEG</span><span class="o">.</span><span class="n">csv</span>
+
+<span class="p">[</span><span class="n">convert</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{filename}.csv&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">f</span><span class="s1">&#39;{filename}.xlsx&#39;</span>
+<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">xlsx2csv</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+
+
+
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+   
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1">## Generating plain output files</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+
+
+
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+   
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1">## Generating output files through pattern matching</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+
+
+
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+   
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1">## Generating outputs from their names</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/target_label.html">How to define named inputs and outputs</a></li>
+</ul>
 
 </div>
 </div>

@@ -341,13 +341,13 @@ pre.section-header.CodeMirror-line {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               86 lines
+               85 lines
                <span class="file-info-divider"></span>
                3.5 kB
             </div>
          </div>
          <div class="filecontent">
-            <textarea rows="86" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
+            <textarea rows="85" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
 # fileformat=SOS1.0
 # Author: Gao Wang and Bo Peng
 
@@ -362,7 +362,7 @@ pre.section-header.CodeMirror-line {
 
 [global]
 parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
-data_files = [("data_{}.train.csv".format(x + 1), "data_{}.test.csv".format(x + 1)) for x in range(5)]
+parameter: id = 0
 
 # Simulate sparse data-sets
 [simulation: provides = ["data_{id}.train.csv", "data_{id}.test.csv"]]
@@ -386,7 +386,7 @@ R: expand = "${ }"
 [ridge_1 (model fitting)]
 depends: R_library("glmnet>=2.0")
 parameter: nfolds = 5
-input: data_files, group_by = 2
+input: f"data_{id}.train.csv", f"data_{id}.test.csv"
 output: f"{_input[0]:nn}.ridge.predicted.csv", f"{_input[0]:nn}.ridge.coef.csv"
 R: expand = "${ }"
   train = read.csv(${_input[0]:r}, header = F)
@@ -402,7 +402,7 @@ R: expand = "${ }"
 [lasso_1 (model fitting)]
 depends: Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9") 
 parameter: nfolds = 5
-input: data_files, group_by = 2
+input: f"data_{id}.train.csv", f"data_{id}.test.csv"
 output: f"{_input[0]:nn}.lasso.predicted.csv", f"{_input[0]:nn}.lasso.coef.csv"
 python: expand = "${ }"
   import numpy as np
@@ -418,12 +418,11 @@ python: expand = "${ }"
 # of prediction vs truth (first line of output)
 # and of betahat vs truth (2nd line of output)
 [ridge_2, lasso_2 (evaluate)]
-depends: data_files
-input: group_with = "data_files"
+depends: f"data_{id}.test.csv"
 output: f"{_input[0]:nn}.mse.csv"
 R: expand = "${ }", stderr = False
   b = c(${paths(beta):,})
-  Ytruth = as.matrix(read.csv(${path(_data_files[1]):r}, header = F)[,-1]) %*% b
+  Ytruth = as.matrix(read.csv(${_depends[0]:r}, header = F)[,-1]) %*% b
   Ypred = scan(${_input[0]:r})
   prediction_mse = mean((Ytruth - Ypred)^2)
   betahat = scan(${_input[1]:r})
@@ -431,8 +430,8 @@ R: expand = "${ }", stderr = False
   cat(paste(prediction_mse, estimation_mse), file = ${_output:r})
  
 [default]
-sos_run('ridge')
-sos_run('lasso')
+input: for_each = {'id': range(1,6)}
+sos_run(['ridge', 'lasso'], id=id)
 </textarea>
          </div>
       </div>
@@ -440,7 +439,7 @@ sos_run('lasso')
          <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
          </a> &nbsp;See the output of command <samp>sos run Mixed_Style.sos -h</samp> for usage information</div>
-         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.17.8</samp></div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.18.1</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
