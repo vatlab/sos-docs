@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>task_error</title>
+<title>ref_group_by</title>
 
 <style type="text/css">
     /*!
@@ -12537,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="How-to-deal-with-failed-or-aborted-jobs">How to deal with failed or aborted jobs<a class="anchor-link" href="#How-to-deal-with-failed-or-aborted-jobs"></a></h1>
+<h1 id="Parameter-group_by-of-sos_targets">Parameter <code>group_by</code> of <code>sos_targets</code><a class="anchor-link" href="#Parameter-group_by-of-sos_targets"></a></h1>
 </div>
 </div>
 </div>
@@ -12549,10 +12549,7 @@ li.tocify-item.active {
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li>Use command <code>sos status -v4</code> to get details of failed jobs</li>
-</ul>
-</li>
+<li><strong>Key points</strong>:</li>
 </ul>
 
 </div>
@@ -12563,10 +12560,1061 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="sos-status--v4">sos status -v4<a class="anchor-link" href="#sos-status--v4"></a></h2>
+<h3 id="Parameter-group_by-and-substeps-">Parameter <code>group_by</code> and substeps <a id="group_by" /><a class="anchor-link" href="#Parameter-group_by-and-substeps-"></a></h3>
 </div>
 </div>
 </div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Up till now all input targets are processed all at once by the step. If you need to process input files one by one or in pair, you can define <strong>substeps</strong> that basically applies the step to subgroups of input targets, represented by variable <code>_input</code>.</p>
+<p>In the trivial case when all input targets are processed together, <code>_input</code> is the same as <code>step_input</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt'
+print(f'step input is {step_input}')
+print(f'substep input is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>step input is a.txt b.txt
+substep input is a.txt b.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Using option <code>group_by</code>, you can group the input targets in a number of ways, the easiest being group by <code>1</code>:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt', group_by=1
+print(f'input of step is {step_input}')
+print(f'input of substep {_index} is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>input of step is a.txt b.txt
+input of substep 0 is a.txt
+input of step is a.txt b.txt
+input of substep 1 is b.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see, the step process is now executed twice. Whereas the <code>step_input</code> is the same for both substeps, <code>_input</code> is <code>a.txt</code> for the first substep, and <code>b.txt</code> for the second substep. Here we used an internal variable <code>_index</code> to show the index of the substep.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS allows you to group input in a number of ways:</p>
+<table>
+<thead><tr>
+<th>option</th>
+<th>group by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>all</code></td>
+<td>all in a single group, the default</td>
+</tr>
+<tr>
+<td><code>single</code></td>
+<td>individual target</td>
+</tr>
+<tr>
+<td><code>pairs</code></td>
+<td>match first half of files with the second half, take one from each half each time</td>
+</tr>
+<tr>
+<td><code>combinations</code></td>
+<td>all unordered combinations of 2-sets</td>
+</tr>
+<tr>
+<td><code>pairwise</code></td>
+<td>all adjacent 2-sets</td>
+</tr>
+<tr>
+<td><code>source</code></td>
+<td>by source of input</td>
+</tr>
+<tr>
+<td><code>pairsource</code></td>
+<td>pair input files by their sources and take one from each source each time</td>
+</tr>
+<tr>
+<td><code>N</code> = <code>1</code>, <code>2</code>, ...</td>
+<td>chunks of size <code>N</code></td>
+</tr>
+<tr>
+<td><code>pairsN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
+<td>match first half of files with the second half, take <code>N</code> from each half each time</td>
+</tr>
+<tr>
+<td><code>pairsourceN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
+<td>pair input files by their sources and take <code>N</code> from each source (if equal size) each time</td>
+</tr>
+<tr>
+<td><code>pairwiseN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
+<td>all adjacent 2-sets, but each set has <code>N</code> items</td>
+</tr>
+<tr>
+<td><code>combinationsN</code>, <code>N</code>=<code>2</code>, <code>3</code>, ...</td>
+<td>all unorderd combinations of <code>N</code> items</td>
+</tr>
+<tr>
+<td>function (e.g. <code>lamba x: ...</code>)</td>
+<td>a function that returns groups of inputs</td>
+</tr>
+</tbody>
+</table>
+<p>For example, with the following sos script, the input are groups pairwisely:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">!touch file1 file2 file3 file4
+
+input: 'file1', 'file2', 'file3', 'file4', group_by='pairwise'
+print(f"{_input}")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>file1 file2
+file2 file3
+file3 file4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To demonstrate more acceptable values, the following example uses <code>sos_run</code> action to execute this a step with different grouping method.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">!touch file1 file2 file3 file4
+%run default
+
+[group]
+parameter: group = str
+print(f"\ngroup_by={group}")
+input: 'file1', 'file2', 'file3', 'file4', group_by=group
+print(f"{_index}: {_input}")
+
+[default]
+sos_run('group', group=1)
+sos_run('group', group=2)
+sos_run('group', group='single')
+sos_run('group', group='pairs')
+sos_run('group', group='pairwise')
+sos_run('group', group='combinations')
+sos_run('group', group='combinations3')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_4f041b9fa4a84a2a87d9c5699cafb061" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_4f041b9fa4a84a2a87d9c5699cafb061" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_4f041b9fa4a84a2a87d9c5699cafb061">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_4f041b9fa4a84a2a87d9c5699cafb061">a50ceb5da37415fc</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_4f041b9fa4a84a2a87d9c5699cafb061">1</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_4f041b9fa4a84a2a87d9c5699cafb061">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_4f041b9fa4a84a2a87d9c5699cafb061" class="completed" datetime="1545604461606.484">Ran for 2 sec</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+group_by=1
+0: file1
+2: file3
+3: file4
+1: file2
+
+group_by=2
+0: file1 file2
+1: file3 file4
+
+group_by=single
+0: file1
+1: file2
+3: file4
+2: file3
+
+group_by=pairs
+0: file1 file3
+1: file2 file4
+
+group_by=pairwise
+0: file1 file2
+2: file3 file4
+1: file2 file3
+
+group_by=combinations
+0: file1 file2
+1: file1 file3
+3: file2 file3
+4: file2 file4
+2: file1 file4
+5: file3 file4
+
+group_by=combinations3
+0: file1 file2 file3
+2: file1 file3 file4
+1: file1 file2 file4
+3: file2 file3 file4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We did not include options <code>pairsN</code> and <code>pairwiseN</code> in the example because we need more input files to see what is going on. As you can see from the following example, the <code>N</code> groups input targets as small groups of size <code>N</code> before <code>pairs</code> and <code>pairwise</code> are applied.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
+   <textarea rows="12"
+      class="sos-source" name="SoS">!touch A1 B1 A2 B2 A3 B3 A4 B4
+%run
+
+[group]
+parameter: group = str
+print(f"\ngroup_by={group}")
+input: 'A1', 'B1', 'A2', 'B2', 'A3', 'B3', 'A4', 'B4', group_by=group
+print(f"{_index}: {_input}")
+
+[default]
+sos_run('group', group='pairs2')
+sos_run('group', group='pairwise2')
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_f0bacc3408524c358381ba9dd75542e4" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_f0bacc3408524c358381ba9dd75542e4" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_f0bacc3408524c358381ba9dd75542e4">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_f0bacc3408524c358381ba9dd75542e4">ac0d35740213f296</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_f0bacc3408524c358381ba9dd75542e4">2</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_f0bacc3408524c358381ba9dd75542e4">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_f0bacc3408524c358381ba9dd75542e4" class="completed" datetime="1545604492423.6292">Ran for 1 sec</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+group_by=pairs2
+0: A1 B1 A3 B3
+1: A2 B2 A4 B4
+
+group_by=pairwise2
+1: A2 B2 A3 B3
+0: A1 B1 A2 B2
+2: A3 B3 A4 B4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we recall from the <code>source</code> attribute of <code>sos_targets</code>, input targets can have <code>source</code> of the present step (if specified directly), or as the output of previouly executed steps. Option <code>group_by</code> allows you to group input by sources <code>by='source'</code>, or pair sources (<code>by='pairsource'</code> and <code>by='pairsourceN'</code>). For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 25.385800000000003em">
+   <textarea rows="20"
+      class="sos-source" name="SoS">!touch c1 c2 c3 c4
+%run
+[step_10]
+output: 'a1'
+_output.touch()
+
+[step_20]
+output: 'b1', 'b2'
+_output.touch()
+
+[group]
+parameter: group = str
+print(f"\ngroup_by={group}")
+input: 'c1', 'c2', 'c3', 'c4', output_from(['step_10', 'step_20']), group_by=group
+print(f"{_index}: {_input} from {_input.sources}")
+
+[default]
+sos_run('group', group='source')
+sos_run('group', group='pairsource')
+sos_run('group', group='pairsource2')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_65f4e05b0aba433f8cec2c2df458d58e" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_65f4e05b0aba433f8cec2c2df458d58e" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_65f4e05b0aba433f8cec2c2df458d58e">default</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_65f4e05b0aba433f8cec2c2df458d58e">128dc21a4566df7e</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_65f4e05b0aba433f8cec2c2df458d58e">4</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_65f4e05b0aba433f8cec2c2df458d58e">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_65f4e05b0aba433f8cec2c2df458d58e" class="completed" datetime="1545604571384.583">Ran for 2 sec</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+group_by=source
+0: c1 c2 c3 c4 from [&#39;group&#39;, &#39;group&#39;, &#39;group&#39;, &#39;group&#39;]
+2: b1 b2 from [&#39;step_20&#39;, &#39;step_20&#39;]
+1: a1 from [&#39;step_10&#39;]
+
+group_by=pairsource
+0: c1 a1 b1 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+2: c3 a1 b2 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+1: c2 a1 b1 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+3: c4 a1 b2 from [&#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+
+group_by=pairsource2
+0: c1 c2 a1 b1 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+1: c3 c4 a1 b2 from [&#39;group&#39;, &#39;group&#39;, &#39;step_10&#39;, &#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The options <code>pairsource</code> and <code>pairsource2</code> need some explanation here because our groups do not have the same size. What these options do are</p>
+<ol>
+<li>Determine number of groups <code>m</code> from <code>N</code> and longest source.</li>
+<li>Either group or repeat items in sources to create <code>m</code> groups</li>
+</ol>
+<p>For example, with <code>pairsource2</code>, we are creating two groups because the largest source have 4 targets (<code>m=4/2=2</code>). Then, <code>a1</code> is repeated twice, <code>b1</code>, <code>b2</code> are in two groups, and <code>c1</code>, <code>c2</code> and <code>c3</code>, <code>c4</code> are in two groups.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, if none of the predefined grouping mechanism works, you can specify a function that takes <code>step_input</code> and returns a list of <code>sos_targets</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">!touch c1 c2 c3 c4 c5 c6
+input: 'c1', 'c2', 'c3', 'c4', 'c5', 'c6',
+    group_by=lambda x: [x[0], x[1:3], x[3:]]
+    
+print(f"{_index}: {_input}")
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: c1
+1: c2 c3
+2: c4 c5 c6
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="group_by-as-option-to-input-functions"><code>group_by</code> as option to input functions<a class="anchor-link" href="#group_by-as-option-to-input-functions"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pairing input from multiple sources is complicated when we apply <code>group_by</code> to a list of targets with different sources. It is actually a lot easier if you apply <code>group_by</code> to the sources separately. Fortunately, functions <code>output_from</code> accepts <code>group_by</code> so that you can regroup the targets before merging with other sources.</p>
+<p>For example, in the following example, <code>step_10</code> has two output files, <code>step_20</code> has 4, by applying <code>group_by=1</code> to <code>output_from('step_10')</code> and <code>group_by=2</code> to <code>output_from('step_20')</code>, we create two <code>sos_targets</code> each with two subgroups. The two <code>sos_targets</code> will be joined to create a single <code>_input</code> for each substep.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">%run group
+
+[step_10]
+output: 'a1', 'a2'
+_output.touch()
+
+[step_20]
+output: 'c1', 'c2', 'c3', 'c4'
+_output.touch()
+
+[group]
+input: output_from('step_10', group_by=1),
+       output_from('step_20', group_by=2)
+print(f"{_index}: {_input} from {_input.sources}")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_490edb0243d34fdd8d7199dcc1c8bb44" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_490edb0243d34fdd8d7199dcc1c8bb44" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_490edb0243d34fdd8d7199dcc1c8bb44">group</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_490edb0243d34fdd8d7199dcc1c8bb44">a67f4ad6ee689885</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_490edb0243d34fdd8d7199dcc1c8bb44">1</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_490edb0243d34fdd8d7199dcc1c8bb44">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_490edb0243d34fdd8d7199dcc1c8bb44" class="completed" datetime="1545605854398.425">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: a1 c1 c2 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
+1: a2 c3 c4 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As usual, keyword arguments overrides the sources of targets, so you can assign names to groups with keyword arguments:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">%run group
+
+[step_10]
+output: 'a1', 'a2'
+_output.touch()
+
+[step_20]
+output: 'c1', 'c2', 'c3', 'c4'
+_output.touch()
+
+[group]
+input: output_from('step_10', group_by=1),
+       s20=output_from('step_20', group_by=2)
+print(f"{_index}: {_input} from {_input.sources}")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_cf910547adf04db287cf89a57c95b045" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_cf910547adf04db287cf89a57c95b045" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_cf910547adf04db287cf89a57c95b045">group</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_cf910547adf04db287cf89a57c95b045">a67f4ad6ee689885</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_cf910547adf04db287cf89a57c95b045">2</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_cf910547adf04db287cf89a57c95b045">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_cf910547adf04db287cf89a57c95b045" class="completed" datetime="1545605923947.605">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0: a1 c1 c2 from [&#39;step_10&#39;, &#39;s20&#39;, &#39;s20&#39;]
+1: a2 c3 c4 from [&#39;step_10&#39;, &#39;s20&#39;, &#39;s20&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Things can become tricky if you specify both "regular" input and grouped targets from <code>output_from</code>. In this case, the regular input will be considered as a <code>sos_targets</code> with a single group, and be merged to every group of another <code>sos_targets</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">!touch e1 e2
+%run group
+
+[step_10]
+output: 'a1', 'a2'
+_output.touch()
+
+[step_20]
+output: 'c1', 'c2', 'c3', 'c4'
+_output.touch()
+
+[group]
+input: output_from('step_10', group_by=1),
+       output_from('step_20', group_by=2),
+       my=('e1', 'e2')
+print(f'\nSubstep {_index}')
+print(f"substep input is {_input} from {_input.sources}")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_50a0a9e461934a6e84fc9a6c5ffafedd" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_50a0a9e461934a6e84fc9a6c5ffafedd" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_50a0a9e461934a6e84fc9a6c5ffafedd">group</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_50a0a9e461934a6e84fc9a6c5ffafedd">ac135058d33d47ab</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_50a0a9e461934a6e84fc9a6c5ffafedd">3</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_50a0a9e461934a6e84fc9a6c5ffafedd">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_50a0a9e461934a6e84fc9a6c5ffafedd" class="completed" datetime="1545605967506.2917">Ran for < 5 seconds</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Substep 0
+substep input is a1 c1 c2 e1 e2 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;my&#39;, &#39;my&#39;]
+
+Substep 1
+substep input is a2 c3 c4 e1 e2 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39;step_20&#39;, &#39;my&#39;, &#39;my&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, if option <code>group_by</code> is specified outside of <code>output_from</code>, it will group all targets regardless of original grouping. For example, in the following example, output from <code>step_10</code> will be grouped by 2.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
+   <textarea rows="12"
+      class="sos-source" name="SoS">!touch e1 e2
+%run group
+
+[step_10]
+output: 'c1', 'c2', 'c3', 'c4'
+_output.touch()
+
+[group]
+input: output_from('step_10', group_by=1),
+       my=('e1', 'e2'), group_by=2
+print(f'\nSubstep {_index}')
+print(f"substep input is {_input} from {_input.sources}")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_ae9e255a188c498c839b31b89053243b" class="workflow_table  completed">
+  <tr>
+        <td class="workflow_icon">
+          <i id="workflow_status_icon_ae9e255a188c498c839b31b89053243b" class="fa fa-2x fa-fw fa-check-square-o"
+            ></i>
+        </td>
+        <td class="workflow_name">
+          <pre><span id="workflow_name_ae9e255a188c498c839b31b89053243b">group</span></pre>
+        </td>
+        <td class="workflow_id">
+          <span>Workflow ID</span></br>
+          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_ae9e255a188c498c839b31b89053243b">c2e04d326bb31bc0</span></pre>
+        </td>
+        <td class="workflow_index">
+          <span>Index</span></br>
+          <pre>#<span id="workflow_index_ae9e255a188c498c839b31b89053243b">6</span></pre>
+        </td>
+        <td class="workflow_status">
+          <span id="status_text_ae9e255a188c498c839b31b89053243b">completed</span></br>
+          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_ae9e255a188c498c839b31b89053243b" class="completed" datetime="1545606653790.388">Ran for 0 sec</time></pre>
+        </td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Substep 0
+substep input is c1 c2 from [&#39;step_10&#39;, &#39;step_10&#39;]
+
+Substep 1
+substep input is c3 c4 from [&#39;step_10&#39;, &#39;step_10&#39;]
+
+Substep 2
+substep input is e1 e2 from [&#39;my&#39;, &#39;my&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
