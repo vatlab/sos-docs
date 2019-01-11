@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-associate-task-IDs-with-sample-IDs-and-job-IDs">How to associate task IDs with sample IDs and job IDs<a class="anchor-link" href="#How-to-associate-task-IDs-with-sample-IDs-and-job-IDs"></a></h1>
 </div>
 </div>
 </div>
@@ -12536,11 +12549,48 @@ li.tocify-item.active {
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li><strong>Key points</strong>:</li>
 </ul>
-</li>
-</ul>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-tags">Option <code>tags</code><a class="anchor-link" href="#Option-tags"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>By default, a task is tagged by step name and workflow ID so that tasks from the same step and/or workflow could be targetted with option <code>--tags</code> for commands such as <code>sos status</code>, <code>sos kill</code>, and <code>sos purge</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can specify additional tags to tasks using option <code>tags</code>. A tag can contain alphabetic and numeric characters, dash (<code>-</code>), underscore (<code>_</code>), and dot (<code>.</code>). Tags with other characters will still be accepted but with non-comforming characters removed.</p>
+<p>For example, if each task handles a sample with an ID, you can use</p>
+
+<pre><code>input: for_each={'ID': IDs}
+task: tags=ID</code></pre>
+<p>to add sample IDs to task tags, or use</p>
+
+<pre><code>input: input_files, paired_with=['IDs', 'barcode']
+task: tags=[_ID, _barcode, 'my_cmd']
+sh:
+    my_cmd ...</code></pre>
+<p>to tag tasks with sample ID, barcode, and command to each task.</p>
 
 </div>
 </div>

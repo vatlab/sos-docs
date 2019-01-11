@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-keep-track-of-revisions-to-the-notebook">How to keep track of revisions to the notebook<a class="anchor-link" href="#How-to-keep-track-of-revisions-to-the-notebook"></a></h1>
 </div>
 </div>
 </div>
@@ -12535,9 +12548,10 @@ li.tocify-item.active {
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Time need to lean</strong>: 5 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>Magic <code>%revisions</code> shows the revision of the document in a repository</li>
+<li>Options of <code>git log</code> command can be used</li>
 </ul>
 </li>
 </ul>
@@ -12550,10 +12564,415 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<h2 id="%revisions"><a id="magic_revisions" /><code>%revisions</code><a class="anchor-link" href="#%revisions"></a></h2>
 </div>
 </div>
 </div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%revisions</code> magic displays revisions of the current document if the document is managed by git.</p>
+<p>This magic accepts a few options:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%revisions -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %revision [-h] [-s [SOURCE]] [-l LINKS [LINKS ...]]
+
+Revision history of the document, parsed from the log message of the notebook
+if it is kept in a git repository. Additional parameters to &#34;git log&#34; command
+(e.g. -n 5 --since --after) could be specified to limit the revisions to
+display.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s [SOURCE], --source [SOURCE]
+                        Source URL to to create links for revisions. SoS
+                        automatically parse source URL of the origin and
+                        provides variables &#34;repo&#34; for complete origin URL
+                        without trailing &#34;.git&#34; (e.g.
+                        https://github.com/vatlab/sos-notebook), &#34;path&#34; for
+                        complete path name (e.g. src/document/doc.ipynb),
+                        &#34;filename&#34; for only the name of the &#34;path&#34;, and
+                        &#34;revision&#34; for revisions. Because sos interpolates
+                        command line by default, variables in URL template
+                        should be included with double braceses (e.g. --source
+                        {{repo}}/blob/{{revision}}/{{path}})). If this option
+                        is provided without value and the document is hosted
+                        on github, a default template will be provided.
+  -l LINKS [LINKS ...], --links LINKS [LINKS ...]
+                        Name and URL or additional links for related files
+                        (e.g. --links report URL_to_repo ) with URL
+                        interpolated as option --source.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First, any options that are acceptable to <a href="https://git-scm.com/docs/git-log">command <code>git log</code></a> can be passed to this magic. The most useful ones are options to limit the commits to display such as <code>-n</code> (number of commits to output), <code>--since=&lt;date&gt;</code> and <code>--after=&lt;date&gt;</code>. For example, you can display five most recent commits with command</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%revisions -n 5</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><span class="revision_id">214c618<span></td>
+<td>Bo Peng</td>
+<td>2018-05-20</td>
+<td>Fix url to HTML</td></tr><tr><td><span class="revision_id">e28e7c0<span></td>
+<td>Bo Peng</td>
+<td>2018-05-20</td>
+<td>Update doc for %revisions</td></tr><tr><td><span class="revision_id">c3d148b<span></td>
+<td>Bo Peng</td>
+<td>2018-05-18</td>
+<td>Shorten %revisions magic in doc</td></tr><tr><td><span class="revision_id">6784599<span></td>
+<td>Bo Peng</td>
+<td>2018-05-18</td>
+<td>Update doc with the new %revisions magic vatlab/sos-notebook#74</td></tr><tr><td><span class="revision_id">bf35ae9<span></td>
+<td>Bo Peng</td>
+<td>2018-05-08</td>
+<td>Update docs on magic %cd</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another useful option is the <code>--source</code> option that allows you to link the revision to specific URL (e.g. github). This option should be specified as a string with <code>repo</code>, <code>revision</code>, <code>path</code>, and <code>filename</code> interpolated as URL to the repository, revision id, and path and name of the document respectively. Here <code>repo</code> is retrieved from the output of command <code>git ls-remote --get-url origin</code> without trailing <code>.git</code> (if available). Because SoS Notebook interpolates magics automatically, you should include variables in double braces.</p>
+<p>For example, the github URL of a particular revision of this document is <code>https://github.com/REPO/blob/REVISION/PATH/TO/FILENAME</code> so the command to link this document to its source on github would be:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%revisions -n 5 --source '{{repo}}/blob/{{revision}}/{{path}}'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> %revisions -n 5 --source '{repo}/blob/{revision}/{path}'<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/214c618beef2d087f2c196f862644dfbc4ec158e/src/documentation/SoS_Magics.ipynb"><span class="revision_id">214c618<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-20</td>
+<td>Fix url to HTML</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/e28e7c0e458e840fc16018ad722a2e1ce0345218/src/documentation/SoS_Magics.ipynb"><span class="revision_id">e28e7c0<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-20</td>
+<td>Update doc for %revisions</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/c3d148bb948391366820842ec23a6ca092f307a1/src/documentation/SoS_Magics.ipynb"><span class="revision_id">c3d148b<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-18</td>
+<td>Shorten %revisions magic in doc</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/6784599ccef31fc4b68bbbadb8aeb97a292456b3/src/documentation/SoS_Magics.ipynb"><span class="revision_id">6784599<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-18</td>
+<td>Update doc with the new %revisions magic vatlab/sos-notebook#74</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/bf35ae9cb26791800a82c183a5553ec511a44374/src/documentation/SoS_Magics.ipynb"><span class="revision_id">bf35ae9<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-08</td>
+<td>Update docs on magic %cd</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because <code>github</code> is the most widely used git repository, we provide the aforementioned template by default if you specify option <code>--source</code> without value. That is to say, if your document is hosted in <code>github.com</code>, you can simply use</p>
+
+<pre><code>%revisions --source</code></pre>
+<p>to link revisions to github.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The links do not have to point to the source of the document. For example, because we always convert this document to HTML in another directory and display it on our homepage, we can link the revisions to the HTML version as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%revisions -n 5 \
+  --source '{{repo}}/blob/{{revision}}/doc/documentation/{{filename[:-6]}}.html'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> %revisions -n 5   --source '{repo}/blob/{revision}/doc/documentation/{filename[:-6]}.html'<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/214c618beef2d087f2c196f862644dfbc4ec158e/doc/documentation/SoS_Magics.html"><span class="revision_id">214c618<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-20</td>
+<td>Fix url to HTML</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/e28e7c0e458e840fc16018ad722a2e1ce0345218/doc/documentation/SoS_Magics.html"><span class="revision_id">e28e7c0<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-20</td>
+<td>Update doc for %revisions</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/c3d148bb948391366820842ec23a6ca092f307a1/doc/documentation/SoS_Magics.html"><span class="revision_id">c3d148b<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-18</td>
+<td>Shorten %revisions magic in doc</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/6784599ccef31fc4b68bbbadb8aeb97a292456b3/doc/documentation/SoS_Magics.html"><span class="revision_id">6784599<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-18</td>
+<td>Update doc with the new %revisions magic vatlab/sos-notebook#74</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/bf35ae9cb26791800a82c183a5553ec511a44374/doc/documentation/SoS_Magics.html"><span class="revision_id">bf35ae9<span></a></td>
+<td>Bo Peng</td>
+<td>2018-05-08</td>
+<td>Update docs on magic %cd</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And if you would like to display one or more links next to the revision number, you can do so with the <code>--links</code> option:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%revisions -n 5 --source  \
+  --links HTML '{{repo}}/blob/{{revision}}/doc/documentation/{{filename[:-6]}}.html'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> %revisions -n 5 --source    --links HTML '{repo}/blob/{revision}/doc/documentation/{filename[:-6]}.html'<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/214c618beef2d087f2c196f862644dfbc4ec158e/src/documentation/SoS_Magics.ipynb"><span class="revision_id">214c618<span></a> (<a target="_blank" href="https://github.com/vatlab/sos-docs/blob/214c618beef2d087f2c196f862644dfbc4ec158e/doc/documentation/SoS_Magics.html">HTML</a>)</td>
+<td>Bo Peng</td>
+<td>2018-05-20</td>
+<td>Fix url to HTML</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/e28e7c0e458e840fc16018ad722a2e1ce0345218/src/documentation/SoS_Magics.ipynb"><span class="revision_id">e28e7c0<span></a> (<a target="_blank" href="https://github.com/vatlab/sos-docs/blob/e28e7c0e458e840fc16018ad722a2e1ce0345218/doc/documentation/SoS_Magics.html">HTML</a>)</td>
+<td>Bo Peng</td>
+<td>2018-05-20</td>
+<td>Update doc for %revisions</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/c3d148bb948391366820842ec23a6ca092f307a1/src/documentation/SoS_Magics.ipynb"><span class="revision_id">c3d148b<span></a> (<a target="_blank" href="https://github.com/vatlab/sos-docs/blob/c3d148bb948391366820842ec23a6ca092f307a1/doc/documentation/SoS_Magics.html">HTML</a>)</td>
+<td>Bo Peng</td>
+<td>2018-05-18</td>
+<td>Shorten %revisions magic in doc</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/6784599ccef31fc4b68bbbadb8aeb97a292456b3/src/documentation/SoS_Magics.ipynb"><span class="revision_id">6784599<span></a> (<a target="_blank" href="https://github.com/vatlab/sos-docs/blob/6784599ccef31fc4b68bbbadb8aeb97a292456b3/doc/documentation/SoS_Magics.html">HTML</a>)</td>
+<td>Bo Peng</td>
+<td>2018-05-18</td>
+<td>Update doc with the new %revisions magic vatlab/sos-notebook#74</td></tr><tr><td><a target="_blank" href="https://github.com/vatlab/sos-docs/blob/bf35ae9cb26791800a82c183a5553ec511a44374/src/documentation/SoS_Magics.ipynb"><span class="revision_id">bf35ae9<span></a> (<a target="_blank" href="https://github.com/vatlab/sos-docs/blob/bf35ae9cb26791800a82c183a5553ec511a44374/doc/documentation/SoS_Magics.html">HTML</a>)</td>
+<td>Bo Peng</td>
+<td>2018-05-08</td>
+<td>Update docs on magic %cd</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>

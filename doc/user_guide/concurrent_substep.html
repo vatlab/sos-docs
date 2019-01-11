@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-(not)-execute-substeps-in-parallel">How to (not) execute substeps in parallel<a class="anchor-link" href="#How-to-(not)-execute-substeps-in-parallel"></a></h1>
 </div>
 </div>
 </div>
@@ -12537,7 +12550,7 @@ li.tocify-item.active {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>option <code>concurrent=False</code> stops the substep from executing in parallel</li>
 </ul>
 </li>
 </ul>
@@ -12550,7 +12563,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<h2 id="Option-concurrent-">Option <code>concurrent</code> <a id="Option_concurrent" /><a class="anchor-link" href="#Option-concurrent-"></a></h2>
 </div>
 </div>
 </div>
@@ -12559,10 +12572,160 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<p>Substeps of a step are by default executed concurrently with potential dependencies. For example,</p>
+
 </div>
 </div>
 </div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">sum = 0
+import time
+start_time = time.time()
+input: for_each={'i': range(4)}
+time.sleep(4)
+print(f'sum is {sum} at index {_index}, completed in {time.time() - start_time:.1f} seconds')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sum is 0 at index 0, completed in 4.7 seconds
+sum is 0 at index 1, completed in 4.7 seconds
+sum is 0 at index 2, completed in 4.7 seconds
+sum is 0 at index 3, completed in 4.7 seconds
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see, the <code>start_time</code> is the start time of all substeps, and the all substeps complete at about the same time because they are executed concurrently.</p>
+<p>Concurrent execution can cause some unexpected results. For example, there are 4 substeps in the following example. Each of them adds <code>i</code> to a shared variable <code>sum</code>, but the results are not accumulated because each substep has its own <code>sum</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">sum = 0
+input: for_each=dict(i=range(4))
+sum += i
+print(f'sum is {sum} at index {_index}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sum is 0 at index 0
+sum is 1 at index 1
+sum is 2 at index 2
+sum is 3 at index 3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To get the correct <code>sum</code> for all substeps, you can execute the substeps sequentially by adding option <code>concurrent=False</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">sum = 0
+input: for_each=dict(i=range(4)), concurrent=False
+sum += i
+print(f'sum is {sum} at index {_index}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sum is 0 at index 0
+sum is 1 at index 1
+sum is 3 at index 2
+sum is 6 at index 3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>

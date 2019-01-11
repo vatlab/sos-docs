@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-keep-track-of-session-information-for-all-kernels">How to keep track of session information for all kernels<a class="anchor-link" href="#How-to-keep-track-of-session-information-for-all-kernels"></a></h1>
 </div>
 </div>
 </div>
@@ -12535,9 +12548,9 @@ li.tocify-item.active {
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Time need to lean</strong>:5 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>Magic <code>%sessioninfo</code> shows the session information of all live kernels</li>
 </ul>
 </li>
 </ul>
@@ -12550,10 +12563,288 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<h2 id="%sessioninfo"><a id="magic_sessioninfo" /><code>%sessioninfo</code><a class="anchor-link" href="#%sessioninfo"></a></h2>
 </div>
 </div>
 </div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%sessioninfo</code> returns the session information of SoS and all the subkernels, which for example include version of the python interpreter and name and version of all imported modules for Python kernels, and the output of function <code>sessionInfo()</code> for language R.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This magic also outputs values of a variable <code>sessioninfo</code> in the SoS namespace, which can be a dictionary of section header and items in the format of string, list of strings or <code>(key, value)</code> pairs, or dictionaries.  This mechanism is designed to output arbitrary additional session information, such as revision of documents and versions of commands. The latter has to be collected manually because there is no standard way to get the version information of commands.</p>
+<p>For example, let us find the revision of this document and versions of two commands <code>rsync</code>,  and <code>awk</code> and put them in <code>sessioninfo</code>:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[64]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
+   <textarea rows="13"
+      class="sos-source" name="SoS">%preview -n sessioninfo
+import time
+from collections import OrderedDict
+sessioninfo = OrderedDict()
+sessioninfo['Programs'] = [
+        ['rsync', get_output('rsync --version | head -1')],
+        ['awk', get_output('awk -version')]
+    ]
+sessioninfo['Extra'] = [
+        ['Date', time.strftime("%d/%m/%Y")],
+        ['Revision', get_output('git rev-list --count HEAD')],
+        ['HASH', get_output('git rev-parse HEAD')]
+    ]
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> sessioninfo: OrderedDict of length 2</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>OrderedDict([(&#39;Programs&#39;,
+              [[&#39;rsync&#39;, &#39;rsync  version 2.6.9  protocol version 29\n&#39;],
+               [&#39;awk&#39;, &#39;awk version 20070501\n&#39;]]),
+             (&#39;Extra&#39;,
+              [[&#39;Date&#39;, &#39;08/12/2017&#39;],
+               [&#39;Revision&#39;, &#39;236\n&#39;],
+               [&#39;HASH&#39;, &#39;b348a9e7ceaa02e6c0f5c195defe01d5a127aca5\n&#39;]])])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, after we load Python3 and R,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_Python3">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[65]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Python3">import pandas
+import numpy</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[66]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">library('ggplot2')</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can run <code>%sessioninfo</code> to display all session information:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[67]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%sessioninfo</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<p class="session_section">SoS</p>
+<table class="session_info">
+<tr>
+<th>SoS Version</th><td><pre>0.9.10.15</pre></td>
+</tr>
+<tr>
+<th>numpy</th><td><pre>1.13.1</pre></td>
+</tr>
+<tr>
+<th>IPython</th><td><pre>6.2.1</pre></td>
+</tr>
+</table>
+<p class="session_section">Python3</p>
+<table class="session_info">
+<tr>
+<th>Kernel</th><td><pre>python3</pre></td>
+</tr>
+<tr>
+<th>Language</th><td><pre>Python3</pre></td>
+</tr>
+<tr>
+<th>Version</th><td><pre>3.6.2 |Anaconda custom (64-bit)| (default, Sep 21 2017, 18:29:43) 
+[GCC 4.2.1 Compatible Clang 4.0.1 (tags/RELEASE_401/final)]</pre></td>
+</tr>
+<tr>
+<th>pandas</th><td><pre>0.20.3</pre></td>
+</tr>
+<tr>
+<th>numpy</th><td><pre>1.13.1</pre></td>
+</tr>
+</table>
+<p class="session_section">R</p>
+<table class="session_info">
+<tr>
+<th>Kernel</th><td><pre>ir</pre></td>
+</tr>
+<tr>
+<th>Language</th><td><pre>R</pre></td>
+</tr>
+<tr>
+<td colspan="2"><pre>R version 3.4.2 (2017-09-28)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: OS X El Capitan 10.11.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ggplot2_2.2.1 feather_0.3.1
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.13        magrittr_1.5        hms_0.3            
+ [4] munsell_0.4.3       uuid_0.1-2          colorspace_1.3-2   
+ [7] R6_2.2.2            rlang_0.1.2         stringr_1.2.0      
+[10] plyr_1.8.4          tools_3.4.2         grid_3.4.2         
+[13] gtable_0.2.0        lazyeval_0.2.1      digest_0.6.12      
+[16] tibble_1.3.4        crayon_1.3.4        IRdisplay_0.4.4    
+[19] repr_0.12.0         IRkernel_0.8.9.9000 evaluate_0.10.1    
+[22] pbdZMQ_0.2-6        stringi_1.1.5       compiler_3.4.2     
+[25] scales_0.5.0        jsonlite_1.5       </pre></td>
+</tr>
+</table>
+<p class="session_section">Programs</p>
+<table class="session_info">
+<tr>
+<th>rsync</th><td><pre>rsync  version 2.6.9  protocol version 29
+</pre></td>
+</tr>
+<tr>
+<th>awk</th><td><pre>awk version 20070501
+</pre></td>
+</tr>
+</table>
+<p class="session_section">Extra</p>
+<table class="session_info">
+<tr>
+<th>Date</th><td><pre>08/12/2017</pre></td>
+</tr>
+<tr>
+<th>Revision</th><td><pre>236
+</pre></td>
+</tr>
+<tr>
+<th>HASH</th><td><pre>b348a9e7ceaa02e6c0f5c195defe01d5a127aca5
+</pre></td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>

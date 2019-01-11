@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-specify-the-resources-needed-for-the-tasks">How to specify the resources needed for the tasks<a class="anchor-link" href="#How-to-specify-the-resources-needed-for-the-tasks"></a></h1>
 </div>
 </div>
 </div>
@@ -12536,9 +12549,40 @@ li.tocify-item.active {
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li><strong>Key points</strong>:</li>
 </ul>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Task-options">Task options<a class="anchor-link" href="#Task-options"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following options are options to keyword <code>task:</code> and specify how tasks should be executed.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><p>The resource options such as <code>walltime</code> and <code>cores</code> will be sent to individual task queues in appropriate format. You do not have to specify all options because task queues can support a subset of these options and some task queues provide default values (and some do not). It is however generally a good idea to specify them all so that your tasks could be executed on all types of task queues.</p>
+</li>
+<li><p>The execution options such as <code>workdir</code>, <code>env</code>, <code>concurrent</code> specify environments in which tasks will be submitted and executed.</p>
 </li>
 </ul>
 
@@ -12550,7 +12594,57 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<h3 id="Option-walltime">Option <code>walltime</code><a class="anchor-link" href="#Option-walltime"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Estimated maximum running time of the task. This parameter will be sent to different task queues and it is up to the task queue to decide if the task would be killed if the task could not be completed within specified <code>walltime</code>. <code>walltime</code> could be specified as a string in the format of <code>HH:MM:SS</code> where <code>HH</code>, <code>MM</code> and <code>SS</code> are hours, minutes, and seconds, or an integer with units <code>s</code> (second), <code>m</code> (minute), <code>h</code> (hour), or <code>d</code> (day), although the internal format of <code>walltime</code> (when you use <code>walltime</code> in <code>job_template</code> etc) is always <code>HH:MM:SS</code>. For example, you could use <code>walltime='240:00:00'</code> or <code>walltime='10d'</code> for a job that would run 10 days.</p>
+<p>It is worth noting that, if some tasks fail because of insufficient <code>walltime</code> (or <code>cores</code> or <code>mem</code>), it is safe to change these options and re-run the jobs. These will only restart the failed jobs because completed or running jobs are not affected by the change of these options.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-cores">Option <code>cores</code><a class="anchor-link" href="#Option-cores"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Number of cores on each computing node, which corrsponds to the <code>ppn</code> option of a PBS system.</p>
+<p>PBS task queue also accepts a parameer <code>nodes</code> (corresponds to PBS resource option <code>nodes</code>, default to 1) but it is currently unused because SoS does not yet support multi-node tasks.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Option-mem">Option <code>mem</code><a class="anchor-link" href="#Option-mem"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The total amount of memory needed across all nodes. Default units are bytes; can also be expressed in megabytes (<code>mem=4000MB</code>). gigabytes (<code>mem=4GB</code>) or gibibytes (<code>mem=4GiB</code>), although all inputs are converted to bytes internally. To use this option in a <code>job_template</code>, you generally need to use expressions such as <code>{mem//1e9}GB</code>.</p>
+
 </div>
 </div>
 </div>

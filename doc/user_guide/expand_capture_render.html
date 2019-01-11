@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-deal-with-input-and-output-of-subkernels">How to deal with input and output of subkernels<a class="anchor-link" href="#How-to-deal-with-input-and-output-of-subkernels"></a></h1>
 </div>
 </div>
 </div>
@@ -12537,7 +12550,9 @@ li.tocify-item.active {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li><code>%expand</code> treats input of cell as a Python f-string and expand it before sendint to subkernel</li>
+<li><code>%capture</code> captures output from subkernels and save them into Python variables</li>
+<li><code>%render</code> renders output from subkernels in different formats</li>
 </ul>
 </li>
 </ul>
@@ -12550,7 +12565,882 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<h2 id="%expand"><a id="magic_expand" /><code>%expand</code><a class="anchor-link" href="#%expand"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Script in SoS cells are by default sent to SoS or the subkernels in verbatim. However, similar to the <code>expand</code> option of the SoS actions, you can interpolate scripts before they are executed by the kernels. Basically,</p>
+<ol>
+<li>By default, scripts are not interpolated.</li>
+<li>With <code>%expand</code> magic, scripts are treated as Python f-string and are interpolated with sigil <code>{ }</code></li>
+<li>With <code>%expand ${ }</code> or other sigils, scripts are interpolated with specified sigil so that you can avoid using symbols that already used in the script.</li>
+</ol>
+<p>As you can imagine, string interpolation allows passing information from the SoS kernel to the subkernels. Although this method is less flexible and powerful than inter-kernel variable exchange using magics such as <code>%get</code>, it is sometimes easier to use and can be especially useful if you plan to include the script as a SoS action in a SoS workflow.</p>
+<p>For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">par = 100</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%expand
+cat("A parameter {par} is specified.")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A parameter 100 is specified.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the script contains <code>{ }</code>, which is quite common in R, you can double the braces</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="R">%expand
+if ({par} > 50) {{
+    cat("A parameter {par} greater than 50 is specified.");
+}}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A parameter 100 greater than 50 is specified.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If there are multiple braces, it is obviously better to use a different sigil, such as <code>${ }</code> to interpolate the script</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="R">%expand ${ }
+if (${par} > 50) {
+    cat("A parameter ${par} greater than 50 is specified.");
+}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A parameter 100 greater than 50 is specified.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="%get"><a id="magic_get" /><code>%get</code><a class="anchor-link" href="#%get"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magics <code>%get</code> retrieve variables from SoS or another subkernel to the current subkernel started by magic <code>%use</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%use sos
+a = [1, 2, 3]
+b = [1, 2, "3"]
+c = True</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="R">%use R
+%get a b c
+a</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>1</li>
+	<li>2</li>
+	<li>3</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">b</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol>
+	<li>1</li>
+	<li>2</li>
+	<li>'3'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">c</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+TRUE
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%preview</code> magic cannot be used to preview variables in the subkernel so we have to list them one by one. As you can see, a Python list can be converted to <code>R</code> array or list depending on its content.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to the <code>%put</code> magic, SoS automatically translate variables with invalid Python names. For example</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%use sos
+_var = 'Hi, Bob'</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="R">%use R
+%get _var
+.var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Variable _var is passed from SoS to kernel ir as .var
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'Hi, Bob'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%use sos</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Also similar to the <code>--to</code> option of magic <code>%put</code>, magic <code>%get</code> accept a parameter <code>--from</code> to get variables from SoS (default) any kernel. For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">R_var <- 'R variable'</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_Python3">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Python3">%get --from R R_var
+R_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;R variable&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Depending on how the language module is defined, such cross-subkernel variable exchange can be achived directly, or by way of SoS, so after the <code>%get --from R R_var</code> statement, the <code>R_var</code> variable might or might not exist in the SoS kernel.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="%render"><a id="magic_render" /><code>%render</code><a class="anchor-link" href="#%render"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%render</code> magic converts the output of a cell to certain format before displaying it in the notebook. The format can be any format supported by the <a href="https://ipython.org/ipython-doc/3/api/generated/IPython.display.html"><code>IPython.display</code> module</a> and is default to <code>Markdown</code>. For example, the following code displays all supported options of <code>%render</code> by checking the subclasses of <code>IPython.display</code>. The cell returns a string in markdown format and is rendered in <code>Markdown</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 20.528640000000003em">
+   <textarea rows="16"
+      class="sos-source" name="SoS">%render
+import IPython.display
+import inspect
+
+res = '''
+Options of magic %render
+
+'''
+
+for key in IPython.display.__dict__.keys():
+    cls = getattr(IPython.display, key)
+    if inspect.isclass(cls) and issubclass(cls, IPython.display.DisplayObject):
+        res += '* {}\n'.format(key)
+
+# this is the output of this cell and will be rendered in Markdown format
+res</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[1]:</div>
+
+
+
+<div class="output_markdown rendered_html output_subarea output_execute_result">
+<p>Options of magic %render</p>
+<ul>
+<li>DisplayObject</li>
+<li>TextDisplayObject</li>
+<li>Pretty</li>
+<li>HTML</li>
+<li>Markdown</li>
+<li>Math</li>
+<li>Latex</li>
+<li>SVG</li>
+<li>ProgressBar</li>
+<li>JSON</li>
+<li>GeoJSON</li>
+<li>Javascript</li>
+<li>Image</li>
+<li>Video</li>
+<li>Audio</li>
+<li>Code</li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similarly, you can use magic <code>%render</code> to render output in other formats:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 26.60009em">
+   <textarea rows="21"
+      class="sos-source" name="SoS">%render --as HTML
+'''
+This is a table in HTML format <br>
+<table style="width:100%">
+  <tr>
+    <th>Firstname</th>
+    <th>Lastname</th> 
+    <th>Age</th>
+  </tr>
+  <tr>
+    <td>Jill</td>
+    <td>Smith</td> 
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td> 
+    <td>94</td>
+  </tr>
+</table>
+'''</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+This is a table in HTML format <br>
+<table style="width:100%">
+  <tr>
+    <th>Firstname</th>
+    <th>Lastname</th> 
+    <th>Age</th>
+  </tr>
+  <tr>
+    <td>Jill</td>
+    <td>Smith</td> 
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td> 
+    <td>94</td>
+  </tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%render</code> magic captures not only the return value of SoS cell, but also standard output of SoS and other cells. For example, a subprocess of the following cell (a Python script) prints the content of a SVG file to standard output, which is captured and displayed by magic <code>%render</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">%render --as SVG
+python:
+print(r'''
+ <svg height="140" width="140">
+  <defs>
+    <filter id="f1" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="20" dy="20" />
+      <feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+    </filter>
+  </defs>
+  <rect width="90" height="90" stroke="green" stroke-width="3" fill="yellow" filter="url(#f1)" />
+  Sorry, your browser does not support inline SVG.
+ </svg>
+''')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+ &lt;svg height=&#34;140&#34; width=&#34;140&#34;&gt;
+  &lt;defs&gt;
+    &lt;filter id=&#34;f1&#34; x=&#34;0&#34; y=&#34;0&#34; width=&#34;200%&#34; height=&#34;200%&#34;&gt;
+      &lt;feOffset result=&#34;offOut&#34; in=&#34;SourceAlpha&#34; dx=&#34;20&#34; dy=&#34;20&#34; /&gt;
+      &lt;feGaussianBlur result=&#34;blurOut&#34; in=&#34;offOut&#34; stdDeviation=&#34;10&#34; /&gt;
+      &lt;feBlend in=&#34;SourceGraphic&#34; in2=&#34;blurOut&#34; mode=&#34;normal&#34; /&gt;
+    &lt;/filter&gt;
+  &lt;/defs&gt;
+  &lt;rect width=&#34;90&#34; height=&#34;90&#34; stroke=&#34;green&#34; stroke-width=&#34;3&#34; fill=&#34;yellow&#34; filter=&#34;url(#f1)&#34; /&gt;
+  Sorry, your browser does not support inline SVG.
+ &lt;/svg&gt;
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_svg output_subarea ">
+<svg height="140" width="140">
+  <defs>
+    <filter height="200%" id="f1" width="200%" x="0" y="0">
+      <feOffset dx="20" dy="20" in="SourceAlpha" result="offOut"/>
+      <feGaussianBlur in="offOut" result="blurOut" stdDeviation="10"/>
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"/>
+    </filter>
+  </defs>
+  <rect fill="yellow" filter="url(#f1)" height="90" stroke="green" stroke-width="3" width="90"/>
+  Sorry, your browser does not support inline SVG.
+ </svg>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%render</code> magic also works for other kernels although it can be tricky to determine what is printed to standard output. For kernel R, the function to print to standard output is <code>cat</code> so you can use <code>cat</code> to print something to the standard output for <code>%render</code> to process. For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="R">%render
+a <- rnorm(5)
+cat(paste(length(a), "random numbers"))
+cat(paste('*', a, collapse='\n'))</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>5 random numbers* -1.50442651757407
+* -0.977242498620981
+* 0.534575832846015
+* -0.390538801124654
+* 0.107239275008704</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<p>5 random numbers* -1.50442651757407</p>
+<ul>
+<li>-0.977242498620981</li>
+<li>0.534575832846015</li>
+<li>-0.390538801124654</li>
+<li>0.107239275008704</li>
+</ul>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, it worth noting that <code>%render</code> captures <code>stdout</code> by default but it can also capture and render text from <code>text/html</code> from <code>display_data</code> messages. This requires a parameter <code>text</code> after <code>%render</code>. Please check the details about this capture mechanism from magic <code>%capture</code>.</p>
+
 </div>
 </div>
 </div>

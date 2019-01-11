@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="How-to-execute-tasks-on-a-remote-server-without-a-batch-system">How to execute tasks on a remote server without a batch system<a class="anchor-link" href="#How-to-execute-tasks-on-a-remote-server-without-a-batch-system"></a></h1>
 </div>
 </div>
 </div>
@@ -12536,10 +12549,7 @@ li.tocify-item.active {
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li>a</li>
-</ul>
-</li>
+<li><strong>Key points</strong>:</li>
 </ul>
 
 </div>
@@ -12550,7 +12560,211 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="h2">h2<a class="anchor-link" href="#h2"></a></h2>
+<h4 id="queue_type"><code>queue_type</code><a class="anchor-link" href="#queue_type"></a></h4>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>query_type</code> determines the type of remote server or job queue. SoS currently supports the following types of job queues:</p>
+<ol>
+<li><strong><code>process</code></strong>: this is the default queue type. Tasks are executed directly, either on local host or on a server.</li>
+<li><strong><code>pbs</code></strong>: A PBS/MOAB/LFS/Slurm cluster system where tasks are submitted using commands such as <code>qsub</code>.</li>
+<li><strong><code>rq</code></strong>: A redis queue where tasks are submitted to the rq server and monitored through rq-dashboard.</li>
+</ol>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Common-host-configuration">Common host configuration<a class="anchor-link" href="#Common-host-configuration"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS needs to know how to connect to a remote host, how to synchronize files between local and remote hosts, and how to execute commands on the remote host. These should be defined with the following keys:</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="address"><code>address</code><a class="anchor-link" href="#address"></a></h4>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>IP address or URL of the host. Note that</p>
+<ul>
+<li><code>address</code> should be ignored for hosts, for example your desktop, that do not accept remote execution.</li>
+<li>If you have a different user name on the the remote host, specify the <code>address</code> in the format of <code>username@hostaddress</code>.</li>
+<li>SoS does not support username/password authentication so <strong>public key authentication between local and remote hosts is reuired for communication between local and remote host</strong>.</li>
+<li>SoS currently does not support remote execution on windows hosts so no <code>address</code> is needed for windows hosts.</li>
+</ul>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="hostname"><code>hostname</code><a class="anchor-link" href="#hostname"></a></h4>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>hostname</code> of the machine, as reported by command <code>hostname</code> or Python's <code>socket.gethostname()</code>. This entry is used to identify the machine on which sos starts. It is needed only if the hostname is different from <code>alias</code> and <code>address</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="port"><code>port</code><a class="anchor-link" href="#port"></a></h4>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>ssh port of the remote host, which is <code>22</code> by default.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="shared"><code>shared</code><a class="anchor-link" href="#shared"></a></h4>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>shared</code> tells SoS which file systems are shared between localhost and some remote hosts so that it does not have to synchronize files under these directories between the hosts.</p>
+<p>The <code>shared</code> entry should be defined with <code>name</code> and <code>path</code> pairs in the format of</p>
+
+<pre><code>hosts:
+    desktop:
+    server:
+        shared:
+            project: /myprojects
+            HTFS: /
+    worker:
+        shared:
+            HTFS: /
+    server1:
+        shared:
+            project: /scratch/myprojects
+            data: /scratch/data
+`</code></pre>
+<p>The above cooked configuration says:</p>
+<ol>
+<li><code>desktop</code> does not share any volume with any other machine so all files need to be transferred.</li>
+<li><code>server</code> and <code>worker</code> shares <code>HTFS</code> with directory <code>/</code>, so all files are shared.</li>
+<li><code>server</code> and <code>server1</code> share a <code>project</code> volume but the volume is mounted at different locations. So files under <code>myprojects</code> are not synchronized if you are submitting jobs from <code>server</code> to <code>server1</code>, and files under <code>/scratch/myprojects</code> are not synchronized if you are submitting jobs from <code>server1</code> to <code>server</code>.</li>
+</ol>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="paths"><code>paths</code><a class="anchor-link" href="#paths"></a></h4>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>paths</code> defines paths that will be translated when a task is executed remotely. For example, your input file on a mac might be <code>/Users/myuser/project/KS28.fa</code>, but it should be named <code>/home/myuser/project/KS28.fa</code> if it is processed on a remote server. In this case, you should define directories <code>/Users/myuser</code> and <code>/home/myuser</code> as equivalent directories on the two hosts, using</p>
+
+<pre><code>hosts:
+    desktop:
+        paths:
+            home: /Users/myuser
+    server:
+        paths:
+            home: /home/myuser</code></pre>
+<p>Multiple entried could be defined and the files would be mapped by the longest mapping path. For example, if you have on the server a shared location for all resources, you could define</p>
+
+<pre><code>hosts:
+    desktop:
+        paths:            
+            home: /Users/myuser
+            resource: /Users/myuser/resources
+    server:
+        paths:
+            home: /home/myuser
+            resource: /shared/resources</code></pre>
+<p>so that <code>/Users/myuser/resources/hg19.fa</code> could be mapped to <code>/shared/resources/hg19.fa</code> on the server. Note that <code>/Users/myuser/resource/hg19.fa</code> would be mapped to <code>resource</code> instead of <code>home</code> because <code>resource</code> matches longer piece of the input path.</p>
+<p>A remote host can be accessible from a local host only if the remote host defines all paths defined by the local host. More specifically, if host A defines path <code>home</code> and host B defines paths <code>home</code> and <code>resource</code>, it is possible to connect from host A to host B using <code>home</code>, but not from host B to A because SoS does not know how to map paths under <code>resource</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="path_map-(derived)"><code>path_map</code> (derived)<a class="anchor-link" href="#path_map-(derived)"></a></h4>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With definitions of <code>shared</code> and <code>paths</code> on both hosts, SoS would derive a set of <code>path_maps</code> between all hosts using common keys in <code>shared</code> and <code>path</code> between the hosts. Actually, when you run</p>
+
+<pre><code>sos status -q -v3</code></pre>
+<p>to list all host configurations, SoS would list all hosts accessible from <code>localhost</code>, with host-specific <code>path_map</code>, which is a list of directory mappings between local and remote directories. For example, the <code>path_map</code> from <code>desktop</code> to <code>server</code> using the above example would be</p>
+
+<pre><code>/Users/myuser -&gt; /home/myuser
+/Users/myuser/resoruces -&gt; /shared/resources</code></pre>
+<p>Note that if a directory shows in both <code>shared</code> and <code>paths</code> (e.g. <code>/scratch</code> in <code>shared</code> and <code>/scratch/user</code> in <code>paths</code>), files can still be synchronized following <code>path_map</code> to a different directory even if they are shared and are already on the remote server.</p>
+
 </div>
 </div>
 </div>

@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="Using-other-SoS-actions-to-control-the-execution-of-steps">Using other SoS actions to control the execution of steps<a class="anchor-link" href="#Using-other-SoS-actions-to-control-the-execution-of-steps"></a></h1>
 </div>
 </div>
 </div>
@@ -12536,111 +12549,8 @@ li.tocify-item.active {
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li><strong>Key points</strong>:</li>
 </ul>
-</li>
-</ul>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Action-docker_build">Action <code>docker_build</code><a class="anchor-link" href="#Action-docker_build"></a></h3><p>Build a docker image from an inline Docker file. The inline version of the action currently does not support adding any file from local machine because the docker file will be saved to a random directory. You can walk around this problem by creating a <code>Dockerfile</code> and pass it to the action through option <code>path</code>. This action accepts all parameters as specified in <a href="http://docker-py.readthedocs.io/en/latest/images.html">docker-py documentation</a> because SoS simply pass additional parameters to the <code>build</code> function.</p>
-<p>For example, the following step builds a docker container for <a href="http://miso.readthedocs.org/en/fastmiso/">MISO</a> based on anaconda python 2.7.</p>
-
-<pre><code>[build_1]
-# building miso from a Dockerfile
-docker_build: tag='mdabioinfo/miso:latest'
-
-    ############################################################
-    # Dockerfile to build MISO container images
-    # Based on Anaconda python
-    ############################################################
-
-    # Set the base image to anaconda Python 2.7 (miso does not support python 3)
-    FROM continuumio/anaconda
-
-    # File Author / Maintainer
-    MAINTAINER Bo Peng &lt;bpeng@mdanderson.org&gt;
-
-    # Update the repository sources list
-    RUN apt-get update
-
-    # Install compiler and python stuff, samtools and git
-    RUN apt-get install --yes \
-     build-essential \
-     gcc-multilib \
-     gfortran \ 
-     apt-utils \
-     libblas3 \ 
-     liblapack3 \
-     libc6 \
-     cython \ 
-     samtools \
-     libbam-dev \
-     bedtools \
-     wget \
-     zlib1g-dev \ 
-     tar \
-     gzip
-
-    WORKDIR /usr/local
-    RUN pip install misopy</code></pre>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Action--download">Action  <code>download</code><a class="anchor-link" href="#Action--download"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Action <code>download(URLs, dest_dir='.', dest_file=None, decompress=False, max_jobs=5)</code> download files from specified URLs, which can be a list of URLs, or a string with tab, space or newline separated URLs.</p>
-<ul>
-<li>If <code>dest_file</code> is specified, only one URL is allowed and the URL can have any form.</li>
-<li>Otherwise all files will be downloaded to <code>dest_dir</code>. Filenames are determined from URLs so the URLs must have the last portion as the filename to save. </li>
-<li>If <code>decompress</code> is True, <code>.zip</code> file, compressed or plan <code>tar</code> (e.g. <code>.tar.gz</code>) files, and <code>.gz</code> files will be decompressed to the same directory as the downloaded file.</li>
-<li><code>max_jobs</code> controls the maximum number of concurrent connection to <strong>each domain</strong> across instances of the <code>download</code> action. That is to say, if multiple steps from multiple workflows download files from the same website, at most <code>max_jobs</code> connections will be made. This option can therefore be used to throttle downloads to websites.</li>
-</ul>
-<p>For example,</p>
-
-<pre><code>[10]
-GATK_RESOURCE_DIR = '/path/to/resource'
-GATK_URL = 'ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/'
-
-download:   dest_dir=GATK_RESOURCE_DIR, expand=True
-    {GATK_URL}/1000G_omni2.5.hg19.sites.vcf.gz
-    {GATK_URL}/1000G_omni2.5.hg19.sites.vcf.gz.md5
-    {GATK_URL}/1000G_omni2.5.hg19.sites.vcf.idx.gz
-    {GATK_URL}/1000G_omni2.5.hg19.sites.vcf.idx.gz.md5</code></pre>
-<p>download the specified files to <code>GATK_RESOURCE_DIR</code>. The <code>.md5</code> files will be automatically used to validate the content of the associated files. Note that</p>
-<p>SoS automatically save signature of downloaded and decompressed files so the files will not be re-downloaded if the action is called multiple times. You can however still still specifies input and output of the step to use step signature</p>
-
-<pre><code>[10]
-GATK_RESOURCE_DIR = '/path/to/resource'
-GATK_URL = 'ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/'
-RESOUCE_FILES =  '''1000G_omni2.5.hg19.sites.vcf.gz
-    1000G_omni2.5.hg19.sites.vcf.gz.md5
-    1000G_omni2.5.hg19.sites.vcf.idx.gz
-    1000G_omni2.5.hg19.sites.vcf.idx.gz.md5'''.split() 
-input: []
-output:  [os.path.join(GATK_RESOURCE_DIR, x) for x in GATK_RESOURCE_FILES]
-download([f'{GATK_URL}/{x}' for x in GATK_RESOURCE_FILES], dest=GATK_RESOURCE_DIR)</code></pre>
-<p>Note that the <code>download</code> action uses up to 5 processes to download files. You can change this number by adjusting system configuration <code>sos_download_processes</code>.</p>
 
 </div>
 </div>
@@ -12670,7 +12580,7 @@ download([f'{GATK_URL}/{x}' for x in GATK_RESOURCE_FILES], dest=GATK_RESOURCE_DI
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Action-stop_if">Action <code>stop_if</code><a class="anchor-link" href="#Action-stop_if"></a></h3><p>Action <code>stop_if(expr, msg='')</code> stops the execution of the current step (or current iteration if within input loops specified by parameters <code>group_by</code> or <code>for_each</code>) and gives a warning message if <code>msg</code> is specified. For example,</p>
+<h3 id="Action-stop_if(cond,-msg,-no_output)">Action <code>stop_if(cond, msg, no_output)</code><a class="anchor-link" href="#Action-stop_if(cond,-msg,-no_output)"></a></h3><p>Action <code>stop_if(expr, msg='')</code> stops the execution of the current step (or current iteration if within input loops specified by parameters <code>group_by</code> or <code>for_each</code>) and gives a warning message if <code>msg</code> is specified. For example,</p>
 
 </div>
 </div>

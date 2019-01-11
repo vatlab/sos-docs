@@ -11718,6 +11718,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -12524,7 +12537,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Title">Title<a class="anchor-link" href="#Title"></a></h1>
+<h1 id="Use-multiple-kernels-in-one-notebook#-Title">Use multiple kernels in one notebook# Title<a class="anchor-link" href="#Use-multiple-kernels-in-one-notebook#-Title"></a></h1>
 </div>
 </div>
 </div>
@@ -12536,10 +12549,8 @@ li.tocify-item.active {
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li>a</li>
-</ul>
-</li>
+<li><strong>Key points</strong>:
+* </li>
 </ul>
 
 </div>
@@ -16584,6 +16595,351 @@ arr = rnorm(n)</textarea>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Note that any new cell will inherit the kernel of its previous code cell.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="%capture"><a id="magic_capture" /><code>%capture</code><a class="anchor-link" href="#%capture"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>capture</code> magic is executed after the evaluation of the current cell (in SoS or any subkernel), capture the output of the cell (either <code>stdout</code> (<code>stdout</code> of <code>stream</code> message type, the default), <code>stdout</code> (<code>stderr</code> of <code>stream</code> messages), <code>text</code> (<code>text/html</code> of <code>display_data</code> messages), <code>html</code> (<code>text/html</code> of <code>display_data</code> messages), or <code>raw</code> (all messages as a list, mostly for debugging purposes). The results are saved to a variable specified by options <code>--to</code> or <code>--append</code>.</p>
+<p>When the capture type is plain text (from <code>stdout</code>, <code>stderr</code>, or <code>text</code>), the return result can be parse it as <code>text</code>, <code>json</code>, <code>csv</code>, or <code>tsv</code>, and save (<code>--to</code>) or append (<code>--append</code>) the result to specified variable  as text, Python dictionary, or <code>Pandas</code> <code>DataFrame</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%capture -h</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: %capture [-h] [--as [{text,json,csv,tsv}]] [-t VAR | -a VAR]
+                [{stdout,stderr,text,markdown,html,raw}]
+
+Capture output (stdout) or output file from a subkernel as variable in SoS
+
+positional arguments:
+  {stdout,stderr,text,markdown,html,raw}
+                        Message type to capture, default to standard output.
+                        In terms of Jupyter message types, &#34;stdout&#34; refers to
+                        &#34;stream&#34; message with &#34;stdout&#34; type, &#34;stderr&#34; refers
+                        to &#34;stream&#34; message with &#34;stderr&#34; type, &#34;text&#34;,
+                        &#34;markdown&#34; and &#34;html&#34; refers to &#34;display_data&#34; message
+                        with &#34;text/plain&#34;, &#34;text/markdown&#34; and &#34;text/html&#34;
+                        type respectively. If &#34;raw&#34; is specified, all returned
+                        messages will be returned in a list format.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --as [{text,json,csv,tsv}]
+                        How to interpret the captured text. This only
+                        applicable to stdout, stderr and text message type
+                        where the text from cell output will be collected. If
+                        this option is given, SoS will try to parse the text
+                        as json, csv (comma separated text), tsv (tab
+                        separated text), and store text (from text), Pandas
+                        DataFrame (from csv or tsv), dict or other types (from
+                        json) to the variable.
+  -t VAR, --to VAR      Name of variable to which the captured content will be
+                        saved. If no varialbe is specified, the return value
+                        will be saved to variable &#34;__captured&#34; and be
+                        displayed at the side panel.
+  -a VAR, --append VAR  Name of variable to which the captured content will be
+                        appended. This option is equivalent to --to if VAR
+                        does not exist. If VAR exists and is of the same type
+                        of new content (str or dict or DataFrame), the new
+                        content will be appended to VAR if VAR is of str (str
+                        concatenation), dict (dict update), or DataFrame
+                        (DataFrame.append) types. If VAR is of list type, the
+                        new content will be appended to the end of the list.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The magic can be applied to any kernel (including SoS) but it only captures output as standard output. For example, in the following R code, although both statements print something, only the <code>cat</code> function writes to standard output. The result of function <code>paste</code> is returned as the result of the cell and is displayed.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="R">%capture --to R_out
+cat("this is to stdout")
+paste("this is the return value")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>this is to stdout</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'this is the return value'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">R_out</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;this is to stdout&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, if you would like to capture the output of <code>paste</code>, you will have to specify <code>text</code> to capture text output of the cell:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%capture text --to R_out
+paste("this is the return value")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'this is the return value'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">R_out</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;[1] &#34;this is the return value&#34;&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you do not know what the cell outputs, you can use option <code>raw</code> to display every output messages and decide how to capture it. When no <code>--to</code> option is specified, the output will be written to <code>__captured</code> and be displayed in the side panel.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%capture raw
+paste("this is the return value")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'this is the return value'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Option <code>--as</code> tries to convert the captured data in a more useful format. For example, if we are doing a sparql search, which outputs result in JSON format:</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The ability to parse tables as <code>Pandas</code> <code>DataFrame</code> is convenient but magic parse tables with <code>pandas.read_csv(sep)</code> with any additional parameter. If you need more flexibility in parsing the table (e.g. table without header), you will have to capture the output as text and parse it by yourself.</p>
 
 </div>
 </div>
