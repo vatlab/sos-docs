@@ -25,11 +25,11 @@ https://github.com/vatlab/sos-docs/tree/master/src/examples
 The zenodo repo is a snapshot of these documents to accompany the SoS workflow manuscript.
 For the most recent version of SoS workflow system implementation, please visit 
 
-https://vatlab.github.io/sos-docs/#workflow_documentation
+https://vatlab.github.io/sos-docs/workflow.html#content
 
 ## Installing frozen release of SoS
 
-Examples in the current repository is guaranteed to work with SoS version 0.18.0.
+Examples in the current repository is guaranteed to work with SoS version 0.18.1.
 To install this particular version of SoS,
 
 ```
