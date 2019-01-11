@@ -12550,7 +12550,9 @@ li.tocify-item.active {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>option <code>concurrent=False</code> stops the substep from executing in parallel</li>
+<li>By default substeps are executed in parallel</li>
+<li>Option <code>concurrent=False</code> stops the substeps from being executed in parallel</li>
+<li>Certain options and statements prevents substeps from being executed in parallel</li>
 </ul>
 </li>
 </ul>
@@ -12563,7 +12565,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Option-concurrent-">Option <code>concurrent</code> <a id="Option_concurrent" /><a class="anchor-link" href="#Option-concurrent-"></a></h2>
+<h2 id="Input-option-concurrent-">Input option <code>concurrent</code> <a id="Option_concurrent" /><a class="anchor-link" href="#Input-option-concurrent-"></a></h2>
 </div>
 </div>
 </div>
@@ -12731,7 +12733,371 @@ sum is 6 at index 3
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Concurrency-for-the-execution-of-nested-subworkflows">Concurrency for the execution of nested subworkflows<a class="anchor-link" href="#Concurrency-for-the-execution-of-nested-subworkflows"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Substeps containing nested subworkflows (function <code>sos_run</code>) are also executed concurrently by default. For example, in the following workflow where four <code>sleep</code> subworkflows are executed with different parameter <code>duration</code>, the subworkflows are executed in parallel and completed in random orders.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">%run -v0
+
+[sleep]
+parameter: index=int
+parameter: duration=int
+import time
+time.sleep(duration)
+print(f'I am process {index}, I have slept for {duration} seconds')
+
+
+[default]
+import random
+input: for_each=dict(i=range(4))
+sos_run('sleep', index=_index, duration=random.randint(1, 10))</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I am process 2, I have slept for 2 seconds
+I am process 1, I have slept for 8 seconds
+I am process 3, I have slept for 8 seconds
+I am process 0, I have slept for 9 seconds
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-warning" role="alert">
+    <h4>Substeps with statements after <code>sos_run</code> are not executed in parallel</h4>
+    <p>Because of the way subworkflows are executed, a subworkflow must be the last statement in the step process to allow the substeps to be executed in parallel. That is to say, subworkflows in</p>
+    <pre>
+    input: ...
+    sos_run('sub')
+    print('Done')
+    </pre>
+    and 
+    <pre>
+    input: ...
+    sos_run('sub1')
+    sos_run('sub2')
+    </pre>
+    will not be executed in parallel. Although the latter case could be executed in parallel if <code>sub2</code> does not have to be executed after <code>sub1</code> and can be executed side by side with
+    <pre>    
+    input: ...
+    sos_run(['sub1', 'sub2'])
+    </pre>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There is a complication though: substeps with subworkflows must have the <code>sos_run</code> as the last statement to be executed in parallel. For example, with the addition of one statement after the <code>sos_run</code> call, subworkflows in the aforementioned example are executed sequentially.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">%run -v0
+
+[sleep]
+parameter: index=int
+parameter: duration=int
+import time
+time.sleep(duration)
+print(f'I am process {index}, I have slept for {duration} seconds')
+
+
+[default]
+import random
+input: for_each=dict(i=range(4))
+sos_run('sleep', index=_index, duration=random.randint(1, 10))
+print(f'{_index} is done')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="workflow_b10e36e6-6d9f-446a-9475-65e6cec2edfa" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_b10e36e6-6d9f-446a-9475-65e6cec2edfa" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_b10e36e6-6d9f-446a-9475-65e6cec2edfa">default</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_b10e36e6-6d9f-446a-9475-65e6cec2edfa">c3c3bfb6674b8ed9</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_b10e36e6-6d9f-446a-9475-65e6cec2edfa">4</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_b10e36e6-6d9f-446a-9475-65e6cec2edfa">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_b10e36e6-6d9f-446a-9475-65e6cec2edfa" class="completed" datetime="1547246443857.8481">Ran for 23 sec</time></pre>
+      </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I am process 0, I have slept for 5 seconds
+0 is done
+I am process 1, I have slept for 7 seconds
+1 is done
+I am process 2, I have slept for 5 seconds
+2 is done
+I am process 3, I have slept for 5 seconds
+3 is done
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is somewhat limiting for users who get used to use a <code>default</code> step to execute multiple subworkflows as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">%run -v0
+
+import time
+
+[sub1]
+time.sleep(6)
+print(f'step {step_name} is done')
+
+[sub2]
+time.sleep(2)
+print(f'step {step_name} is done')
+
+[default]
+sos_run('sub1')
+sos_run('sub2')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>step sub1 is done
+step sub2 is done
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, remember that function <code>sos_run</code> can accept multiple subworkflows and will execute them in parallel, you can write execute the steps in parallel as long as they donot depend on each other:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">%run -v0
+
+import time
+
+[sub1]
+time.sleep(6)
+print(f'step {step_name} is done')
+
+[sub2]
+time.sleep(2)
+print(f'step {step_name} is done')
+
+[default]
+sos_run([
+    'sub1',
+    'sub2'
+])</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>step sub2 is done
+step sub1 is done
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/nested_workflow.html">How to execute other workflows in a SoS step</a></li>
+</ul>
 
 </div>
 </div>
