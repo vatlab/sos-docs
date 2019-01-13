@@ -12564,7 +12564,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Unnamed-input-files">Unnamed input files<a class="anchor-link" href="#Unnamed-input-files"></a></h3>
+<h2 id="Unnamed-input-files">Unnamed input files<a class="anchor-link" href="#Unnamed-input-files"></a></h2>
 </div>
 </div>
 </div>
@@ -12573,7 +12573,23 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The easiest way to explicitly specify step input is to list input targets (mostly files) directly in the <code>input:</code> statement. For example</p>
+<div class="bs-callout bs-callout-primary" role="alert">
+  <h4>Unnamed input files of SoS steps</h4>
+    <ul>
+        <li>Any python statements (literals, variables, expressions, function calls) are acceptable in the <code>input</code> statement of a SoS step</li>
+        <li>SoS automatically join filenames, lists of filenames, and flatten nested lists to create a single list of targets</li>
+        <li>The input of the step is accessible in the step process as variables <code>step_input</code> for all input of the step and <code>_input</code> for input of each substep</li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The easiest way to explicitly specify input of a step is to list input files directly in the <code>input</code> statement. Because SoS  checks the existence of input files when it executes a step, let us first create a few files:</p>
 
 </div>
 </div>
@@ -12583,7 +12599,7 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="SoS"># create some sample files
@@ -12597,6 +12613,16 @@ li.tocify-item.active {
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following is a SoS step (with a default section head) with a <code>input</code> statement, which results in a <code>step_input</code> variable with a single file <code>a.txt</code>:</p>
+
+</div>
+</div>
+</div>
 
 <div class="lan_SoS">
    
@@ -12649,10 +12675,10 @@ print(f'step_input is {step_input}')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
-      class="sos-source" name="SoS">%run --in-files a.txt b.txt
+      class="sos-source" name="SoS">%run --in-files a.txt b.txt -v0
 parameter: in_files = paths
 input: in_files
 
@@ -12673,30 +12699,6 @@ print(f'step_input is {step_input}')</textarea>
 
 
 <div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_0c54a6299335435f8f7d2a76d7e4110b" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_0c54a6299335435f8f7d2a76d7e4110b" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_0c54a6299335435f8f7d2a76d7e4110b">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_0c54a6299335435f8f7d2a76d7e4110b">0261827f0e7f005c</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_0c54a6299335435f8f7d2a76d7e4110b">2</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_0c54a6299335435f8f7d2a76d7e4110b">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_0c54a6299335435f8f7d2a76d7e4110b" class="completed" datetime="1545079298431.9749">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
 
 </div>
 
@@ -12774,8 +12776,17 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that the user-specified input will override default input, so steps with explicit input target does not inherit output from its previous step.</p>
+<p>Because steps in these examples do not have any substep, it is equivalent to use variable <code>_input</code> instead of <code>step_input</code>.</p>
 
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Named-input">Named input<a class="anchor-link" href="#Named-input"></a></h2>
 </div>
 </div>
 </div>
@@ -13560,7 +13571,11 @@ a_3.txt with variable i=3
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/input_substeps.html">How to specify input and output files and process input files in groups</a> for basics of step and substeps.</li>
+<li><a href="doc/user_guide/group_by.html">How to process input files in groups</a> for option <code>group_by</code>, and</li>
+<li><a href="doc/user_guide/for_each.html">How to repeat steps for different parameters</a> for option <code>for_each</code></li>
+</ul>
 
 </div>
 </div>
