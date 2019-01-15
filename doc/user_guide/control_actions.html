@@ -12549,7 +12549,14 @@ li.tocify-item.active {
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:</li>
+<li><strong>Key points</strong>:<ul>
+<li>Normal <code>break</code>, <code>continue</code>, <code>return</code> structures cannot be used in the implicit loops of substeps</li>
+<li>Action <code>warn_if</code> gives an warning under specified conditions</li>
+<li>Action <code>fail_if</code> raises an exception that terminates the substep and therefore the entire workflow if a condition is met</li>
+<li>Action <code>done_if</code> assumes that the substep is completed and ignores the rest of the statements</li>
+<li>Action <code>skip_if</code> skips the substep and removed <code>_output</code> even if the <code>_output</code> has been generated</li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -12560,27 +12567,35 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Action-fail_if">Action <code>fail_if</code><a class="anchor-link" href="#Action-fail_if"></a></h3><p>Action <code>fail_if(expr, msg='')</code> raises an exception with <code>msg</code> (and terminate the execution of the workflow if the exception is not caught) if <code>expr</code> returns True.</p>
+<h2 id="Control-structures-of-substeps">Control structures of substeps<a class="anchor-link" href="#Control-structures-of-substeps"></a></h2>
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS"># create a few input files for examples
+!touch a_0.txt a_1.txt a_2.txt a_3.txt</textarea>
+  </div>
+</div>
+
+</div>
 
 </div>
 </div>
-</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Action-warn_if">Action <code>warn_if</code><a class="anchor-link" href="#Action-warn_if"></a></h3><p>Action <code>warn_if(expr, msg)</code> yields a warning message <code>msg</code> if <code>expr</code> is evaluate to be true.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Action-stop_if(cond,-msg,-no_output)">Action <code>stop_if(cond, msg, no_output)</code><a class="anchor-link" href="#Action-stop_if(cond,-msg,-no_output)"></a></h3><p>Action <code>stop_if(expr, msg='')</code> stops the execution of the current step (or current iteration if within input loops specified by parameters <code>group_by</code> or <code>for_each</code>) and gives a warning message if <code>msg</code> is specified. For example,</p>
+<p>SoS allows the use of arbitrary Python statements in step processes. For example, suppose you are processing a number of input files and some of them contain errors and have to be ignored, you can write a workflow step as follows:</p>
 
 </div>
 </div>
@@ -12590,19 +12605,17 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
-   <textarea rows="10"
-      class="sos-source" name="SoS">%sandbox
-%run
-!touch a.txt
-!echo 'something' > b.txt
-
-[10]
-input: '*.txt', group_by=1
-
-stop_if(os.path.getsize(_input[0]) == 0)
-print(_input)</textarea>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">infiles = [f'a_{i}.txt' for i in range(4)]
+outfiles = []
+for idx, infile in enumerate(infiles):
+    if idx == 2:  # problematic step
+        continue
+    out = f'a_{idx}.out'
+    sh(f'echo generating {out}\ntouch {out}')
+    outfiles.append(out)</textarea>
   </div>
 </div>
 
@@ -12618,7 +12631,9 @@ print(_input)</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>b.txt
+<pre>generating a_0.out
+generating a_1.out
+generating a_3.out
 </pre>
 </div>
 </div>
@@ -12635,17 +12650,8 @@ print(_input)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>skips <code>a.txt</code> because it has size 0.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>A side effect of <code>stop_if</code> is that it will clear <code>_output</code> of the iteration so that the step <code>output</code> consists of only files from non-stopped iterations. For example,</p>
+<p>However, as we have discussed in tutorials <a href="doc/user_guide/scripts_in_sos.html">How to include scripts in different langauges in SoS workflows</a> and <a href="doc/user_guide/input_substeps.html">How to specify input and output files and process input files in groups</a>, steps written with loops and function calls like <code>sh()</code> are not very readable because the scripts are not clearly presented and users have to follow the logics of the code. Also, the input files are not processed in parallel so the step is not executed efficiently.</p>
+<p>The more SoS way to implement the step is to use input and output statements and script format of function calls as follows:</p>
 
 </div>
 </div>
@@ -12655,21 +12661,172 @@ print(_input)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
-   <textarea rows="12"
-      class="sos-source" name="SoS">%sandbox
-%run
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">input: [f'a_{i}.txt' for i in range(4)], group_by=1
+output: _input.with_suffix('.out')
+
+sh: expand=True
+    echo generating {_output}
+    touch {_output}
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>generating a_0.out
+generating a_1.out
+generating a_2.out
+generating a_3.out
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The problem is that substeps are processed concurrently and we do not yet have a way to treat them differentially and introduce the logic of</p>
+
+<pre><code>    if idx == 2:  # problematic step
+        continue</code></pre>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Action-skip_if">Action <code>skip_if</code><a class="anchor-link" href="#Action-skip_if"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Action <code>skip_if(expr, msg)</code></h4>
+    <p>Action <code>skip_if(expr, msg)</code> skips the execution of the substep if condition <code>expr</code> is met. It also assume that the substep generates no output and set <code>_output</code> to empty. The usage pattern of <code>skip_if</code> is</p>
+    <pre>
+    output: ...
+    skip_if(...)
+    statements to produce _output
+    </pre>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>skip_if</code> action allows you to skip certain substeps with certain condition. The condition can involve a (mostly) hidden variable <code>_index</code> which is the index of the substep. For example, the aforementioned step can be written as</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">input: [f'a_{i}.txt' for i in range(4)], group_by=1
+output: _input.with_suffix('.out')
+
+skip_if(_index == 2, 'input 2 has some problem')
+
+sh: expand=True
+    echo generating {_output}
+    touch {_output}
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>generating a_0.out
+generating a_1.out
+generating a_3.out
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is important to remember that <code>skip_if</code> assumes that substep output is not generated and adjust <code>_output</code> accordingly. For example, if you pass the output of the step to another step, you will notice that the output of step <code>2</code> is empty.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
+   <textarea rows="13"
+      class="sos-source" name="SoS">%run -v0
 [10]
-input: for_each={'idx': range(10)}
-output: f"{idx}.txt"
-stop_if(idx % 2 == 0)
-run: expand=True
-    echo "Generating {_output}"
+input: [f'a_{i}.txt' for i in range(4)], group_by=1
+output: _input.with_suffix('.out')
+
+skip_if(_index == 2, 'input 2 has some problem')
+
+sh: expand=True
+    echo generating {_output}
     touch {_output}
 
 [20]
-print(f"Output of last step is {input}")</textarea>
+print(f'Input of {_index} is {_input}')</textarea>
   </div>
 </div>
 
@@ -12684,28 +12841,23 @@ print(f"Output of last step is {input}")</textarea>
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>echo &#34;Generating 1.txt&#34;
-Generating 1.txt
-touch 1.txt
-
-echo &#34;Generating 3.txt&#34;
-Generating 3.txt
-touch 3.txt
-
-echo &#34;Generating 5.txt&#34;
-Generating 5.txt
-touch 5.txt
-
-echo &#34;Generating 7.txt&#34;
-Generating 7.txt
-touch 7.txt
-
-echo &#34;Generating 9.txt&#34;
-Generating 9.txt
-touch 9.txt
-
-Output of last step is Undetermined(&#39;&#39;)
+<pre>Input of 0 is a_0.out
+Input of 1 is a_1.out
+Input of 2 is 
+Input of 3 is a_3.out
 </pre>
 </div>
 </div>
@@ -12722,7 +12874,257 @@ Output of last step is Undetermined(&#39;&#39;)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Action-done_if">Action <code>done_if</code><a class="anchor-link" href="#Action-done_if"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Action <code>done_if(expr, msg)</code></h4>
+    <p>Action <code>done_if(expr, msg)</code> ignores the rest of the step process, assuming that the substep has been completed with output generated. The usage pattern of <code>done_if</code> is</p>
+    <pre>
+    output: ...
+    statements to produce _output
+    done_if(...)
+    additional statements
+    </pre>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A similar action is <code>done_if</code>, which also ignores the rest of the step process but assumes that the output has already been generated. Consequently, this action does not adjust <code>_output</code>. For example, if some more work is only applied to a subset of substeps, you can use <code>done_if</code> to execute additional code to only selected substeps.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 20.528640000000003em">
+   <textarea rows="16"
+      class="sos-source" name="SoS">%run -v0
+[10]
+input: [f'a_{i}.txt' for i in range(4)], group_by=1
+output: _input.with_suffix('.out')
+
+sh: expand=True
+    echo generating {_output}
+    touch {_output}
+
+done_if(_index != 2, 'input 2 need to be fixed')
+
+sh: expand=True
+    echo "Fixing {_output}"
+
+[20]
+print(f'Input of {_index} is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of 0 is a_0.out
+Input of 1 is a_1.out
+Input of 2 is a_2.out
+Input of 3 is a_3.out
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Action-warn_if">Action <code>warn_if</code><a class="anchor-link" href="#Action-warn_if"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Action <code>warn_if(expr, msg)</code></h4>
+    <p>Action <code>warn_if(expr, msg)</code> gives an warning if a specified condition is met.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Action <code>warn_if</code> is very easy to use. It just produces an warning message if something suspicious is detected.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">input: [f'a_{i}.txt' for i in range(4)], group_by=1
+output: _input.with_suffix('.out')
+
+sh: expand=True
+    echo generating {_output}
+    touch {_output}
+
+warn_if(_index == 2, 'input 2 might be problematic')</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Action-fail_if">Action <code>fail_if</code><a class="anchor-link" href="#Action-fail_if"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Action <code>fail_if(expr, msg)</code></h4>
+    <p>Action <code>fail_if(expr, msg)</code> terminates the execution of workflow if a condition is met.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Action <code>fail_if</code> terminates the execution of the workflow under certain conditions. It kills all other processes (e.g. working substeps or nested workflows) and it should be used with caution if is unsafe to terminate the workflow abruptly.</p>
+<p>For example, if we decide to terminate the entire workflow if we detect something wrong with an input file, we can do</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">input: [f'a_{i}.txt' for i in range(4)], group_by=1
+output: _input.with_suffix('.out')
+
+sh: expand=True
+    echo generating {_output}
+    touch {_output}
+
+fail_if(_index == 2, 'input 2 might be problematic')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>generating a_0.out
+generating a_1.out
+generating a_3.out
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>input 2 might be problematic
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/scripts_in_sos.html">How to include scripts in different langauges in SoS workflows</a></li>
+<li><a href="doc/user_guide/input_substeps.html">How to specify input and output files and process input files in groups</a></li>
+</ul>
 
 </div>
 </div>
