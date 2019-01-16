@@ -12554,6 +12554,7 @@ li.tocify-item.active {
 <li>Steps can access workflow and step information through variables <code>step_name</code>, <code>step_id</code>, <code>workflow_id</code>, and <code>master_id</code></li>
 <li>Steps have step and substep specific variables such as <code>step_input</code>, <code>_input</code>, <code>_depends</code>, <code>_output</code></li>
 <li>Steps can use variables defined locally and in global sections</li>
+<li>Steps can inherit variables passed as output of other steps, e.g. from <code>output_from</code></li>
 <li>Steps can use variables shared by other steps through <code>sos_variable</code></li>
 </ul>
 </li>
@@ -12567,7 +12568,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS steps are isolated in the sense that they have access to limited set of variables and by default do not share variables. This tutorial lists all the variables that can be used in a step.</p>
+<p>SoS steps are isolated in the sense that they have access to limited set of variables and by default do not share variables. This tutorial lists all variables that can be used in a step.</p>
 
 </div>
 </div>
@@ -12746,7 +12747,7 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Notice that <code>CONFIG</code> only contains content from system configuration files <code>{SOS_DIRECTORY}/site_config.yml</code>, <code>~/.sos/hosts.yml</code>, and <code>~/.sos/config.yml</code>. If you have your own configuration in a file in JSON or YMAL format, you can specify it from command line using option <code>-c</code>. The content of that file will then be available in variable <code>CONFIG</code>.</p>
+<p>Note that <code>CONFIG</code> only contains content from system configuration files <code>{SOS_DIRECTORY}/site_config.yml</code>, <code>~/.sos/hosts.yml</code>, and <code>~/.sos/config.yml</code>. If you have your own configuration in a file in JSON or YMAL format, you can specify it from command line using option <code>-c</code>. The content of that file will then be available in variable <code>CONFIG</code>.</p>
 
 </div>
 </div>
@@ -12756,23 +12757,9 @@ li.tocify-item.active {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Workflow-and-step-variables">Workflow and step variables<a class="anchor-link" href="#Workflow-and-step-variables"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS defines multiple variables during the execution of a step. The first type of variables provides information about the step, which includes</p>
-<ul>
-<li><strong><code>step_name</code></strong>: name of the step</li>
-<li><strong><code>step_id</code></strong>: Hash ID of the step, which is determined by the content of the step</li>
-<li><strong><code>workflow_id</code></strong>: Hash ID of the workflow in which the step is defined. It would be the ID of the nested workflow if the workflow is nested.</li>
-<li><strong><code>master_id</code></strong>: Hash ID of the entire workflow, regardless if the step is defined in a nested workflow.</li>
-</ul>
-<p>For example, in the following example, two steps have different step names, step IDs, and workflow IDs because <code>nested</code> is a nested workflow, but they share the same <code>master_id</code>, which equals to <code>workflow_id</code> of the outermost workflow.</p>
+<p>For example, using a <code>report</code> action, the following workflow creates a <code>local.yml</code> file with content</p>
+
+<pre><code>my_setting: 5</code></pre>
 
 </div>
 </div>
@@ -12782,52 +12769,16 @@ li.tocify-item.active {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
-   <textarea rows="13"
-      class="sos-source" name="SoS">%run
-[nested]
-print(f'Workflow {workflow_id}: step name={step_name}')
-print(f'Workflow {workflow_id}: step id={step_id}')
-print(f'Workflow {workflow_id}: workflow id={workflow_id}')
-print(f'Workflow {workflow_id}: master id={master_id}')
-
-[default]
-print(f'Workflow {workflow_id}: step name={step_name}')
-print(f'Workflow {workflow_id}: step id={step_id}')
-print(f'Workflow {workflow_id}: workflow id={workflow_id}')
-print(f'Workflow {workflow_id}: master id={master_id}')
-sos_run('nested')</textarea>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">report: output='local.yml'
+    my_setting: 5  </textarea>
   </div>
 </div>
 
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Workflow 1663b815c3bed9f2: step name=default_0
-Workflow 1663b815c3bed9f2: step id=950015e2ddfc10d4
-Workflow 1663b815c3bed9f2: workflow id=1663b815c3bed9f2
-Workflow 1663b815c3bed9f2: master id=1663b815c3bed9f2
-Workflow fecfb67fda2f92df: step name=nested_0
-Workflow fecfb67fda2f92df: step id=74bf81da4f5098aa
-Workflow fecfb67fda2f92df: workflow id=fecfb67fda2f92df
-Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 </div>
 
@@ -12837,7 +12788,9 @@ Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>These variables can be useful, for example, to save runtime information, as in the example of</p>
+<p>Then, with option <code>-c local.yml</code>, the content of this file becomes part of <code>CONFIG</code> and can be used as</p>
+
+<pre><code>CONFIG['my_setting']</code></pre>
 
 </div>
 </div>
@@ -12847,15 +12800,11 @@ Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
-      class="sos-source" name="SoS">%preview -n default_10.log
-%run 
-
-[10]
-with open(step_name + '.log', 'w') as log:
-    log.write(f'Step specific log message saved in {step_name}.log')</textarea>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%run -c local.yml -v0
+print(CONFIG['my_setting'])</textarea>
   </div>
 </div>
 
@@ -12872,7 +12821,7 @@ with open(step_name + '.log', 'w') as log:
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> default_10.log (49 B):</div>
+
 </div>
 
 </div>
@@ -12883,59 +12832,7 @@ with open(step_name + '.log', 'w') as log:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Step specific log message saved in default_10.log</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If a section defines multiple steps, the step variables can be used to define (slightly) different steps according to which step is executing. For example,</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
-   <textarea rows="7"
-      class="sos-source" name="SoS">%run human
-
-[human_10, mouse_10]
-if 'human' in step_name:
-   print("I am dealing with human")
-else:
-   print("I am dealing with mouse")
-</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>I am dealing with human
+<pre>5
 </pre>
 </div>
 </div>
@@ -12952,11 +12849,167 @@ else:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The second type of variables are step input, output, and dependent targets. They are of type <code>sos_targets</code> and will be explained later.</p>
+<h2 id="Workflow-and-step-identifications">Workflow and step identifications<a class="anchor-link" href="#Workflow-and-step-identifications"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Variables <code>step_name</code>, <code>step_id</code>, <code>workflow_id</code> and <code>master_id</code></h4>
+    <ul>
+       <li><code>step_name</code>: name of the step
+<li><code>step_id</code>: Hash ID of the step, which is determined by the content of the step
+<li><code>workflow_id</code>: Hash ID of the workflow in which the step is defined. It would be the ID of the nested workflow if the workflow is nested.
+<li><code>master_id</code>: Hash ID of the entire workflow, regardless if the step is defined in a nested workflow.
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS passes identifications of workflows and steps as variables during the the execution of a step. For example, in the following example, two steps have different step names and workflow IDs because <code>nested</code> is a nested workflow, but they share the same <code>master_id</code>.</p>
 
 </div>
 </div>
 </div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
+      class="sos-source" name="SoS">%run -v0
+[nested]
+print(f'I am step {step_name} of workflow {workflow_id}')
+
+[default]
+print(f'I am step {step_name} of workflow {workflow_id}')
+sos_run('nested')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I am step default of workflow 1b2c9e89e2a1a288
+I am step nested of workflow 343bf780bd093452
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These variables are mostly used internally although you can use them to create step- or workflow-specific log messages or output files. <code>step_name</code>, however, is an exception because it is useful for the creation of steps that can be used by multiple workflows.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, if you have a workflow that can handle both human and mouse data, you can define a section that can be used by both workflows. Inside the step, you can use variable <code>step_name</code> to determine which workflow is being executed and act accordingly:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
+      class="sos-source" name="SoS">%run human -v0
+
+[human_10, mouse_10]
+if 'human' in step_name:
+   print("Using human reference genome")
+else:
+   print("Using mouse reference genome")
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Using human reference genome
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -13005,6 +13058,300 @@ else:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Global sections of a workflow can be considered as part of the step process. As a matter of fact, because steps and substeps are executed in separate processes, statements in global sections will be executed repeatedly for each step and substep. Consequently, you can use variables or parameters defined in the global sections in each step.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">%run --sample=A23 -v0
+
+[global]
+parameter: sample=str
+
+[A_1]
+print(f'Preparing {sample}')
+
+[A_2]
+print(f'Processing {sample}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Preparing A23
+Processing A23
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, because steps are executed separately, although variables defined by the global section are shared by all steps, changing these variables in a step will not affect variables in other steps:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">%run --sample=A23 -v0
+
+[global]
+parameter: sample=str
+
+[A_1]
+print(f'Preparing {sample}')
+sample = 'Another name'
+
+[A_2]
+print(f'Processing {sample}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Preparing A23
+Processing A23
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Variables-passed-from-output-of-other-steps">Variables passed from output of other steps<a class="anchor-link" href="#Variables-passed-from-output-of-other-steps"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>_output</code> of a step is a <code>sos_target</code> object. Similar to other SoS targets, you can attach variables to this variable. Interestingly, when <code>_output</code> is passed to another step and becomes the <code>_input</code> of a substep, its associated variables will be accessible from the substep.</p>
+<p>For example, in the following workflow, an attribute <code>my_i</code> is assigned to each <code>_output</code> with value of variable <code>i</code>. When step <code>20</code> inherits the output of step <code>10</code> and executes the substeps, <code>my_i</code> becomes available to each substep.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">%run -v0
+[10]
+input: for_each=dict(i=range(2))
+output: f'test_{i}.txt'
+_output.touch()
+_output.set(my_i=i)
+
+[20]
+print(my_i)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0
+1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The same holds for outputs imported by functions <code>named_output</code> and <code>output_from</code>. For example, the use of <code>output_from('A')</code> in the following workflow imports the <code>step_output</code> and its groups from step <code>A</code>, and <code>my_i</code> attached to <code>_input</code> becomes available in the substeps of <code>default</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">%run -v0
+[A]
+input: for_each=dict(i=range(2))
+output: f'test_{i}.txt'
+_output.touch()
+_output.set(my_i=i)
+
+[default]
+input: output_from('A')
+print(my_i)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0
+1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-warning" role="alert">
+    <h4>Inherited output variables can be tricky to use</h4>
+    <p>Whereas attaching variables to <code>_output</code> allows you to attach information to output of a step and pass such information around with them, use of such variables can be tricky because they are defined implicitly by <code>_output.set()</code> and can appear magical to users who are not familiar with SoS.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Variables-shared-from-other-steps">Variables shared from other steps<a class="anchor-link" href="#Variables-shared-from-other-steps"></a></h2>
 </div>
 </div>
@@ -13014,7 +13361,104 @@ else:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Sharing variables between steps</h4>
+    <p>Sharing of variables can be achieved by using <code>shared</code> section option from the source step and <code>depends: sos_variable(name)</code> from the destination step. The usage pattern is</p>
+    <pre>
+    [A: shared='var']
+    var = ...
+    ...
+    [B]
+    depends: sos_variable('var')
+    </pre>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, if you really want to access variables created in another step, you will have to explicitly <code>share</code> that variable between the steps. For example, in the following workflow, a variable <code>var</code> is defined in step <code>A</code>, which is exposed to other steps through the <code>shared</code> step option. In step <code>default</code>, a <code>depends: sos_variable('var')</code> is defined to makes sure that step <code>A</code> is executed before step <code>default</code>, and transfers variables from <code>A</code> to <code>default</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">%run -v0
+
+[A: shared='var']
+var = 3
+
+[default]
+depends: sos_variable('var')
+print(var)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tutorial <a href="doc/user_guide/shared_variables.html">How to pass variables between SoS steps</a> describes the <code>shared</code> section option in more detail.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/paired_group_with.html">How to attach variables to files and groups of files</a></li>
+<li><a href="doc/user_guide/shared_variables.html">How to pass variables between SoS steps</a></li>
+</ul>
 
 </div>
 </div>
