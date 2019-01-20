@@ -12464,24 +12464,27 @@ textarea.sos-source {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
-  padding-left: 0px;
-  text-indent: 0px;
 
   li {
     list-style: none;
   }
 }
 
-.toc-list .toc-list {
+#toc > .toc-list  a {
   margin: 0;
-  text-indent: 15px;
+  padding-left: 10px;
+}
+
+#toc > .toc-list .toc-list a {
+  margin: 0;
+  padding-left: 25px;
   font-size: 12px;
 }
 
 
-.toc-list .toc-list .toc-list {
+#toc > .toc-list .toc-list .toc-list a {
   margin: 0;
-  text-indent: 30px;
+  padding-left: 40px;
   font-size: 12px;
 }
 
@@ -14201,15 +14204,13 @@ a_3.txt with variable i=3
   var headingMap = {}
 
   Array.prototype.forEach.call(headings, function(heading) {
-    if (!heading.id) {
-      var id = heading.textContent.toLowerCase()
-        .split(' ').join('-').split(':').join('')
-      headingMap[id] = !isNaN(headingMap[id]) ? headingMap[id]++ : 0
-      if (headingMap[id]) {
-        heading.id = id + '-' + headingMap[id]
-      } else {
-        heading.id = id
-      }
+    var id = heading.id ? heading.id : id = heading.textContent.toLowerCase()
+        .split(' ').join('-').split(':').join('');
+    headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
+    if (headingMap[id]) {
+      heading.id = id + '-' + headingMap[id]
+    } else {
+      heading.id = id
     }
   })
 
@@ -14229,7 +14230,6 @@ a_3.txt with variable i=3
     activeListItemClass: 'active',
     //
     orderedList: false,
-
     //
     scrollSmooth: false
   });
