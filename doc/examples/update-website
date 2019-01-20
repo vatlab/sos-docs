@@ -31,32 +31,28 @@ run: expand='${ }'
 
 [convert-homepage]
 input:  html=sos_targets('../src/homepage/*.ipynb', group_by=1), 
-        template='../src/homepage/template.html'
+        template='../src/homepage/template.html',
+        template_toc='../src/homepage/template_toc.html'
 output: f"../{_input['html']:bn}.html"
 
-with_toc = False # 'Running' in str(_input)
 
 run: expand=True
 	cd ../src/tutorials
-	sos convert {_input["html"]:a} {_output:a} --template {'../templates/basic_toc.tpl' if with_toc else 'basic'}
+	sos convert {_input["html"]:a} {_output:a} --template basic
+
+with_toc = 'running' in str(_input) or 'guide' in str(_input)
 
 # insert the temporaty output into the destination
-with open(_input["template"], 'r') as template, open(_output, 'r+') as dest:
+with open(_input["template_toc"] if with_toc else _input["template"], 'r') as template, open(_output, 'r+') as dest:
     content = dest.read()
     dest.seek(0)
     for line in template:
         if line.strip() == '<!-- insert the content of page here -->':
-            dest.write(content)
+            dest.write(content.replace('¶', '').replace('&#182;', ''))
         elif _output.name in line:
             dest.write(line.replace('<li>', '<li class="active">'))
         else:
             dest.write(line)
-    
-stop_if(not with_toc)
-run: expand=True
-    perl -pi -e 's/id="toc"/id="side_toc_{_output:bn}"/' {_output:a}
-    perl -pi -e 's/"#toc"/"#toc_{_output:bn}"/' {_output:a}
-    perl -pi -e 's/"#side_toc"/"#side_toc_{_output:bn}"/' {_output:a}
 
 [convert-example-scripts]
 input:  '../src/examples/*.sos', 'update-website', group_by=1

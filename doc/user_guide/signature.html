@@ -11849,6 +11849,14 @@ div.output_subarea:empty {
 	padding: 0px;
 }
 
+/* the cell_kernel_selector will be absolute to the parent
+*  of absolute or relative position, so putting div.input_area
+* as relative will prevent the select from going out of the
+* input cell */
+div.input_area {
+	position: relative;
+}
+
 .code_cell .cell_kernel_selector {
 	/* width:70pt; */
 	background: none;
@@ -12428,18 +12436,15 @@ textarea.sos-source {
 
 
 
-<style type="text/css">
-/*
- * jquery.tocify.css 1.9.0
- * Author: @gregfranko
- */
+<style>
 
 /* The Table of Contents container element */
-.tocify {
+#toc {
     width: 20%;
     max-height: 90%;
-    overflow: auto;
+    overflow-y: auto;
     margin-left: 2%;
+    margin-top: 60px;
     position: fixed;
     border: 1px solid #ccc;
     webkit-border-radius: 6px;
@@ -12448,39 +12453,57 @@ textarea.sos-source {
 }
 
 /* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
-.tocify ul, .tocify li {
+#toc ul, #toc li {
     list-style: none;
     margin: 0;
     padding: 0;
     border: none;
-    line-height: 30px;
+    line-height: 1.5em;
 }
 
-/* Top level header elements */
-.tocify-header {
-    text-indent: 10px;
+#toc > .toc-list {
+  overflow: hidden;
+  position: relative;
+  padding-left: 0px;
+  text-indent: 0px;
+
+  li {
+    list-style: none;
+  }
 }
 
-/* Top level subheader elements.  These are the first nested items underneath a header element. */
-.tocify-subheader {
-    text-indent: 20px;
-    display: none;
+.toc-list .toc-list {
+  margin: 0;
+  text-indent: 15px;
+  font-size: 12px;
 }
 
-/* Makes the font smaller for all subheader elements. */
-.tocify-subheader li {
-    font-size: 12px;
+
+.toc-list .toc-list .toc-list {
+  margin: 0;
+  text-indent: 30px;
+  font-size: 12px;
 }
 
-/* Further indents second level subheader elements. */
-.tocify-subheader .tocify-subheader {
-    text-indent: 30px;
+a.toc-link {
+  height: 100%;
 }
 
-/* Further indents third level subheader elements. You can continue this pattern if you have more nested elements. */
-.tocify-subheader .tocify-subheader .tocify-subheader {
-    text-indent: 40px;
+.is-collapsible {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: all 300ms ease-in-out;
 }
+
+.is-collapsed {
+  max-height: 0;
+}
+
+.is-position-fixed {
+  position: fixed !important;
+  top: 0;
+}
+
 
 /* Twitter Bootstrap Override Style */
 .nav-list > li > a, .nav-list .nav-header {
@@ -12491,38 +12514,30 @@ textarea.sos-source {
 .nav-list > li > a {
     padding: 5px;
 }
-</style>
-<style>
-#notebook-container {
+
+.notebook-container {
   box-shadow: none;
 }
-li.tocify-item.active {
+
+li.toc-item .is-active-link {
   background-color: #6197d5;
-}
-.tocify-item.active a {
   color: white;
 }
 
-.tocify {
-  margin-top: 60px;
-}
-.tocify ul, .tocify li {
-    line-height: 1.5em;
-}
 .nav > li > a:hover, .nav > li > a:focus {
     text-decoration: none;
     background-color: #eeeeee;
     color: #337ab7;
 }
 </style>
+
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.9.1/themes/smoothness/jquery-ui.css">
 
 </head>
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <div id="toc" class="tocify">
+      <div id="toc">
       </div><!--/.well -->
     </div><!--/span-->
     <div class="col-xs-12 col-sm-8 col-md-9">
@@ -13859,23 +13874,46 @@ INFO: Step <span class="ansi-green-fg">default_20</span> (index=0) is <span clas
 
 
 
-<script
-  src="https://code.jquery.com/jquery-1.7.2.min.js"
-  integrity="sha256-R7aNzoy2gFrVs+pNJ6+SokH04ppcEqJ0yFLkNGoFALQ="
-  crossorigin="anonymous"></script>
-<script
-  src="https://code.jquery.com/ui/1.9.1/jquery-ui.min.js"
-  integrity="sha256-UezNdLBLZaG/YoRcr48I68gr8pb5gyTBM+di5P8p6t8="
-  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+
 <script>
-!function(e){"use strict";!function(e,t,s,i){var o="tocify",n="tocify-hide",a="tocify-header",l="."+a,r="tocify-subheader",h="."+r,d="tocify-item",c="."+d,f="tocify-extend-page";e.widget("toc.tocify",{version:"1.9.0",options:{context:"body",ignoreSelector:null,selectors:"h1, h2, h3",showAndHide:!0,showEffect:"slideDown",showEffectSpeed:"medium",hideEffect:"slideUp",hideEffectSpeed:"medium",smoothScroll:!0,smoothScrollSpeed:"medium",scrollTo:0,showAndHideOnScroll:!0,highlightOnScroll:!0,highlightOffset:40,theme:"bootstrap",extendPage:!0,extendPageOffset:100,history:!0,scrollHistory:!1,hashGenerator:"compact",highlightDefault:!0},_create:function(){var s=this;s.extendPageScroll=!0,s.items=[],s._generateToc(),s._addCSSClasses(),s.webkit=function(){for(var e in t)if(e&&-1!==e.toLowerCase().indexOf("webkit"))return!0;return!1}(),s._setEventHandlers(),e(t).load(function(){s._setActiveElement(!0),e("html, body").promise().done(function(){setTimeout(function(){s.extendPageScroll=!1},0)})})},_generateToc:function(){var t,s,i=this,l=i.options.ignoreSelector;if((t=-1!==this.options.selectors.indexOf(",")?e(this.options.context).find(this.options.selectors.replace(/ /g,"").substr(0,this.options.selectors.indexOf(","))):e(this.options.context).find(this.options.selectors.replace(/ /g,""))).length){i.element.addClass(o);var r=e(this.options.context).find(this.options.selectors),h=0;t.each(function(t){if(!e(this).is(l)){for(s=e("<ul/>",{id:a+t,class:a}).append(i._nestElements(e(this),t)),i.element.append(s);r[h]!==this;)h+=1;for(var o=h+1;o<r.length&&r[o].nodeName.toLowerCase()!==r[h].nodeName.toLowerCase();)o+=1;for(h+=1;h<o;){var n=r[h];e(n).is(l)||i._appendSubheaders.call(n,i,s),h+=1}}})}else i.element.addClass(n)},_setActiveElement:function(e){var s=this,i=t.location.hash.substring(1),o=s.element.find('li[data-unique="'+i+'"]');return i.length?(s.element.find("."+s.focusClass).removeClass(s.focusClass),o.addClass(s.focusClass),s.options.showAndHide&&o.click()):(s.element.find("."+s.focusClass).removeClass(s.focusClass),!i.length&&e&&s.options.highlightDefault&&s.element.find(c).first().addClass(s.focusClass)),s},_nestElements:function(t,s){var i,o,n;return(i=e.grep(this.items,function(e){return e===t.text()})).length?this.items.push(t.text()+s):this.items.push(t.text()),n=this._generateHashValue(i,t,s),o=e("<li/>",{class:d,"data-unique":n}).append(e("<a/>",{text:t.text()})),t.before(e("<div/>",{name:n,"data-unique":n})),o},_generateHashValue:function(e,t,s){var i="",o=this.options.hashGenerator;if("pretty"===o){for(i=t.text().toLowerCase().replace(/\s/g,"-");i.indexOf("--")>-1;)i=i.replace(/--/g,"-");for(;i.indexOf(":-")>-1;)i=i.replace(/:-/g,"-")}else i="function"==typeof o?o(t.text(),t):t.text().replace(/\s/g,"");return e.length&&(i+=""+s),i},_appendSubheaders:function(t,s){var i=e(this).index(t.options.selectors),o=e(t.options.selectors).eq(i-1),n=+e(this).prop("tagName").charAt(1),a=+o.prop("tagName").charAt(1);n<a?t.element.find(h+"[data-tag="+n+"]").last().append(t._nestElements(e(this),i)):n===a?s.find(c).last().after(t._nestElements(e(this),i)):s.find(c).last().after(e("<ul/>",{class:r,"data-tag":n})).next(h).append(t._nestElements(e(this),i))},_setEventHandlers:function(){var i=this;this.element.on("click.tocify","li",function(s){if(i.options.history&&(t.location.hash=e(this).attr("data-unique")),i.element.find("."+i.focusClass).removeClass(i.focusClass),e(this).addClass(i.focusClass),i.options.showAndHide){var o=e('li[data-unique="'+e(this).attr("data-unique")+'"]');i._triggerShow(o)}i._scrollTo(e(this))}),this.element.find("li").on({"mouseenter.tocify":function(){e(this).addClass(i.hoverClass),e(this).css("cursor","pointer")},"mouseleave.tocify":function(){"bootstrap"!==i.options.theme&&e(this).removeClass(i.hoverClass)}}),(i.options.extendPage||i.options.highlightOnScroll||i.options.scrollHistory||i.options.showAndHideOnScroll)&&e(t).on("scroll.tocify",function(){e("html, body").promise().done(function(){var o,n,a,l,r=e(t).scrollTop(),h=e(t).height(),d=e(s).height(),u=e("body")[0].scrollHeight;if(i.options.extendPage&&(i.webkit&&r>=u-h-i.options.extendPageOffset||!i.webkit&&h+r>d-i.options.extendPageOffset)&&!e(".tocify-extend-page").length){if(!(n=e('div[data-unique="'+e(c).last().attr("data-unique")+'"]')).length)return;a=n.offset().top,e(i.options.context).append(e("<div />",{class:f,height:Math.abs(a-r)+"px","data-unique":f})),i.extendPageScroll&&(l=i.element.find("li.active"),i._scrollTo(e('div[data-unique="'+l.attr("data-unique")+'"]')))}setTimeout(function(){var s,n=null,a=null,l=e(i.options.context).find("div[data-unique]");l.each(function(t){var s=Math.abs((e(this).next().length?e(this).next():e(this)).offset().top-r-i.options.highlightOffset);if(!(null==n||s<n))return!1;n=s,a=t}),s=e(l[a]).attr("data-unique"),o=e('li[data-unique="'+s+'"]'),i.options.highlightOnScroll&&o.length&&(i.element.find("."+i.focusClass).removeClass(i.focusClass),o.addClass(i.focusClass)),i.options.scrollHistory&&t.location.hash!=="#"+s&&t.location.replace("#"+s),i.options.showAndHideOnScroll&&i.options.showAndHide&&i._triggerShow(o,!0)},0)})})},show:function(t,s){var i=this;if(!t.is(":visible"))switch(t.find(h).length||t.parent().is(l)||t.parent().is(":visible")?t.children(h).length||t.parent().is(l)||(t=t.closest(h)):t=t.parents(h).add(t),i.options.showEffect){case"none":t.show();break;case"show":t.show(i.options.showEffectSpeed);break;case"slideDown":t.slideDown(i.options.showEffectSpeed);break;case"fadeIn":t.fadeIn(i.options.showEffectSpeed);break;default:t.show()}return t.parent().is(l)?i.hide(e(h).not(t)):i.hide(e(h).not(t.closest(l).find(h).not(t.siblings()))),i},hide:function(e){var t=this;switch(t.options.hideEffect){case"none":e.hide();break;case"hide":e.hide(t.options.hideEffectSpeed);break;case"slideUp":e.slideUp(t.options.hideEffectSpeed);break;case"fadeOut":e.fadeOut(t.options.hideEffectSpeed);break;default:e.hide()}return t},_triggerShow:function(e,t){return e.parent().is(l)||e.next().is(h)?this.show(e.next(h),t):e.parent().is(h)&&this.show(e.parent(),t),this},_addCSSClasses:function(){return"jqueryui"===this.options.theme?(this.focusClass="ui-state-default",this.hoverClass="ui-state-hover",this.element.addClass("ui-widget").find(".toc-title").addClass("ui-widget-header").end().find("li").addClass("ui-widget-content")):"bootstrap"===this.options.theme?(this.element.find(l+","+h).addClass("nav nav-list"),this.focusClass="active"):(this.focusClass="tocify-focus",this.hoverClass="tocify-hover"),this},setOption:function(){e.Widget.prototype._setOption.apply(this,arguments)},setOptions:function(){e.Widget.prototype._setOptions.apply(this,arguments)},_scrollTo:function(t){var s=this.options.smoothScroll||0,i=this.options.scrollTo,o=e('div[data-unique="'+t.attr("data-unique")+'"]');return o.length?(e("html, body").promise().done(function(){e("html, body").animate({scrollTop:o.offset().top-(e.isFunction(i)?i.call():i)+"px"},{duration:s})}),this):this}})}(window.jQuery,window,document)}();
-</script>
-<script>
-    $(function() {
-        var toc = $("#toc").tocify({
-          selectors: "h2,h3,h4,h5"
-        });
-    });
+  var content = document.querySelector('.notebook-container')
+  var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+  var headingMap = {}
+
+  Array.prototype.forEach.call(headings, function(heading) {
+    if (!heading.id) {
+      var id = heading.textContent.toLowerCase()
+        .split(' ').join('-').split(':').join('')
+      headingMap[id] = !isNaN(headingMap[id]) ? headingMap[id]++ : 0
+      if (headingMap[id]) {
+        heading.id = id + '-' + headingMap[id]
+      } else {
+        heading.id = id
+      }
+    }
+  })
+
+  tocbot.init({
+    // Where to render the table of contents.
+    tocSelector: '#toc',
+    // Where to grab the headings to build the table of contents.
+    contentSelector: '.notebook-container',
+    // Which headings to grab inside of the contentSelector element.
+    headingSelector: 'h2, h3, h4',
+    //
+    listClass: 'toc-list',
+    extraListClasses: 'nav nav-list',
+    //
+    listItemClass: 'toc-item',
+    //
+    activeListItemClass: 'active',
+    //
+    orderedList: false,
+
+    //
+    scrollSmooth: false
+  });
 </script>
 
 
