@@ -1,12 +1,14 @@
 
 
+
 <!DOCTYPE html>
 <html>
 <head>
 
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>input_output</title>
+<title>depends_statement</title>
 
 <style type="text/css">
     /*!
@@ -12314,15 +12316,9 @@ font-style: italic;
 <style>
    .lan_Bash .input_prompt {
       background-color: #E6EEFF !important;
-    }.lan_R .input_prompt {
-      background-color: #DCDCDA !important;
     }
 </style>
 
-<script src="https://code.jquery.com/jquery-1.7.2.min.js"
-  integrity="sha256-R7aNzoy2gFrVs+pNJ6+SokH04ppcEqJ0yFLkNGoFALQ="
-  crossorigin="anonymous">
-</script>
 
 <script>
 function filterDataFrame(id) {
@@ -12547,7 +12543,27 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
+
+
+
+<style type="text/css">
+
+#sos_hover_tooltip {
+  position: fixed;
+  display: none;
+  background: lightgray;
+  border: 1pt solid gray;
+  opacity: 50%;
+}
+
+.sos_hover_doc:hover {
+  cursor: pointer;
+}
+</style>
+
+
 </head>
+
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
@@ -12566,7 +12582,7 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="How-to-define-input-and-output-of-workflows">How to define input and output of workflows<a class="anchor-link" href="#How-to-define-input-and-output-of-workflows"></a></h1>
+<h1 id="How-to-define-step-dependencies">How to define step dependencies<a class="anchor-link" href="#How-to-define-step-dependencies"></a></h1>
 </div>
 </div>
 </div>
@@ -12579,8 +12595,8 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>Input statements accepts regular Python aguments</li>
-<li>Input output can be named</li>
+<li>Step depends accepts regular Python aguments</li>
+<li>Step depends are usually used to create dependencies but variables <code>_depends</code> can be used directly  </li>
 </ul>
 </li>
 </ul>
@@ -12593,7 +12609,8 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Unnamed-input-files">Unnamed input files<a class="anchor-link" href="#Unnamed-input-files"></a></h2>
+<p>The <code>depends</code> statement defines the dependency targets of a SoS step and are usually used to create step dependencies. You can check out the <a href="doc/user_guide/step_dependencies.html">How to create dependencies between SoS steps</a> tutorial for a quick overview of the use of input statements.</p>
+
 </div>
 </div>
 </div>
@@ -12602,14 +12619,7 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-primary" role="alert">
-  <h4>Unnamed input files of SoS steps</h4>
-    <ul>
-        <li>Any python statements (literals, variables, expressions, function calls) are acceptable in the <code>input</code> statement of a SoS step</li>
-        <li>SoS automatically join filenames, lists of filenames, and flatten nested lists to create a single list of targets</li>
-        <li>The input of the step is accessible in the step process as variables <code>step_input</code> for all input of the step and <code>_input</code> for input of each substep</li>
-    </ul>
-</div>
+<h2 id="Direct-input-of-unnamed-or-named-dependency-files">Direct input of unnamed or named dependency files<a class="anchor-link" href="#Direct-input-of-unnamed-or-named-dependency-files"></a></h2>
 </div>
 </div>
 </div>
@@ -12618,7 +12628,7 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The easiest way to explicitly specify input of a step is to list input files directly in the <code>input</code> statement. Because SoS  checks the existence of input files when it executes a step, let us first create a few files:</p>
+<p>Although rarely used in this way, you can list dependency files <code>depends</code> statement. These files will have to exist before the step starts or will cause SoS to search for steps to produce them.</p>
 
 </div>
 </div>
@@ -12628,233 +12638,29 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS"># create some sample files
-!touch a.txt b.txt c.txt d.txt</textarea>
-  </div>
-</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 25.385800000000003em">
+   <textarea rows="20"
+      class="sos-source" name="SoS">!rm -f a.txt b.txt
 
-</div>
+%run -v0
 
-</div>
-</div>
+[A]
+output: 'a.txt'
 
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The following is a SoS step (with a default section head) with a <code>input</code> statement, which results in a <code>step_input</code> variable with a single file <code>a.txt</code>:</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">input: 'a.txt'
-print(f'step_input is {step_input}')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>step_input is a.txt
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Multiple files can be listed as multiple paramters, sequences (<code>list</code>, <code>tuple</code> etc), or variables of string or sequence types. For example, you can define a parameter <code>in_files</code> of type <code>paths</code> (list of <code>path</code>) and specify input files from command line:</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
-   <textarea rows="5"
-      class="sos-source" name="SoS">%run --in-files a.txt b.txt -v0
-parameter: in_files = paths
-input: in_files
-
-print(f'step_input is {step_input}')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>step_input is a.txt b.txt
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>You can list multiple files, mix string literals with variable names,</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
-   <textarea rows="4"
-      class="sos-source" name="SoS">in_files = ['a.txt', 'b.txt']
-input: in_files, 'c.txt', 'd.txt'
-
-print(f'step_input is {step_input}')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>step_input is a.txt b.txt c.txt d.txt
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Because steps in these examples do not have any substep, it is equivalent to use variable <code>_input</code> instead of <code>step_input</code>.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Named-input">Named input<a class="anchor-link" href="#Named-input"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Inherited-input-with-groups">Inherited input with groups<a class="anchor-link" href="#Inherited-input-with-groups"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Remember that the purpose of <code>input</code> statement is to create <code>step_input</code> with appropriate targets and groups, but what will happen to <code>sos_targets</code> inherited from previous step, from <code>output_from</code> and <code>named_output</code>? The simple answer is that the existing groups will be honored.</p>
-<p>Let us first look at one example,</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
-   <textarea rows="8"
-      class="sos-source" name="SoS">%run
-[10]
-input: for_each=dict(i=range(3))
-output: f'out_{i}.txt'
+print(f'Generating {_output}')
 _output.touch()
 
-[20]
-print(_input)</textarea>
+[B]
+output: 'b.txt'
+
+print(f'Generating {_output}')
+_output.touch()
+
+[default]
+depends: 'a.txt', 'b.txt'
+
+print(f'Dependencies {_depends} have been generated')</textarea>
   </div>
 </div>
 
@@ -12869,46 +12675,10 @@ print(_input)</textarea>
 <div class="prompt"></div>
 
 
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_963ebfa2719c4e2a85344c2c728d161d" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_963ebfa2719c4e2a85344c2c728d161d" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_963ebfa2719c4e2a85344c2c728d161d">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_963ebfa2719c4e2a85344c2c728d161d">00e512747f48765d</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_963ebfa2719c4e2a85344c2c728d161d">3</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_963ebfa2719c4e2a85344c2c728d161d">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_963ebfa2719c4e2a85344c2c728d161d" class="completed" datetime="1545611386397.4988">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>out_0.txt
-out_2.txt
-out_1.txt
+<pre>Generating a.txt
+Generating b.txt
+Dependencies a.txt b.txt have been generated
 </pre>
 </div>
 </div>
@@ -12925,9 +12695,7 @@ out_1.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>What happens here is that there are three substeps in step <code>10</code>, creating outputs <code>out_0.txt</code>, <code>out_1.txt</code> and <code>out_2.txt</code>. The <code>step_output</code> object contains three targets in three groups.</p>
-<p>When this <code>step_output</code> target is inherited by step <code>20</code> and becomes the <code>step_input</code> of the next step, step <code>20</code> is executed with the three existing substeps with <code>_input</code> being the <code>_output</code> of step <code>10</code>.</p>
-
+<h2 id="Depends-on-another-step">Depends on another step<a class="anchor-link" href="#Depends-on-another-step"></a></h2>
 </div>
 </div>
 </div>
@@ -12936,7 +12704,7 @@ out_1.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If this is what you want, you can regroup the input with option <code>group_by</code>. For example,</p>
+<p>You can explicitly depend on another step as a way to execute another step before the step:</p>
 
 </div>
 </div>
@@ -12949,110 +12717,15 @@ out_1.txt
 <div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
    <textarea rows="9"
-      class="sos-source" name="SoS">%run
-[10]
-input: for_each=dict(i=range(3))
-output: f'out_{i}.txt'
-_output.touch()
+      class="sos-source" name="SoS">%run -v0 -s force
 
-[20]
-input: group_by='all'
-print(_input)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_6fde36b98ca74ad384c506f68885a209" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_6fde36b98ca74ad384c506f68885a209" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_6fde36b98ca74ad384c506f68885a209">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_6fde36b98ca74ad384c506f68885a209">00e512747f48765d</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_6fde36b98ca74ad384c506f68885a209">4</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_6fde36b98ca74ad384c506f68885a209">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_6fde36b98ca74ad384c506f68885a209" class="completed" datetime="1545611620458.7751">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>out_0.txt out_1.txt out_2.txt
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The same logic applies to output obtained from <code>output_from</code> and <code>named_output</code>. In the following example, the <code>output_from</code> function inherited 4 groups of outputs from step 'A', and 2 groups of outputs from step <code>B</code>. It then regroup outputs from step <code>A</code> into 2 groups and merge it with output from <code>B</code>. The final <code>_input</code> of step <code>20</code> therefore has two groups, each with 2 from step <code>A</code> and 1 from step <code>B</code>.</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
-   <textarea rows="14"
-      class="sos-source" name="SoS">%run
 [A]
-input: for_each=dict(i=range(4))
-output: f'A_{i}.txt'
-_output.touch()
+print(f'Running {step_name}')
 
-[B]
-input: for_each=dict(i=range(2))
-output: f'B_{i}.txt'
-_output.touch()
+[default]
+depends: sos_step('A')
 
-[20]
-input: output_from('A', group_by=2), output_from('B')
-print(_input)</textarea>
+print(f'Running {step_name}')</textarea>
   </div>
 </div>
 
@@ -13067,45 +12740,9 @@ print(_input)</textarea>
 <div class="prompt"></div>
 
 
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_9de591f48fc34c289c65e471c0bd9de5" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_9de591f48fc34c289c65e471c0bd9de5" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_9de591f48fc34c289c65e471c0bd9de5">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_9de591f48fc34c289c65e471c0bd9de5">36316057dc19cf7a</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_9de591f48fc34c289c65e471c0bd9de5">5</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_9de591f48fc34c289c65e471c0bd9de5">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_9de591f48fc34c289c65e471c0bd9de5" class="completed" datetime="1545611731042.863">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>A_0.txt A_1.txt B_0.txt
-A_2.txt A_3.txt B_1.txt
+<pre>Running A
+Running default
 </pre>
 </div>
 </div>
@@ -13122,112 +12759,7 @@ A_2.txt A_3.txt B_1.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is worth noting that <code>named_output</code> can have groups as well. Because a step can produce multiple named outputs, <code>named_output('a')</code> will essentially get a subset of targets with source <code>a</code>, and all targets from groups with source <code>a</code>. For example, step <code>K</code> generates 8 outputs in 4 groups. With <code>named_output('B')</code>, output and all targets in groups with name <code>B</code> are returned so <code>_input</code> will be <code>B_0.txt</code>, <code>B_1.txt</code> and so on.</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
-      class="sos-source" name="SoS">%run
-[K]
-input: for_each=dict(i=range(4))
-output: A=f'A_{i}.txt', B=f'B_{i}.txt'
-_output.touch()
-
-[20]
-input: named_output('B')
-print(_input)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_b93d43c9fc2c41558913c128cf461e41" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_b93d43c9fc2c41558913c128cf461e41" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_b93d43c9fc2c41558913c128cf461e41">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_b93d43c9fc2c41558913c128cf461e41">d80ff4278bad6c40</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_b93d43c9fc2c41558913c128cf461e41">8</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_b93d43c9fc2c41558913c128cf461e41">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_b93d43c9fc2c41558913c128cf461e41" class="completed" datetime="1545613365692.245">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>B_0.txt
-B_2.txt
-B_1.txt
-B_3.txt
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Output files of a step can be specified by step <code>output</code>. Similar to <code>input</code>, step output accepts strings, variables, expressions, and allows wildcard characters. For example, the following are acceptable output files</p>
-<div class="highlight"><pre><span></span><span class="n">output</span><span class="p">:</span>  <span class="p">[]</span>
-
-<span class="n">output</span><span class="p">:</span>  <span class="s1">&#39;accepted_hits.bam&#39;</span>
-
-<span class="n">output</span><span class="p">:</span>  <span class="n">aligned_reads</span><span class="p">,</span> <span class="n">bam_stats</span>
-
-<span class="n">output</span><span class="p">:</span>  <span class="s1">&#39;aligned/*.bam&#39;</span>
-
-<span class="n">output</span><span class="p">:</span>  <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;aligned_{samples}.bam&#39;</span><span class="p">)</span>
-</pre></div>
-<p>In the last example, function <code>expand_pattern</code> is used to contruct list of files from items of a sequence <code>samples</code>.</p>
-
+<h2 id="Depends-on-variables-shared-by-another-step">Depends on variables shared by another step<a class="anchor-link" href="#Depends-on-variables-shared-by-another-step"></a></h2>
 </div>
 </div>
 </div>
@@ -13236,279 +12768,7 @@ B_3.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Step process could be repeated multiple times with <strong>substeps</strong> defined by options <code>for_each</code> or <code>group_by</code>. Whereas <code>input</code> represents the complete set of input files, each substep has its own input files stored in variable <code>_input</code>.</p>
-<p>When there is no substep, <code>output</code> and <code>_output</code> are the same. Otherwise, the <code>output:</code> statement produces <code>_output</code> for each substep, and <code>_output</code> for all substeps form <code>output</code> after the completion of all substeps.</p>
-<p>For example, the following step accepts one or more bam files and index them using command <code>samtools index</code>. The input files are passed one by one and output from each substep is determined by <code>_input</code>.</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="nb">input</span><span class="p">:</span>
-    <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;single&#39;</span>
-
-<span class="n">output</span><span class="p">:</span>
-    <span class="n">f</span><span class="s1">&#39;{_input}.bai&#39;</span>
-
-<span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
-</pre></div>
-<p>The use of variable <code>output</code> in this scenario is discouraged because <code>output</code>, as the collection of all <code>_output</code> increases with each substep.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Specifying output of the entire step when there are multiple substeps can lead to error. For example,</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="nb">input</span><span class="p">:</span>
-    <span class="n">bamfiles</span><span class="p">,</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
-
-<span class="n">output</span><span class="p">:</span>
-    <span class="n">output</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39;.bai&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bamfiles</span><span class="p">]</span>
-
-<span class="n">task</span><span class="p">:</span>
-<span class="n">run</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;&#39;&#39;samtools index {_input} &#39;&#39;&#39;</span><span class="p">)</span>
-</pre></div>
-<p>will fail because tasks in this step produce the same set of output files (equal <code>_output</code> for all substeps), and none of the task produces all specified output files.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-group_by-">Option <code>group_by</code> <a id="Option_group_by" /><a class="anchor-link" href="#Option-group_by-"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>output</code> statement usually generate a <code>sos_targets</code> object without groups. This object will become <code>_output</code>, which then becomes one of the groups of <code>step_output</code>.</p>
-<p>However, the <code>output</code> statement can also generate a <code>sos_targets</code> object with groups, in which case the <code>_index</code> group will be become the <code>_output</code> of subgroup <code>_index</code>. For this reason, the object should have the same number of groups as <code>step_input</code>.</p>
-<p>For example, if you have list of pre-determined input and output files and you would like to pair them, you can create list all output files and use option <code>group_by</code> to create an equal number of output groups as input groups.</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
-   <textarea rows="11"
-      class="sos-source" name="SoS">%run
-in_files = [f'a_{i}.txt' for i in range(4)]
-out_files = [f'b_{i}.txt' for i in range(4)]
-
-[1]
-input: in_files, group_by=1
-output: out_files, group_by=1
-_output.touch()
-
-[2]
-print(_input)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_fd75d9a6702b495a81de2d9b5442e179" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_fd75d9a6702b495a81de2d9b5442e179" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_fd75d9a6702b495a81de2d9b5442e179">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_fd75d9a6702b495a81de2d9b5442e179">41c862e5b9a946e4</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_fd75d9a6702b495a81de2d9b5442e179">5</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_fd75d9a6702b495a81de2d9b5442e179">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_fd75d9a6702b495a81de2d9b5442e179" class="completed" datetime="1545612611265.95">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>b_0.txt
-b_2.txt
-b_3.txt
-b_1.txt
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that the previous example might not produce <code>b_0.txt</code>, <code>b_1.txt</code> in order because the substeps are executed concurrently so substeps can complete the <code>print</code> statement in any order.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Options-paired_with,-group_with,-pattern,-and-for_each">Options <code>paired_with</code>, <code>group_with</code>, <code>pattern</code>, and <code>for_each</code><a class="anchor-link" href="#Options-paired_with,-group_with,-pattern,-and-for_each"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Just like <code>input</code> statements, options <code>paired_with</code>, <code>group_with</code>, <code>pattern</code>, and <code>for_each</code> are all allowed in the <code>output</code> statement and can be used to create <code>_output</code> that can be passed to the next step, or from <code>output_from</code> or <code>named_output</code>.</p>
-<p>The most useful usages of the <code>paired_with</code> and <code>group_with</code> options are to attached variables to output targets and the output group.</p>
-<p>Say we know that particular input and output files are associated with a sample name, and we have paired each input file with a sample name using option <code>paired_with=dict(sample=samples)</code>. Consequently, <code>_input.sample</code> is available for each substep.</p>
-<p>The output statement</p>
-
-<pre><code>output: f'{_input}.result', paired_with=dict(sample=_input.sample)</code></pre>
-<p>generates <code>f'{_input}.result'</code> for each <code>_input</code> but the sample information will be lost. For this reason an option <code>paired_with=dict(sample=_input.sample)</code> is added to attach attribute <code>sample</code> with value <code>_input.sample</code> to each output file name. With this step each input file of step <code>20</code> has an attribute that points to its sample name.</p>
-
-</div>
-</div>
-</div>
-
-<div class="lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
-   <textarea rows="13"
-      class="sos-source" name="SoS">!touch a.txt b.txt
-
-%run
-[10]
-samples = ['A', 'B']
-input_files = ['a.txt', 'b.txt']
-
-input: input_files, group_by=1, paired_with=dict(sample=samples)
-output: f'{_input}.result', paired_with=dict(sample=_input.sample)
-_output.touch()
-
-[20]
-print(f'{_input} with sample name {_input.sample}')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_c8f0f23a2a034a3f95ad6d452cbb1176" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_c8f0f23a2a034a3f95ad6d452cbb1176" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_c8f0f23a2a034a3f95ad6d452cbb1176">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_c8f0f23a2a034a3f95ad6d452cbb1176">c1f4c407fcb8ccd6</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_c8f0f23a2a034a3f95ad6d452cbb1176">16</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_c8f0f23a2a034a3f95ad6d452cbb1176">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_c8f0f23a2a034a3f95ad6d452cbb1176" class="completed" datetime="1545614645470.9958">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>a.txt.result with sample name A
-b.txt.result with sample name B
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Similarly, in the following example,</p>
-
-<pre><code>output: f'a_{i}.txt', group_with=dict(i=i)</code></pre>
-<p>creates four <code>sos_targets</code> object with variable <code>i</code> attached. These objects becomes <code>_output</code> of step <code>10</code>, and <code>_input</code> of the next step. <code>i</code> becomes available in step <code>20</code> because it was attached to <code>_input</code>. This feature is pretty powerful but can be dangerous as well because of the "contamination" of namespace of step <code>20</code> from <code>_input</code> variables.</p>
+<p>Another usage is that if you step depends on a variable that is generated from another step, you have to <code>shared</code> the variable from the step that generates it, and depends on the variable in the step that uses it.</p>
 
 </div>
 </div>
@@ -13519,16 +12779,20 @@ b.txt.result with sample name B
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
-   <textarea rows="8"
-      class="sos-source" name="SoS">%run
-[10]
-input: for_each=dict(i=range(4))
-output: f'a_{i}.txt', group_with=dict(i=i)
-_output.touch()
+  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
+   <textarea rows="12"
+      class="sos-source" name="SoS">%run -v0 -s force
 
-[20]
-print(f'{_input} with variable i={i}')</textarea>
+[A: shared='rn']
+
+import random
+rn = random.randint(1, 1000)
+print(f'Random number {rn} is generated')
+
+[default]
+depends: sos_variable('rn')
+
+print(f'Random number {rn} used in {step_name}')</textarea>
   </div>
 </div>
 
@@ -13543,36 +12807,59 @@ print(f'{_input} with variable i={i}')</textarea>
 <div class="prompt"></div>
 
 
-
-<div class="output_html rendered_html output_subarea ">
-
-<table id="workflow_ae8ef6ef16a5409982ef1f1e269bb4cc" class="workflow_table  completed">
-  <tr>
-        <td class="workflow_icon">
-          <i id="workflow_status_icon_ae8ef6ef16a5409982ef1f1e269bb4cc" class="fa fa-2x fa-fw fa-check-square-o"
-            ></i>
-        </td>
-        <td class="workflow_name">
-          <pre><span id="workflow_name_ae8ef6ef16a5409982ef1f1e269bb4cc">default</span></pre>
-        </td>
-        <td class="workflow_id">
-          <span>Workflow ID</span></br>
-          <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_ae8ef6ef16a5409982ef1f1e269bb4cc">09c0428018532656</span></pre>
-        </td>
-        <td class="workflow_index">
-          <span>Index</span></br>
-          <pre>#<span id="workflow_index_ae8ef6ef16a5409982ef1f1e269bb4cc">13</span></pre>
-        </td>
-        <td class="workflow_status">
-          <span id="status_text_ae8ef6ef16a5409982ef1f1e269bb4cc">completed</span></br>
-          <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_ae8ef6ef16a5409982ef1f1e269bb4cc" class="completed" datetime="1545613871139.179">Ran for < 5 seconds</time></pre>
-        </td>
-  </tr>
-</table>
-
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Random number 670 is generated
+Random number 670 used in default
+</pre>
+</div>
 </div>
 
 </div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Depends-on-other-types-of-targets-such-as-system-resource">Depends on other types of targets such as system resource<a class="anchor-link" href="#Depends-on-other-types-of-targets-such-as-system-resource"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS allows many the use of many types of <strong>targets</strong>, which are generally speaking object that you can check its existence. You can check the existence of libraries (and install them if not available in some cases), and check the available of certain executables, or if your system has the required resources. These targets generally are used in the <code>depends</code> statement of steps.</p>
+<p>For example, the following workflow checks if command <code>file</code> exists before running the shell script that uses it.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">depends: executable('file')
+sh:
+  file depends_statement.ipynb</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
 
 <div class="output_area">
 
@@ -13580,10 +12867,7 @@ print(f'{_input} with variable i={i}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>a_0.txt with variable i=0
-a_2.txt with variable i=2
-a_1.txt with variable i=1
-a_3.txt with variable i=3
+<pre>depends_statement.ipynb: ASCII text, with very long lines
 </pre>
 </div>
 </div>
@@ -13601,9 +12885,8 @@ a_3.txt with variable i=3
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
-<li><a href="doc/user_guide/input_substeps.html">How to specify input and output files and process input files in groups</a> for basics of step and substeps.</li>
-<li><a href="doc/user_guide/group_by.html">How to process input files in groups</a> for option <code>group_by</code>, and</li>
-<li><a href="doc/user_guide/for_each.html">How to repeat steps for different parameters</a> for option <code>for_each</code></li>
+<li><a href="doc/user_guide/target_sos_step.html">How to explicitly execute another step before a SoS step</a> </li>
+<li><a href="doc/user_guide/depends_workflow.html">How to explicitly execute another workflow before a SoS step</a></li>
 </ul>
 
 </div>
@@ -13611,6 +12894,7 @@ a_3.txt with variable i=3
 </div>
     </div>
   </div>
+
 
 
 
@@ -14177,24 +13461,35 @@ a_3.txt with variable i=3
 });
 </script>
 <script>
-    function highlight_cells(cells, i, interval) {
-        setTimeout(function() {
-            var editor = CodeMirror.fromTextArea(cells[i], {
-                lineNumbers: false,
-                styleActiveLine: true,
-                matchBrackets: true,
-                readOnly: true,
-                mode: 'sos',
-                base_mode: cells[i].name,
-            });
-            $(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>"
-					       + cells[i].name + "</option></select>");
-            if (i < cells.length)
-                highlight_cells(cells, i + 1, interval);
-        }, interval);
-    }
+  function highlight_cells(cells, i, interval) {
+    setTimeout(function() {
+      if (! cells[i])
+        return;
+      var editor = CodeMirror.fromTextArea(cells[i], {
+          lineNumbers: false,
+          styleActiveLine: true,
+          matchBrackets: true,
+          readOnly: true,
+          mode: 'sos',
+          base_mode: cells[i].name,
+      });
 
-    highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      let select = document.createElement('select');
+      let option = document.createElement('option');
+      option.value = cells[i].name;
+      option.textContent = cells[i].name;
+      select.appendChild(option);
+      select.className = "cell-kernel-selector";
+      select.value = cells[i].name;
+
+      cells[i].parentElement.insertBefore(select, cells[i]);
+
+      if (i < cells.length)
+          highlight_cells(cells, i + 1, interval);
+    }, interval);
+  }
+
+  highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
 </script>
 
 
@@ -14207,6 +13502,26 @@ a_3.txt with variable i=3
   var content = document.querySelector('.notebook-container')
   var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
   var headingMap = {}
+
+  function indexedHeaders(headings) {
+      if (!headings) {
+          return '';
+      }
+      let counts = [0, 0, 0, 0, 0, 0, 0]
+      for (let i = 0; i < headings.length; ++i) {
+        ++counts[parseInt(headings[i].tagName[1])-1]
+      }
+      // now, we remove the first 1 if it is the first tag, and if
+      // it has only one, and if it is not the only header
+      let first = counts.findIndex(x => x > 0);
+      console.log(first)
+      if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
+         && parseInt(headings[0].tagName[1]) === first + 1) {
+          counts[first] = 0;
+      }
+      //
+      return counts.map((x, idx) => x > 0 ? 'H' + (idx+1) : '').filter(x => x).join(',');
+  }
 
   Array.prototype.forEach.call(headings, function(heading) {
     var id = heading.id ? heading.id : heading.textContent.toLowerCase()
@@ -14225,7 +13540,7 @@ a_3.txt with variable i=3
     // Where to grab the headings to build the table of contents.
     contentSelector: '.notebook-container',
     // Which headings to grab inside of the contentSelector element.
-    headingSelector: 'h2, h3, h4',
+    headingSelector: indexedHeaders(headings),
     //
     listClass: 'toc-list',
     extraListClasses: 'nav nav-list',
@@ -14242,9 +13557,67 @@ a_3.txt with variable i=3
 
 
 
+<script>
+
+let keyword_links = {
+  'input:' : 'https://vatlab.github.io/sos-docs/doc/user_guide/input_statement.html',
+  'output:' : 'https://vatlab.github.io/sos-docs/doc/user_guide/output_statement.html',
+  'depends:' : 'https://vatlab.github.io/sos-docs/doc/user_guide/depebds_statement.html',
+}
+
+let function_links = {
+  'named_output' : 'https://vatlab.github.io/sos-docs/doc/user_guide/named_output.html',
+}
+
+function sos_doc_hover_over(evt) {
+  let tooltip = document.getElementById('sos_hover_tooltip');
+  let tooltiptext = document.getElementById('sos_hover_tooltip');
+
+  let loc = evt.target.getBoundingClientRect();
+  tooltip.style.top = loc.y + 'px';
+  tooltip.style.left = loc.x + 'px';
+  tooltip.style.width = loc.width + 'px';
+  tooltip.style.height = loc.height + 'px';
+
+  tooltip.style.display = 'block';
+}
+
+function sos_doc_hover_leave(evt) {
+  document.getElementById('sos_hover_tooltip').style.display = 'none';
+}
+
+function sos_doc_hover_visit(evt) {
+  window.open(keyword_links[evt.target.innerText], '_blank')
+}
+
+
+// we wait for 10 seconds before scanning document because we need to
+// wait syntax hilighting to be done. A promise is actually needed.
+setTimeout(function() {
+  // find all keyword in keyword_links
+  let elems = document.getElementsByClassName("cm-keyword cm-strong");
+  Array.from(elems).filter(elem => elem.innerText in keyword_links).forEach(x => {
+    x.classList.add('sos_hover_doc');
+    x.addEventListener('mouseover', sos_doc_hover_over);
+    x.addEventListener('mouseleave', sos_doc_hover_leave);
+    x.addEventListener('click', sos_doc_hover_visit);
+  })
+}, 5000)
+
+</script>
+
+
+
     </div>
   </div>
 </body>
+
+
+
+<div id='sos_hover_tooltip'>
+</div>
+
+
 
 
  

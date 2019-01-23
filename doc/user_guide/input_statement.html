@@ -8,7 +8,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>comment_help</title>
+<title>input_statement</title>
 
 <style type="text/css">
     /*!
@@ -12584,7 +12584,7 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="How-to-add-help-messages-to-my-SoS-workflow">How to add help messages to my SoS workflow<a class="anchor-link" href="#How-to-add-help-messages-to-my-SoS-workflow"></a></h1>
+<h1 id="How-to-define-step-input">How to define step input<a class="anchor-link" href="#How-to-define-step-input"></a></h1>
 </div>
 </div>
 </div>
@@ -12597,8 +12597,11 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>Comments before section headers and parameter definitions are significant</li>
-<li>Use <code>-h</code> to display the help message of workflows</li>
+<li>Input statements accepts regular Python aguments</li>
+<li>Input files can be grouped to create substeps</li>
+<li>Input files can be labeled and be accessed by the labels</li>
+<li>A step can include part or all output from other steps</li>
+<li>You can attach variables to individual input files or substeps  </li>
 </ul>
 </li>
 </ul>
@@ -12611,7 +12614,8 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Comments-and-help-message">Comments and help message<a class="anchor-link" href="#Comments-and-help-message"></a></h2>
+<p>The <code>input</code> statement defines the input files or targets of a SoS step, it is optional but is fundamental for the creation of all but very simple workflows. You can check out the <a href="doc/user_guide/step_dependencies.html">How to create dependencies between SoS steps</a> tutorial for a quick overview of the use of input statements. This tutorial lists what you can put in the <code>input</code> statement of a step with simple examples and you should refer to other tutorials for more in-depth discussions of the topics.</p>
+
 </div>
 </div>
 </div>
@@ -12620,10 +12624,26 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you have a sos script in either <code>.sos</code> or <code>.ipynb</code> format, you can use command</p>
+<h2 id="Steps-with-no-input-statement">Steps with no input statement<a class="anchor-link" href="#Steps-with-no-input-statement"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>input</code> statement is optional. When no input file is defined, a step will either have undefined input, or output from its previous step as its input.</p>
 
-<pre><code>sos run script -h</code></pre>
-<p>to get the help information of the script. Because this feature is not available within SoS notebook (because <code>%sos -h</code> and <code>%sosrun -h</code> will only show help message for the magics, not the script), let us create a script</p>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, the following workflow has a step <code>A</code> that execute a simple shell script. No input statement is needed and the workflow will work just fine.</p>
 
 </div>
 </div>
@@ -12633,40 +12653,13 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[89]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 38.742990000000006em">
-   <textarea rows="31"
-      class="sos-source" name="SoS">report: output='work_play.sos'
-  #!/usr/bin/env sos-runner
-  #fileformat=SOS1.0
-  #
-  # Author: Bo Peng
-
-  # This is a workflow for the demonstration of the use of
-  # comments in SoS script
-  
-  # This is some other comment
-
-  # Friend to work or play with
-  parameter: friend=str
-
-
-  # This is step 10 workflow work
-  # that generates an output
-  [work_10]
-  output: 'output.txt'
-  # comment for code, not included in help message
-  sh: expand=True
-      echo "Working with {friend} to generating {_output}"
-      touch {_output}
-
-
-  # This is workflow play
-  [play]
-  # game to play
-  parameter: game = 'chess'
-  sh: expand=True
-    echo I am playing {game} with {friend}</textarea>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run A -v0
+[A]
+sh:
+  echo do something</textarea>
   </div>
 </div>
 
@@ -12681,12 +12674,7 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>report</code> magic writes the script to specified file <code>work_play.sos</code>. If we execute the script with <code>-h</code> option, the following help message will be displayed. As you can see</p>
-<ol>
-<li>The second comment block is the description of the script. This is where you introduce the purpose of the workflows.</li>
-<li>Comments immediately before section header and <code>parameter:</code> definitions decome the descriptions of the sections and parameters.</li>
-</ol>
-<p>Other comments are ignored and will not be displayed in the help message. In particular, the first comment is reserved for shebang line (<code>#!/usr/bin/env sos-runer</code>) and other information such as revision log.</p>
+<p>In a special case when a workflow is defined with numerically indexed steps, a step without input statement will depend on its previous step and take its output as its input. Here we just present a very simple example and you will see more complex examples in other tutorials.</p>
 
 </div>
 </div>
@@ -12696,10 +12684,17 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[90]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">!sos run work_play -h</textarea>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">%run  -v0
+
+[step_10]
+output: 'a.txt'
+_output.touch()
+
+[step_20]
+print(f'The input of this step is {step_input}')</textarea>
   </div>
 </div>
 
@@ -12715,32 +12710,7 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos run work_play [workflow_name | -t targets] [options] [workflow_options]
-  workflow_name:        Single or combined workflows defined in this script
-  targets:              One or more targets to generate
-  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
-  workflow_options:     Double-hyphen workflow-specific parameters
-
-This is a workflow for the demonstration of the use of
-comments in SoS script
-
-Workflows:
-  work
-  play
-
-Targets:
-  output.txt
-
-Global Workflow Options:
-  --friend VAL (as str, required)
-                        Friend to work or play with
-
-Sections
-  work_10:              This is step 10 workflow work that generates an output
-  play:                 This is workflow play
-    Workflow Options:
-      --game chess
-                        game to play
+<pre>The input of this step is a.txt
 </pre>
 </div>
 </div>
@@ -12757,7 +12727,16 @@ Sections
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The help message lists the workflows and targets available in the script, and global and section specific parameters. For example, according to the message, you can execute a workflow <code>play</code> with a global required parameter <code>friend</code> and workflow specific parameter <code>game</code>,</p>
+<h2 id="Unnamed-input-files">Unnamed input files<a class="anchor-link" href="#Unnamed-input-files"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The easiest way to explicitly specify input of a step is to list input files directly in the <code>input</code> statement. Because SoS  checks the existence of input files when it executes a step, let us first create a few files:</p>
 
 </div>
 </div>
@@ -12767,10 +12746,40 @@ Sections
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[91]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">!sos run work_play play --friend Joe --game 'chinese chess' -v1</textarea>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS"># create some sample files
+!touch a.txt b.txt c.txt d.txt</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following is a SoS step (with a default section head) with a <code>input</code> statement, which results in a <code>step_input</code> variable with a single file <code>a.txt</code>:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">input: 'a.txt'
+print(f'step_input is {step_input}')</textarea>
   </div>
 </div>
 
@@ -12786,7 +12795,7 @@ Sections
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>I am playing chinese chess with Joe
+<pre>step_input is a.txt
 </pre>
 </div>
 </div>
@@ -12803,7 +12812,7 @@ Sections
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Or you can execute the workflow to generate specified target</p>
+<p>Multiple files can be listed as multiple paramters, sequences (<code>list</code>, <code>tuple</code> etc), or variables of string or sequence types. For example, you can define a parameter <code>in_files</code> of type <code>paths</code> (list of <code>path</code>) and specify input files from command line:</p>
 
 </div>
 </div>
@@ -12813,13 +12822,47 @@ Sections
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[92]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">!sos run work_play -t output.txt --friend Joe -v1</textarea>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%run --in-files a.txt b.txt -v0
+parameter: in_files = paths
+input: in_files
+
+print(f'step_input is {step_input}')</textarea>
   </div>
 </div>
 
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>step_input is a.txt b.txt
+</pre>
+</div>
+</div>
+
+</div>
 </div>
 
 </div>
@@ -12831,7 +12874,579 @@ Sections
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<p>You can list multiple files, mix string literals with variable names,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">in_files = ['a.txt', 'b.txt']
+input: in_files, 'c.txt', 'd.txt'
+
+print(f'step_input is {step_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>step_input is a.txt b.txt c.txt d.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because steps in these examples do not have any substep, it is equivalent to use variable <code>_input</code> instead of <code>step_input</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Substep-created-by-option-group_by">Substep created by option <code>group_by</code><a class="anchor-link" href="#Substep-created-by-option-group_by"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A step can be executed multiple times with different variables, which are called <strong>substeps</strong>. The input of each substep is assigned to variable <code>_step</code>. The most common way to define substeps are using option <code>group_by</code> to group input files.</p>
+<p>For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt', 'c.txt', 'd.txt', group_by=2
+print(f'Input of substep is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of substep is a.txt b.txt
+Input of substep is c.txt d.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Substep-craeted-by-option-for_each">Substep craeted by option <code>for_each</code><a class="anchor-link" href="#Substep-craeted-by-option-for_each"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another way to create substeps are repeating the step with different values of a variable. For example, in the following example, a variable <code>val</code> is defined to iterate through a list <code>[1, 2]</code> and it will create two substeps with <code>val=1</code> and <code>val=2</code> respectively.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">input: 'a.txt', for_each=dict(val=[1, 2])
+print(f'Processing {_input} with {val}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Processing a.txt with 1
+Processing a.txt with 2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Named-input">Named input<a class="anchor-link" href="#Named-input"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can assign subsets of your input files some labels and refer to these subsets with the labels.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">input: A='a.txt', B='b.txt'
+print(f'Step input is {_input}. Inputs with label A is {_input["A"]}. Input with label B is {_input["B"]}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Step input is a.txt b.txt. Inputs with label A is a.txt. Input with label B is b.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Attach-variables-to-individual-input-files">Attach variables to individual input files<a class="anchor-link" href="#Attach-variables-to-individual-input-files"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Variables <code>step_input</code> and <code>_input</code> are of type <code>sos_targets</code>, which consists of SoS targets, most of which are <code>file_targets</code>. All targets have a dictionary that can be used to store attributes related to them.</p>
+<p>For example, by pairing a list of sample names to a list of input files, the attribute <code>sample_name</code> is attached to each input file and can be accessible through <code>.sample_name</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt', paired_with=dict(sample_name=['A', 'B'])
+print(f'Input of substep is {_input}, with sample names {_input[0].sample_name} and {_input[1].sample_name}')
+</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of substep is a.txt b.txt, with sample names A and B
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The variables are attached to individual input files so they will be available with the files in substeps:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt', paired_with=dict(sample_name=['A', 'B']), group_by=1
+print(f'Input of substep is {_input}, with sample names {_input[0].sample_name}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of substep is a.txt, with sample names A
+Input of substep is b.txt, with sample names B
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Attach-variables-to-substeps">Attach variables to substeps<a class="anchor-link" href="#Attach-variables-to-substeps"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When we group input files, we can attach attribute to the entire group presented by variable <code>_input</code>. This is done through option <code>group_with</code>.</p>
+<p>For example, in the following workflow, 4 files are grouped into two groups each with two files. The two groups are attached with items in list <code>['AB', 'CD']</code> with name <code>sample_name</code>, and can be accessed with <code>_input.sample_name</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt', 'c.txt', 'd.txt', group_with=dict(sample_name=['AB', 'CD']), group_by=2
+print(f'Input of substep is {_input}, with sample name {_input.sample_name}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of substep is a.txt b.txt, with sample name AB
+Input of substep is c.txt d.txt, with sample name CD
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For simplicity (and backward compatibility), the substep variables can be accessed directly in substeps so that you can use <code>sample_name</code> instead of <code>_input.sample_name</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">input: 'a.txt', 'b.txt', 'c.txt', 'd.txt', group_with=dict(sample_name=['AB', 'CD']), group_by=2
+print(f'Input of substep is {_input}, with sample name {sample_name}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of substep is a.txt b.txt, with sample name AB
+Input of substep is c.txt d.txt, with sample name CD
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Named-input-with-function-named_input">Named input with function <code>named_input</code><a class="anchor-link" href="#Named-input-with-function-named_input"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The input statement accept python functions. A function <code>named_input</code> is defined to include named output from another step.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">%run -v0
+
+[A]
+output: summary='output.html'
+_output.touch()
+
+[default]
+input: named_output('summary')
+print(f'Input of the step is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of the step is output.html
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Output-from-another-step-using-function-output_from">Output from another step using function <code>output_from</code><a class="anchor-link" href="#Output-from-another-step-using-function-output_from"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>named_output</code> can be used to refer to part of, if multiple named output exists, or all of the output from a step. Similarly, a function <code>output_from</code> can be used to include complete output from specified step:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">%run -v0
+
+[A]
+output: 'output.html'
+_output.touch()
+
+[default]
+input: output_from('A')
+print(f'Input of the step is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input of the step is output.html
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/input_substeps.html">How to specify input and output files and process input files in groups</a> for basics of step and substeps.</li>
+<li><a href="doc/user_guide/group_by.html">How to process input files in groups</a> for option <code>group_by</code>, and</li>
+<li><a href="doc/user_guide/for_each.html">How to repeat steps for different parameters</a> for option <code>for_each</code></li>
+</ul>
 
 </div>
 </div>

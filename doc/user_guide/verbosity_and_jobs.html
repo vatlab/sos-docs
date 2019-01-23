@@ -1,8 +1,10 @@
 
 
+
 <!DOCTYPE html>
 <html>
 <head>
+
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
@@ -12319,10 +12321,6 @@ font-style: italic;
     }
 </style>
 
-<script src="https://code.jquery.com/jquery-1.7.2.min.js"
-  integrity="sha256-R7aNzoy2gFrVs+pNJ6+SokH04ppcEqJ0yFLkNGoFALQ="
-  crossorigin="anonymous">
-</script>
 
 <script>
 function filterDataFrame(id) {
@@ -12547,7 +12545,27 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
+
+
+
+<style type="text/css">
+
+#sos_hover_tooltip {
+  position: fixed;
+  display: none;
+  background: lightgray;
+  border: 1pt solid gray;
+  opacity: 50%;
+}
+
+.sos_hover_doc:hover {
+  cursor: pointer;
+}
+</style>
+
+
 </head>
+
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
@@ -12703,6 +12721,7 @@ input: 'a.txt'
 </div>
     </div>
   </div>
+
 
 
 
@@ -13269,24 +13288,35 @@ input: 'a.txt'
 });
 </script>
 <script>
-    function highlight_cells(cells, i, interval) {
-        setTimeout(function() {
-            var editor = CodeMirror.fromTextArea(cells[i], {
-                lineNumbers: false,
-                styleActiveLine: true,
-                matchBrackets: true,
-                readOnly: true,
-                mode: 'sos',
-                base_mode: cells[i].name,
-            });
-            $(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>"
-					       + cells[i].name + "</option></select>");
-            if (i < cells.length)
-                highlight_cells(cells, i + 1, interval);
-        }, interval);
-    }
+  function highlight_cells(cells, i, interval) {
+    setTimeout(function() {
+      if (! cells[i])
+        return;
+      var editor = CodeMirror.fromTextArea(cells[i], {
+          lineNumbers: false,
+          styleActiveLine: true,
+          matchBrackets: true,
+          readOnly: true,
+          mode: 'sos',
+          base_mode: cells[i].name,
+      });
 
-    highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      let select = document.createElement('select');
+      let option = document.createElement('option');
+      option.value = cells[i].name;
+      option.textContent = cells[i].name;
+      select.appendChild(option);
+      select.className = "cell-kernel-selector";
+      select.value = cells[i].name;
+
+      cells[i].parentElement.insertBefore(select, cells[i]);
+
+      if (i < cells.length)
+          highlight_cells(cells, i + 1, interval);
+    }, interval);
+  }
+
+  highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
 </script>
 
 
@@ -13299,6 +13329,26 @@ input: 'a.txt'
   var content = document.querySelector('.notebook-container')
   var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
   var headingMap = {}
+
+  function indexedHeaders(headings) {
+      if (!headings) {
+          return '';
+      }
+      let counts = [0, 0, 0, 0, 0, 0, 0]
+      for (let i = 0; i < headings.length; ++i) {
+        ++counts[parseInt(headings[i].tagName[1])-1]
+      }
+      // now, we remove the first 1 if it is the first tag, and if
+      // it has only one, and if it is not the only header
+      let first = counts.findIndex(x => x > 0);
+      console.log(first)
+      if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
+         && parseInt(headings[0].tagName[1]) === first + 1) {
+          counts[first] = 0;
+      }
+      //
+      return counts.map((x, idx) => x > 0 ? 'H' + (idx+1) : '').filter(x => x).join(',');
+  }
 
   Array.prototype.forEach.call(headings, function(heading) {
     var id = heading.id ? heading.id : heading.textContent.toLowerCase()
@@ -13317,7 +13367,7 @@ input: 'a.txt'
     // Where to grab the headings to build the table of contents.
     contentSelector: '.notebook-container',
     // Which headings to grab inside of the contentSelector element.
-    headingSelector: 'h2, h3, h4',
+    headingSelector: indexedHeaders(headings),
     //
     listClass: 'toc-list',
     extraListClasses: 'nav nav-list',
@@ -13334,9 +13384,67 @@ input: 'a.txt'
 
 
 
+<script>
+
+let keyword_links = {
+  'input:' : 'https://vatlab.github.io/sos-docs/doc/user_guide/input_statement.html',
+  'output:' : 'https://vatlab.github.io/sos-docs/doc/user_guide/output_statement.html',
+  'depends:' : 'https://vatlab.github.io/sos-docs/doc/user_guide/depebds_statement.html',
+}
+
+let function_links = {
+  'named_output' : 'https://vatlab.github.io/sos-docs/doc/user_guide/named_output.html',
+}
+
+function sos_doc_hover_over(evt) {
+  let tooltip = document.getElementById('sos_hover_tooltip');
+  let tooltiptext = document.getElementById('sos_hover_tooltip');
+
+  let loc = evt.target.getBoundingClientRect();
+  tooltip.style.top = loc.y + 'px';
+  tooltip.style.left = loc.x + 'px';
+  tooltip.style.width = loc.width + 'px';
+  tooltip.style.height = loc.height + 'px';
+
+  tooltip.style.display = 'block';
+}
+
+function sos_doc_hover_leave(evt) {
+  document.getElementById('sos_hover_tooltip').style.display = 'none';
+}
+
+function sos_doc_hover_visit(evt) {
+  window.open(keyword_links[evt.target.innerText], '_blank')
+}
+
+
+// we wait for 10 seconds before scanning document because we need to
+// wait syntax hilighting to be done. A promise is actually needed.
+setTimeout(function() {
+  // find all keyword in keyword_links
+  let elems = document.getElementsByClassName("cm-keyword cm-strong");
+  Array.from(elems).filter(elem => elem.innerText in keyword_links).forEach(x => {
+    x.classList.add('sos_hover_doc');
+    x.addEventListener('mouseover', sos_doc_hover_over);
+    x.addEventListener('mouseleave', sos_doc_hover_leave);
+    x.addEventListener('click', sos_doc_hover_visit);
+  })
+}, 5000)
+
+</script>
+
+
+
     </div>
   </div>
 </body>
+
+
+
+<div id='sos_hover_tooltip'>
+</div>
+
+
 
 
  
