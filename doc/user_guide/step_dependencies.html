@@ -12728,7 +12728,7 @@ Executing step_3
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depends-on-static-output-using-input-statement">Depends on static output using <code>input</code> statement<a class="anchor-link" href="#Depends-on-static-output-using-input-statement"></a></h2>
+<h2 id="Input-with-static-output-from-another-step"><code>Input</code> with static output from another step<a class="anchor-link" href="#Input-with-static-output-from-another-step"></a></h2>
 </div>
 </div>
 </div>
@@ -12737,7 +12737,7 @@ Executing step_3
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If the input of a step is not available, SoS will attempts to find another step that generates such a file and execute it before this step. A simple data-flow data workflow can therefore be written by defining static input and output of each step.</p>
+<p>If the input of a step is not available, SoS will attempts to find another step that generates such a file and execute it before this step. A simple data-flow data workflow can therefore be written by defining static input and output of each step. Note that dependencies will not be created for existing input files.</p>
 
 </div>
 </div>
@@ -12837,7 +12837,7 @@ Generating c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depends-on-static-output-using-depends-statement">Depends on static output using <code>depends</code> statement<a class="anchor-link" href="#Depends-on-static-output-using-depends-statement"></a></h2>
+<h2 id="Depends-on-static-output-from-another-step"><code>Depends</code> on static output from another step<a class="anchor-link" href="#Depends-on-static-output-from-another-step"></a></h2>
 </div>
 </div>
 </div>
@@ -12846,7 +12846,7 @@ Generating c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Another way to depends on static output from another step is to use the <code>depends:</code> statement. Although conceptually the following workflow works the same as the previous workflow and produces the same DAG, they work different when the dependent files already exist. More specifically, while the above workflow will not execute steps <code>A</code> and <code>B</code>, and <code>C</code> if it is re-executed because <code>a.txt</code>, <code>b.txt</code>, and <code>c.txt</code> already exists, the following workflow will still execute these steps even if the files already exist.</p>
+<p>Another way to depends on static output from another step is to use the <code>depends:</code> statement. However, whereas the above workflow will not execute steps <code>A</code>, <code>B</code>, or <code>C</code> if the corresponding output already exists, the following workflow will execute all steps even if the files already exist. The idea is that <strong><code>depends</code> statement will always try to create dependencies</strong>.</p>
 
 </div>
 </div>
@@ -12945,7 +12945,7 @@ Generating c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depends-on-named-output">Depends on named output<a class="anchor-link" href="#Depends-on-named-output"></a></h2>
+<h2 id="Input-with-or-depends-on-named-output"><code>Input</code> with or <code>depends</code> on named output<a class="anchor-link" href="#Input-with-or-depends-on-named-output"></a></h2>
 </div>
 </div>
 </div>
@@ -12954,7 +12954,7 @@ Generating c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If there are multiple output or the output is not statically defined, function <code>named_output()</code> can be used to named output from another step. Basically, <code>name_output()</code> makes a step depends on another step with the named output.</p>
+<p>If there are multiple output or the output is not statically defined, function <code>named_output()</code> can be used to named output from another step. Basically, <code>name_output()</code> makes a step depends on another step with the named output. This function can also be used in <code>depends</code> statement.</p>
 
 </div>
 </div>
@@ -13054,7 +13054,7 @@ Generating c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depend-on-output-of-another-step">Depend on output of another step<a class="anchor-link" href="#Depend-on-output-of-another-step"></a></h2>
+<h2 id="Input-with-or-depends-on-output-from-another-step"><code>Input</code> with or <code>depends</code> on output from another step<a class="anchor-link" href="#Input-with-or-depends-on-output-from-another-step"></a></h2>
 </div>
 </div>
 </div>
@@ -13063,7 +13063,7 @@ Generating c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Similar to <code>named_output</code>, function <code>output_from(step)</code> imports entire output from specified step, therefore creating a step-based dependency.</p>
+<p>Similar to <code>named_output</code>, function <code>output_from(step)</code> imports entire output from specified step, therefore creating a step-based dependency. This function can also be used in <code>depends:</code> statement.</p>
 
 </div>
 </div>
@@ -13163,7 +13163,7 @@ Generating c.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depend-on-another-step">Depend on another step<a class="anchor-link" href="#Depend-on-another-step"></a></h2>
+<h2 id="Depends-on-another-step"><code>Depends</code> on another step<a class="anchor-link" href="#Depends-on-another-step"></a></h2>
 </div>
 </div>
 </div>
@@ -13264,7 +13264,7 @@ Executing D
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depend-on-another-workflow">Depend on another workflow<a class="anchor-link" href="#Depend-on-another-workflow"></a></h2>
+<h2 id="Depends-on-another-workflow"><code>Depends</code> on another workflow<a class="anchor-link" href="#Depends-on-another-workflow"></a></h2>
 </div>
 </div>
 </div>
@@ -13369,7 +13369,7 @@ Executing D
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depends-on-shared-variable">Depends on shared variable<a class="anchor-link" href="#Depends-on-shared-variable"></a></h2>
+<h2 id="Depends-on-shared-variable"><code>Depends</code> on shared variable<a class="anchor-link" href="#Depends-on-shared-variable"></a></h2>
 </div>
 </div>
 </div>
@@ -13471,7 +13471,7 @@ Executing D
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depend-on-pattern-matched-output-using-depends-statement">Depend on pattern matched output using <code>depends</code> statement<a class="anchor-link" href="#Depend-on-pattern-matched-output-using-depends-statement"></a></h2>
+<h2 id="Depends-on-pattern-matched-output"><code>Depends</code> on pattern matched output<a class="anchor-link" href="#Depends-on-pattern-matched-output"></a></h2>
 </div>
 </div>
 </div>
@@ -13574,7 +13574,7 @@ Executing D
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Depend-on-pattern-matched-output-using-input-statement">Depend on pattern matched output using <code>input</code> statement<a class="anchor-link" href="#Depend-on-pattern-matched-output-using-input-statement"></a></h2>
+<h2 id="Input-with-pattern-matched-output"><code>Input</code> with pattern matched output<a class="anchor-link" href="#Input-with-pattern-matched-output"></a></h2>
 </div>
 </div>
 </div>
@@ -13687,10 +13687,10 @@ Executing D
 <p>As an interesting way to summaize this tutorial, let us look backward and see how a step can become a dependency to another step:</p>
 <table>
 <thead><tr>
-<th>method</th>
-<th>syntax</th>
-<th>matched by</th>
-<th>comment</th>
+<th>Method</th>
+<th>Syntax</th>
+<th>Matched by</th>
+<th>Comment</th>
 </tr>
 </thead>
 <tbody>
@@ -13722,13 +13722,13 @@ Executing D
 <td>by static output</td>
 <td><code>output: 'output.txt'</code></td>
 <td><code>input: 'output.txt'</code></td>
-<td>Step will not be executed if <code>output.txt</code> already exists</td>
+<td>Static matching only if <code>output.ext</code> does not exist</td>
 </tr>
 <tr>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 <td><code>depends: 'output.txt'</code></td>
-<td>Step will be executed even if <code>output.txt</code> exists</td>
+<td>Static matching even if <code>output.txt</code> already exists</td>
 </tr>
 <tr>
 <td>&nbsp;</td>
@@ -13738,15 +13738,15 @@ Executing D
 </tr>
 <tr>
 <td>&nbsp;</td>
-<td><code>output: A='output.txt'</code></td>
+<td>&nbsp;</td>
 <td><code>depends: 'output.txt'</code></td>
 <td>&nbsp;</td>
 </tr>
 <tr>
 <td>by named output</td>
-<td><code>output: A='output'</code></td>
+<td><code>output: A='output.txt'</code></td>
 <td><code>input: named_output('A')</code></td>
-<td>&nbsp;</td>
+<td>Name <code>A</code> can refer to multiple or dynamic outputs</td>
 </tr>
 <tr>
 <td>&nbsp;</td>
@@ -13764,19 +13764,19 @@ Executing D
 <td>by pattern matching</td>
 <td><code>[name: provides='output.txt']</code></td>
 <td><code>input: 'output.txt'</code></td>
-<td>static matching</td>
+<td>Static matching only if <code>output.ext</code> does not exist</td>
 </tr>
 <tr>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
 <td><code>depends: 'output.txt'</code></td>
-<td>Step will be executed if <code>output.txt</code> already exists</td>
+<td>Static matching even if <code>output.txt</code> already exists</td>
 </tr>
 <tr>
 <td>&nbsp;</td>
 <td><code>[name: provides='{filename}.txt']</code></td>
 <td><code>input: 'output.txt'</code></td>
-<td>pattern matching, file only</td>
+<td>pattern matching, only for file targets</td>
 </tr>
 <tr>
 <td>&nbsp;</td>
