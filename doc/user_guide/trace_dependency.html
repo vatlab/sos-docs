@@ -12606,7 +12606,19 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-problem-with-intemediate-files">The problem with intemediate files<a class="anchor-link" href="#The-problem-with-intemediate-files"></a></h2>
+<h2 id="A-problem-with-makefile-style-workflows">A problem with makefile-style workflows<a class="anchor-link" href="#A-problem-with-makefile-style-workflows"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-info" role="alert">
+    <h4>Dependency check of workflow steps</h4>
+    <p>A workflow step is ready to execute if all input and dependent targets exist.<p>
+</div>
 </div>
 </div>
 </div>
@@ -12616,7 +12628,7 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Suppose you are working on a project that involves the execution of workflows repeatedly with different input files or parameters. It is possible to lose track of intermediate files and obtain incorrect results.</p>
-<p>For example,</p>
+<p>Let us assume that you created the following workflow with step <code>analyze</code> accepting some parameter and write result to a file, and step <code>summarize</code> creating a report named <code>out.md</code> from the output of step <code>analyze</code>. A little trick here is that action <code>report</code> accept one or more input files from its <code>input</code> parameter and appends their contents to the end of the report.</p>
 
 </div>
 </div>
@@ -12626,28 +12638,49 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
-   <textarea rows="15"
-      class="sos-source" name="SoS">%run analysis --par 5 
-%run rep 
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 22.957220000000003em">
+   <textarea rows="18"
+      class="sos-source" name="SoS"># remove out.txt if it already exists
+!rm -f out.txt
+# write a workflow
+%save test.sos -f
 
-[analysis]
+[analyze]
 parameter: par=5
+output: 'out.txt'
 
 print(f'Analyze data with parameter {par}')
-with open('out.txt', 'w') as out:
+with open(_output, 'w') as out:
     out.write(f'Result from parameter {par}')
 
-[rep]
+[summarize]
+input: 'out.txt'    
 print(f'Writing report with input out.txt')
 report: input='out.txt', output='out.md'
-    ## A summary report
-    
-</textarea>
+    ## A summary report</textarea>
   </div>
 </div>
 
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">Cell content saved to <a href="test.sos" target="_blank">test.sos</a>, use option -r to also execute the cell.</div>
+</div>
+
+</div>
+
+</div>
 </div>
 
 </div>
@@ -12659,7 +12692,896 @@ report: input='out.txt', output='out.md'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<p>Now, let us perform the analysis and generate a report:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%preview out.md
+%runfile test.sos summarize --par 10 -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Analyze data with parameter 10
+Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> out.md (47 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<h2>A summary report</h2>
+<p>Result from parameter 10</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Everything looks ok, so you would like to re-run the analysis using another parameter:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%preview out.md
+%runfile test.sos summarize --par 20 -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> out.md (47 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<h2>A summary report</h2>
+<p>Result from parameter 10</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Do you see what the problem is here? When you run the step <code>summarize</code> of the workflow and its input <code>out.txt</code> already exist, SoS will simply execute the step so the <code>analyze</code> step is not executed again.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-clean-up-step">A clean up step<a class="anchor-link" href="#A-clean-up-step"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A common solution to this problem is to introduce a special step to clean up intemediate files. In a GNU Make system this involves the introduction of a <code>clean</code> target, and use it to remove intermediate files with commands like</p>
+
+<pre><code>make target --par 10
+make clean
+make target --par 20</code></pre>
+<p>We can do something similar and create a workflow as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 25.385800000000003em">
+   <textarea rows="20"
+      class="sos-source" name="SoS">%save test1.sos -f
+
+[analyze]
+parameter: par=5
+output: 'out.txt'
+
+print(f'Analyze data with parameter {par}')
+with open(_output, 'w') as out:
+    out.write(f'Result from parameter {par}')
+
+[summarize]
+input: 'out.txt'    
+print(f'Writing report with input out.txt')
+report: input='out.txt', output='out.md'
+    ## A summary report
+
+[clean]
+sh:
+   echo Cleaning up
+   rm -f out.txt out.md</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">Cell content saved to <a href="test1.sos" target="_blank">test1.sos</a>, use option -r to also execute the cell.</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After the <code>clean</code> step, the next <code>summarize</code> step works ok.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%preview out.md
+%runfile test1.sos clean -v0
+%runfile test1.sos summarize --par 20 -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Analyze data with parameter 20
+Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> out.md (47 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<h2>A summary report</h2>
+<p>Result from parameter 20</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can even execute the <code>clean</code> step before <code>summaize</code> using compound workflow as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%preview out.md
+%runfile test1.sos clean+summarize --par 25 -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Analyze data with parameter 25
+Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> out.md (47 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<h2>A summary report</h2>
+<p>Result from parameter 25</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Dependency-tracing-with-option--T">Dependency tracing with option <code>-T</code><a class="anchor-link" href="#Dependency-tracing-with-option--T"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An easier method, perhaps unique to SoS, is to force the workflow engine to trace the dependency of existing files. More specifically, with option <code>-T</code> (trace dependency), SoS will check the input and dependent targets and see if they are the result of another step, and rerun the steps even if the targets already exist.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%preview out.md
+%runfile test.sos summarize --par 26 -T -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Analyze data with parameter 26
+Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> out.md (47 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<h2>A summary report</h2>
+<p>Result from parameter 26</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to avoiding the trouble of a <code>clean</code> step, this method is also more performant, because the <code>analyze</code> step will be ignored if its signature matches. This can be shown by running the same step twice as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%runfile test.sos summarize --par 26 -T </textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">analyze</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">analyze</span> (index=0) is <span class="sos_highlight">ignored</span> due to saved signature
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: output:   <span class="sos_highlight">out.txt</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">summarize</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow summarize (ID=b835340f2af1c898) is executed successfully with 1 completed step and 1 ignored step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because <code>out.txt</code> was generated with <code>par=26</code>, rerunning the workflow will not reproduce <code>out.txt</code>. This is clearly better than the <code>clean</code> approach, which will force the re-execution of the <code>analyze</code> step.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Forcing-dependency-tracing-of-selected-files">Forcing dependency tracing of selected files<a class="anchor-link" href="#Forcing-dependency-tracing-of-selected-files"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4><code>traced</code> target</h4>
+    <p>A <code>traced</code> target (e.g. <code>traced('out.txt')</code>) will always be verified or re-generated even if it already exists. The function converts its parameters to a <code>sos_targets</code> object and marks all its targets. Therefore, this function accepts all parameters of <code>sos_targets</code> and you can use it in the format of<p>
+    <pre>
+    traced('a.txt')
+    traced('a.txt', 'b.txt')
+    traced(A='a.txt', B='b.txt')
+    ...
+    </pre>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>-T</code> option is convenient but can be slow if your workflow handles a large amount of files because SoS will need to determine the dependent steps of all input and dependent files. In addition, users of your workflow may still produce erroneous output if they do not know the <code>-T</code> option.</p>
+<p>If some intermediate files are important and you always want to make sure that they are up to date, you can mark them as <code>traced</code> by wrapping them in the <code>traced</code> function.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 25.385800000000003em">
+   <textarea rows="20"
+      class="sos-source" name="SoS">%save test_traced.sos -f
+
+[analyze]
+parameter: par=5
+output: 'out.txt'
+
+print(f'Analyze data with parameter {par}')
+with open(_output, 'w') as out:
+    out.write(f'Result from parameter {par}')
+
+[summarize]
+input: traced('out.txt')
+print(f'Writing report with input out.txt')
+report: input='out.txt', output='out.md'
+    ## A summary report
+
+[clean]
+sh:
+   echo Cleaning up
+   rm -f out.txt out.md</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">Cell content saved to <a href="test_traced.sos" target="_blank">test_traced.sos</a>, use option -r to also execute the cell.</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, when you execute this workflow, the <code>analyze</code> step will always be executed (or ignored if signature matches) to ensure the integrity of <code>out.txt</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%preview out.md
+%runfile test_traced.sos summarize --par 3 -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Analyze data with parameter 3
+Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> out.md (46 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<h2>A summary report</h2>
+<p>Result from parameter 3</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%preview out.md
+%runfile test_traced.sos summarize --par 4 -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Analyze data with parameter 4
+Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> out.md (46 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<h2>A summary report</h2>
+<p>Result from parameter 4</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%preview out.md
+%runfile test_traced.sos summarize --par 4 -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Writing report with input out.txt
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> out.md (46 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<h2>A summary report</h2>
+<p>Result from parameter 4</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the <code>analyze</code> step is ignored in the last case so you do not lose any productivity by rerunning the <code>analyze</code> step.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/step_dependencies.html">How to create dependencies between SoS steps</a></li>
+</ul>
 
 </div>
 </div>
