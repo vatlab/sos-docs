@@ -13480,7 +13480,7 @@ Converting a_2.txt a_3.txt to a_2.bak a_3.bak
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Going back to our <code>conver</code>, <code>plot</code> example. When another step is added to have the same named output, it is no longer possible to use <code>named_output(name)</code>. In this case you can explicitly specify the step from which the named output is defined, and use</p>
+<p>Going back to our <code>convert</code>, <code>plot</code> example. When another step is added to have the same named output, it is no longer possible to use <code>named_output(name)</code>. In this case you can explicitly specify the step from which the named output is defined, and use</p>
 
 <pre><code>output_from(step)[name]</code></pre>
 <p>instead of</p>
@@ -13647,6 +13647,133 @@ null device
 </div>
 </div>
 </div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="output_from()-with-skipped-substeps"><code>output_from()</code> with skipped substeps<a class="anchor-link" href="#output_from()-with-skipped-substeps"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Function <code>output_from()</code> obtains outputs, actually substeps output from another step. There is, however, a case when a substep is skipped and leaves no output. In this case, the substep output is dicarded.</p>
+<p>For example, when a substep in the step <code>A</code> of the following workflow is skipped, the result from <code>output_from('A')</code> contains only the output of valid substeps.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">%run -v0
+[A]
+input: for_each=dict(i=range(4))
+output: f'output_{i}.txt'
+
+skip_if(i == 2, 'Skip substep 2')
+_output.touch()
+
+[default]
+input: output_from('A')
+print(_input)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>output_0.txt
+output_1.txt
+output_3.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, if you would like to keep consistent number of substeps across steps, you can handle get output from all substeps by using option <code>remove_empty_groups=False</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">%run -v0
+[A]
+input: for_each=dict(i=range(4))
+output: f'output_{i}.txt'
+
+skip_if(i == 2, 'Skip substep 2')
+_output.touch()
+
+[default]
+input: output_from('A', remove_empty_groups=False)
+print(_input)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>output_0.txt
+
+output_1.txt
+output_3.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
