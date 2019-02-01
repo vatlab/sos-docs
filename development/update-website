@@ -47,7 +47,10 @@ with open(_input["template_toc"] if with_toc else _input["template"], 'r') as te
     dest.seek(0)
     for line in template:
         if line.strip() == '<!-- insert the content of page here -->':
-            dest.write(content.replace('¶', '').replace('&#182;', ''))
+            if 'guide' in str(_output):
+                dest.write(content.replace('¶', '').replace('&#182;', '').replace('<ul>\n',  '<ul class="fa-ul">\n'))
+            else:
+                dest.write(content.replace('¶', '').replace('&#182;', ''))
         elif _output.name in line:
             dest.write(line.replace('<li>', '<li class="active">'))
         else:
