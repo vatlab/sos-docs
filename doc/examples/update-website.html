@@ -355,13 +355,13 @@ pre.section-header.CodeMirror-line {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               158 lines
+               159 lines
                <span class="file-info-divider"></span>
-               4.9 kB
+               5.0 kB
             </div>
          </div>
          <div class="filecontent">
-            <textarea rows="158" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
+            <textarea rows="159" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
 [getFileNames]
@@ -385,11 +385,12 @@ run: expand='${ }'
 	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_tut.tpl
 
 [convert-guide]
-input:  '../src/user_guide/*.ipynb', group_by=1
+input: '../src/user_guide/*.ipynb', group_by=1
+depends: '../src/templates/sos-doc-with-banner.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
-run: expand='${ }'
-	sos convert ${_input:a} ${_output:a}  --template sos-doc
+run: expand=True
+	sos convert {_input:a} {_output:a}  --template {_depends}
 
 [convert-homepage]
 input:  html=sos_targets('../src/homepage/*.ipynb', group_by=1), 
