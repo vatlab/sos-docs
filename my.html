@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>magic_use</title>
+<title>sos_in_notebook</title>
 
 <style type="text/css">
     /*!
@@ -12316,10 +12316,10 @@ font-style: italic;
 
 
 <style>
-   .sos_lan_P3 .input_prompt {
-      background-color: green !important;
-    }.sos_lan_Python3 .input_prompt {
-      background-color: #FFD91A !important;
+   .sos_lan_Bash .input_prompt {
+      background-color: #E6EEFF !important;
+    }.sos_lan_R .input_prompt {
+      background-color: #DCDCDA !important;
     }
 </style>
 
@@ -12689,19 +12689,20 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     padding-left: 20px;
 }
 .toc-header .nav-buttons {
-    float: right;  
-    padding-right: 30px;      
+    float: right;        
 }
 .toc-header .nav-buttons .fa {
     padding-top: 10px;
     padding-bottom: 10px;
 }
+.toc-header .nav-buttons .nav-right {
+    padding-right: 30px;
+}
 .toc-header .fa {
-    font-size: 38px;
+    font-size: 40px;
     color: white;
     padding: 10px;
 }
-
 .toc-header .fa:hover {
     color: #6197d5 ;
 }
@@ -12786,7 +12787,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Advanced-usages-of-the-%use-magic">Advanced usages of the <code>%use</code> magic<a class="anchor-link" href="#Advanced-usages-of-the-%use-magic"></a></h1>
+<h1 id="Using-SoS-workflow-system-in-Jupyter-and-from-command-line">Using SoS workflow system in Jupyter and from command line<a class="anchor-link" href="#Using-SoS-workflow-system-in-Jupyter-and-from-command-line"></a></h1>
 </div>
 </div>
 </div>
@@ -12797,11 +12798,15 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Time need to lean</strong>: 15 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>Magic <code>%use NAME --language</code> can start a separate kernel with <code>NAME</code></li>
-<li>Magic <code>%use NAME --language LAN --kernel KER</code> can bind a language module to an unsupported kernel</li>
-<li>Option <code>--color</code> can be used to customize colored prompt of subkernels</li>
+<li>SoS uses classic Jupyter or Jupyter Lab with a SoS kernel as its IDE</li>
+<li>SoS steps can be developed and executed in SoS Notebook</li>
+<li>SoS workflows can be embedded in Jupyter notebook</li>
+<li>Magics <code>%run</code> executes workflows defined in the current cell</li>
+<li>Magic <code>%sosrun</code> executes workflows defined in the entire notebook</li>
+<li>Magic <code>%runfile</code> executes workflows defined in specified file</li>
+<li>Command <code>sos</code> executes workflows from the command line</li>
 </ul>
 </li>
 </ul>
@@ -12814,7 +12819,187 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="More-on-subkernels">More on subkernels<a class="anchor-link" href="#More-on-subkernels"></a></h2>
+<h2 id="SoS-Workflow-System-in-Jupyter">SoS Workflow System in Jupyter<a class="anchor-link" href="#SoS-Workflow-System-in-Jupyter"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS Workflow System uses SoS Notebook as its IDE. The following figure illustrates the overall design of SoS Workflow System and SoS Notebook:</p>
+<p><img src="https://vatlab.github.io/sos-docs/doc/media/SoS_Notebook_and_Workflow.png" alt="JupyterCon18 SoS Talk"></p>
+<p>Basically,</p>
+<ul>
+<li>SoS Notebook is a <a href="https://jupyter.org/">Jupyter Notebook</a> with a SoS kernel.</li>
+<li>SoS Notebook serves as a super kernel to all other Jupyter kernels and allows the use of multiple kernels in a single notebook.</li>
+<li>SoS Notebook also serves as the IDE for SoS Workflow System.</li>
+</ul>
+<p>The figure is linked to a <a href="https://www.youtube.com/watch?v=U75eKosFbp8">youtube video</a> for a <a href="https://github.com/vatlab/JupyterCon2018">presentation on SoS during the 2018 JupyterCon</a>, which introduces both SoS Notebook and SoS Workflow System and can be a good starting point for you to learn SoS. The SoS Workflow part starts at <a href="https://www.youtube.com/watch?v=U75eKosFbp8#t=20m">20min</a>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Running-SoS">Running SoS<a class="anchor-link" href="#Running-SoS"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <a href="https://vatlab.github.io/sos-docs/running.html#content">Running SoS section</a> of the <a href="https://vatlab.github.io/sos-docs/">SoS Homepage</a> contains all the instructions on how to install and run SoS. Briefly, you have the following options to use SoS</p>
+<ul>
+<li>Try SoS using our live server <a href="http://vatlab.github.io/sos/live">http://vatlab.github.io/sos/live</a>.</li>
+<li>Start a Jupyter notebook server from our docker image <a href="https://hub.docker.com/r/mdabioinfo/sos-notebook/">mdabioinfo/sos-notebook</a>.</li>
+<li>Install <code>sos</code> and <code>sos-notebook</code> locally if you have a local Python (3.6 or higher) installation and a working Jupyter server with kernels of interest.</li>
+<li>Check with your system administrator if you have access to an institutional JupyterHub server with SoS installed.</li>
+</ul>
+<p>For the purpose of this tutorial, it is good enough to use our live server <a href="http://vatlab.github.io/sos/live">http://vatlab.github.io/sos/live</a>. After you see the following interface, select New -&gt; SoS to create a SoS notebook. You can also go to <code>examples</code> and open existing SoS notebooks.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Using-the-SoS-kernel">Using the SoS kernel<a class="anchor-link" href="#Using-the-SoS-kernel"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This tutorial is written in a SoS Notebook, which consists of multiple <strong>markdown cells</strong> and <strong>code cells</strong>. With the SoS kernel, each code cell can have its own kernel. SoS Notebook allows you to use multiple kernels in a single notebook and exchange variables among live kernels. This allow you to develop scripts and analyze data in different languages.</p>
+<p>For example, the following three code cells perform a multi-language data analysis where the first cell defines a few variables, the second cell runs a bash script to convert an excel file to csv format, and the last cell uses R to read the csv file and generate a plot. Three different kernels, SoS, <a href="https://github.com/takluyver/bash_kernel">bash_kernel</a>, and <a href="https://github.com/IRkernel/IRkernel">IRkernel</a> are used, and a <code>%expand</code> magic is used to pass filenames from the SoS kernel to other kernels.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_Bash">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Bash">%expand
+xlsx2csv {excel_file} > {csv_file}</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="R">%expand
+data <- read.csv('{csv_file}')
+pdf('{figure_file}')
+plot(data$log2FoldChange, data$stat)
+dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<strong>pdf:</strong> 2
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+  <h4>SoS is extended from Python 3.6+</h4>
+    <p>The SoS workflow system extends the syntax of Python 3.6+ so <b>SoS codecells accept any Python code</b></p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="-Use-magic-%run-to-execute-the-current-cell-as-a-SoS-workflow"><a id="magic-run" /> Use magic <code>%run</code> to execute the current cell as a SoS workflow<a class="anchor-link" href="#-Use-magic-%run-to-execute-the-current-cell-as-a-SoS-workflow"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Scripts in different languages can be converted to steps in SoS workflows by adding section headers in the format of</p>
+
+<pre><code>[header_name]</code></pre>
+<p>or</p>
+
+<pre><code>[header_name: options]</code></pre>
+
 </div>
 </div>
 </div>
@@ -12824,14 +13009,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <div class="bs-callout bs-callout-primary" role="alert">
-  <h4>Components of subkernel</h4>
-    <p>A subkernel consists of</p>
-    <ul>
-        <li>Name of subkernel, which is usually name of the language (e.g. <code>R</code>)
-        <li>A Jupyter kernel (e.g. <code>irkernel</code> for language R</li>
-        <li>A SoS language module (e.g. <code>sos-r</code> for R</li>
-        <li>A color used to color the input prompt</li>
-    </ul>
+  <h4>%run</h4>
+    <p> The <code>%run</code> magic execute the content of the cell as a complete SoS workflow using an external process.</p>  
 </div>
 </div>
 </div>
@@ -12841,28 +13020,122 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A subkernel will be started with the execution of a cell with the selected language. By default</p>
-<ul>
-<li>The name of the subkernel is the name of the language</li>
-<li>The Jupyter kernel for the language. If multiple kernels that support the same language are available, preference will be given to a kernel determined by SoS.</li>
-<li>The SoS language module for the selected language.</li>
-<li>A default color determined by SoS.</li>
-</ul>
-<p>For example, the following cell starts subkernel <code>Python3</code>, with language <code>Python3</code>, kernel <code>ipython</code>, language module <code>sos-python</code>, and a default color determined by SoS.</p>
+<p>The SoS magic <code>%run</code> can be used to execute workflows defined in the current cell. For example, the following cell executes a simple <code>hello_world</code> workflow with a single <code>print</code> statement.</p>
 
 </div>
 </div>
 </div>
 
-<div class="sos_lan_Python3">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="Python3">print('This is a subkernel for Python 3')
-var = 'hello, I am Python3'</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run
+
+print('This is our first hello world workflow')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is our first hello world workflow
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=2cb13acadf20b6ad) is executed successfully with 1 completed step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS starts an external <code>sos</code> process, execute the workflow and displays the output in the notebook. <strong>The workflow is executed independently and does not share any variables in the SoS kernel</strong>. For example, if you define a variable in the SoS kernel</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">my_name = 'sos_in_notebook.ipynb'</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can use the variable in another SoS cell:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">print(f'This notebook is named {my_name}')</textarea>
   </div>
 </div>
 
@@ -12878,7 +13151,7 @@ var = 'hello, I am Python3'</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>This is a subkernel for Python 3
+<pre>This notebook is named sos_in_notebook.ipynb
 </pre>
 </div>
 </div>
@@ -12895,96 +13168,22 @@ var = 'hello, I am Python3'</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Start-multiple-sessions-of-the-same-kernel">Start multiple sessions of the same kernel<a class="anchor-link" href="#Start-multiple-sessions-of-the-same-kernel"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Using the <code>%use</code> magic, you can start another session of the same language by specifying a separate subkernel with language name specified with option <code>--language</code>. A separate color is usually specified to differentiate two subkernels:</p>
+<p>But the variable is not available in the following cell, which is executed by magic <code>%run</code> as an independent workflow unless you <a href="parameters.html">define a parameter and pass the variable to it from command line</a>.</p>
 
 </div>
 </div>
 </div>
 
-<div class="sos_lan_P3">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="P3">%use P3 --language Python3 --color green
-var = 'hello, I am P3'</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can see, the two Python3 kernels do not share variables:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_P3">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="P3">var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[6]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;hello, I am P3&#39;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_Python3">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="Python3">var</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run
+
+print(f'This notebook is named {my_name}')</textarea>
   </div>
 </div>
 
@@ -12996,13 +13195,144 @@ var = 'hello, I am P3'</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[7]:</div>
+<div class="prompt"></div>
 
 
 
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
 
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;hello, I am Python3&#39;</pre>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[default]: 
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+script_4008715518445167588 in &lt;module&gt;
+----&gt; print(f&#39;This notebook is named {my_name}&#39;)
+
+NameError: name &#39;my_name&#39; is not defined</span>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A notebook cell can contain complete workflows with multiple steps. For example, the following cell defines a SoS workflows that resembles the analysis that was performed using three different kernels. The workflow consists of a <code>global</code> section that defines variables for all steps, and two sections <code>plot_10</code> and <code>plot_20</code> that constitute two steps of workflow <code>plot</code>. The first step executes a shell script and the second step executes a <code>R</code> script. The syntax of this workflow will be discussed in details in <a href="doc/user_guide/scripts_in_sos.html">the next tutorial</a>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
+   <textarea rows="17"
+      class="sos-source" name="SoS">%run
+
+[global]
+excel_file = 'data/DEG.xlsx'
+csv_file = 'DEG.csv'
+figure_file = 'output.pdf'
+
+[plot_10]
+run: expand=True
+    xlsx2csv {excel_file} > {csv_file}
+
+[plot_20]
+R: expand=True
+    data <- read.csv('{csv_file}')
+    pdf('{figure_file}')
+    plot(data$log2FoldChange, data$stat)
+    dev.off()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=221e15922696f853) is executed successfully with 2 completed steps.
+</div>
 </div>
 
 </div>
@@ -13019,21 +13349,206 @@ var = 'hello, I am P3'</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>And you can transfer variables from one kernel to another as usual:</p>
+<h3 id="Controlling-verbosity-(option--v)">Controlling verbosity (option <code>-v</code>)<a class="anchor-link" href="#Controlling-verbosity-(option--v)"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magics <code>%run</code> (actually the underlying <code>sos</code> command) accepts a set of optional arguments, the easiest of which is option <code>-v</code> that controls the verbosity of output.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-info" role="alert">
+    <h4>The verbosity (<code>-v</code>) argument of magics <code>%run</code>, <code>%sosrun</code> and command <code>sos run</code></h4>
+    <p>The verbosity argument <code>-v</code> accepts values </p>
+    <ul>
+        <li><code>-v 0</code>: Display no system messages except errors</li>
+        <li><code>-v 1</code>: Display errors and warnings, and a text-based progress bar</li>
+        <li><code>-v 2 (default)</code>: Display errors, warnings, and informational messages</li>
+        <li><code>-v 3</code>: Display additional debug messages</li>
+        <li><code>-v 4</code>: Display very verbose trace messages for development purposes</li>
+     </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you have seen, the default verbosity level <code>-v2</code> displays messages to report the status of execution:</p>
 
 </div>
 </div>
 </div>
 
-<div class="sos_lan_P3">
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run
+
+print('This is our first hello world workflow')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is our first hello world workflow
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=2cb13acadf20b6ad) is executed successfully with 1 completed step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can suppress these messages using option <code>-v1</code> even <code>-v0</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run -v0
+
+print('This is our first hello world workflow')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is our first hello world workflow
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running-long-workflows-in-background-*">Running long workflows in background *<a class="anchor-link" href="#Running-long-workflows-in-background-*"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-info" role="alert">
+    <h4>Execute workflow in non-blocking mode</h4>
+    <p>You can execute a workflow using magics <code>%run</code>, <code>%sosrun</code>, and <code>%runfile</code> in the background by adding a <code>&</code> at the end of the magic. The workflow will be executed in a queue while you can continue to work the notebook.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS Notebook usually starts a workflow and waits until the workflow is completed. If the workflow takes a long time to execute, you can send workflows to a queue in which workflows will be executed one by one while you continue to work on the notebook. A status table will be displayed for each queued workflows and log messages and results will continue to send back to SoS Notebook.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="P3">%get var --from Python3
-var</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">%run -v0 &
+
+import time
+for i in range(5):
+    print(i)
+    time.sleep(10)</textarea>
   </div>
 </div>
 
@@ -13045,13 +13560,36 @@ var</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[11]:</div>
+<div class="prompt"></div>
 
 
 
+<div class="output_html rendered_html output_subarea ">
 
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;hello, I am Python3&#39;</pre>
+<table id="workflow_68400d1a-a230-4ba1-a5df-652c69e6e3c5" class="workflow_table  completed">
+<tr>
+      <td class="workflow_icon">
+        <i id="workflow_status_icon_68400d1a-a230-4ba1-a5df-652c69e6e3c5" class="fa fa-2x fa-fw fa-check-square-o"
+        onmouseover='this.classList="fa fa-2x fa-fw fa-trash"' onmouseleave='this.classList="fa fa-2x fa-fw fa-check-square-o"' onclick="cancel_workflow(this.id.substring(21))"></i>
+      </td>
+      <td class="workflow_name">
+        <pre><span id="workflow_name_68400d1a-a230-4ba1-a5df-652c69e6e3c5">plot</span></pre>
+      </td>
+      <td class="workflow_id">
+        <span>Workflow ID</span></br>
+        <pre><i class="fa fa-fw fa-sitemap"></i><span id="workflow_id_68400d1a-a230-4ba1-a5df-652c69e6e3c5">4dd99bdf71b08cf8</span></pre>
+      </td>
+      <td class="workflow_index">
+        <span>Index</span></br>
+        <pre>#<span id="workflow_index_68400d1a-a230-4ba1-a5df-652c69e6e3c5">1</span></pre>
+      </td>
+      <td class="workflow_status">
+        <span id="status_text_68400d1a-a230-4ba1-a5df-652c69e6e3c5">completed</span></br>
+        <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_68400d1a-a230-4ba1-a5df-652c69e6e3c5" class="completed" datetime="1547752794721.1553">Ran for 1 sec</time></pre>
+      </td>
+</tr>
+</table>
+
 </div>
 
 </div>
@@ -13068,7 +13606,7 @@ var</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Binding-a-language-module-to-an-unsupported-kernel">Binding a language module to an unsupported kernel<a class="anchor-link" href="#Binding-a-language-module-to-an-unsupported-kernel"></a></h2>
+<h2 id="-Execute-embedded-workflows-using-magic-%sosrun"><a id="magic-sosrun" /> Execute embedded workflows using magic <code>%sosrun</code><a class="anchor-link" href="#-Execute-embedded-workflows-using-magic-%sosrun"></a></h2>
 </div>
 </div>
 </div>
@@ -13077,10 +13615,347 @@ var</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Each language module supports one or more kerneles (e.g. kernel <code>javascript</code>, and <code>nodejs</code> for JavaScript) for one or more langauges (e.g. both <code>MATLAB</code> and <code>Octave</code> are supported by the <code>sos-matlab</code> langauge module). If there is a kernel that uses one of the supported languages but is not explicitly supported by SoS, you can use the <code>--kernel</code> option in combination with the <code>--language</code> option to link the kernel with the specific language module.</p>
-<p>For example, if you have developed yet another kernel for javascript, you can link it with the <code>sos-javascript</code> language module with command</p>
+<p>A SoS notebook can have multiple workflow sections defined in multiple code cell. These sections constitute the content of the <strong>embedded SoS script</strong> of the notebook.</p>
 
-<pre><code>%use myjs --kernel myjs --language JavaScript</code></pre>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+  <h4>Embedded SoS script</h4>
+  <p>An embed SoS script consists of SoS sections in all SoS cells of a notebook.</p>  
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The easiest way to view the embedded script of a SoS notebook is to use the <code>%preview --workflow</code> magic as follows (The option <code>-n</code> lists the script in the notebook instead of the console panel). As you can see, the embedded script consists of steps from the entire notebook.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%preview -n --workflow</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="CodeMirror cm-s-default"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 5px; left: 5px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;" tabindex="0"></textarea></div><div class="CodeMirror-vscrollbar" tabindex="-1" cm-not-content="true" style="bottom: 0px; width: 18px; pointer-events: none;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-hscrollbar" tabindex="-1" cm-not-content="true" style="height: 18px; pointer-events: none;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 30px; min-height: 345px; min-width: 316.027px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-cursors"><div class="CodeMirror-cursor" style="left: 0px; top: 0px; height: 16.5714px;">&nbsp;</div></div><div class="CodeMirror-code" role="presentation" style=""><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment">#!/usr/bin/env sos-runner</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment">#fileformat=SOS1.0</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" section-header CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-header">[global]</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">excel_file</span> <span class="cm-operator">=</span> <span class="cm-string">'data/DEG.xlsx'</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">csv_file</span> <span class="cm-operator">=</span> <span class="cm-string">'DEG.csv'</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">figure_file</span> <span class="cm-operator">=</span> <span class="cm-string">'output.pdf'</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" section-header CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-header">[plot_10]</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin cm-strong">run:</span><span class="cm-null cm-sos-option"> </span><span class="cm-variable cm-sos-option">expand</span><span class="cm-operator cm-sos-option">=</span><span class="cm-keyword cm-sos-option">True</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-null cm-sos-script">    xlsx2csv </span><span class="cm-sos-sigil cm-sos-script">{</span><span class="cm-sos-interpolated cm-variable cm-sos-script">excel_file</span><span class="cm-sos-sigil cm-sos-script">}</span><span class="cm-null cm-sos-script"> &gt; </span><span class="cm-sos-sigil cm-sos-script">{</span><span class="cm-sos-interpolated cm-variable cm-sos-script">csv_file</span><span class="cm-sos-sigil cm-sos-script">}</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" section-header CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-header">[plot_20]</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin cm-strong">R:</span><span class="cm-null cm-sos-option"> </span><span class="cm-variable cm-sos-option">expand</span><span class="cm-operator cm-sos-option">=</span><span class="cm-keyword cm-sos-option">True</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-null cm-sos-script">    </span><span class="cm-variable cm-sos-script">data</span><span class="cm-null cm-sos-script"> </span><span class="cm-operator cm-arrow cm-sos-script">&lt;-</span><span class="cm-null cm-sos-script"> </span><span class="cm-variable cm-sos-script">read.csv</span><span class="cm-null cm-sos-script">(</span><span class="cm-string cm-sos-script">'</span><span class="cm-sos-sigil cm-sos-script">{</span><span class="cm-sos-interpolated cm-variable cm-sos-script">csv_file</span><span class="cm-sos-sigil cm-sos-script">}</span><span class="cm-string cm-sos-script">'</span><span class="cm-null cm-sos-script">)</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-null cm-sos-script">    </span><span class="cm-variable cm-sos-script">pdf</span><span class="cm-null cm-sos-script">(</span><span class="cm-string cm-sos-script">'</span><span class="cm-sos-sigil cm-sos-script">{</span><span class="cm-sos-interpolated cm-variable cm-sos-script">figure_file</span><span class="cm-sos-sigil cm-sos-script">}</span><span class="cm-string cm-sos-script">'</span><span class="cm-null cm-sos-script">)</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-null cm-sos-script">    </span><span class="cm-variable cm-sos-script">plot</span><span class="cm-null cm-sos-script">(</span><span class="cm-variable cm-sos-script">data</span><span class="cm-operator cm-dollar cm-sos-script">$</span><span class="cm-variable cm-sos-script">log2FoldChange</span><span class="cm-null cm-sos-script">, </span><span class="cm-variable cm-sos-script">data</span><span class="cm-operator cm-dollar cm-sos-script">$</span><span class="cm-variable cm-sos-script">stat</span><span class="cm-null cm-sos-script">)</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-null cm-sos-script">    </span><span class="cm-variable cm-sos-script">dev.off</span><span class="cm-null cm-sos-script">()</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; border-bottom: 0px solid transparent; top: 345px;"></div><div class="CodeMirror-gutters" style="display: none; height: 375px;"></div></div></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+  <h4>%sosrun</h4>
+  <p> The <code>%sosrun</code> magic execute workflows defined in the embedded SoS script of a notebook.</p>  
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%sosrun</code> magic can be used to execute any of the workflows defined in the notebook. For example, the following magic execute the workflow <code>plot</code> defined in the above section. Because multiple workflows are defined in this notebook (<code>hello_world</code>, and <code>plot</code>), a workflow name is required for this magic.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%sosrun plot</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=4dd99bdf71b08cf8) is executed successfully with 2 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-warning" role="alert">
+  <h4>Warning</h4>
+    <p>Workflow cells can only be executed by SoS magics <code>%run</code> and <code>%sosrun</code>. SoS will not produce any output if you execute a workflow cell directly.</p>  
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="-Execute-external-script-with-magic-%runfile"><a id="magic-runfile" /> Execute external script with magic <code>%runfile</code><a class="anchor-link" href="#-Execute-external-script-with-magic-%runfile"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+  <h4>%runfile filename</h4>
+  <p> The <code>%runfile</code> execute a SoS script from specified file with specified option. Both SoS scripts (usually with extension <code>.sos</code>) and SoS notebooks (with extension <code>.ipynb</code>) are supported.</p>  
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The third magic to execute SoS workflows in SoS Notebook is to use the <code>%runfile</code> magic, which execute workflows from a specified external file. For example, instead of using magic <code>%sosrun</code>, you can execute the current notebook with magic</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%runfile sos_in_notebook.ipynb plot</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>xlsx2csv data/DEG.xlsx &gt; DEG.csv
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>null device 
+          1 
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow plot (ID=4dd99bdf71b08cf8) is executed successfully with 2 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Execute-embedded-workflows-with-command-sos">Execute embedded workflows with command <code>sos</code><a class="anchor-link" href="#Execute-embedded-workflows-with-command-sos"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%sosrun</code> magic calls an external command <code>sos</code> to execute workflows defined in the notebook. Although for the sake of convenience we will use magic <code>%run</code> to execute workflows throughout this documentation, please remember that <strong>you can execute the notebook using command <code>sos</code> from command line</strong>.</p>
+<p><img src="../media/sos_cmd_cli.png" alt="running notebook from command line"></p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Alternatively, you can also write the workflow in a text file (usually with extension <code>.sos</code>) and execute it with command <code>sos run</code>:</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../media/sos_cmd_script_cli.png" alt="running script from command line"></p>
 
 </div>
 </div>
@@ -13091,7 +13966,9 @@ var</textarea>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
-<li><a href="doc/user_guide/multi_kernel_notebook.html">How to use multiple kernels in one Jupyter notebook</a></li>
+<li><a href="Inclusion_of_scripts.html">Inclusion of scripts</a></li>
+<li><a href="doc/user_guide/forward_workflow.html">How to define and execute basic forward-type workflows</a></li>
+<li><a href="doc/user_guide/cli.html">Command line interface</a></li>
 </ul>
 
 </div>
@@ -13832,7 +14709,6 @@ function add_hoverdoc(){
 </body>
 
 
-    <script src="../../js/docs.js"></script>
     <script>
     function toggle_toc() {
         let item = document.getElementById('toggle_caret');
@@ -13849,46 +14725,27 @@ function add_hoverdoc(){
         }
     }
 
-    function add_nav_header(filename) {
+    function add_nav_header() {
         let header = document.getElementsByClassName('toc-header');
         if (!header) {
             return;
-        }
-        let idx = guides.indexOf(filename.replace(/\.[^/.]+$/, ""))
-        let prev_link = ''
-        let next_link = ''
-        if (idx != 0) {
-            // has prev
-            prev_link = `${guides[idx - 1]}.html`
-        }
-        if (idx != guides.length - 1) {
-            // has next
-            next_link = `${guides[idx + 1]}.html`
-        } 
-        if (prev_link) {
-            prev_link = `<a href="${prev_link}" target="_blank"><i class="fa fa-arrow-circle-left nav-left"></i></a>`;
-        }
-        if (next_link) {
-            next_link = `<a href="${next_link}" target="_blank"><i class="fa fa-arrow-circle-right nav-right"></i></a>`;
         }
         header[0].outerHTML = `
             <div class="toc-header">
                 <div class="row">
                     <div class="nav-home">
-                        <a href="https://vatlab.github.io/sos-docs/guide.html#content" target="_blank"><i class="fa fa-home"></i></a>
+                        <i class="fa fa-home"></i>
                     </div>
                     <div class="nav-buttons">                    
-                            ${prev_link}
-                            ${next_link}                            
+                            <i class="fa fa-arrow-circle-left nav-left"></i>
+                            <i class="fa fa-arrow-circle-right nav-right"></i>                        
                     </div>
                 </div>
             </div>       
         `
     }
 
-    let url = window.location.pathname;
-    let filename = url.substring(url.lastIndexOf('/')+1);
-    add_nav_header(filename);
+    add_nav_header()
 
     </script>
 

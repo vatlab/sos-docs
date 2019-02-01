@@ -12440,7 +12440,7 @@ textarea.sos-source {
 <style>
 
 /* The Table of Contents container element */
-#toc {
+.toc-wrapper {
     width: 20%;
     max-height: 90%;
     overflow-y: auto;
@@ -12643,9 +12643,6 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
   z-index:100;
 }
 
-#toc {
-    margin-top: 100px;
-}
 #toc_panel {
     display: none;
     left: 0;
@@ -12676,6 +12673,37 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 #toc_panel ul {
     padding-left: 0px;
     list-style: none;
+}
+
+.toc-wrapper {
+    margin-top: 100px;
+}
+
+.toc-header {
+    background-color: #c3dbf7;
+    height: 60px;
+}
+
+.toc-header .nav-home {
+    float: left;
+    padding-left: 20px;
+}
+.toc-header .nav-buttons {
+    float: right;  
+    padding-right: 30px;      
+}
+.toc-header .nav-buttons .fa {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.toc-header .fa {
+    font-size: 38px;
+    color: white;
+    padding: 10px;
+}
+
+.toc-header .fa:hover {
+    color: #6197d5 ;
 }
 </style>
 
@@ -12739,8 +12767,12 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <div id="toc">
-      </div><!--/.well -->
+      <div class="toc-wrapper">
+        <div class="toc-header">
+        </div>
+        <div id="toc" class="toc">
+        </div><!--/.well -->
+      </div>
     </div><!--/span-->
     <div class="col-xs-12 col-sm-8 col-md-9">
       
@@ -14414,6 +14446,7 @@ function add_hoverdoc(){
 </body>
 
 
+    <script src="../../js/docs.js"></script>
     <script>
     function toggle_toc() {
         let item = document.getElementById('toggle_caret');
@@ -14429,6 +14462,48 @@ function add_hoverdoc(){
             panel.style.display = 'none'
         }
     }
+
+    function add_nav_header(filename) {
+        let header = document.getElementsByClassName('toc-header');
+        if (!header) {
+            return;
+        }
+        let idx = guides.indexOf(filename.replace(/\.[^/.]+$/, ""))
+        let prev_link = ''
+        let next_link = ''
+        if (idx != 0) {
+            // has prev
+            prev_link = `${guides[idx - 1]}.html`
+        }
+        if (idx != guides.length - 1) {
+            // has next
+            next_link = `${guides[idx + 1]}.html`
+        } 
+        if (prev_link) {
+            prev_link = `<a href="${prev_link}" target="_blank"><i class="fa fa-arrow-circle-left nav-left"></i></a>`;
+        }
+        if (next_link) {
+            next_link = `<a href="${next_link}" target="_blank"><i class="fa fa-arrow-circle-right nav-right"></i></a>`;
+        }
+        header[0].outerHTML = `
+            <div class="toc-header">
+                <div class="row">
+                    <div class="nav-home">
+                        <a href="https://vatlab.github.io/sos-docs/guide.html#content" target="_blank"><i class="fa fa-home"></i></a>
+                    </div>
+                    <div class="nav-buttons">                    
+                            ${prev_link}
+                            ${next_link}                            
+                    </div>
+                </div>
+            </div>       
+        `
+    }
+
+    let url = window.location.pathname;
+    let filename = url.substring(url.lastIndexOf('/')+1);
+    add_nav_header(filename);
+
     </script>
 
 
