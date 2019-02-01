@@ -12310,9 +12310,9 @@ font-style: italic;
 
 
 <style>
-   .lan_Bash .input_prompt {
+   .sos_lan_Bash .input_prompt {
       background-color: #E6EEFF !important;
-    }.lan_R .input_prompt {
+    }.sos_lan_R .input_prompt {
       background-color: #DCDCDA !important;
     }
 </style>
@@ -12425,6 +12425,7 @@ textarea.sos-source {
   overflow: hidden;
   vertical-align: text-top;
 }
+
 </style>
 
 
@@ -12533,7 +12534,7 @@ $(document).ready(function() {
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12649,7 +12650,7 @@ $(document).ready(function() {
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12669,7 +12670,7 @@ figure_file = 'output.pdf'</textarea>
 
 
 
-<div class="lan_Bash">
+<div class="sos_lan_Bash">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12688,7 +12689,7 @@ xlsx2csv {excel_file} > {csv_file}</textarea>
 
 
 
-<div class="lan_R">
+<div class="sos_lan_R">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12780,7 +12781,7 @@ An embed SoS script consists of SoS sections in SoS cells.</p>
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12849,7 +12850,7 @@ print('This is step 20 of a SoS workflow step')
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12877,7 +12878,7 @@ print('This is step A of a SoS workflow')</textarea>
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12969,7 +12970,7 @@ print('This is step B of a SoS workflow')</textarea>
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -13080,7 +13081,7 @@ The <code>%sosrun</code> magic execute workflows defined in the embedded SoS scr
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -13171,7 +13172,7 @@ This is step 20 of a SoS workflow step
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -13788,35 +13789,47 @@ INFO: Workflow step (ID=9d30892e37966444) is executed successfully with 2 comple
 });
 </script>
 <script>
-  function highlight_cells(cells, i, interval) {
-    setTimeout(function() {
-      if (! cells[i])
-        return;
-      var editor = CodeMirror.fromTextArea(cells[i], {
-          lineNumbers: false,
-          styleActiveLine: true,
-          matchBrackets: true,
-          readOnly: true,
-          mode: 'sos',
-          base_mode: cells[i].name,
-      });
 
-      let select = document.createElement('select');
-      let option = document.createElement('option');
-      option.value = cells[i].name;
-      option.textContent = cells[i].name;
-      select.appendChild(option);
-      select.className = "cell-kernel-selector";
-      select.value = cells[i].name;
 
-      cells[i].parentElement.insertBefore(select, cells[i]);
+  function highlight_cell(cell){
+    return new Promise((resolve,reject)=>{
+        if (! cell)
+          resolve("empty");
+        var editor = CodeMirror.fromTextArea(cell, {
+            lineNumbers: false,
+            styleActiveLine: true,
+            matchBrackets: true,
+            readOnly: true,
+            mode: 'sos',
+            base_mode: cell.name,
+        });
 
-      if (i < cells.length)
-          highlight_cells(cells, i + 1, interval);
-    }, interval);
+        let select = document.createElement('select');
+        let option = document.createElement('option');
+        option.value = cell.name;
+        option.textContent = cell.name;
+        select.appendChild(option);
+        select.className = "cell-kernel-selector";
+        select.value = cell.name;
+
+        cell.parentElement.insertBefore(select, cell);
+        resolve("tooltip")
+        })
   }
 
-  highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+  async function highlight_cells(cells){
+      for(cell of cells){
+        result=await highlight_cell(cell)
+      }
+      if (typeof add_hoverdoc !== "undefined") {
+        add_hoverdoc()
+      }
+  }
+
+  highlight_cells(document.getElementsByClassName("sos-source"))
+
+
+
 </script>
 
 
