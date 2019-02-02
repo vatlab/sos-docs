@@ -41,6 +41,7 @@ def generate_doc_toc(docs_dir):
 
     tutString="var tutorials=["
     docString="var documentation=["
+    guideString="var guides=["
     with open(os.path.join(docs_dir, "src", "homepage", "notebook.ipynb")) as json_data:
          d = json.load(json_data)
     for cell in d["cells"]:
@@ -70,12 +71,24 @@ def generate_doc_toc(docs_dir):
     docString=docString[:-2]
     docString+="]"
 
+    with open(os.path.join(docs_dir, "src", "homepage", "guide.ipynb")) as json_data:
+         d = json.load(json_data)
+    for cell in d["cells"]:
+        for sentence in cell["source"]:
+            guide=re.search('doc/user_guide/(.+?).html',sentence)
+            if guide:
+                name=guide.group(1)
+                guideString+='"'+name+'", '
+    guideString=guideString[:-2]
+    guideString+="]"
+
     with open(os.path.join(docs_dir, "js", "docs.js"), "w") as docFile:
         fileDict(docFile, os.path.join(docs_dir, "src", "documentation"))
         fileDict(docFile, os.path.join(docs_dir, "src", "tutorials"))
         findImages(docFile, docs_dir)
         docFile.write(docString+"\n")
         docFile.write(tutString+"\n")
+        docFile.write(guideString+"\n")
         docFile.close()
 
 if __name__ == '__main__':
