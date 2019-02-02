@@ -131,17 +131,26 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     padding-left: 20px;
 }
 .toc-header .nav-buttons {
-    float: right;  
-    padding-right: 30px;      
+    float: right;
+    padding-right: 30px;
+    outline: none;
 }
-.toc-header .nav-buttons .fa {
-    padding-top: 10px;
-    padding-bottom: 10px;
+
+.toc-header .nav-buttons button {
+    background: transparent;
+    border: none;
 }
+
+.toc-header .nav-buttons button:focus {
+    outline: 0;
+}
+
 .toc-header .fa {
     font-size: 38px;
     color: white;
-    padding: 10px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 10px;
 }
 
 .toc-header .fa:hover {
@@ -160,7 +169,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
                 <li><a href="../../running.html#content">Running SoS</a> </li>
                 <li><a href="../../notebook.html#content">SoS Notebook</a> </li>
                 <li><a href="../../workflow.html#content">SoS Workflow System</a> </li>
-                <li><a href="#" onclick="toggle_toc()">User Guide &nbsp; <i class="fa fa-caret-down" id="toggle_caret"></i> </a>  </li>
+                <li><a href="#" onclick="toggle_toc();return false;">User Guide &nbsp; <i class="fa fa-caret-down" id="toggle_caret"></i> </a>  </li>
             </ul>
             <div id="toc_panel">
                 <div class="container row-fluid">
@@ -171,7 +180,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
                         <li><a href="expand_capture_render.html">Work with subkernel</a></li>
                         <li><a href="exchange_variable.html">Data exchange among kernels</a></li>
                         <li><a href="magic_preview.html">Preview variables and files</a></li>
-                    </ul>                
+                    </ul>
                 </div>
                 <div class="col-xs-12 col-sm-4 col-md-3">
                     <p>Workflow Basics</p>
@@ -181,31 +190,31 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
                         <li><a href="parameters.html">Parameters</a></li>
                         <li><a href="input_substeps.html">Step and substeps</a></li>
                         <li><a href="forward_workflow.html">Basic workflow</a></li>
-                    </ul>            
+                    </ul>
                 </div>
                 <div class="col-xs-12 col-sm-4 col-md-3">
                     <p>Workflow Definition</p>
-                    <ul>                
+                    <ul>
                         <li><a href="input_statement.html"><code>input</code> statement</a></li>
                         <li><a href="output_statement.html"><code>output</code> statement</a></li>
                         <li><a href="depends_statement.html"><code>depends</code> statement</a></li>
                         <li><a href="named_output.html"><code>named_output()</code></a></li>
-                        <li><a href="output_from.html"><code>output_from()</code></a></li>                        
-                    </ul>                    
+                        <li><a href="output_from.html"><code>output_from()</code></a></li>
+                    </ul>
                 </div>
                 <div class="col-xs-12 col-sm-4 col-md-3">
                     <p>Workflow Execution</p>
                     <ul>
                         <li><a href="signature.html">Runtime signature</a></li>
                         <li><a href="trace_dependency.html">Dependency tracing</a></li>
-                        <li><a href="workflow_summary.html">Workflow report</a></li>                    
-                        <li><a href="https://vatlab.github.io/sos-docs/guide.html#content">A lot more ...</a></li>                    
-                    </ul>                       
-                </div>            
+                        <li><a href="workflow_summary.html">Workflow report</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/guide.html#content">A lot more ...</a></li>
+                    </ul>
+                </div>
             </div>
         </nav>
     </div>
-    
+
 
     {{ super() }}
 
@@ -226,7 +235,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
         }
     }
 
-    function add_nav_header(filename) {
+    function add_nav_header() {
+        let url = window.location.pathname;
+        let filename = url.substring(url.lastIndexOf('/')+1);
+
         let header = document.getElementsByClassName('toc-header');
         if (!header) {
             return;
@@ -235,37 +247,82 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
         let prev_link = ''
         let next_link = ''
         if (idx != 0) {
-            // has prev
-            prev_link = `${guides[idx - 1]}.html`
+            prev_link = `<button onclick="loadPage('${guides[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
         }
         if (idx != guides.length - 1) {
-            // has next
-            next_link = `${guides[idx + 1]}.html`
-        } 
-        if (prev_link) {
-            prev_link = `<a href="${prev_link}" target="_blank"><i class="fa fa-arrow-circle-left nav-left"></i></a>`;
-        }
-        if (next_link) {
-            next_link = `<a href="${next_link}" target="_blank"><i class="fa fa-arrow-circle-right nav-right"></i></a>`;
+            next_link = `<button onclick="loadPage('${guides[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
         }
         header[0].outerHTML = `
             <div class="toc-header">
                 <div class="row">
                     <div class="nav-home">
-                        <a href="https://vatlab.github.io/sos-docs/guide.html#content" target="_blank"><i class="fa fa-home"></i></a>
+                        <a href="https://vatlab.github.io/sos-docs/guide.html#content"><i class="fa fa-home"></i></a>
                     </div>
-                    <div class="nav-buttons">                    
+                    <div class="nav-buttons">
                             ${prev_link}
-                            ${next_link}                            
+                            ${next_link}
                     </div>
                 </div>
-            </div>       
+            </div>
         `
     }
 
-    let url = window.location.pathname;
-    let filename = url.substring(url.lastIndexOf('/')+1);
-    add_nav_header(filename);
+    function replacePage(title, url, newdoc, pushState) {
+        window.aa = newdoc;
+        // step 1, find existing cells
+        let nc = document.getElementById('notebook-container');
+        nc.innerHTML = '';
+        var root = document.createElement("div");
+        root.innerHTML = newdoc;
+        // let us find notebook-container in the root
+        let new_nc = root.querySelector('.notebook-container');
+
+        while (new_nc.childNodes.length > 0) {
+            nc.appendChild(new_nc.childNodes[0]);
+        }
+        if (pushState) {
+            history.pushState({'title': title, 'url': url}, title, url);
+        }
+        // update URL
+        add_nav_header()
+        // nav_header
+        tocbot.refresh();
+        // CM
+        applySoSMode();
+    }
+
+    function loadPage(name, pushState=true) {
+        let xhr = new XMLHttpRequest();
+        let url = `/doc/user_guide/${name}.html`;
+        xhr.open('GET', url);
+        xhr.onload = function(e) {
+            if (xhr.status === 200) {
+                replacePage(name, url, xhr.responseText, pushState);
+            }
+            else {
+                console.log(`failed to load ${url}`)
+                alert(`failed to load page ${name}`);
+            }
+        };
+        xhr.onerror = function (e) {
+            console.log('failed')
+            conole.log(e)
+        }
+        xhr.send();
+    }
+
+    add_nav_header();
+
+    function navBack(event) {
+        if (event.state && event.state.title) {
+            console.log(`load ${event.state.title}`)
+            loadPage(event.state.title, false);
+        } else {
+            window.open(document.location);
+        }
+    }
+
+    window.addEventListener('popstate', navBack);
 
     </script>
 {% endblock body %}
