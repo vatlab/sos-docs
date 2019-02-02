@@ -165,10 +165,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
         <a name="content"></a>
         <nav id="navigation" class="sticky">
             <ul class="nav nav-tabs">
-                <li><a href="../../index.html#content">Introduction</a> </li>
-                <li><a href="../../running.html#content">Running SoS</a> </li>
-                <li><a href="../../notebook.html#content">SoS Notebook</a> </li>
-                <li><a href="../../workflow.html#content">SoS Workflow System</a> </li>
+                <li><a href="https://vatlab.github.io/sos-docs/index.html#content">Introduction</a> </li>
+                <li><a href="https://vatlab.github.io/sos-docs/running.html#content">Running SoS</a> </li>
+                <li><a href="https://vatlab.github.io/sos-docs/notebook.html#content">SoS Notebook</a> </li>
+                <li><a href="https://vatlab.github.io/sos-docs/workflow.html#content">SoS Workflow System</a> </li>
                 <li><a href="#" onclick="toggle_toc();return false;">User Guide &nbsp; <i class="fa fa-caret-down" id="toggle_caret"></i> </a>  </li>
             </ul>
             <div id="toc_panel">
@@ -176,38 +176,38 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
                 <div class="col-xs-12 col-sm-4 col-md-3">
                     <p>SoS Notebook</p>
                     <ul>
-                        <li><a href="multi_kernel_notebook.html">Use of SoS notebook</a></li>
-                        <li><a href="expand_capture_render.html">Work with subkernel</a></li>
-                        <li><a href="exchange_variable.html">Data exchange among kernels</a></li>
-                        <li><a href="magic_preview.html">Preview variables and files</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/multi_kernel_notebook.html">Use of SoS notebook</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/expand_capture_render.html">Work with subkernel</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/exchange_variable.html">Data exchange among kernels</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/magic_preview.html">Preview variables and files</a></li>
                     </ul>
                 </div>
                 <div class="col-xs-12 col-sm-4 col-md-3">
                     <p>Workflow Basics</p>
                     <ul>
-                        <li><a href="sos_in_notebook.html">Basic usages</a></li>
-                        <li><a href="scripts_in_sos.html">Inclusion of scripts</a></li>
-                        <li><a href="parameters.html">Parameters</a></li>
-                        <li><a href="input_substeps.html">Step and substeps</a></li>
-                        <li><a href="forward_workflow.html">Basic workflow</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/sos_in_notebook.html">Basic usages</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/scripts_in_sos.html">Inclusion of scripts</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/parameters.html">Parameters</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/input_substeps.html">Step and substeps</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/forward_workflow.html">Basic workflow</a></li>
                     </ul>
                 </div>
                 <div class="col-xs-12 col-sm-4 col-md-3">
                     <p>Workflow Definition</p>
                     <ul>
-                        <li><a href="input_statement.html"><code>input</code> statement</a></li>
-                        <li><a href="output_statement.html"><code>output</code> statement</a></li>
-                        <li><a href="depends_statement.html"><code>depends</code> statement</a></li>
-                        <li><a href="named_output.html"><code>named_output()</code></a></li>
-                        <li><a href="output_from.html"><code>output_from()</code></a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/input_statement.html"><code>input</code> statement</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/output_statement.html"><code>output</code> statement</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/depends_statement.html"><code>depends</code> statement</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/named_output.html"><code>named_output()</code></a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/output_from.html"><code>output_from()</code></a></li>
                     </ul>
                 </div>
                 <div class="col-xs-12 col-sm-4 col-md-3">
                     <p>Workflow Execution</p>
                     <ul>
-                        <li><a href="signature.html">Runtime signature</a></li>
-                        <li><a href="trace_dependency.html">Dependency tracing</a></li>
-                        <li><a href="workflow_summary.html">Workflow report</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/signature.html">Runtime signature</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/trace_dependency.html">Dependency tracing</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/doc/user_guide/workflow_summary.html">Workflow report</a></li>
                         <li><a href="https://vatlab.github.io/sos-docs/guide.html#content">A lot more ...</a></li>
                     </ul>
                 </div>
