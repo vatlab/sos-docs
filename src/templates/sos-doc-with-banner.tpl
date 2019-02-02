@@ -289,6 +289,9 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
         while (new_nc.childNodes.length > 0) {
             nc.appendChild(new_nc.childNodes[0]);
         }
+        // scroll to top
+        nc.parentElement.scrollIntoView()
+
         if (pushState) {
             history.pushState({'title': title, 'url': url}, title, url);
         }
