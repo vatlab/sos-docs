@@ -7,19 +7,19 @@ run:
 
 [convert-documentation]
 input:  '../src/documentation/*.ipynb', group_by=1
+depends: '../src/templates/sos-doc-with-banner.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
-run: expand='${ }'
-	cd ../src/documentation
-	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_doc.tpl
+run: expand=True
+	sos convert {_input:a} {_output:a}  --template {_depends}
 
 [convert-tutorials]
 input:  '../src/tutorials/*.ipynb', group_by=1
+depends: '../src/templates/sos-doc-with-banner.tpl'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
-run: expand='${ }'
-	cd ../src/tutorials
-	sos convert ${_input:a} ${_output:a}  --template ../templates/toc_tut.tpl
+run: expand=True
+	sos convert {_input:a} {_output:a}  --template {_depends}
 
 [convert-guide]
 input: '../src/user_guide/*.ipynb', group_by=1
