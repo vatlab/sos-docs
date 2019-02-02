@@ -49,37 +49,27 @@
 
 
 
-{% macro js() %}
+{% macro js(master_list, notebook_id) %}
 
-<script src="../../js/docs.js"></script>
+
 <script>
-
 
 function add_nav_header() {
     let url = window.location.pathname;
     let filename = url.substring(url.lastIndexOf('/')+1);
-    let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.lastIndexOf('/'));
-
-    if (dir == 'documentation') {
-        all_docs = documentation;
-    } else if (dir == 'tutorials') {
-        all_docs = tutorials;
-    } else {
-        all_docs = guides;
-    }
 
     let header = document.getElementsByClassName('toc-header');
     if (!header) {
         return;
     }
-    let idx = all_docs.indexOf(filename.replace(/\.[^/.]+$/, ""))
+    let idx = {{ master_list }}.indexOf(filename.replace(/\.[^/.]+$/, ""))
     let prev_link = ''
     let next_link = ''
     if (idx != 0) {
-        prev_link = `<button onclick="loadPage('${all_docs[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+        prev_link = `<button onclick="loadPage('{{ '${' }}{{ master_list }}[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
     }
-    if (idx != all_docs.length - 1) {
-        next_link = `<button onclick="loadPage('${all_docs[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+    if (idx != {{ master_list }}.length - 1) {
+        next_link = `<button onclick="loadPage('{{ '${' }}{{ master_list }}[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
     }
     header[0].outerHTML = `
         <div class="toc-header">
@@ -99,12 +89,12 @@ function add_nav_header() {
 function replacePage(title, url, newdoc, pushState) {
     window.aa = newdoc;
     // step 1, find existing cells
-    let nc = document.getElementById('notebook-container');
+    let nc = document.getElementById('{{ notebook_id}}');
     nc.innerHTML = '';
     var root = document.createElement("div");
     root.innerHTML = newdoc;
     // let us find notebook-container in the root
-    let new_nc = root.querySelector('.notebook-container');
+    let new_nc = root.querySelector('.{{ notebook_id}}');
 
     while (new_nc.childNodes.length > 0) {
         nc.appendChild(new_nc.childNodes[0]);
@@ -120,7 +110,9 @@ function replacePage(title, url, newdoc, pushState) {
     // nav_header
     tocbot.refresh();
     // CM
-    applySoSMode();
+    if (typeof applySoSMode === "function") {
+        applySoSMode();
+    }
 }
 
 function loadPage(name, pushState=true) {
