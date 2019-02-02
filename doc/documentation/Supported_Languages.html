@@ -1,10 +1,16 @@
 
+
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>Supported_Languages</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<title>Supported_Languages</title>
 
 <style type="text/css">
     /*!
@@ -11758,7 +11764,7 @@ div#notebook {
 </style>
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
+
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -12444,91 +12450,370 @@ textarea.sos-source {
 
 
 
+
 <style>
-  #notebook-container {
-    padding: 0px;
-    -webkit-box-shadow: 0px 0px 0px 0px;
-	box-shadow: 0px 0px 0px 0px;
-     display: none;
+
+/* The Table of Contents container element */
+.toc-wrapper {
+    width: 20%;
+    max-height: 90%;
+    overflow-y: auto;
+    margin-left: 2%;
+    margin-top: 60px;
+    position: fixed;
+    border: 1px solid #ccc;
+    webkit-border-radius: 6px;
+    moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+/* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
+#toc ul, #toc li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 1.5em;
+}
+
+#toc > .toc-list {
+  overflow: hidden;
+  position: relative;
+
+  li {
+    list-style: none;
   }
+}
+
+#toc > .toc-list  a {
+  margin: 0;
+  padding-left: 10px;
+}
+
+#toc > .toc-list .toc-list a {
+  margin: 0;
+  padding-left: 25px;
+  font-size: 12px;
+}
+
+
+#toc > .toc-list .toc-list .toc-list a {
+  margin: 0;
+  padding-left: 40px;
+  font-size: 12px;
+}
+
+a.toc-link {
+  height: 100%;
+}
+
+.is-collapsible {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: all 300ms ease-in-out;
+}
+
+.is-collapsed {
+  max-height: 0;
+}
+
+.is-position-fixed {
+  position: fixed !important;
+  top: 0;
+}
+
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a, .nav-list .nav-header {
+    margin: 0px;
+}
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a {
+    padding: 5px;
+}
+
+.notebook-container {
+  box-shadow: none;
+}
+
+li.toc-item .is-active-link {
+  background-color: #6197d5;
+  color: white;
+}
+
+.nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+    color: #337ab7;
+}
+
+#notebook-container {
+  box-shadow: none;
+}
+
+/* https://github.com/tscanlin/tocbot/issues/121 */
+h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 </style>
 
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+
+
+<style type="text/css">
+
+.sos_hover_doc:hover {
+  cursor: pointer;
+  background: lightgray;
+  opacity: 50%;
+}
+</style>
+
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="https://vatlab.github.io/sos-docs/css/toc2.css">
+
+<style>
+h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+    display: block;
+    content: " ";
+    height: 80px;
+    margin-top: -80px;
+    visibility: hidden;
+}
 
 
 
+.nav-tabs {
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 12pt;
+    font-weight: normal;
+    font-style: normal;
+    background: #ffffff;
+    text-shadow: none !important;
+    border-color: transparent;
+    border-bottom-color: rgba(180,180,180,.30);
+}
 
-<script src="https://vatlab.github.io/sos-docs/js/doc_toc.js"></script>
-<script src="https://vatlab.github.io/sos-docs/js/docs.js"></script>
-<script>
-$(document).ready(function() {
-    var cfg = {
-        'threshold': 4,
-        'number_sections': false,
-        'toc_cell': false, // useless here
-        'toc_window_display': true, // display the toc window
-        "toc_section_display": "block", // display toc contents in the window
-        'sideBar': true, // sidebar or floating window
-        'navigate_menu': false // navigation menu (only in liveNotebook -- do not change)
-    }
+.nav-tabs > li > a:hover {
+ color: #2f2f2f;
+ background-color: rgba(180,180,180,.14);
+}
+.nav-tabs > li > a:active,
+.nav-tabs > li > a:focus,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+ color: #1c1c1c;
+ background-color: #eeeeee;
+ border: 1px solid transparent;
+ border-bottom-color: transparent;
+ cursor: default;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+ text-decoration: none;
+ background-color: rgba(180,180,180,.14);
+}
 
-    var st = {}; // some variables used in the script
-    st.rendering_toc_cell = false;
-    st.config_loaded = false;
-    st.extension_initialized = false;
-    st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-    st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-    st.nbcontainer_width = $('#notebook-container').css('width')
-    st.oldTocHeight = undefined
-    st.cell_toc = undefined;
-    st.toc_index = 0;
+.nav-tabs > li {
+    float:none;
+    display:inline-block;
+}
 
-    // fire the main function with these parameters
-    table_of_contents(cfg, st);
+.nav-tabs {
+    text-align:center;
+}
 
-    var file = documentationDict[$("h1:first").attr("id")];
-    var path = "http://vatlab.github.io/sos-docs"
-    $("#toc-level0 a").css("color", "#126dce");
-    $('a[href="#' + $("h1:first").attr("id") + '"]').hide()
-    var docs = documentation;
-    var pos = documentation.indexOf(file);
+.nav-tabs li a {font-size:14px; text-transform: uppercase; }
 
-    for (var a = pos; a >= 0; a--) {
-        var name = docs[a]
-        $('<li><a href="' + path + '/doc/documentation/' + name + '.html">' + name.replace(/_/g, " ") +
-            '&nbsp ' + '<i class="fa ' +
-            (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' + '</a></li>').insertBefore("#toc-level0 li:eq(0)");
-    }
-    $('a[href="' + path + '/doc/documentation/' + file + '.html' + '"]').css("color", "#126dce");
+.sticky .nav {
+  background-color: black;
+}
+.sticky .nav-tabs li a {
+    color: white;
+}
+.sticky .nav-tabs li.active a {
+    color: black;
+}
 
+.sticky .nav-tabs li.active .toc a {
+    text-transform: none;
+}
 
-    for (var a = pos + 1; a < docs.length; a++) {
-        var name = docs[a]
-        $(".toc #toc-level0").append('<li><a href="' + path + '/doc/documentation/' + name + '.html">' + name.replace(/_/g, " ") +
-            '&nbsp' + '<i class="fa fa-caret-right"></i>' + '</a></li>');
-    }
-});
-</script>
+.sticky {
+  position: fixed;
+  top: 0;
+  left:0;
+  width: 100%;
+  z-index:100;
+}
 
+#toc_panel {
+    display: none;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: black;
+    color: white;
+    padding-top: 20px;
+}
 
+#toc_panel a {
+    color: white;
+}
+
+#toc_panel code {
+    color: white;
+    background: none;
+}
+
+#toc_panel li:hover {
+    background: gray;
+}
+
+#toc_panel li a:hover {
+    text-decoration: none;
+}
+
+#toc_panel ul {
+    padding-left: 0px;
+    list-style: none;
+}
+
+.toc-wrapper {
+    margin-top: 100px;
+}
+
+.toc-header {
+    background-color: #c3dbf7;
+    height: 60px;
+}
+
+.toc-header .nav-home {
+    float: left;
+    padding-left: 20px;
+}
+.toc-header .nav-buttons {
+    float: right;
+    padding-right: 30px;
+    outline: none;
+}
+
+.toc-header .nav-buttons button {
+    background: transparent;
+    border: none;
+}
+
+.toc-header .nav-buttons button:focus {
+    outline: 0;
+}
+
+.toc-header .fa {
+    font-size: 38px;
+    color: white;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 10px;
+}
+
+.toc-header .fa:hover {
+    color: #6197d5 ;
+}
+</style>
 
 </head>
+    <div id="exTab2" class="container">
+        <a name="content"></a>
+        <nav id="navigation" class="sticky">
+            <ul class="nav nav-tabs">
+                <li><a href="../../index.html#content">Introduction</a> </li>
+                <li><a href="../../running.html#content">Running SoS</a> </li>
+                <li><a href="../../notebook.html#content">SoS Notebook</a> </li>
+                <li><a href="../../workflow.html#content">SoS Workflow System</a> </li>
+                <li><a href="#" onclick="toggle_toc();return false;">User Guide &nbsp; <i class="fa fa-caret-down" id="toggle_caret"></i> </a>  </li>
+            </ul>
+            <div id="toc_panel">
+                <div class="container row-fluid">
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <p>SoS Notebook</p>
+                    <ul>
+                        <li><a href="multi_kernel_notebook.html">Use of SoS notebook</a></li>
+                        <li><a href="expand_capture_render.html">Work with subkernel</a></li>
+                        <li><a href="exchange_variable.html">Data exchange among kernels</a></li>
+                        <li><a href="magic_preview.html">Preview variables and files</a></li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <p>Workflow Basics</p>
+                    <ul>
+                        <li><a href="sos_in_notebook.html">Basic usages</a></li>
+                        <li><a href="scripts_in_sos.html">Inclusion of scripts</a></li>
+                        <li><a href="parameters.html">Parameters</a></li>
+                        <li><a href="input_substeps.html">Step and substeps</a></li>
+                        <li><a href="forward_workflow.html">Basic workflow</a></li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <p>Workflow Definition</p>
+                    <ul>
+                        <li><a href="input_statement.html"><code>input</code> statement</a></li>
+                        <li><a href="output_statement.html"><code>output</code> statement</a></li>
+                        <li><a href="depends_statement.html"><code>depends</code> statement</a></li>
+                        <li><a href="named_output.html"><code>named_output()</code></a></li>
+                        <li><a href="output_from.html"><code>output_from()</code></a></li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <p>Workflow Execution</p>
+                    <ul>
+                        <li><a href="signature.html">Runtime signature</a></li>
+                        <li><a href="trace_dependency.html">Dependency tracing</a></li>
+                        <li><a href="workflow_summary.html">Workflow report</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/guide.html#content">A lot more ...</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
 
+
+    
 <body>
-  <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
+  <div class="row-fluid">
+    <div class="col-xs-12 col-sm-4 col-md-3">
+      <div class="toc-wrapper">
+        <div class="toc-header">
+        </div>
+        <div id="toc" class="toc">
+        </div><!--/.well -->
+      </div>
+    </div><!--/span-->
+    <div class="col-xs-12 col-sm-8 col-md-9">
+      
 
+
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="notebook-container" id="notebook-container">
+
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Supported-Languages">Supported Languages<a class="anchor-link" href="#Supported-Languages">&#182;</a></h1>
+<h1 id="Supported-Languages">Supported Languages<a class="anchor-link" href="#Supported-Languages"></a></h1>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12544,14 +12829,16 @@ $(document).ready(function() {
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Bash-">Bash <a id="Bash" /><a class="anchor-link" href="#Bash-">&#182;</a></h2>
+<h2 id="Bash-">Bash <a id="Bash" /><a class="anchor-link" href="#Bash-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12561,14 +12848,16 @@ $(document).ready(function() {
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="JavaScript-">JavaScript <a id="JavaScript" /><a class="anchor-link" href="#JavaScript-">&#182;</a></h2>
+<h2 id="JavaScript-">JavaScript <a id="JavaScript" /><a class="anchor-link" href="#JavaScript-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12614,6 +12903,7 @@ $(document).ready(function() {
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12697,6 +12987,7 @@ $(document).ready(function() {
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13226,6 +13517,7 @@ mtcars</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13284,14 +13576,16 @@ mtcars['Mazda RX4']</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Julia-">Julia <a id="Julia" /><a class="anchor-link" href="#Julia-">&#182;</a></h2>
+<h2 id="Julia-">Julia <a id="Julia" /><a class="anchor-link" href="#Julia-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13301,6 +13595,7 @@ mtcars['Mazda RX4']</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13421,6 +13716,7 @@ mtcars['Mazda RX4']</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13524,6 +13820,7 @@ mtcars['Mazda RX4']</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13570,6 +13867,7 @@ mtcars['Mazda RX4']</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13660,6 +13958,7 @@ mtcars['Mazda RX4']</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13719,6 +14018,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13810,6 +14110,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13860,14 +14161,16 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="MATLAB-(Octave)-">MATLAB (Octave) <a id="Matlab_Octave" /><a class="anchor-link" href="#MATLAB-(Octave)-">&#182;</a></h2>
+<h2 id="MATLAB-(Octave)-">MATLAB (Octave) <a id="Matlab_Octave" /><a class="anchor-link" href="#MATLAB-(Octave)-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13877,6 +14180,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13977,6 +14281,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14071,6 +14376,7 @@ Raw index is ignored because Julia DataFrame does not support raw index.
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14157,14 +14463,16 @@ mtcars =
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Python-2-and-Python-3">Python 2 and Python 3<a class="anchor-link" href="#Python-2-and-Python-3">&#182;</a></h2>
+<h2 id="Python-2-and-Python-3">Python 2 and Python 3<a class="anchor-link" href="#Python-2-and-Python-3"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14174,14 +14482,16 @@ mtcars =
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="R-">R <a id="R" /><a class="anchor-link" href="#R-">&#182;</a></h2>
+<h2 id="R-">R <a id="R" /><a class="anchor-link" href="#R-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14191,6 +14501,7 @@ mtcars =
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14276,6 +14587,7 @@ mtcars =
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14375,6 +14687,7 @@ mtcars =
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14553,6 +14866,7 @@ TRUE
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14830,6 +15144,7 @@ seri_var = pandas.Series([1,2,3,3,3,3])</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14945,6 +15260,7 @@ mat_var = numpy.matrix([[1,2],[3,4]])</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15127,6 +15443,7 @@ comp_var = 1+2i</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15367,6 +15684,7 @@ dtype: int64</pre>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15483,6 +15801,7 @@ arr_var = array(c(1:16),dim=c(2,2,2,2))</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15510,6 +15829,7 @@ arr_var = array(c(1:16),dim=c(2,2,2,2))</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15558,6 +15878,7 @@ Rlist</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15643,6 +15964,7 @@ Rlist</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15692,6 +16014,7 @@ Rlist</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15701,14 +16024,16 @@ Rlist</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Ruby">Ruby<a class="anchor-link" href="#Ruby">&#182;</a></h2>
+<h2 id="Ruby">Ruby<a class="anchor-link" href="#Ruby"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15800,6 +16125,7 @@ Rlist</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15890,6 +16216,7 @@ Rlist</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15958,6 +16285,7 @@ puts [null_var, num_var, logic_var, char_var, comp_var]</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16920,6 +17248,7 @@ mtcars</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17045,14 +17374,16 @@ $$\left(\begin{array}{ccc}
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="SAS-">SAS <a id="SAS" /><a class="anchor-link" href="#SAS-">&#182;</a></h2>
+<h2 id="SAS-">SAS <a id="SAS" /><a class="anchor-link" href="#SAS-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -18989,7 +19320,7 @@ var _ie64 = _info.indexOf("x64") > 0
 </div>
 <br>
 </div>
-</body>
+
 </html>
 
 </div>
@@ -19003,6 +19334,7 @@ var _ie64 = _info.indexOf("x64") > 0
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -20505,7 +20837,7 @@ var _ie64 = _info.indexOf("x64") > 0
 </div>
 <br>
 </div>
-</body>
+
 </html>
 
 </div>
@@ -20519,6 +20851,7 @@ var _ie64 = _info.indexOf("x64") > 0
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -20638,14 +20971,16 @@ var _ie64 = _info.indexOf("x64") > 0
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Stata-">Stata <a id="Stata" /><a class="anchor-link" href="#Stata-">&#182;</a></h2>
+<h2 id="Stata-">Stata <a id="Stata" /><a class="anchor-link" href="#Stata-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -20723,6 +21058,7 @@ filename = 'gss.dta'</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -20775,6 +21111,7 @@ marital  age      educ     sex      inc      happy    region
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -20838,6 +21175,7 @@ _datadir:       ~/Downloads/StataIntro/dataSets
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -20889,6 +21227,7 @@ marital  age      educ     sex      inc      happy    region
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -20998,7 +21337,7 @@ summarize</textarea>
 
 
 <div class="output_html rendered_html output_subarea ">
-                <iframe frameborder="0" scrolling="no" height="436" width="600"                srcdoc="<html><body>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+                <iframe frameborder="0" scrolling="no" height="436" width="600"                srcdoc="<html>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
 &lt;!-- This is a Stata 15.1 generated SVG file (http://www.stata.com) --&gt;
 
 &lt;svg version=&quot;1.1&quot; width=&quot;600px&quot; height=&quot;436px&quot; viewBox=&quot;0 0 3960 2880&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
@@ -21047,7 +21386,7 @@ summarize</textarea>
 	&lt;text x=&quot;3420.08&quot; y=&quot;2619.14&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;300&lt;/text&gt;
 	&lt;text x=&quot;2124.91&quot; y=&quot;2729.16&quot; style=&quot;font-family:&#x27;Helvetica&#x27;;font-size:99.99px;fill:#000000&quot; text-anchor=&quot;middle&quot;&gt;hp&lt;/text&gt;
 &lt;/svg&gt;
-</body></html>"></iframe>
+</html>"></iframe>
 
 </div>
 
@@ -21072,6 +21411,7 @@ summarize</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -21640,6 +21980,7 @@ mydata</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -21688,6 +22029,7 @@ S_ADO</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -21715,6 +22057,7 @@ S_ADO</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -21762,6 +22105,7 @@ S_ADO</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -21874,14 +22218,16 @@ loaded via a namespace (and not attached):
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="TypeScript-">TypeScript <a id="TypeScript" /><a class="anchor-link" href="#TypeScript-">&#182;</a></h2>
+<h2 id="TypeScript-">TypeScript <a id="TypeScript" /><a class="anchor-link" href="#TypeScript-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -21927,6 +22273,7 @@ loaded via a namespace (and not attached):
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -22010,6 +22357,7 @@ loaded via a namespace (and not attached):
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -22070,7 +22418,61 @@ mtcars['Mazda RX4']</textarea>
 
     </div>
   </div>
-</body>
+
+
+
+<script>
+
+let sos_keywords = new Set([
+  // keywords
+  'input:', 'output:', 'depends:', 'task:',
+  // options
+  'expand',
+  // input options
+  'for_each', 'paired_with', 'group_with', 'pattern',
+  'named_output', 'output_from',
+  // functions
+  'sos_run', 'fail_if', 'done_if', 'warn_if', 'skip_if',
+  'get_output',
+  // task options
+  'walltime', 'cores', 'mem', 'queue', 'to_host',
+  'from_host', 'map_vars', 'trunk_size', 'trunk_workers', 'workdir',
+  'concurrent', 'shared', 'env', 'prepend_path', 'tags',
+  // targets
+  'file_target', 'executable', 'sos_variable', 'env_variable',
+  'sos_step', 'dynamic', 'remote', 'system_resource',
+  'Py_Module', 'R_Library',
+  // actions
+  'run:', 'script:', 'report:', 'bash:', 'sh:',
+  'csh:', 'tcsh', 'zsh:', 'perl:', 'ruby:', 'node:',
+  'pandoc:', 'docker_build:', 'download:', 'julia:',
+  'R:', 'matlab:', 'python:', 'python2:', 'python3:',
+  // magics
+  '%capture', '%cd', '%clear', '%debug', '%dict',
+  '%expand', '%get', '%matplotlib', '%preview', '%pull',
+  '%push', '%put', '%render', '%run', '%runfile', '%revisions',
+  '%save', '%set', '%sessioninfo', '%shutdown', '%sosrun',
+  '%sossave', '%task', '%toc', '%sandbox', '%use', '%with'
+  ]
+)
+
+function visit_sos_doc(evt) {
+  window.open(`https://vatlab.github.io/sos-docs/redirect_doc.html?${evt.target.innerText}`, '_blank');
+}
+
+function add_hoverdoc(){
+  let elems = ['cm-keyword cm-strong', 'cm-variable cm-sos-option', 'cm-builtin cm-strong', 'cm-meta'].map(
+    cls => Array.from(document.getElementsByClassName(cls))).reduce((r, a) => r.concat(a), [])
+  Array.from(elems).filter(elem => sos_keywords.has(elem.innerText)).forEach(x => {
+    x.classList.add('sos_hover_doc');
+    x.addEventListener('click', visit_sos_doc);
+  })
+
+}
+
+</script>
+
+
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
@@ -22672,15 +23074,207 @@ mtcars['Mazda RX4']</textarea>
       }
   }
 
-  highlight_cells(document.getElementsByClassName("sos-source"))
+  function applySoSMode( ) {
+    highlight_cells(document.getElementsByClassName("sos-source"))
+  }
+  
+  applySoSMode()
+  
+</script>
 
 
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+
+<script>
+  
+  function indexedHeaders(headings) {
+      if (!headings) {
+          return '';
+      }
+      let counts = [0, 0, 0, 0, 0, 0, 0]
+      for (let i = 0; i < headings.length; ++i) {
+        ++counts[parseInt(headings[i].tagName[1])-1]
+      }
+      // now, we remove the first 1 if it is the first tag, and if
+      // it has only one, and if it is not the only header
+      let first = counts.findIndex(x => x > 0);
+      if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
+         && parseInt(headings[0].tagName[1]) === first + 1) {
+          counts[first] = 0;
+      }
+      //
+      return counts.map((x, idx) => x > 0 ? 'H' + (idx+1) : '').filter(x => x).join(',');
+  }
+
+  function updateTOC ( ) {
+    var content = document.querySelector('.notebook-container')
+    var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+    var headingMap = {}
+
+    Array.prototype.forEach.call(headings, function(heading) {
+      var id = heading.id ? heading.id : heading.textContent.toLowerCase()
+          .split(' ').join('-').split(':').join('');
+      headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
+      if (headingMap[id]) {
+        heading.id = id + '-' + headingMap[id]
+      } else {
+        heading.id = id
+      }
+    })
+
+    tocbot.init({
+      // Where to render the table of contents.
+      tocSelector: '#toc',
+      // Where to grab the headings to build the table of contents.
+      contentSelector: '.notebook-container',
+      // Which headings to grab inside of the contentSelector element.
+      headingSelector: indexedHeaders(headings),
+      //
+      listClass: 'toc-list',
+      extraListClasses: 'nav nav-list',
+      //
+      listItemClass: 'toc-item',
+      //
+      activeListItemClass: 'active',
+      //
+      orderedList: false,
+      //
+      scrollSmooth: true
+    });
+  }
+
+  updateTOC()
 
 </script>
 
 
 
 
+    </div>
+  </div>
+</body>
+
+
+    <script src="../../js/docs.js"></script>
+    <script>
+    function toggle_toc() {
+        let item = document.getElementById('toggle_caret');
+        let expand = item.classList.contains('fa-caret-down');
+        let panel = document.getElementById('toc_panel');
+        if (expand) {
+            item.classList.remove('fa-caret-down');
+            item.classList.add('fa-caret-up');
+            panel.style.display = 'block'
+        } else {
+            item.classList.remove('fa-caret-up');
+            item.classList.add('fa-caret-down');
+            panel.style.display = 'none'
+        }
+    }
+
+    function add_nav_header() {
+        let url = window.location.pathname;
+        let filename = url.substring(url.lastIndexOf('/')+1);
+        let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.lastIndexOf('/'));
+
+        if (dir == 'documentation') {
+            all_docs = documentation;
+        } else if (dir == 'tutorials') {
+            all_docs = tutorials;
+        } else {
+            all_docs = guides;
+        }
+
+        let header = document.getElementsByClassName('toc-header');
+        if (!header) {
+            return;
+        }
+        let idx = all_docs.indexOf(filename.replace(/\.[^/.]+$/, ""))
+        let prev_link = ''
+        let next_link = ''
+        if (idx != 0) {
+            prev_link = `<button onclick="loadPage('${all_docs[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+        }
+        if (idx != all_docs.length - 1) {
+            next_link = `<button onclick="loadPage('${all_docs[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+        }
+        header[0].outerHTML = `
+            <div class="toc-header">
+                <div class="row">
+                    <div class="nav-home">
+                        <a href="https://vatlab.github.io/sos-docs/guide.html#content"><i class="fa fa-home"></i></a>
+                    </div>
+                    <div class="nav-buttons">
+                            ${prev_link}
+                            ${next_link}
+                    </div>
+                </div>
+            </div>
+        `
+    }
+
+    function replacePage(title, url, newdoc, pushState) {
+        window.aa = newdoc;
+        // step 1, find existing cells
+        let nc = document.getElementById('notebook-container');
+        nc.innerHTML = '';
+        var root = document.createElement("div");
+        root.innerHTML = newdoc;
+        // let us find notebook-container in the root
+        let new_nc = root.querySelector('.notebook-container');
+
+        while (new_nc.childNodes.length > 0) {
+            nc.appendChild(new_nc.childNodes[0]);
+        }
+        if (pushState) {
+            history.pushState({'title': title, 'url': url}, title, url);
+        }
+        // update URL
+        add_nav_header()
+        // nav_header
+        tocbot.refresh();
+        // CM
+        applySoSMode();
+    }
+
+    function loadPage(name, pushState=true) {
+        let xhr = new XMLHttpRequest();
+        let href = window.location.href;
+        let base = href.substring(0, href.lastIndexOf('/'));
+        let url = `${base}/${name}.html`;
+        xhr.open('GET', url);
+        xhr.onload = function(e) {
+            if (xhr.status === 200) {
+                replacePage(name, url, xhr.responseText, pushState);
+            }
+            else {
+                console.log(`failed to load ${url}`);
+            }
+        };
+        xhr.onerror = function (e) {
+            console.log('failed')
+            conole.log(e)
+        }
+        xhr.send();
+    }
+
+    add_nav_header();
+
+    function navBack(event) {
+        if (event.state && event.state.title) {
+            console.log(`load ${event.state.title}`)
+            loadPage(event.state.title, false);
+        } else {
+            window.open(document.location);
+        }
+    }
+
+    window.addEventListener('popstate', navBack);
+
+    </script>
 
 
  

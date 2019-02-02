@@ -14222,19 +14222,28 @@ function add_hoverdoc(){
     function add_nav_header() {
         let url = window.location.pathname;
         let filename = url.substring(url.lastIndexOf('/')+1);
+        let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.lastIndexOf('/'));
+
+        if (dir == 'documentation') {
+            all_docs = documentation;
+        } else if (dir == 'tutorials') {
+            all_docs = tutorials;
+        } else {
+            all_docs = guides;
+        }
 
         let header = document.getElementsByClassName('toc-header');
         if (!header) {
             return;
         }
-        let idx = guides.indexOf(filename.replace(/\.[^/.]+$/, ""))
+        let idx = all_docs.indexOf(filename.replace(/\.[^/.]+$/, ""))
         let prev_link = ''
         let next_link = ''
         if (idx != 0) {
-            prev_link = `<button onclick="loadPage('${guides[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+            prev_link = `<button onclick="loadPage('${all_docs[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
         }
-        if (idx != guides.length - 1) {
-            next_link = `<button onclick="loadPage('${guides[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+        if (idx != all_docs.length - 1) {
+            next_link = `<button onclick="loadPage('${all_docs[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
         }
         header[0].outerHTML = `
             <div class="toc-header">
@@ -14277,17 +14286,16 @@ function add_hoverdoc(){
 
     function loadPage(name, pushState=true) {
         let xhr = new XMLHttpRequest();
-        let url = window.location.href;
-        let base = url.substring(0, url.lastIndexOf('/')+1);
-        let url = `${base}/doc/user_guide/${name}.html`;
+        let href = window.location.href;
+        let base = href.substring(0, href.lastIndexOf('/'));
+        let url = `${base}/${name}.html`;
         xhr.open('GET', url);
         xhr.onload = function(e) {
             if (xhr.status === 200) {
                 replacePage(name, url, xhr.responseText, pushState);
             }
             else {
-                console.log(`failed to load ${url}`)
-                alert(`failed to load page ${name}`);
+                console.log(`failed to load ${url}`);
             }
         };
         xhr.onerror = function (e) {

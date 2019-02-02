@@ -1,10 +1,16 @@
 
+
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>SoS_Step</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<title>SoS_Step</title>
 
 <style type="text/css">
     /*!
@@ -11758,7 +11764,7 @@ div#notebook {
 </style>
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
+
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -12426,91 +12432,370 @@ textarea.sos-source {
 
 
 
+
 <style>
-  #notebook-container {
-    padding: 0px;
-    -webkit-box-shadow: 0px 0px 0px 0px;
-	box-shadow: 0px 0px 0px 0px;
-     display: none;
+
+/* The Table of Contents container element */
+.toc-wrapper {
+    width: 20%;
+    max-height: 90%;
+    overflow-y: auto;
+    margin-left: 2%;
+    margin-top: 60px;
+    position: fixed;
+    border: 1px solid #ccc;
+    webkit-border-radius: 6px;
+    moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+/* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
+#toc ul, #toc li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 1.5em;
+}
+
+#toc > .toc-list {
+  overflow: hidden;
+  position: relative;
+
+  li {
+    list-style: none;
   }
+}
+
+#toc > .toc-list  a {
+  margin: 0;
+  padding-left: 10px;
+}
+
+#toc > .toc-list .toc-list a {
+  margin: 0;
+  padding-left: 25px;
+  font-size: 12px;
+}
+
+
+#toc > .toc-list .toc-list .toc-list a {
+  margin: 0;
+  padding-left: 40px;
+  font-size: 12px;
+}
+
+a.toc-link {
+  height: 100%;
+}
+
+.is-collapsible {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: all 300ms ease-in-out;
+}
+
+.is-collapsed {
+  max-height: 0;
+}
+
+.is-position-fixed {
+  position: fixed !important;
+  top: 0;
+}
+
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a, .nav-list .nav-header {
+    margin: 0px;
+}
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a {
+    padding: 5px;
+}
+
+.notebook-container {
+  box-shadow: none;
+}
+
+li.toc-item .is-active-link {
+  background-color: #6197d5;
+  color: white;
+}
+
+.nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+    color: #337ab7;
+}
+
+#notebook-container {
+  box-shadow: none;
+}
+
+/* https://github.com/tscanlin/tocbot/issues/121 */
+h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 </style>
 
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+
+
+<style type="text/css">
+
+.sos_hover_doc:hover {
+  cursor: pointer;
+  background: lightgray;
+  opacity: 50%;
+}
+</style>
+
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="https://vatlab.github.io/sos-docs/css/toc2.css">
+
+<style>
+h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+    display: block;
+    content: " ";
+    height: 80px;
+    margin-top: -80px;
+    visibility: hidden;
+}
 
 
 
+.nav-tabs {
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 12pt;
+    font-weight: normal;
+    font-style: normal;
+    background: #ffffff;
+    text-shadow: none !important;
+    border-color: transparent;
+    border-bottom-color: rgba(180,180,180,.30);
+}
 
-<script src="https://vatlab.github.io/sos-docs/js/doc_toc.js"></script>
-<script src="https://vatlab.github.io/sos-docs/js/docs.js"></script>
-<script>
-$(document).ready(function() {
-    var cfg = {
-        'threshold': 4,
-        'number_sections': false,
-        'toc_cell': false, // useless here
-        'toc_window_display': true, // display the toc window
-        "toc_section_display": "block", // display toc contents in the window
-        'sideBar': true, // sidebar or floating window
-        'navigate_menu': false // navigation menu (only in liveNotebook -- do not change)
-    }
+.nav-tabs > li > a:hover {
+ color: #2f2f2f;
+ background-color: rgba(180,180,180,.14);
+}
+.nav-tabs > li > a:active,
+.nav-tabs > li > a:focus,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+ color: #1c1c1c;
+ background-color: #eeeeee;
+ border: 1px solid transparent;
+ border-bottom-color: transparent;
+ cursor: default;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+ text-decoration: none;
+ background-color: rgba(180,180,180,.14);
+}
 
-    var st = {}; // some variables used in the script
-    st.rendering_toc_cell = false;
-    st.config_loaded = false;
-    st.extension_initialized = false;
-    st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-    st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-    st.nbcontainer_width = $('#notebook-container').css('width')
-    st.oldTocHeight = undefined
-    st.cell_toc = undefined;
-    st.toc_index = 0;
+.nav-tabs > li {
+    float:none;
+    display:inline-block;
+}
 
-    // fire the main function with these parameters
-    table_of_contents(cfg, st);
+.nav-tabs {
+    text-align:center;
+}
 
-    var file = documentationDict[$("h1:first").attr("id")];
-    var path = "http://vatlab.github.io/sos-docs"
-    $("#toc-level0 a").css("color", "#126dce");
-    $('a[href="#' + $("h1:first").attr("id") + '"]').hide()
-    var docs = documentation;
-    var pos = documentation.indexOf(file);
+.nav-tabs li a {font-size:14px; text-transform: uppercase; }
 
-    for (var a = pos; a >= 0; a--) {
-        var name = docs[a]
-        $('<li><a href="' + path + '/doc/documentation/' + name + '.html">' + name.replace(/_/g, " ") +
-            '&nbsp ' + '<i class="fa ' +
-            (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' + '</a></li>').insertBefore("#toc-level0 li:eq(0)");
-    }
-    $('a[href="' + path + '/doc/documentation/' + file + '.html' + '"]').css("color", "#126dce");
+.sticky .nav {
+  background-color: black;
+}
+.sticky .nav-tabs li a {
+    color: white;
+}
+.sticky .nav-tabs li.active a {
+    color: black;
+}
 
+.sticky .nav-tabs li.active .toc a {
+    text-transform: none;
+}
 
-    for (var a = pos + 1; a < docs.length; a++) {
-        var name = docs[a]
-        $(".toc #toc-level0").append('<li><a href="' + path + '/doc/documentation/' + name + '.html">' + name.replace(/_/g, " ") +
-            '&nbsp' + '<i class="fa fa-caret-right"></i>' + '</a></li>');
-    }
-});
-</script>
+.sticky {
+  position: fixed;
+  top: 0;
+  left:0;
+  width: 100%;
+  z-index:100;
+}
 
+#toc_panel {
+    display: none;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: black;
+    color: white;
+    padding-top: 20px;
+}
 
+#toc_panel a {
+    color: white;
+}
+
+#toc_panel code {
+    color: white;
+    background: none;
+}
+
+#toc_panel li:hover {
+    background: gray;
+}
+
+#toc_panel li a:hover {
+    text-decoration: none;
+}
+
+#toc_panel ul {
+    padding-left: 0px;
+    list-style: none;
+}
+
+.toc-wrapper {
+    margin-top: 100px;
+}
+
+.toc-header {
+    background-color: #c3dbf7;
+    height: 60px;
+}
+
+.toc-header .nav-home {
+    float: left;
+    padding-left: 20px;
+}
+.toc-header .nav-buttons {
+    float: right;
+    padding-right: 30px;
+    outline: none;
+}
+
+.toc-header .nav-buttons button {
+    background: transparent;
+    border: none;
+}
+
+.toc-header .nav-buttons button:focus {
+    outline: 0;
+}
+
+.toc-header .fa {
+    font-size: 38px;
+    color: white;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 10px;
+}
+
+.toc-header .fa:hover {
+    color: #6197d5 ;
+}
+</style>
 
 </head>
+    <div id="exTab2" class="container">
+        <a name="content"></a>
+        <nav id="navigation" class="sticky">
+            <ul class="nav nav-tabs">
+                <li><a href="../../index.html#content">Introduction</a> </li>
+                <li><a href="../../running.html#content">Running SoS</a> </li>
+                <li><a href="../../notebook.html#content">SoS Notebook</a> </li>
+                <li><a href="../../workflow.html#content">SoS Workflow System</a> </li>
+                <li><a href="#" onclick="toggle_toc();return false;">User Guide &nbsp; <i class="fa fa-caret-down" id="toggle_caret"></i> </a>  </li>
+            </ul>
+            <div id="toc_panel">
+                <div class="container row-fluid">
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <p>SoS Notebook</p>
+                    <ul>
+                        <li><a href="multi_kernel_notebook.html">Use of SoS notebook</a></li>
+                        <li><a href="expand_capture_render.html">Work with subkernel</a></li>
+                        <li><a href="exchange_variable.html">Data exchange among kernels</a></li>
+                        <li><a href="magic_preview.html">Preview variables and files</a></li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <p>Workflow Basics</p>
+                    <ul>
+                        <li><a href="sos_in_notebook.html">Basic usages</a></li>
+                        <li><a href="scripts_in_sos.html">Inclusion of scripts</a></li>
+                        <li><a href="parameters.html">Parameters</a></li>
+                        <li><a href="input_substeps.html">Step and substeps</a></li>
+                        <li><a href="forward_workflow.html">Basic workflow</a></li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <p>Workflow Definition</p>
+                    <ul>
+                        <li><a href="input_statement.html"><code>input</code> statement</a></li>
+                        <li><a href="output_statement.html"><code>output</code> statement</a></li>
+                        <li><a href="depends_statement.html"><code>depends</code> statement</a></li>
+                        <li><a href="named_output.html"><code>named_output()</code></a></li>
+                        <li><a href="output_from.html"><code>output_from()</code></a></li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <p>Workflow Execution</p>
+                    <ul>
+                        <li><a href="signature.html">Runtime signature</a></li>
+                        <li><a href="trace_dependency.html">Dependency tracing</a></li>
+                        <li><a href="workflow_summary.html">Workflow report</a></li>
+                        <li><a href="https://vatlab.github.io/sos-docs/guide.html#content">A lot more ...</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
 
+
+    
 <body>
-  <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
+  <div class="row-fluid">
+    <div class="col-xs-12 col-sm-4 col-md-3">
+      <div class="toc-wrapper">
+        <div class="toc-header">
+        </div>
+        <div id="toc" class="toc">
+        </div><!--/.well -->
+      </div>
+    </div><!--/span-->
+    <div class="col-xs-12 col-sm-8 col-md-9">
+      
 
+
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="notebook-container" id="notebook-container">
+
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Step-definition">Step definition<a class="anchor-link" href="#Step-definition">&#182;</a></h1>
+<h1 id="Step-definition">Step definition<a class="anchor-link" href="#Step-definition"></a></h1>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12521,14 +12806,16 @@ $(document).ready(function() {
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-variables">Step variables<a class="anchor-link" href="#Step-variables">&#182;</a></h2>
+<h2 id="Step-variables">Step variables<a class="anchor-link" href="#Step-variables"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12600,6 +12887,7 @@ Workflow fecfb67fda2f92df: master id=1663b815c3bed9f2
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12661,6 +12949,7 @@ with open(step_name + '.log', 'w') as log:
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12713,6 +13002,7 @@ else:
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12722,14 +13012,16 @@ else:
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-options-">Step options <a id="Step_options" /><a class="anchor-link" href="#Step-options-">&#182;</a></h2>
+<h2 id="Step-options-">Step options <a id="Step_options" /><a class="anchor-link" href="#Step-options-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12739,11 +13031,12 @@ else:
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-skip">Option <code>skip</code><a class="anchor-link" href="#Option-skip">&#182;</a></h3><p><a id="Option_skip"></a>
+<h3 id="Option-skip">Option <code>skip</code><a class="anchor-link" href="#Option-skip"></a></h3><p><a id="Option_skip"></a>
 Option <code>skip</code> takes two formats, the first format has no value</p>
 
 <pre><code>[10: skip]</code></pre>
@@ -12755,6 +13048,7 @@ Option <code>skip</code> takes two formats, the first format has no value</p>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12803,6 +13097,7 @@ print(f"{step_name} is executed")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12851,24 +13146,27 @@ print(f"{step_name} is executed")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-sigil">Option <code>sigil</code><a class="anchor-link" href="#Option-sigil">&#182;</a></h3><p><a id="Option_sigil"></a>
+<h3 id="Option-sigil">Option <code>sigil</code><a class="anchor-link" href="#Option-sigil"></a></h3><p><a id="Option_sigil"></a>
 Option <code>sigil</code> accepts a string for an alternative sigil, or <code>None</code> to disable string interpolation in the step. The sigil must be two strings separated by a space, such as <code>%( )</code>, <code>&lt; &gt;</code>, and <code>#{ }</code>. Sigils with equal left and right symbol such as <code># #</code> can be used although they do not support features such as nested interpolation. Please refer to section <a href="SoS_Syntax.html">SoS Syntax</a> for details of this option.</p>
 
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-shared-">Option <code>shared</code> <a id="Option_shared" /><a class="anchor-link" href="#Option-shared-">&#182;</a></h3>
+<h3 id="Option-shared-">Option <code>shared</code> <a id="Option_shared" /><a class="anchor-link" href="#Option-shared-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12925,6 +13223,7 @@ print(myvar)</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -12978,6 +13277,7 @@ input: test_output</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13032,6 +13332,7 @@ output 2: b.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13041,6 +13342,7 @@ output 2: b.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13050,6 +13352,7 @@ output 2: b.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13103,6 +13406,7 @@ print(seed)</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13156,6 +13460,7 @@ print(step_seed)</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13211,6 +13516,7 @@ print(summed)</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13281,14 +13587,16 @@ print(summed)</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-provides-">Option <code>provides</code> <a id="Option_provides" /><a class="anchor-link" href="#Option-provides-">&#182;</a></h3>
+<h3 id="Option-provides-">Option <code>provides</code> <a id="Option_provides" /><a class="anchor-link" href="#Option-provides-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13308,14 +13616,16 @@ print(summed)</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-Input-">Step Input <a id="Step_Input" /><a class="anchor-link" href="#Step-Input-">&#182;</a></h2>
+<h2 id="Step-Input-">Step Input <a id="Step_Input" /><a class="anchor-link" href="#Step-Input-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13333,14 +13643,16 @@ print(summed)</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Default-input-of-a-step">Default input of a step<a class="anchor-link" href="#Default-input-of-a-step">&#182;</a></h3>
+<h3 id="Default-input-of-a-step">Default input of a step<a class="anchor-link" href="#Default-input-of-a-step"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13429,14 +13741,16 @@ print(f'Input of step {step_name} is {step_input}')</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Unnamed-input-files">Unnamed input files<a class="anchor-link" href="#Unnamed-input-files">&#182;</a></h3>
+<h3 id="Unnamed-input-files">Unnamed input files<a class="anchor-link" href="#Unnamed-input-files"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13502,6 +13816,7 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13587,6 +13902,7 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13635,6 +13951,7 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13644,14 +13961,16 @@ print(f'step_input is {step_input}')</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Named-input-files">Named input files<a class="anchor-link" href="#Named-input-files">&#182;</a></h3>
+<h3 id="Named-input-files">Named input files<a class="anchor-link" href="#Named-input-files"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13738,6 +14057,7 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13785,6 +14105,7 @@ print(f'step_input is {step_input} with sources {step_input.sources}')</textarea
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13838,14 +14159,16 @@ Reference is ref.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Function--output_from-">Function  <code>output_from</code> <a id="output_from" /><a class="anchor-link" href="#Function--output_from-">&#182;</a></h3>
+<h3 id="Function--output_from-">Function  <code>output_from</code> <a id="output_from" /><a class="anchor-link" href="#Function--output_from-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13942,6 +14265,7 @@ Output of step_20 is b.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -13951,6 +14275,7 @@ Output of step_20 is b.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14048,6 +14373,7 @@ input of step step_30 is a.txt b.txt c.txt with sources [&#39;step_10&#39;, &#39
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14136,6 +14462,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14224,6 +14551,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14316,6 +14644,7 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14325,14 +14654,16 @@ print(f'input of step {step_name} is {step_input} with sources {step_input.sourc
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Function-named_output-">Function <code>named_output</code> <a id="named_output" /><a class="anchor-link" href="#Function-named_output-">&#182;</a></h3>
+<h3 id="Function-named_output-">Function <code>named_output</code> <a id="named_output" /><a class="anchor-link" href="#Function-named_output-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14423,6 +14754,7 @@ a.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14513,6 +14845,7 @@ a.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14522,14 +14855,16 @@ a.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Parameter-group_by-and-substeps-">Parameter <code>group_by</code> and substeps <a id="group_by" /><a class="anchor-link" href="#Parameter-group_by-and-substeps-">&#182;</a></h3>
+<h3 id="Parameter-group_by-and-substeps-">Parameter <code>group_by</code> and substeps <a id="group_by" /><a class="anchor-link" href="#Parameter-group_by-and-substeps-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14579,6 +14914,7 @@ substep input is a.txt b.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14629,6 +14965,7 @@ input of substep 1 is b.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14638,6 +14975,7 @@ input of substep 1 is b.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14750,6 +15088,7 @@ file3 file4
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14885,6 +15224,7 @@ group_by=combinations3
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -14986,6 +15326,7 @@ group_by=pairwise2
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15100,6 +15441,7 @@ group_by=pairsource2
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15114,6 +15456,7 @@ group_by=pairsource2
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15166,14 +15509,16 @@ print(f"{_index}: {_input}")
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="group_by-as-option-to-input-functions"><code>group_by</code> as option to input functions<a class="anchor-link" href="#group_by-as-option-to-input-functions">&#182;</a></h3>
+<h3 id="group_by-as-option-to-input-functions"><code>group_by</code> as option to input functions<a class="anchor-link" href="#group_by-as-option-to-input-functions"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15270,6 +15615,7 @@ print(f"{_index}: {_input} from {_input.sources}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15365,6 +15711,7 @@ print(f"{_index}: {_input} from {_input.sources}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15467,6 +15814,7 @@ substep input is a2 c3 c4 e1 e2 from [&#39;step_10&#39;, &#39;step_20&#39;, &#39
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15567,14 +15915,16 @@ substep input is e1 e2 from [&#39;my&#39;, &#39;my&#39;]
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-for_each-">Option <code>for_each</code> <a id="Option_for_each" /><a class="anchor-link" href="#Option-for_each-">&#182;</a></h3>
+<h3 id="Option-for_each-">Option <code>for_each</code> <a id="Option_for_each" /><a class="anchor-link" href="#Option-for_each-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15662,6 +16012,7 @@ print(f"{_index}: {_input} {_method}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15671,6 +16022,7 @@ print(f"{_index}: {_input} {_method}")</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15680,6 +16032,7 @@ print(f"{_index}: {_input} {_method}")</textarea>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15770,6 +16123,7 @@ print(f"{_index}: _input={_input} _method={_method}, _pars={_pars}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15861,6 +16215,7 @@ print(f"{_index}: _input={_input} _method={_method}, _pars={_pars}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -15953,6 +16308,7 @@ sh: expand=True
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16003,6 +16359,7 @@ print(f"{_index}: {_input} {method}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16092,6 +16449,7 @@ print(f"{_index}: _input={_input} method={method}, pars={pars}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16184,14 +16542,16 @@ print(f"{_index} {outfile[_index]} {_n} {_p}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-paired_with-">Option <code>paired_with</code> <a id="Option_paired_with" /><a class="anchor-link" href="#Option-paired_with-">&#182;</a></h3>
+<h3 id="Option-paired_with-">Option <code>paired_with</code> <a id="Option_paired_with" /><a class="anchor-link" href="#Option-paired_with-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16248,6 +16608,7 @@ Sample ctrl/A2.bam is of type ctrl
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16312,6 +16673,7 @@ Sample ctrl/A2.bam is of type ctrl
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16373,6 +16735,7 @@ print(f"{_index}: _input={_input} _mutated={_input._mutated}, _sample_name={_inp
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16426,6 +16789,7 @@ print(f"{_index}: _input={_input} _mutated={_mutated}, _sample_name={_sample_nam
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16435,14 +16799,16 @@ print(f"{_index}: _input={_input} _mutated={_mutated}, _sample_name={_sample_nam
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-group_with-">Option <code>group_with</code> <a id="Option_group_with" /><a class="anchor-link" href="#Option-group_with-">&#182;</a></h3>
+<h3 id="Option-group_with-">Option <code>group_with</code> <a id="Option_group_with" /><a class="anchor-link" href="#Option-group_with-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16497,6 +16863,7 @@ print(f"{_index}: _input={_input} _mutated={_mutated}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16549,14 +16916,16 @@ print(f"{_index}: _input={_input} mutated={mutated}")</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-pattern-">Option <code>pattern</code> <a id="Option_pattern" /><a class="anchor-link" href="#Option-pattern-">&#182;</a></h3>
+<h3 id="Option-pattern-">Option <code>pattern</code> <a id="Option_pattern" /><a class="anchor-link" href="#Option-pattern-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16610,6 +16979,7 @@ sh: expand=True
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16619,6 +16989,7 @@ sh: expand=True
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16673,14 +17044,16 @@ b-processed-10.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-concurrent-">Option <code>concurrent</code> <a id="Option_concurrent" /><a class="anchor-link" href="#Option-concurrent-">&#182;</a></h3>
+<h3 id="Option-concurrent-">Option <code>concurrent</code> <a id="Option_concurrent" /><a class="anchor-link" href="#Option-concurrent-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16734,6 +17107,7 @@ sum is 0 at index 3, completed in 4.7 seconds
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16786,6 +17160,7 @@ sum is 3 at index 3
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16837,14 +17212,16 @@ sum is 6 at index 3
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="dynamic-input-files"><code>dynamic</code> input files<a class="anchor-link" href="#dynamic-input-files">&#182;</a></h3>
+<h3 id="dynamic-input-files"><code>dynamic</code> input files<a class="anchor-link" href="#dynamic-input-files"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16865,14 +17242,16 @@ steps have been completed.</p>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Inherited-input-with-groups">Inherited input with groups<a class="anchor-link" href="#Inherited-input-with-groups">&#182;</a></h3>
+<h3 id="Inherited-input-with-groups">Inherited input with groups<a class="anchor-link" href="#Inherited-input-with-groups"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16964,6 +17343,7 @@ out_1.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -16974,6 +17354,7 @@ out_1.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17063,6 +17444,7 @@ print(_input)</textarea>
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17158,6 +17540,7 @@ A_2.txt A_3.txt B_1.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17250,11 +17633,12 @@ B_3.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h3><p>Options of step <code>input</code> are evaluated in the following orders:</p>
+<h3 id="Summary">Summary<a class="anchor-link" href="#Summary"></a></h3><p>Options of step <code>input</code> are evaluated in the following orders:</p>
 <ol>
 <li>A list of input files, if specified, would replace <code>input</code>, which is by default output from the previous step.</li>
 <li>Option <code>group_by</code> groups the files into several groups, named <code>_input</code></li>
@@ -17270,22 +17654,25 @@ B_3.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-output-">Step output <a id="Step_output" /><a class="anchor-link" href="#Step-output-">&#182;</a></h2>
+<h2 id="Step-output-">Step output <a id="Step_output" /><a class="anchor-link" href="#Step-output-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Output-files-">Output files <a id="Output_files" /><a class="anchor-link" href="#Output-files-">&#182;</a></h3>
+<h3 id="Output-files-">Output files <a id="Output_files" /><a class="anchor-link" href="#Output-files-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17306,6 +17693,7 @@ B_3.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17327,6 +17715,7 @@ B_3.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17347,14 +17736,16 @@ B_3.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-group_by-">Option <code>group_by</code> <a id="Option_group_by" /><a class="anchor-link" href="#Option-group_by-">&#182;</a></h3>
+<h3 id="Option-group_by-">Option <code>group_by</code> <a id="Option_group_by" /><a class="anchor-link" href="#Option-group_by-"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17451,6 +17842,7 @@ b_1.txt
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17460,14 +17852,16 @@ b_1.txt
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Options-paired_with,-group_with,-pattern,-and-for_each">Options <code>paired_with</code>, <code>group_with</code>, <code>pattern</code>, and <code>for_each</code><a class="anchor-link" href="#Options-paired_with,-group_with,-pattern,-and-for_each">&#182;</a></h3>
+<h3 id="Options-paired_with,-group_with,-pattern,-and-for_each">Options <code>paired_with</code>, <code>group_with</code>, <code>pattern</code>, and <code>for_each</code><a class="anchor-link" href="#Options-paired_with,-group_with,-pattern,-and-for_each"></a></h3>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17568,6 +17962,7 @@ b.txt.result with sample name B
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17662,11 +18057,12 @@ a_3.txt with variable i=3
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="dynamic-output-files"><code>dynamic</code> output files<a class="anchor-link" href="#dynamic-output-files">&#182;</a></h3><p>Similar to the cases with <a href="#dynamically-determined-input-files-function-dynamic">dynamic input files</a>, the output of some steps could also not be determined beforehand. For example, with the following script that generates <code>html</code> files that cannot be determined during dry run,</p>
+<h3 id="dynamic-output-files"><code>dynamic</code> output files<a class="anchor-link" href="#dynamic-output-files"></a></h3><p>Similar to the cases with <a href="#dynamically-determined-input-files-function-dynamic">dynamic input files</a>, the output of some steps could also not be determined beforehand. For example, with the following script that generates <code>html</code> files that cannot be determined during dry run,</p>
 
 </div>
 </div>
@@ -17727,6 +18123,7 @@ Output target *.html does not exist after the completion of step default_10
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17781,6 +18178,7 @@ touch result_7.html
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17790,14 +18188,16 @@ touch result_7.html
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-depends-">Step depends <a id="Step_depends" /><a class="anchor-link" href="#Step-depends-">&#182;</a></h2>
+<h2 id="Step-depends-">Step depends <a id="Step_depends" /><a class="anchor-link" href="#Step-depends-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17812,6 +18212,7 @@ touch result_7.html
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17823,14 +18224,16 @@ of input and output files and related variables.</p>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-process-">Step process <a id="Step_process" /><a class="anchor-link" href="#Step-process-">&#182;</a></h2>
+<h2 id="Step-process-">Step process <a id="Step_process" /><a class="anchor-link" href="#Step-process-"></a></h2>
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17863,6 +18266,7 @@ with open(_output[0], 'w') as dest:
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17895,6 +18299,7 @@ sh: expand=True
 </div>
 
 
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17904,6 +18309,7 @@ sh: expand=True
 </div>
 </div>
 </div>
+  
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -17915,7 +18321,61 @@ sh: expand=True
 </div>
     </div>
   </div>
-</body>
+
+
+
+<script>
+
+let sos_keywords = new Set([
+  // keywords
+  'input:', 'output:', 'depends:', 'task:',
+  // options
+  'expand',
+  // input options
+  'for_each', 'paired_with', 'group_with', 'pattern',
+  'named_output', 'output_from',
+  // functions
+  'sos_run', 'fail_if', 'done_if', 'warn_if', 'skip_if',
+  'get_output',
+  // task options
+  'walltime', 'cores', 'mem', 'queue', 'to_host',
+  'from_host', 'map_vars', 'trunk_size', 'trunk_workers', 'workdir',
+  'concurrent', 'shared', 'env', 'prepend_path', 'tags',
+  // targets
+  'file_target', 'executable', 'sos_variable', 'env_variable',
+  'sos_step', 'dynamic', 'remote', 'system_resource',
+  'Py_Module', 'R_Library',
+  // actions
+  'run:', 'script:', 'report:', 'bash:', 'sh:',
+  'csh:', 'tcsh', 'zsh:', 'perl:', 'ruby:', 'node:',
+  'pandoc:', 'docker_build:', 'download:', 'julia:',
+  'R:', 'matlab:', 'python:', 'python2:', 'python3:',
+  // magics
+  '%capture', '%cd', '%clear', '%debug', '%dict',
+  '%expand', '%get', '%matplotlib', '%preview', '%pull',
+  '%push', '%put', '%render', '%run', '%runfile', '%revisions',
+  '%save', '%set', '%sessioninfo', '%shutdown', '%sosrun',
+  '%sossave', '%task', '%toc', '%sandbox', '%use', '%with'
+  ]
+)
+
+function visit_sos_doc(evt) {
+  window.open(`https://vatlab.github.io/sos-docs/redirect_doc.html?${evt.target.innerText}`, '_blank');
+}
+
+function add_hoverdoc(){
+  let elems = ['cm-keyword cm-strong', 'cm-variable cm-sos-option', 'cm-builtin cm-strong', 'cm-meta'].map(
+    cls => Array.from(document.getElementsByClassName(cls))).reduce((r, a) => r.concat(a), [])
+  Array.from(elems).filter(elem => sos_keywords.has(elem.innerText)).forEach(x => {
+    x.classList.add('sos_hover_doc');
+    x.addEventListener('click', visit_sos_doc);
+  })
+
+}
+
+</script>
+
+
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
@@ -18517,15 +18977,207 @@ sh: expand=True
       }
   }
 
-  highlight_cells(document.getElementsByClassName("sos-source"))
+  function applySoSMode( ) {
+    highlight_cells(document.getElementsByClassName("sos-source"))
+  }
+  
+  applySoSMode()
+  
+</script>
 
 
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+
+<script>
+  
+  function indexedHeaders(headings) {
+      if (!headings) {
+          return '';
+      }
+      let counts = [0, 0, 0, 0, 0, 0, 0]
+      for (let i = 0; i < headings.length; ++i) {
+        ++counts[parseInt(headings[i].tagName[1])-1]
+      }
+      // now, we remove the first 1 if it is the first tag, and if
+      // it has only one, and if it is not the only header
+      let first = counts.findIndex(x => x > 0);
+      if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
+         && parseInt(headings[0].tagName[1]) === first + 1) {
+          counts[first] = 0;
+      }
+      //
+      return counts.map((x, idx) => x > 0 ? 'H' + (idx+1) : '').filter(x => x).join(',');
+  }
+
+  function updateTOC ( ) {
+    var content = document.querySelector('.notebook-container')
+    var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+    var headingMap = {}
+
+    Array.prototype.forEach.call(headings, function(heading) {
+      var id = heading.id ? heading.id : heading.textContent.toLowerCase()
+          .split(' ').join('-').split(':').join('');
+      headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
+      if (headingMap[id]) {
+        heading.id = id + '-' + headingMap[id]
+      } else {
+        heading.id = id
+      }
+    })
+
+    tocbot.init({
+      // Where to render the table of contents.
+      tocSelector: '#toc',
+      // Where to grab the headings to build the table of contents.
+      contentSelector: '.notebook-container',
+      // Which headings to grab inside of the contentSelector element.
+      headingSelector: indexedHeaders(headings),
+      //
+      listClass: 'toc-list',
+      extraListClasses: 'nav nav-list',
+      //
+      listItemClass: 'toc-item',
+      //
+      activeListItemClass: 'active',
+      //
+      orderedList: false,
+      //
+      scrollSmooth: true
+    });
+  }
+
+  updateTOC()
 
 </script>
 
 
 
 
+    </div>
+  </div>
+</body>
+
+
+    <script src="../../js/docs.js"></script>
+    <script>
+    function toggle_toc() {
+        let item = document.getElementById('toggle_caret');
+        let expand = item.classList.contains('fa-caret-down');
+        let panel = document.getElementById('toc_panel');
+        if (expand) {
+            item.classList.remove('fa-caret-down');
+            item.classList.add('fa-caret-up');
+            panel.style.display = 'block'
+        } else {
+            item.classList.remove('fa-caret-up');
+            item.classList.add('fa-caret-down');
+            panel.style.display = 'none'
+        }
+    }
+
+    function add_nav_header() {
+        let url = window.location.pathname;
+        let filename = url.substring(url.lastIndexOf('/')+1);
+        let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.lastIndexOf('/'));
+
+        if (dir == 'documentation') {
+            all_docs = documentation;
+        } else if (dir == 'tutorials') {
+            all_docs = tutorials;
+        } else {
+            all_docs = guides;
+        }
+
+        let header = document.getElementsByClassName('toc-header');
+        if (!header) {
+            return;
+        }
+        let idx = all_docs.indexOf(filename.replace(/\.[^/.]+$/, ""))
+        let prev_link = ''
+        let next_link = ''
+        if (idx != 0) {
+            prev_link = `<button onclick="loadPage('${all_docs[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+        }
+        if (idx != all_docs.length - 1) {
+            next_link = `<button onclick="loadPage('${all_docs[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+        }
+        header[0].outerHTML = `
+            <div class="toc-header">
+                <div class="row">
+                    <div class="nav-home">
+                        <a href="https://vatlab.github.io/sos-docs/guide.html#content"><i class="fa fa-home"></i></a>
+                    </div>
+                    <div class="nav-buttons">
+                            ${prev_link}
+                            ${next_link}
+                    </div>
+                </div>
+            </div>
+        `
+    }
+
+    function replacePage(title, url, newdoc, pushState) {
+        window.aa = newdoc;
+        // step 1, find existing cells
+        let nc = document.getElementById('notebook-container');
+        nc.innerHTML = '';
+        var root = document.createElement("div");
+        root.innerHTML = newdoc;
+        // let us find notebook-container in the root
+        let new_nc = root.querySelector('.notebook-container');
+
+        while (new_nc.childNodes.length > 0) {
+            nc.appendChild(new_nc.childNodes[0]);
+        }
+        if (pushState) {
+            history.pushState({'title': title, 'url': url}, title, url);
+        }
+        // update URL
+        add_nav_header()
+        // nav_header
+        tocbot.refresh();
+        // CM
+        applySoSMode();
+    }
+
+    function loadPage(name, pushState=true) {
+        let xhr = new XMLHttpRequest();
+        let href = window.location.href;
+        let base = href.substring(0, href.lastIndexOf('/'));
+        let url = `${base}/${name}.html`;
+        xhr.open('GET', url);
+        xhr.onload = function(e) {
+            if (xhr.status === 200) {
+                replacePage(name, url, xhr.responseText, pushState);
+            }
+            else {
+                console.log(`failed to load ${url}`);
+            }
+        };
+        xhr.onerror = function (e) {
+            console.log('failed')
+            conole.log(e)
+        }
+        xhr.send();
+    }
+
+    add_nav_header();
+
+    function navBack(event) {
+        if (event.state && event.state.title) {
+            console.log(`load ${event.state.title}`)
+            loadPage(event.state.title, false);
+        } else {
+            window.open(document.location);
+        }
+    }
+
+    window.addEventListener('popstate', navBack);
+
+    </script>
 
 
  
