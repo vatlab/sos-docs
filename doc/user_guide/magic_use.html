@@ -12441,9 +12441,11 @@ textarea.sos-source {
 
 /* The Table of Contents container element */
 .toc-wrapper {
+    flex-flow: column;
+    display: flex;
+
     width: 20%;
-    max-height: 90%;
-    overflow-y: auto;
+    max-height: calc(100% - 120px);
     margin-left: 2%;
     margin-top: 60px;
     position: fixed;
@@ -12453,7 +12455,16 @@ textarea.sos-source {
     border-radius: 6px;
 }
 
+.toc-header {
+  flex: 0 1 auto;
+}
+
 /* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
+#toc {
+      overflow-y: auto;
+      flex: 1 1 auto;
+}
+
 #toc ul, #toc li {
     list-style: none;
     margin: 0;
@@ -12655,6 +12666,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 
 .toc-wrapper {
     margin-top: 100px;
+    max-height: calc(100% - 160px);
 }
 
 .toc-header {
@@ -13768,6 +13780,26 @@ function add_hoverdoc(){
 
 <script>
 
+  function fixIDsForToc(headings = null) {
+    let headingMap = {}
+
+    if (!headings) {
+      let content = document.querySelector('.notebook-container')
+      headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+    }
+    Array.prototype.forEach.call(headings, function(heading) {
+      var id = heading.id ? heading.id : heading.textContent.toLowerCase();
+      id = id.split(' ').join('-').replace(/["'\!\@\#\$\%\^\&\*\(\)\:]/ig, '');
+      headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
+      if (headingMap[id]) {
+        heading.id = id + '-' + headingMap[id]
+      } else {
+        heading.id = id
+      }
+    })
+  }
+
+
   function indexedHeaders(headings) {
       if (!headings) {
           return '';
@@ -13787,21 +13819,12 @@ function add_hoverdoc(){
       return counts.map((x, idx) => x > 0 ? 'H' + (idx+1) : '').filter(x => x).join(',');
   }
 
+
   function updateTOC ( ) {
     var content = document.querySelector('.notebook-container')
     var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
-    var headingMap = {}
 
-    Array.prototype.forEach.call(headings, function(heading) {
-      var id = heading.id ? heading.id : heading.textContent.toLowerCase()
-            .split(' ').join('-').replace(/[\!\@\#\$\%\^\&\*\(\)\:]/ig, '');
-      headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
-      if (headingMap[id]) {
-        heading.id = id + '-' + headingMap[id]
-      } else {
-        heading.id = id
-      }
-    })
+    fixIDsForToc(headings);
 
     tocbot.init({
       // Where to render the table of contents.
@@ -13964,6 +13987,7 @@ function replacePage(title, url, newdoc, pushState) {
     // update URL
     add_nav_header()
     // nav_header
+    fixIDsForToc();
     tocbot.refresh();
     // CM
     if (typeof applySoSMode === "function") {
@@ -13997,9 +14021,12 @@ function navBack(event) {
     if (event.state && event.state.title) {
         console.log(`load ${event.state.title}`)
         loadPage(event.state.title, false);
-    } else {
-        window.open(document.location);
     }
+    // else {
+    //    window.open(document.location);
+    // }
+    console.log(event)
+    console.log(`Location ${document.location}`)
 }
 
 window.addEventListener('popstate', navBack);
