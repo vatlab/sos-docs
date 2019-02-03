@@ -22,6 +22,7 @@ var tipuesearch = {"pages": [
 {"mainTitle": "SoS Workflow System (CLI)", "title": "R", "text": "R ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/running.html", "url": "https://vatlab.github.io/sos-docs/running.html#R"},
 {"mainTitle": "SoS Workflow System (CLI)", "title": "Ruby", "text": "Ruby ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/running.html", "url": "https://vatlab.github.io/sos-docs/running.html#Ruby"},
 {"mainTitle": "SoS Workflow System (CLI)", "title": "SAS", "text": "SAS ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/running.html", "url": "https://vatlab.github.io/sos-docs/running.html#SAS"},
+{"mainTitle": "SoS Workflow System (CLI)", "title": "Stata", "text": "Stata ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/running.html", "url": "https://vatlab.github.io/sos-docs/running.html#Stata"},
 {"mainTitle": "SoS Workflow System (CLI)", "title": "TypeScript", "text": "TypeScript ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/running.html", "url": "https://vatlab.github.io/sos-docs/running.html#TypeScript"},
 {"mainTitle": "SoS Workflow System (CLI)", "title": "Notes", "text": "Notes ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/running.html", "url": "https://vatlab.github.io/sos-docs/running.html#Notes"},
 {"mainTitle": "SoS Workflow System (CLI)", "title": "Remote access", "text": "Remote access ", "tags": "", "mainUrl": "https://vatlab.github.io/sos-docs/running.html", "url": "https://vatlab.github.io/sos-docs/running.html#Remote-access"},
