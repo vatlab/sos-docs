@@ -6,6 +6,7 @@
 
 .toc-wrapper {
     margin-top: 100px;
+    max-height: calc(100% - 160px);
 }
 
 .toc-header {
@@ -108,6 +109,7 @@ function replacePage(title, url, newdoc, pushState) {
     // update URL
     add_nav_header()
     // nav_header
+    fixIDsForToc();
     tocbot.refresh();
     // CM
     if (typeof applySoSMode === "function") {
@@ -141,9 +143,12 @@ function navBack(event) {
     if (event.state && event.state.title) {
         console.log(`load ${event.state.title}`)
         loadPage(event.state.title, false);
-    } else {
-        window.open(document.location);
     }
+    // else {
+    //    window.open(document.location);
+    // }
+    //console.log(event)
+    //console.log(`Location ${document.location}`)
 }
 
 window.addEventListener('popstate', navBack);
