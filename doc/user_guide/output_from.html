@@ -13521,7 +13521,7 @@ Output from step_20 is b.txt
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="groups-of-output-returned-from-output_from">groups of output returned from <code>output_from</code><a class="anchor-link" href="#groups-of-output-returned-from-output_from"></a></h3>
+<h3 id="Groups-of-output-returned-from-output_from">Groups of output returned from <code>output_from</code><a class="anchor-link" href="#Groups-of-output-returned-from-output_from"></a></h3>
 </div>
 </div>
 </div>
@@ -13980,6 +13980,90 @@ print(_input)</textarea>
 
 output_1.txt
 output_3.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Output-from-a-workflow">Output from a workflow<a class="anchor-link" href="#Output-from-a-workflow"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-info" role="alert">
+    <h4>Function <code>output_from(workflow_name)</code></h4>
+    <p><code>output_from(workflow_name)</code> is equivalent to <code>output_from(workflow_name_index)</code> where <code>index</code> is the largest index of the workflow <code>workflow_name</code></p>
+ </div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Function <code>output_from</code> is usually used to refer the output of a specific step. However, similar to <a href="target_sos_step.html">target <code>sos_step</code> that can refer to a numerically indexed workflow</a>, <code>output_from</code> can also accept the name of the workflow and returns the output of the last step of the workflow.</p>
+<p>For example, in the following workflow, <code>output_from('A')</code> is used to obtain the output of step <code>A_2</code>, which is the last step of the workflow <code>A</code>. Although <code>output_from('A')</code> is identical to <code>output_from('A_2')</code>, it frees you from specifying the index of the last step of the workflow, and is more intuitive to think <code>output_from('A')</code> as the output of the workflow.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="SoS">%run -v0 
+
+[A_1]
+print(f'Running {step_name} to analye data')
+
+[A_2]
+output: 'result.txt'
+
+print(f'Running {step_name} to generate result')
+_output.touch()
+
+[default]
+input: output_from('A')
+
+print(f'Input of the {step_name} is {_input}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Running A_1 to analye data
+Running A_2 to generate result
+Input of the default is result.txt
 </pre>
 </div>
 </div>
