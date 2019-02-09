@@ -1,7 +1,9 @@
 /**
+ *
  * Copyright (c) Bo Peng and UT MD Anderson Cancer Center
  * Distributed under the terms of the Modified BSD License.
  **/
+
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
