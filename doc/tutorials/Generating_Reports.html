@@ -11722,6 +11722,19 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
+<style type="text/css">
+    /*This file contains any manual css for this page that needs to override the global styles.
+This is only required when different pages style the same element differently. This is just
+a hack to deal with our current css styles and no new styling should be added in this file.*/
+
+#ipython-main-app {
+    position: relative;
+}
+#jupyter-main-app {
+    position: relative;
+}
+
+    </style>
 
 
 <style type="text/css">
@@ -11751,7 +11764,7 @@ div#notebook {
 </style>
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
+
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
@@ -12303,15 +12316,15 @@ font-style: italic;
 
 
 <style>
-   .lan_Bash .input_prompt {
+   .sos_lan_Bash .input_prompt {
       background-color: #E6EEFF !important;
-    }.lan_Julia .input_prompt {
+    }.sos_lan_Julia .input_prompt {
       background-color: #ebd8eb !important;
-    }.lan_MATLAB .input_prompt {
+    }.sos_lan_MATLAB .input_prompt {
       background-color: #dff8fb !important;
-    }.lan_Python3 .input_prompt {
+    }.sos_lan_Python3 .input_prompt {
       background-color: #FFE771 !important;
-    }.lan_R .input_prompt {
+    }.sos_lan_R .input_prompt {
       background-color: #DCDCDA !important;
     }
 </style>
@@ -12433,10 +12446,12 @@ textarea.sos-source {
 <style>
 
 /* The Table of Contents container element */
-#toc {
+.toc-wrapper {
+    flex-flow: column;
+    display: flex;
+
     width: 20%;
-    max-height: 90%;
-    overflow-y: auto;
+    max-height: calc(100% - 120px);
     margin-left: 2%;
     margin-top: 60px;
     position: fixed;
@@ -12446,7 +12461,16 @@ textarea.sos-source {
     border-radius: 6px;
 }
 
+.toc-header {
+  flex: 0 1 auto;
+}
+
 /* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
+#toc {
+      overflow-y: auto;
+      flex: 1 1 auto;
+}
+
 #toc ul, #toc li {
     list-style: none;
     margin: 0;
@@ -12758,8 +12782,12 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <div id="toc">
-      </div><!--/.well -->
+      <div class="toc-wrapper">
+        <div class="toc-header">
+        </div>
+        <div id="toc" class="toc">
+        </div><!--/.well -->
+      </div>
     </div><!--/span-->
     <div class="col-xs-12 col-sm-8 col-md-9">
       
@@ -12807,7 +12835,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12884,7 +12912,7 @@ report: expand=True
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12961,7 +12989,7 @@ report: output='summary.md', expand=True
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -13025,7 +13053,7 @@ pandoc: output='summary.html', expand=True
 </div>
 </div>
 
-<div class="lan_SoS">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -13735,9 +13763,11 @@ function add_hoverdoc(){
       }
   }
 
-  highlight_cells(document.getElementsByClassName("sos-source"))
+  function applySoSMode( ) {
+    highlight_cells(document.getElementsByClassName("sos-source"))
+  }
 
-
+  applySoSMode()
 
 </script>
 
@@ -13748,9 +13778,26 @@ function add_hoverdoc(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
 
 <script>
-  var content = document.querySelector('.notebook-container')
-  var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
-  var headingMap = {}
+
+  function fixIDsForToc(headings = null) {
+    let headingMap = {}
+
+    if (!headings) {
+      let content = document.querySelector('.notebook-container')
+      headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+    }
+    Array.prototype.forEach.call(headings, function(heading) {
+      var id = heading.id ? heading.id : heading.textContent.toLowerCase();
+      id = id.split(' ').join('-').replace(/["'\!\@\#\$\%\^\&\*\(\)\:]/ig, '');
+      headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
+      if (headingMap[id]) {
+        heading.id = id + '-' + headingMap[id]
+      } else {
+        heading.id = id
+      }
+    })
+  }
+
 
   function indexedHeaders(headings) {
       if (!headings) {
@@ -13763,7 +13810,6 @@ function add_hoverdoc(){
       // now, we remove the first 1 if it is the first tag, and if
       // it has only one, and if it is not the only header
       let first = counts.findIndex(x => x > 0);
-      console.log(first)
       if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
          && parseInt(headings[0].tagName[1]) === first + 1) {
           counts[first] = 0;
@@ -13772,36 +13818,36 @@ function add_hoverdoc(){
       return counts.map((x, idx) => x > 0 ? 'H' + (idx+1) : '').filter(x => x).join(',');
   }
 
-  Array.prototype.forEach.call(headings, function(heading) {
-    var id = heading.id ? heading.id : heading.textContent.toLowerCase()
-        .split(' ').join('-').split(':').join('');
-    headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
-    if (headingMap[id]) {
-      heading.id = id + '-' + headingMap[id]
-    } else {
-      heading.id = id
-    }
-  })
 
-  tocbot.init({
-    // Where to render the table of contents.
-    tocSelector: '#toc',
-    // Where to grab the headings to build the table of contents.
-    contentSelector: '.notebook-container',
-    // Which headings to grab inside of the contentSelector element.
-    headingSelector: indexedHeaders(headings),
-    //
-    listClass: 'toc-list',
-    extraListClasses: 'nav nav-list',
-    //
-    listItemClass: 'toc-item',
-    //
-    activeListItemClass: 'active',
-    //
-    orderedList: false,
-    //
-    scrollSmooth: true
-  });
+  function updateTOC ( ) {
+    var content = document.querySelector('.notebook-container')
+    var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+
+    fixIDsForToc(headings);
+
+    tocbot.init({
+      // Where to render the table of contents.
+      tocSelector: '#toc',
+      // Where to grab the headings to build the table of contents.
+      contentSelector: '.notebook-container',
+      // Which headings to grab inside of the contentSelector element.
+      headingSelector: indexedHeaders(headings),
+      //
+      listClass: 'toc-list',
+      extraListClasses: 'nav nav-list',
+      //
+      listItemClass: 'toc-item',
+      //
+      activeListItemClass: 'active',
+      //
+      orderedList: false,
+      //
+      scrollSmooth: true
+    });
+  }
+
+  updateTOC()
+
 </script>
 
 
