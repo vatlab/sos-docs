@@ -19,4 +19,3 @@ RUN     cd /home/jovyan; git clone https://github.com/sosdocs/sos-docs.git && cd
 
 # copy git credential
 COPY    file1 /home/jovyan/.gitconfig
-COPY    file2 /home/jovyan/.git-credentials
