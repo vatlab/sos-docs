@@ -10,7 +10,7 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 
 def push_changes():
     # commit the changes
-    print(f'\n\nPushing branch {BRANCH}\n')
+    print(f'Pushing to branch {BRANCH}')
     child = pexpect.spawn(f'git push origin {BRANCH}', cwd=DIR)
     while True:
         prompt = child.expect([
@@ -25,10 +25,11 @@ def push_changes():
         elif prompt == 2:
             child.close()
             break
-    print(child.before.decode())
+    if child.exitstatus != 0:
+        print(child.before.decode())
 
 def create_pull_request():
-    print('\n\nCreating pull request\n')
+    print('Creating pull request')
     child = pexpect.spawn(f'hub pull-request --base vatlab/sos-docs:master -m "sos-docs updated from sos live server"',
         cwd=DIR)
     while True:
@@ -42,7 +43,6 @@ def create_pull_request():
         elif prompt == 1:
             child.sendline('PASSWORD')
         elif prompt == 2:
-            print(child.before.decode())
             child.close()
             break
     print(child.before.decode())
@@ -51,12 +51,14 @@ if __name__ == '__main__':
     DIR = '/home/jovyan/sos-docs'
     BRANCH = id_generator(6)
 
-    print('\nSyncing with upstream master...\n')
-    subprocess.call('git fetch upstream master', cwd=DIR, shell=True)
-    subprocess.call(f'git checkout -b {BRANCH} FETCH_HEAD', cwd=DIR, shell=True)
+    print('\nSyncing with upstream master...')
+    subprocess.call('git fetch upstream master', cwd=DIR, shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    print(f'Creating a new branch {BRANCH}')
+    subprocess.call(f'git checkout -b {BRANCH} FETCH_HEAD', cwd=DIR, shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
     # get a list of changed files
-    out = subprocess.check_output('git diff --name-only', cwd=DIR, shell=True).decode()
+    out = subprocess.check_output('git diff --name-only', cwd=DIR, shell=True,
+        stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL).decode()
 
     # out should be something like
     #
@@ -64,10 +66,11 @@ if __name__ == '__main__':
     for file in out.splitlines():
         if file.startswith('src/') and file.endswith('.ipynb'):
             dest = file.replace('src', 'doc').replace('.ipynb', '.html')
-            print(f'Converting {file} to {dest}')
+            print(f'Converting {file}')
             subprocess.call(f'sos convert {DIR}/{file} {DIR}/{dest}  --template {DIR}/src/templates/sos-doc-with-banner.tpl',
-                cwd=DIR, shell=True)
+                cwd=DIR, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, shell=True)
 
+    print('Committing changes...')
     subprocess.call(['git', 'commit', '.', '-m', 'Update {" ".join(out.splitlines())}'],
         cwd=DIR)
 
