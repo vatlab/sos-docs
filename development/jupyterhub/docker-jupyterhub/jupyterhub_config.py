@@ -26,4 +26,4 @@ c.DockerSpawner.remove = True
 #c.DockerSpawner.extra_create_kwargs.update({ 'command': 'start-singleuser.sh' })
 
 # mount dir
-c.DockerSpawner.volumes = {f'/home/sos/sos-docs/src': '/home/jovyan/sos-docs/' }
+c.DockerSpawner.volumes = {f'/home/sos/sos-docs': '/home/jovyan/sos-docs/' }
