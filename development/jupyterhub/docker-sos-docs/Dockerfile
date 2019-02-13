@@ -18,5 +18,5 @@ USER    jovyan
 RUN     cd /home/jovyan; git clone https://github.com/sosdocs/sos-docs.git && cd sos-docs && git remote add upstream https://github.com/vatlab/sos-docs.git && git fetch upstream master && git merge upstream/master
 
 # copy git credential
-COPY    .gitconfig /home/jovyan
-COPY    .git-credentials /home/jovyan
+COPY    file1 /home/jovyan/.gitconfig
+COPY    file2 /home/jovyan/.git-credentials
