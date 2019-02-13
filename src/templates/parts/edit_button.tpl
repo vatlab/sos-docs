@@ -11,8 +11,17 @@
 .edit-me {
     position: fixed;
     top: 0;
-    right: 0px;
+    right: 10px;
     z-index: 200;
+}
+
+.edit-me .btn-primary {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.edit-me .btn-primary:hover {
+    border-color: white;
 }
 
 </style>
