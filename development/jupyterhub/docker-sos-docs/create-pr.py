@@ -51,7 +51,7 @@ if __name__ == '__main__':
     DIR = '/home/jovyan/sos-docs'
     BRANCH = id_generator(6)
 
-    print('\nSyncing with upstream master...')
+    print('Syncing with upstream master')
     subprocess.call('git fetch upstream master', cwd=DIR, shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
     print(f'Creating a new branch {BRANCH}')
     subprocess.call(f'git checkout -b {BRANCH} FETCH_HEAD', cwd=DIR, shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
@@ -69,7 +69,7 @@ if __name__ == '__main__':
             subprocess.call(f'sos convert {DIR}/{file} {DIR}/{dest}  --template {DIR}/src/templates/sos-doc-with-banner.tpl',
                 cwd=DIR, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, shell=True)
 
-    print('Committing changes...')
+    print('Committing changes')
     subprocess.call(['git', 'commit', '.', '-m', 'Update {" ".join(out.splitlines())}'],
         cwd=DIR)
 
