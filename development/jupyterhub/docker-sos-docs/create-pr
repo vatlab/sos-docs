@@ -1,10 +1,24 @@
 # Copyright (c) Bo Peng and the University of Texas MD Anderson Cancer Center
 # Distributed under the terms of the 3-clause BSD License.
 
-cd ~/sos-docs/development
+cd /home/jovyan/sos-docs/
 
-sos run update-website
+BRANCH=$(openssl rand -base64 12)
 
-cd ../
+git fetch upsteam master
+
+git checkout -b $BRANCH FETCH_HEAD
+
+cd development
+
+sos run update-website convert-homepage+convert-documentation+convert-tutorials+convert-guide -v1
+
+cd ..
+
+git config --global user.name "sosdocs"
+git config --global user.email "ben.bob@gmail.com"
+
+git commit . -m 'Update sos-docs'
+ 
 dt=$(date '+%d/%m/%Y %H:%M:%S')
-hub pull-request -m "Document updated from sos-docs hub on ${dt}"
+hub pull-request -m "sos-docs updated from sos live server on ${dt}"

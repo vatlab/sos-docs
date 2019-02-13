@@ -23,9 +23,7 @@ c.DockerSpawner.network_name = 'jupyterhub'
 c.DockerSpawner.remove = True
 
 # use another command to start sos-docs
-#c.DockerSpawner.extra_create_kwargs.update({ 'command': 'prepare-docs-and-start-singleuser.sh' })
-
-notebook_docs = '/home/jovyan/docs/'
+#c.DockerSpawner.extra_create_kwargs.update({ 'command': 'start-singleuser.sh' })
 
 # mount dir
-c.DockerSpawner.volumes = {f'/home/bpeng1/jupyterhub_base/sos-docs/src': notebook_docs }
+c.DockerSpawner.volumes = {f'/home/sos/sos-docs/src': '/home/jovyan/sos-docs/' }
