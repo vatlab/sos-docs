@@ -70,8 +70,8 @@ if __name__ == '__main__':
                 cwd=DIR, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, shell=True)
 
     print('Committing changes')
-    subprocess.call(['git', 'commit', '.', '-m', 'Update {" ".join(out.splitlines())}'],
-        cwd=DIR)
+    subprocess.call(['git', 'commit', '.', '-m', f'Update {" ".join(out.splitlines())}'],
+        stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=DIR)
 
     push_changes()
     create_pull_request()
