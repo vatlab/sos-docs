@@ -32,8 +32,8 @@
 
 <script>
 function editme() {
-    let filepath = window.location.pathname.slice(0, -5);
-    let new_url = `http://128.135.144.117/hub/user-redirect/notebooks/${filepath}.ipynb`;
+    let filepath = window.location.pathname.slice(0, -5).replace('doc/', 'src/');
+    let new_url = `http://128.135.144.117:8000/hub/user-redirect/notebooks/${filepath}.ipynb`;
     window.open(new_url, target='_blank');
 }
 </script>
