@@ -40,7 +40,7 @@ def create_pull_request():
         if prompt == 0:
             child.sendline('sosdocs')
         elif prompt == 1:
-            child.sendline('wxsAjvtkX5nu57m0')
+            child.sendline('PASSWORD')
         elif prompt == 2:
             print(child.before.decode())
             child.close()
