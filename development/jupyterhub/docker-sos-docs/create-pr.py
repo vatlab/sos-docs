@@ -28,9 +28,9 @@ def push_changes():
     if child.exitstatus != 0:
         print(child.before.decode())
 
-def create_pull_request():
+def create_pull_request(msg='sos-docs updated from sos live server'):
     print('Creating pull request')
-    child = pexpect.spawn(f'hub pull-request --base vatlab/sos-docs:master -m "sos-docs updated from sos live server"',
+    child = pexpect.spawn(f'hub pull-request --base vatlab/sos-docs:master -m "{msg}"',
         cwd=DIR)
     while True:
         prompt = child.expect([
@@ -74,5 +74,5 @@ if __name__ == '__main__':
         stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=DIR)
 
     push_changes()
-    create_pull_request()
+    create_pull_request(msg=f'Update {" ".join(out.splitlines())} from live server')
 
