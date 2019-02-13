@@ -57,8 +57,7 @@ if __name__ == '__main__':
     subprocess.call(f'git checkout -b {BRANCH} FETCH_HEAD', cwd=DIR, shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
     # get a list of changed files
-    out = subprocess.check_output('git diff --name-only', cwd=DIR, shell=True,
-        stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL).decode()
+    out = subprocess.check_output('git diff --name-only', cwd=DIR, shell=True).decode()
 
     # out should be something like
     #
