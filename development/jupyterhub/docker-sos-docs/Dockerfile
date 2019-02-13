@@ -15,7 +15,7 @@ RUN     chmod +x /usr/local/bin/create-pr
 
 USER    jovyan
 
-RUN     cd /home/jovyan; git clone https://github.com/sosdocs/sos-docs.git && cd sos-docs && git remote add upstream https://github.com/vatlab/sos-docs.git && git fetch upstream master && git merge upstream/master
+RUN     cd /home/jovyan; git clone https://github.com/sosdocs/sos-docs.git && cd sos-docs && git config --global user.name "Bo Peng" && git config --global user.email bpeng@mdanderson.org && git remote add upstream https://github.com/vatlab/sos-docs.git && git fetch upstream master && git merge upstream/master
 
 # copy git credential
 COPY    file1 /home/jovyan/.gitconfig
