@@ -14,3 +14,5 @@ COPY    create-pr /usr/local/bin
 RUN     chmod +x /usr/local/bin/create-pr
 
 USER    jovyan
+
+RUN     cd /home/jovyan; git clone https://github.com/sosdocs/sos-docs.git && cd sos-docs && git remote add upstream https://github.com/vatlab/sos-docs.git && git fetch upstream master && git merge upstream/master

@@ -35,15 +35,9 @@ docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
 ```
 
-1. Check out `sos-docs` repository using a separate github user `sosdocs`, add `vatlab/sos-docs` as `upstream`.
-
+1. Check out `sos-docs` repository or update to the latest master
 ```
-git clone https://github.com/sosdocs/sos-docs.git
-git remote add upstream https://github.com/
-
-cd sos-docs
-git fetch upstream master
-git merge upstream/master
+git clone https://github.com/vatlabsos-docs.git
 ```
 
 2. Set up sos-docs docker image
