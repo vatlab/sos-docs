@@ -24,3 +24,16 @@ c.DockerSpawner.remove = True
 
 # use another command to start sos-docs
 #c.DockerSpawner.extra_create_kwargs.update({ 'command': 'start-singleuser.sh' })
+
+# set a reasonable number of concurrent users
+c.JupyterHub.active_server_limit = 20
+
+
+# kill idle server after a while
+c.JupyterHub.services = [
+    {
+        'name': 'cull-idle',
+        'admin': True,
+        'command': [sys.executable, 'cull_idle_servers.py', '--timeout=3600'],
+    }
+]
