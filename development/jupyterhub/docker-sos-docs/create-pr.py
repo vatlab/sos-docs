@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import subprocess
 import string
 import random
@@ -63,11 +64,18 @@ if __name__ == '__main__':
     #
     # src/user_guide/whatever.ipynb
     for file in out.splitlines():
-        if file.startswith('src/') and file.endswith('.ipynb'):
+        if not file.endswith('.ipynb'):
+            continue
+        if any(file.startswith(f'src/{x}') for x in ('documentation', 'tutorials', 'user_guide')):
             dest = file.replace('src', 'doc').replace('.ipynb', '.html')
             print(f'Converting {file}')
             subprocess.call(f'sos convert {DIR}/{file} {DIR}/{dest}  --template {DIR}/src/templates/sos-doc-with-banner.tpl',
                 cwd=DIR, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, shell=True)
+        elif file.startswith('src/homepage'):
+            print(f'Converting {file}')
+            subprocess.call(f'sos run update-website convert-homepage',
+                cwd=os.path.join(DIR, 'development'), stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, shell=True)
+
 
     print('Committing changes')
     subprocess.call(['git', 'commit', '.', '-m', f'Update {" ".join(out.splitlines())}'],
