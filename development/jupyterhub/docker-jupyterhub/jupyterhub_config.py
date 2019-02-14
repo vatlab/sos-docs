@@ -30,10 +30,10 @@ c.JupyterHub.active_server_limit = 20
 
 
 # kill idle server after a while
-c.JupyterHub.services = [
-    {
-        'name': 'cull-idle',
-        'admin': True,
-        'command': [sys.executable, 'cull_idle_servers.py', '--timeout=3600'],
-    }
-]
+# c.JupyterHub.services = [
+#     {
+#         'name': 'cull-idle',
+#         'admin': True,
+#         'command': [sys.executable, 'cull_idle_servers.py', '--timeout=3600'],
+#     }
+# ]
