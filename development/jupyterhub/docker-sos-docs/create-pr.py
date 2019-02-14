@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# Copyright (c) Bo Peng and the University of Texas MD Anderson Cancer Center
+# Distributed under the terms of the 3-clause BSD License.
+
+import argparse
 import os
 import subprocess
 import string
@@ -49,13 +53,25 @@ def create_pull_request(msg='sos-docs updated from sos live server'):
     print(child.before.decode())
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser('create-pr',
+        description='Create a pull request from changes in the current repository to vatlab/sos-docs.')
+    parser.add_argument('-v', '--verbose', action='store_true', help='show output of commands')
+    parser.add_argument('--branch', help='Name of the branch. By default a new random branch will be created.')
+    args = parser.parse_args()
+
     DIR = '/home/jovyan/sos-docs'
-    BRANCH = id_generator(6)
+
+    BRANCH = args.branch if args.branch else id_generator(6)
+
+    if args.verbose:
+        outargs = {}
+    else:
+        outargs = dict(stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
     print('Syncing with upstream master')
-    subprocess.call('git fetch upstream master', cwd=DIR, shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    subprocess.call('git fetch upstream master', cwd=DIR, shell=True, **outargs)
     print(f'Creating a new branch {BRANCH}')
-    subprocess.call(f'git checkout -b {BRANCH} FETCH_HEAD', cwd=DIR, shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    subprocess.call(f'git checkout -b {BRANCH} FETCH_HEAD', cwd=DIR, shell=True, **outargs)
 
     # get a list of changed files
     out = subprocess.check_output('git diff --name-only', cwd=DIR, shell=True).decode()
@@ -70,16 +86,16 @@ if __name__ == '__main__':
             dest = file.replace('src', 'doc').replace('.ipynb', '.html')
             print(f'Converting {file}')
             subprocess.call(f'sos convert {DIR}/{file} {DIR}/{dest}  --template {DIR}/src/templates/sos-doc-with-banner.tpl',
-                cwd=DIR, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, shell=True)
+                cwd=DIR, shell=True, **outargs)
         elif file.startswith('src/homepage'):
             print(f'Converting {file}')
             subprocess.call(f'sos run update-website convert-homepage',
-                cwd=os.path.join(DIR, 'development'), stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, shell=True)
+                cwd=os.path.join(DIR, 'development'), shell=True, **outargs)
 
 
     print('Committing changes')
     subprocess.call(['git', 'commit', '.', '-m', f'Update {" ".join(out.splitlines())}'],
-        stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, cwd=DIR)
+        cwd=DIR, **outargs)
 
     push_changes()
     create_pull_request(msg=f'Update {" ".join(out.splitlines())} from live server')
