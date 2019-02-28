@@ -12842,8 +12842,11 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li><code>-v</code> controls logging level</li>
-<li><code>-j</code> controls number of processes</li>
+<li><code>-v</code> controls logging level from <code>error</code>, <code>warning</code>, <code>info</code> to <code>debug</code></li>
+<li><code>-v1</code> introduces a special text-based progress bar</li>
+<li><code>%set -v</code> sets a persistent logging level for the entire notebook</li>
+<li>Environment variable <code>DBG_DEBUG</code> writes topic-specific information to <code>~/sos_debug.log</code></li>
+<li><code>-j</code> controls number of concurrent processes</li>
 </ul>
 </li>
 </ul>
@@ -12856,7 +12859,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="logging-level">logging level<a class="anchor-link" href="#logging-level"></a></h2>
+<h2 id="Logging-level">Logging level<a class="anchor-link" href="#Logging-level"></a></h2>
 </div>
 </div>
 </div>
@@ -12865,8 +12868,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS uses a logging system to output all sorts of information during the execution of workflows. The amount of output can be controlled by logging level, which can be <code>error</code> (0), <code>warning</code> (1), <code>info</code> (2), <code>debug</code> (3), and <code>trace</code> (4). The default logging level for SoS is <code>info</code> in batch mode and <code>warning</code> in interactive mode.</p>
-<p>For example, logging at <code>info</code> level would produce message indicating the steps executed and input output files, but nothing but warning and errors at the <code>warning</code> level.</p>
+<p>SoS uses a logging system to output all sorts of information during the execution of workflows. The amount of output can be controlled by logging level, which can be <code>error</code> (0), <code>warning</code> (1), <code>info</code> (2), and <code>debug</code> (3). The default logging level for SoS is <code>info</code>.</p>
+<p>For example, logging at <code>info</code> level would produce message indicating the steps executed and input output files, while <code>-v0</code> will suppress all but error messages. It is worth noting that if you are using SoS Notebook, all logging messages will be sent to the side panel if the side panel is open.</p>
 
 </div>
 </div>
@@ -12876,11 +12879,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
-      class="sos-source" name="SoS">%sandbox
-!touch a.txt
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">!touch a.txt
 
 %run -v3
 [10]
@@ -12902,23 +12904,64 @@ input: 'a.txt'
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre><span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">Workflow default created with 4 sections: default_10, default_20, default_30, default_40</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">Executing </span><span class="ansi-green-fg">default_10</span><span class="ansi-blue-intense-fg">: </span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">input:    </span><span class="ansi-green-fg">[]</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">output:   </span><span class="ansi-green-fg">[]</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">Executing </span><span class="ansi-green-fg">default_20</span><span class="ansi-blue-intense-fg">: </span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">input:    </span><span class="ansi-green-fg">[file_target(&#39;a.txt&#39;)]</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">output:   </span><span class="ansi-green-fg">[]</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">Executing </span><span class="ansi-green-fg">default_30</span><span class="ansi-blue-intense-fg">: </span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">input:    </span><span class="ansi-green-fg">[]</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">output:   </span><span class="ansi-green-fg">[]</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">Executing </span><span class="ansi-green-fg">default_40</span><span class="ansi-blue-intense-fg">: </span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">input:    </span><span class="ansi-green-fg">[]</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">output:   </span><span class="ansi-green-fg">[]</span>
-<span class="ansi-blue-intense-fg">DEBUG</span>: <span class="ansi-blue-intense-fg">Workflow default (ID=9ecd6f946ef5282b) is executed successfully.</span>
-</pre>
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">10</span>: 
 </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">30</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">40</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=da9f62e48e2b6ead) is executed successfully with 4 completed steps.
+</div>
+</div>
+
 </div>
 
 </div>
@@ -12928,16 +12971,27 @@ input: 'a.txt'
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Text-based progress bar with <code>-v1</code></h4>
+    <p>If you have a large workflow with lots of steps, the default output can be overwhelming. In this case you can use <code>-v1</code>, which not only suppress most of the `INFO` messages, but also introduces a text-based progress bar from which you can learn the progress of the workflow easily.</p>
+</div>
+</div>
+</div>
+</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
-      class="sos-source" name="SoS">%sandbox
-!touch a.txt
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">!touch a.txt
 
 %run -v1
 [10]
@@ -12950,6 +13004,24 @@ input: 'a.txt'
 
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 4 steps processed (4 jobs completed)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 </div>
 
@@ -12959,8 +13031,83 @@ input: 'a.txt'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="SOS_DEBUG-and-~/sos_debug.log"><code>SOS_DEBUG</code> and <code>~/sos_debug.log</code><a class="anchor-link" href="#SOS_DEBUG-and-~/sos_debug.log"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This option is designed for developers but if you would like to peak into what SoS is actually doing, you can set an environment variable <code>SOS_DEBUG</code>, with <code>,</code> separated values</p>
+<ul>
+<li><code>ALL</code>: all debug messages</li>
+<li>Topics such as <code>CONTROLLER</code>, <code>TASK</code>, <code>WORKER</code>, <code>EXECUTOR</code> to keep only debug information of specific topics. The actual values can vary so you should check the output of command <code>sos run -h</code> for acceptable topics.</li>
+<li>A filename with an extension. If you include a filename in <code>SOS_DEBUG</code> (e.g. <code>SOS_DEBUG=TASK,tasks.log</code>), the debug output will be saved to specified files. If no file is specified, the debug information will be saved to <code>~/sos_debug.log</code>.</li>
+</ul>
 
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Again, <code>SOS_DEBUG</code> can be used to generate a large amount of information for debugging purposes. You usually do not need to use it but if you encounter some problems with SoS and would like to submit a bug report, it is a good idea to upload a log file with your workflow executed under</p>
+
+<pre><code>export SOS_DEBUG=ALL,bug_report.log</code></pre>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Control-the-number-of-running-jobs">Control the number of running jobs<a class="anchor-link" href="#Control-the-number-of-running-jobs"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Control number of workers with option <code>-j</code></h4>
+    <p>Option <code>-j</code> sets the number of workers for SoS. The default value is half of the number of processes.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS dispatch steps, substeps, and nested workflows to dedicated workers. The maximum number of concurrent workers can be controlled by the <code>-j</code> option. Although the default value, which is half of the number of processes of the computer, is good most of the time, you might want to control the number of workers depending on your running environment (e.g. on a shared server) or on the size of your workflow. Note that <code>-j</code> specifies the number of workers so the total number of processes started by <code>sos</code> can be at most <code>n + 1</code> with option <code>-j n</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-warning" role="alert">
+    <h4>Dedicated workers for blocking nested workflows</h4>
+    <p>Ocassionally you might see more than <code>n + 1</code> SoS processes when you execute a workflow with option `-j n`. This is because the workflow consists of blocking nested workflows, namely nested workflows not as the last statement of a step. For example, the nested workflow `A` in the following SoS step has to be executed in a blocking fashion before `some_other_computation` can be done,</p>
+    <pre>
+        [10]
+        sos_run('A')
+        some_other_computation()
+        </pre>
+    <p>So SoS spawns a separate process for nested workflow <code>A</code> so that it will not affect the concurrent execution of other parts of the workflow.</p>    
+</div>
 </div>
 </div>
 </div>
