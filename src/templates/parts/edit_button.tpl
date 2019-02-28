@@ -15,6 +15,18 @@
     z-index: 200;
 }
 
+.edit-me-hint {
+    display: none;
+    position: fixed;
+    right: 0px;
+    top: 40px;
+    z-index: 10;
+    width: 11em;
+    background: black;
+    color: white;
+    padding: 1em;
+}
+
 .edit-me .btn-primary {
     background-color: transparent;
     border-color: transparent;
@@ -22,6 +34,10 @@
 
 .edit-me .btn-primary:hover {
     border-color: white;
+}
+
+.edit-me:hover ~ .edit-me-hint {
+    display: block;
 }
 
 </style>
@@ -33,6 +49,11 @@
     <button type="button" onclick="editme()" class="btn btn-primary">
    <i class="fa fa-edit fa-2x"></i></button>
 </div>
+
+<div class="edit-me-hint">
+<p>Edit this page on our live server and create a PR by running command <code>!create-pr</code> in the console panel</p>
+</div>
+
 
 {% endmacro %}
 
