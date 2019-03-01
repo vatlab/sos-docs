@@ -12761,6 +12761,18 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     z-index: 200;
 }
 
+.edit-me-hint {
+    display: none;
+    position: fixed;
+    right: 0px;
+    top: 40px;
+    z-index: 10;
+    width: 11em;
+    background: black;
+    color: white;
+    padding: 1em;
+}
+
 .edit-me .btn-primary {
     background-color: transparent;
     border-color: transparent;
@@ -12768,6 +12780,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 
 .edit-me .btn-primary:hover {
     border-color: white;
+}
+
+.edit-me:hover ~ .edit-me-hint {
+    display: block;
 }
 
 </style>
@@ -12803,6 +12819,11 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     <button type="button" onclick="editme()" class="btn btn-primary">
    <i class="fa fa-edit fa-2x"></i></button>
 </div>
+
+<div class="edit-me-hint">
+<p>Edit this page on our live server and create a PR by running command <code>!create-pr</code> in the console panel</p>
+</div>
+
 
 
 
@@ -12845,7 +12866,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <li><code>-v</code> controls logging level from <code>error</code>, <code>warning</code>, <code>info</code> to <code>debug</code></li>
 <li><code>-v1</code> introduces a special text-based progress bar</li>
 <li><code>%set -v</code> sets a persistent logging level for the entire notebook</li>
-<li>Environment variable <code>DBG_DEBUG</code> writes topic-specific information to <code>~/sos_debug.log</code></li>
+<li>Environment variable <code>DBG_DEBUG</code> can be used to generate topic-specific debug information</li>
 <li><code>-j</code> controls number of concurrent processes</li>
 </ul>
 </li>
@@ -13031,6 +13052,85 @@ input: 'a.txt'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>As a convenience feature that we do not really recommend, you can set a default verbosity level for your notebook using magic <code>%set</code>. For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%set -v0</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Set sos options to &#34;-v0&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>will set verbosity level to <code>ERROR</code> so you would not see any output if you rerun the above workflow</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">%run
+[10]
+[20]
+input: 'a.txt'
+[30]
+[40]</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="SOS_DEBUG-and-~/sos_debug.log"><code>SOS_DEBUG</code> and <code>~/sos_debug.log</code><a class="anchor-link" href="#SOS_DEBUG-and-~/sos_debug.log"></a></h2>
 </div>
 </div>
@@ -13040,24 +13140,22 @@ input: 'a.txt'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This option is designed for developers but if you would like to peak into what SoS is actually doing, you can set an environment variable <code>SOS_DEBUG</code>, with <code>,</code> separated values</p>
+<p>This option is designed for developers but if you would like to peak into what SoS is actually doing, you can set an environment variable <code>SOS_DEBUG</code>, with <code>,</code> separated values of</p>
 <ul>
 <li><code>ALL</code>: all debug messages</li>
 <li>Topics such as <code>CONTROLLER</code>, <code>TASK</code>, <code>WORKER</code>, <code>EXECUTOR</code> to keep only debug information of specific topics. The actual values can vary so you should check the output of command <code>sos run -h</code> for acceptable topics.</li>
-<li>A filename with an extension. If you include a filename in <code>SOS_DEBUG</code> (e.g. <code>SOS_DEBUG=TASK,tasks.log</code>), the debug output will be saved to specified files. If no file is specified, the debug information will be saved to <code>~/sos_debug.log</code>.</li>
+<li>A filename with an extension, or <code>-</code> for standard error output, or nothing to use <code>~/sos_debug.log</code> as default.</li>
 </ul>
+<p>For example,</p>
 
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Again, <code>SOS_DEBUG</code> can be used to generate a large amount of information for debugging purposes. You usually do not need to use it but if you encounter some problems with SoS and would like to submit a bug report, it is a good idea to upload a log file with your workflow executed under</p>
+<pre><code>export SOS_DEBUG=ALL</code></pre>
+<p>will save a large amount of debug information to <code>~/sos_debug.log</code>, regardless of verbosity level set by <code>-v</code>,</p>
 
-<pre><code>export SOS_DEBUG=ALL,bug_report.log</code></pre>
+<pre><code>export SOS_DEBUG=TASK,-</code></pre>
+<p>will send task related debug information to the terminal, and</p>
+
+<pre><code>export SOS_DEBUG=ALL,myrun.log</code></pre>
+<p>will save all debug information in <code>myrun.log</code>, which can be useful if you notice something wrong with SoS or your workflow and would like to submit a bug report.</p>
 
 </div>
 </div>
