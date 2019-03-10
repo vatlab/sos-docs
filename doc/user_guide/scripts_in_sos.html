@@ -12761,6 +12761,18 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     z-index: 200;
 }
 
+.edit-me-hint {
+    display: none;
+    position: fixed;
+    right: 0px;
+    top: 40px;
+    z-index: 10;
+    width: 11em;
+    background: black;
+    color: white;
+    padding: 1em;
+}
+
 .edit-me .btn-primary {
     background-color: transparent;
     border-color: transparent;
@@ -12768,6 +12780,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 
 .edit-me .btn-primary:hover {
     border-color: white;
+}
+
+.edit-me:hover ~ .edit-me-hint {
+    display: block;
 }
 
 </style>
@@ -12803,6 +12819,11 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     <button type="button" onclick="editme()" class="btn btn-primary">
    <i class="fa fa-edit fa-2x"></i></button>
 </div>
+
+<div class="edit-me-hint">
+<p>Edit this page on our live server and create a PR by running command <code>!create-pr</code> in the console panel</p>
+</div>
+
 
 
 
@@ -13475,10 +13496,230 @@ R: expand='${ }'
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-warning" role="alert">
-  <h4>Limitations of script format of function calls</h4>
-  <p>Because the action name starts from the first column, you will have to use the regular function call format as shown in the first section of this tutorial if you would like to use the function in a <code>if/else</code> block, or in a <code>for</code> loop.</p>
+<h2 id="Indented-script-format">Indented script format<a class="anchor-link" href="#Indented-script-format"></a></h2>
 </div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>What you have seen so far are function calls without Python control structure. Because SoS allows you to execute the same statements repeatedly for different inputs (<a href="input_substeps.html">substeps</a> and stop the execution of substeps through actions such as <a href="control_actions.html"><code>skip_if</code> and <code>done_if</code></a>, there is rarely a need to call SoS actions within the <code>if...else...</code> block or <code>for</code> or <code>while</code> loops.</p>
+<p>However, if you do need to call SoS actions inside a Python control structure, you can still use the script format for it. For example, instead of writing</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">for i in range(3):
+    sh(f'echo {i}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0
+1
+2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can write the <code>sh</code> action in the format of</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">for i in range(3):
+    sh: expand=True
+        echo {i}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0
+1
+2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Indentation for the included script is optional</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">for i in range(3):
+    sh: expand=True
+echo {i}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0
+1
+2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>but is required in more complex cases to avoid ambiguity. For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">%run --var 2
+parameter: var=int
+
+if var > 1:
+    python:
+        print('Python script for var > 1')
+else:
+    python:
+        print('Python script for var <= 1')
+    </textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Python script for var &gt; 1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>cannot be written as</p>
+
+<pre><code>if var &gt; 1:
+    python:
+print('Python script for var &gt; 1')
+else:
+    python:
+print('Python script for var &lt;= 1')</code></pre>
+<p>because the <code>else:</code> block would be considered as part of the first <code>python</code> script.</p>
+
 </div>
 </div>
 </div>
@@ -13488,7 +13729,9 @@ R: expand='${ }'
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
-<li><a href="doc/user_guide/sos_actions.html">SoS Actions and common action options</a></li>
+<li><a href="sos_actions.html">SoS Actions and common action options</a></li>
+<li><a href="input_substeps.html">substeps of SoS</a></li>
+<li><a href="control_actions.html">Actions for controlling execution of substeps</a></li>
 </ul>
 
 </div>
