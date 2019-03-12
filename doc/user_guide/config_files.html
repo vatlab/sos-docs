@@ -12869,7 +12869,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>a</li>
+<li>SoS reads multiple configuration files and merge the results</li>
+<li>User configuration files can be specified with option <code>-c</code></li>
+<li>Content of configuration file is available through variable <code>CONFIG</code></li>
+<li>Host-specific paths can be accessed by <code>path(name, default)</code></li>
 </ul>
 </li>
 </ul>
@@ -12882,7 +12885,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Configuration-files-">Configuration files <a id="Configuration_files" /><a class="anchor-link" href="#Configuration-files-"></a></h3>
+<h2 id="SoS-configuration-files-">SoS configuration files <a id="Configuration_files" /><a class="anchor-link" href="#SoS-configuration-files-"></a></h2>
 </div>
 </div>
 </div>
@@ -12893,535 +12896,132 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>SoS reads configurations from</p>
 <ul>
-<li>A site configuration file <code>site_config.yml</code> under the sos package directory</li>
-<li>A host configuration file <code>~/.sos/hosts.yml</code></li>
-<li>A global sos configuration file <code>~/.sos/config.yml</code></li>
-<li>And a configuration file specified by command line option <code>-c</code>.</li>
+<li>A site configuration file <code>site_config.yml</code> under the sos package directory. This is where system adminstrators define system-wide configurations (e.g. host definitions) for all users.</li>
+<li>A host configuration file <code>~/.sos/hosts.yml</code> that defines properties of local and remote hosts.</li>
+<li>A global sos configuration file <code>~/.sos/config.yml</code> that defines other user-specific settings.</li>
+<li>And a configuration file specified by command line option <code>-c</code> that defines workflow-specific settings.</li>
 </ul>
-<p>The configuration files should be in <a href="http://www.yaml.org/start.html">YAML format</a>. Dictionaries defined in all these configuration files are merged to form a single dictionary that is available to SoS as a dictionary named <code>CONFIG</code>.</p>
-<p>Note that:</p>
+<p>The configuration files should be in the format of <a href="http://yaml.org/"><code>YAML</code></a> or its subset format <a href="http://json-schema.org/implementations.html"><code>JSON</code></a>. When a SoS script is loaded, SoS looks for and parses site and global configuration files, then optionally a configuration file specified by command line option <code>-c</code>. The results are stored in a global variable <code>CONFIG</code> that is available to the script.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Merge-of-multiple-configuration-files">Merge of multiple configuration files<a class="anchor-link" href="#Merge-of-multiple-configuration-files"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All configurations from the aforementioned files are merged to a single dictionary. A dictionary could therefore contain keys defined in different configuration files and a latter file could overwrite keys defined in a previous file. For example, if</p>
 <ul>
-<li>All configurations from the aforementioned files are merged to a single dictionary. A dictionary could therefore contain keys defined in different configuration files and a latter file could overwrite keys defined in a previous file. For example, if <ul>
-<li><code>{'A': {'B': 'old', 'C': 'old'}</code> is defined in <code>~/.sos/config.yml</code> and</li>
-<li><code>{'A': {'B': 'new', 'D': 'new'}</code> is defined in <code>my_config.yml</code>, then</li>
-<li>dictionary <code>A</code> in <code>CONFIG</code> would have value <code>{'B': 'new', 'C': 'old', 'D': 'new'}</code>. </li>
-</ul>
+<li><p><code>{'A': {'B': 'old', 'C': 'old'}</code> is defined in <code>~/.sos/config.yml</code> using</p>
+
+<pre><code>A:
+    B: old
+    C: old</code></pre>
 </li>
-<li>SoS interpolate string values in <code>CONFIG</code> if they contain <code>{ }</code>. The expressions enclosed by <code>{ }</code> would be evaluated with a local namespace that is the dictionary in which the key exists, and a global namespace that is the complete <code>CONFIG</code> dictionary. That is to say, if a configuration file contains
+<li><p><code>{'A': {'B': 'new', 'D': 'new'}</code> is defined in <code>my_config.yml</code> using</p>
+
+<pre><code>A:
+    B: new
+    D: new</code></pre>
+</li>
+</ul>
+<p>then the final result using <code>-c my_config.yml</code> would be <code>{'A': {'B': 'new', 'C': 'old', 'D': 'new'}}</code> as if a sinle configuration file with content</p>
+
+<pre><code>  A:
+      B: new
+      C: old
+      D: new</code></pre>
+<p>is used. This is how site or global configurations can be overridden by user configurations.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="String-interpolation">String interpolation<a class="anchor-link" href="#String-interpolation"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS interpolates string values if they contain <code>{ }</code>. The expressions enclosed by <code>{ }</code> would be evaluated with a local namespace that is the dictionary in which the key exists, and a global namespace that is the complete <code>CONFIG</code> dictionary. That is to say, if a configuration file contains</p>
+
 <pre><code>user_name: user
 hosts:
   cluster:
     address: "{user_name}@domain.com:{port}"
     port: 123</code></pre>
-<code>CONFIG['hosts']['cluster']['address']</code> would be interpolated with <code>port</code> from the <code>CONFIG['host']['cluster']</code> and <code>user_name</code> from the top level <code>CONFIG['user_name']</code>. You will need to double the braces (<code>{{ }}</code> to include <code>{ }</code> in the config file.</li>
-<li>Because key <code>user_name</code> is frequently used in <code>hosts.yml</code>, SoS automatically defines <code>user_name</code> as the local user ID (all lower case) in <code>CONFIG</code> if it is not defined in any of the configuration files.</li>
-<li>A special key <code>based_on</code> will be processed after all configuration files are loaded. The value of <code>based_on</code> should be one or more keys to other dictionaries in the configuration (e.g. <code>hosts.cluster</code>. The consequence of this key is that the items from the referred dictionaries would be merged to the present dictionary if they do not exist in the present dictionary. This allows you to derive a dictionary from an existing one. For example, 
+<p><code>CONFIG['hosts']['cluster']['address']</code> would be interpolated as</p>
+
+<pre><code>user@domain.com:123</code></pre>
+<p>using <code>port</code> from the <code>CONFIG['host']['cluster']</code> and <code>user_name</code> from the top level <code>CONFIG['user_name']</code>. You will need to double the braces (<code>{{ }}</code> to include <code>{ }</code> in the config file.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because key <code>user_name</code> is frequently used in <code>hosts.yml</code>, SoS automatically defines <code>user_name</code> as the local user ID (all lower case) in <code>CONFIG</code> if it is not defined in any of the configuration files.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Derived-dictionary-keys">Derived dictionary keys<a class="anchor-link" href="#Derived-dictionary-keys"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A special key <code>based_on</code> will be processed after all configuration files are loaded. The value of <code>based_on</code> should be one or more keys to other dictionaries in the configuration (e.g. <code>hosts.cluster</code>. The consequence of this key is that the items from the referred dictionaries would be merged to the present dictionary if they do not exist in the present dictionary. This allows you to derive a dictionary from an existing one. For example,</p>
+
 <pre><code>hosts:
-  head_node:
-    description: head_node of cluster
-    address: "{user_name}@domain.com:{port}"
-    port: 123
-    paths:
-        home:   "/home/{user_name}"
-  cluster:
-    description: Cluster
-    based_on: hosts.head_node
-    queue_type: pbs</code></pre>
- allows <code>hosts["cluster"]</code> to be derived from <code>hosts["head_node"]</code>.</li>
-</ul>
+    head_node:
+        description: head_node of cluster
+        address: "{user_name}@domain.com:{port}"
+        port: 123
+        paths:
+            home:   "/home/{user_name}"
+    cluster:
+        description: Cluster
+        based_on: hosts.head_node
+        queue_type: pbs</code></pre>
+<p>allows <code>hosts["cluster"]</code> to be derived from <code>hosts["head_node"]</code>, and</p>
 
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS allows you to store parameters in a number of configuration files. There are three kinds of configuraiton files:</p>
-<ol>
-<li>Global user-specific configuration file <code>~/.sos/config.yml</code>.</li>
-<li>Local project-specific configuraiton file <code>./config.yml</code> (under the current working directory).</li>
-<li>Configuration file specified by option <code>-c</code>.</li>
-</ol>
-<p>The configuration files should be in the format of <a href="http://yaml.org/"><code>YAML</code></a> or its subset format <a href="http://json-schema.org/implementations.html"><code>JSON</code></a>. When a SoS script is loaded, SoS looks for and parses the global and project-specific configuration files, and a configuration file specified by option <code>-c</code>. The results are stored in a global variable <code>CONFIG</code> that is available to the script.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Use-of-configuration-file">Use of configuration file<a class="anchor-link" href="#Use-of-configuration-file"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The configuration file should be in <code>YAML</code> format, which is a superset of JSON so any configuration file in JSON format is also acceptable.</p>
-<p>Let us create a yaml file with some simple content</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
-      class="sos-source" name="SoS">run:
-    cat << EOF > myconfig.yml
-    # A list of tasty fruits
-    martin:
-        name: Martin D'vloper
-        job: Developer
-        skill: Elite
-    manager: martin
-    EOF</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The configuration file looks like</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">!cat myconfig.yml</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre># A list of tasty fruits
-martin:
-    name: Martin D&#39;vloper
-    job: Developer
-    skill: Elite
-manager: martin
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Variables defined in the configuration file are available in SoS script as a dictionary <code>CONFIG</code>. You can retrieve its values as a regular dictionary although writing to this dictioary is prohibited. For convenience, an attribute syntax can also be used to access dictionary items.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
-   <textarea rows="4"
-      class="sos-source" name="SoS">%run -c myconfig.yml
-print(CONFIG['martin'])
-print(CONFIG.martin['name'])
-print(CONFIG.manager)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>{&#39;name&#39;: &#34;Martin D&#39;vloper&#34;, &#39;skill&#39;: &#39;Elite&#39;, &#39;job&#39;: &#39;Developer&#39;}
-Martin D&#39;vloper
-martin
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Configuration files are frequently used to specify system configurations. For example</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%run -c myconfig.yml
-manager = CONFIG.manager</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>allow you to define name of <code>manager</code> in a configuration file. If you do not want to require a configuration file, you can define <code>manager</code> as</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">manager = CONFIG.get('manager', 'Bob')
-print(manager)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Bob
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>So the manger would be <code>Bob</code> without configuration file, and <code>Martin</code> with configuration file.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run -c myconfig.yml
-manager = CONFIG.get('manager', 'Bob')
-print(manager)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>martin
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If you would further want to allow modification of this value from command line, you can place this definition after <code>parameter</code>.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">parameter: manager = CONFIG.get('manager', 'Bob')
-print(manager)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Bob
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In this way, users have the freedom to use the default value, define a value in a configuration file, and provide another value from command line.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%rerun</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Bob
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%rerun -c myconfig.yml</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>martin
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%rerun -c myconfig.yml --manager Joe</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
+<pre><code>hosts:
+    cat:
+        based_on: hosts.a_very_long_name</code></pre>
+<p>effectively creates an alias <code>cat</code> to another host with <code>a_very_long_name</code>.</p>
 
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Joe
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%rerun --manager Joe</textarea>
-  </div>
 </div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Joe
-</pre>
 </div>
 </div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -13446,7 +13046,16 @@ print(manager)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>sos config</code> by default works on the local <code>config.yml</code> file. For example</p>
+<h3 id="Set-configuration">Set configuration<a class="anchor-link" href="#Set-configuration"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>sos config</code> by default works on <code>~/.sos/config.yml</code> file. For example</p>
 
 </div>
 </div>
@@ -13456,7 +13065,7 @@ print(manager)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
       class="sos-source" name="SoS">!sos config --set cutoff 0.5</textarea>
@@ -13475,7 +13084,7 @@ print(manager)</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Set cutoff to 0.5
+<pre>Set cutoff to &#39;0.5&#39;
 </pre>
 </div>
 </div>
@@ -13492,7 +13101,7 @@ print(manager)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>creates <code>config.yml</code> with content</p>
+<p>creates <code>~/.sos/config.yml</code> if it does not exist, or append to this file otherwise, with content</p>
 
 </div>
 </div>
@@ -13502,10 +13111,10 @@ print(manager)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!cat config.yml</textarea>
+      class="sos-source" name="SoS">!cat ~/.sos/config.yml</textarea>
   </div>
 </div>
 
@@ -13521,7 +13130,7 @@ print(manager)</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>cutoff: 0.5
+<pre>cutoff: &#39;0.5&#39;
 </pre>
 </div>
 </div>
@@ -13538,7 +13147,7 @@ print(manager)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It can also work on the global configuration file with option <code>--global</code>, or a local configuration file <code>--config file</code>. For example,</p>
+<p>You can specify a configuration file and add the content to it with option <code>-c</code>:</p>
 
 </div>
 </div>
@@ -13548,10 +13157,10 @@ print(manager)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!sos config -c myconfig.yml --set cutoff '{"low":1, "high":10}'</textarea>
+      class="sos-source" name="SoS">!sos config -c new_config.yml --set cutoff.low 1</textarea>
   </div>
 </div>
 
@@ -13567,7 +13176,7 @@ print(manager)</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Set cutoff to {&#39;high&#39;: 10, &#39;low&#39;: 1}
+<pre>Set cutoff to {&#39;low&#39;: 1}
 </pre>
 </div>
 </div>
@@ -13584,7 +13193,7 @@ print(manager)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>would add a line to existing configuration file <code>myconfig.yml</code></p>
+<p>would create a configuration file <code>myconfig.yml</code></p>
 
 </div>
 </div>
@@ -13594,10 +13203,10 @@ print(manager)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!cat myconfig.yml</textarea>
+      class="sos-source" name="SoS">!cat new_config.yml</textarea>
   </div>
 </div>
 
@@ -13614,13 +13223,7 @@ print(manager)</textarea>
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>cutoff:
-  high: 10
   low: 1
-manager: martin
-martin:
-  job: Developer
-  name: Martin D&#39;vloper
-  skill: Elite
 </pre>
 </div>
 </div>
@@ -13637,7 +13240,7 @@ martin:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The command is clever enough to handle partial values (e.g. of a dictionary), so if you do</p>
+<p>Note that <code>cutoff.low</code> is interpreted as dictionary <code>cutoff</code> with key <code>low</code>, and the command is clever enough to handle partial values (e.g. of a dictionary). For example, the following command will update instead of replacing <code>cutoff</code></p>
 
 </div>
 </div>
@@ -13647,10 +13250,10 @@ martin:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!sos config -c myconfig.yml --set cutoff.low 2</textarea>
+      class="sos-source" name="SoS">!sos config -c new_config.yml --set cutoff.high 2</textarea>
   </div>
 </div>
 
@@ -13666,7 +13269,7 @@ martin:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Set cutoff to {&#39;high&#39;: 10, &#39;low&#39;: 2}
+<pre>Set cutoff to {&#39;low&#39;: 1, &#39;high&#39;: 2}
 </pre>
 </div>
 </div>
@@ -13683,17 +13286,7 @@ martin:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The commands updates one of the values of dictionary <code>cutoff</code>.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Other than <code>set</code>, you can check the content of a configuration file using option <code>get</code>. For example, the following command get all values defined in <code>config.yml</code>,</p>
+<p>The <code>--set</code> option can handle lists:</p>
 
 </div>
 </div>
@@ -13703,10 +13296,10 @@ martin:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!sos config --get</textarea>
+      class="sos-source" name="SoS">!sos config -c new_config.yml --set values 1 2 3</textarea>
   </div>
 </div>
 
@@ -13722,7 +13315,7 @@ martin:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>cutoff	0.5
+<pre>Set values to [1, 2, 3]
 </pre>
 </div>
 </div>
@@ -13739,7 +13332,7 @@ martin:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>and the following command get the value of <code>manager</code> from <code>myconfig.yml</code>.</p>
+<p>And it accepts Python expressions such as a dictionary. The tricky part here is that SoS would interpolate command line (<code>!</code> magic) if you execute the command in SoS notebook, so you will have to double the braces here. You do not need to do it if you execute the command from a terminal.</p>
 
 </div>
 </div>
@@ -13749,10 +13342,10 @@ martin:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!sos config -c myconfig.yml --get manager</textarea>
+      class="sos-source" name="SoS">!sos config -c new_config.yml --set samples "{{'A': 'A.txt'}}"</textarea>
   </div>
 </div>
 
@@ -13767,8 +13360,20 @@ martin:
 <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> !sos config -c new_config.yml --set samples "{'A': 'A.txt'}"<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>manager	&#39;martin&#39;
+<pre>Set samples to {&#39;A&#39;: &#39;A.txt&#39;}
 </pre>
 </div>
 </div>
@@ -13785,7 +13390,16 @@ martin:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>wildcard characters are allowed to specify a subset of keys, although the name should be quoted to avoid shell expansion.</p>
+<h3 id="View-configurations">View configurations<a class="anchor-link" href="#View-configurations"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Running command <code>sos config</code> without any parameter will list all configurations in a dictonary format. Because we set <code>cutoff</code> to <code>0.5</code> to <code>~/.sos/config.yml</code>, the following command shows <code>cutoff</code> and a <code>user_name</code> key generated by SoS.</p>
 
 </div>
 </div>
@@ -13795,10 +13409,10 @@ martin:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!sos config -c myconfig.yml --get 'c*'</textarea>
+      class="sos-source" name="SoS">!sos config</textarea>
   </div>
 </div>
 
@@ -13814,7 +13428,7 @@ martin:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>cutoff	{&#39;low&#39;: 2, &#39;high&#39;: 10}
+<pre>{&#39;cutoff&#39;: &#39;0.5&#39;, &#39;user_name&#39;: &#39;bpeng1&#39;}
 </pre>
 </div>
 </div>
@@ -13826,6 +13440,154 @@ martin:
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you are interested in only one of the items, you can use option <code>--get</code> to list it.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!sos config --get cutoff</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cutoff	&#39;0.5&#39;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Of course you can use <code>-c</code> to include another configuration file</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!sos config --get cutoff -c new_config.yml</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cutoff.high	2
+cutoff.low	1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or only one of the keys</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!sos config -c new_config.yml --get cutoff.low</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cutoff.low	1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Remove-a-key-from-a-configuration-file">Remove a key from a configuration file<a class="anchor-link" href="#Remove-a-key-from-a-configuration-file"></a></h3>
+</div>
+</div>
+</div>
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -13841,10 +13603,10 @@ martin:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!sos config -c myconfig.yml --unset martin</textarea>
+      class="sos-source" name="SoS">!sos config -c new_config.yml --unset cutoff</textarea>
   </div>
 </div>
 
@@ -13860,7 +13622,7 @@ martin:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Unset martin
+<pre>Unset cutoff
 </pre>
 </div>
 </div>
@@ -13872,15 +13634,25 @@ martin:
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Running <code>sos config</code> again will show the <code>cutoff</code> from <code>~/.sos/config.yml</code>, which was overriden by <code>cutoff</code> defined in <code>new_config.yml</code>.</p>
+
+</div>
+</div>
+</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">!cat myconfig.yml</textarea>
+      class="sos-source" name="SoS">!sos config --get cutoff -c new_config.yml</textarea>
   </div>
 </div>
 
@@ -13896,10 +13668,7 @@ martin:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>cutoff:
-  high: 10
-  low: 2
-manager: martin
+<pre>cutoff	&#39;0.5&#39;
 </pre>
 </div>
 </div>
@@ -13911,16 +13680,41 @@ manager: martin
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Variable-CONFIG">Variable <code>CONFIG</code><a class="anchor-link" href="#Variable-CONFIG"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As stated above, you can create a configuration file and load it with option <code>-c</code>, and the results would be available as a magic variable <code>CONFIG</code> to the workflow.</p>
+<p>Let us create a yaml file with some simple content using a <code>report</code> action.</p>
+
+</div>
+</div>
+</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS"># clean up
-!rm config.yml myconfig.yaml</textarea>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
+      class="sos-source" name="SoS">report: output='myconfig.yml'
+    # A list of tasty fruits
+    martin:
+        name: Martin D'vloper
+        job: Developer
+        skill: Elite
+    manager: Martin</textarea>
   </div>
 </div>
 
@@ -13930,6 +13724,332 @@ manager: martin
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When you execute any workflow with option <code>-c myconfig.yml</code>, the content of the configuration file would be available as keys of variable <code>CONFIG</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Configuration files are frequently used to specify system configurations. For example, with the following definition of parameter <code>manager</code>, the workflow will take default value <code>Bob</code> if run without option,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run
+parameter: manager = CONFIG.get('manager', 'Bob')
+print(manager)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bob
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>take user specified value from command line</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run --manager Me
+parameter: manager = CONFIG.get('manager', 'Bob')
+print(manager)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Me
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>or values from a configuration file if a configuration file is specified</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run -c myconfig.yml
+parameter: manager = CONFIG.get('manager', 'Bob')
+print(manager)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Martin
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Host-dependent-paths">Host-dependent paths<a class="anchor-link" href="#Host-dependent-paths"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4><code>path(name, default)</code></h4>
+    <p>The <code>path</code> datatype of SoS is derived from `pathlib.Path`. One of the additions of this datatype is paramters `<code>name</code> and <code>default</code>, which returns a pre-defined <code>path</code> defined in </p>
+    <pre>
+    CONFIG["hosts"][current-host]["paths"]
+    </pre>
+    <p>where <code>current-host</code> is normally <code>localhost</code> but can be one of the remote hosts if the function is called from a remote host. A <code>default</code> value could be returned if <code>name</code> is not available in the configuration.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>hosts</code> definitions in <code>~/.sos/hosts.yml</code> allow the definition of paths for different hosts. For clarity let us define a local configuration file that points <code>localhost</code> to a <code>example_host</code> configuration.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">report: output='myconfig.yml'
+    localhost: example_host
+    hosts:
+        example_host:
+            address: localhost
+            paths:
+                home: /Users/{user_name}
+                project:  /Users/{user_name}/Documents
+                tmp: /tmp</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Without worrying about the <code>localhost</code> part for now, this configuration file defines a few paths for the localhost. The <code>paths</code> could be retrieved using <code>path(name='project')</code> so that you can write your script in a host-independent way. For example, the following workflow uses <code>path(name='project')</code> to get the host-specific <code>project</code> directory, which is defined as <code>/Users/bpeng1/Documents</code> in <code>myconfig.yml</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run -c myconfig.yml
+
+sh: workdir=path(name='project')
+   echo Working on `pwd`</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Working on /Users/bpeng1/Documents
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you are uncertain if <code>project</code> is defined for current host, you can use <code>default</code> to specify a default value</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%run -c myconfig.yml
+
+import os
+sh: workdir=path(name='scratch', default='~')
+   echo Working on `pwd`</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Working on /Users/bpeng1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="remote_filesystem.html">Using remote filesystems</a> for <code>hosts.yml</code></li>
+</ul>
+
+</div>
+</div>
+</div>
     </div>
   </div>
 
@@ -14043,7 +14163,7 @@ function add_hoverdoc(){
     .concat(sosMagicWords);
 
   var sosDirectives = sosKeywords.map(x => x + ":");
-  var sosActions = sosActionWords.map(x => x + ":");
+  var sosActions = sosActionWords.map(x => new RegExp("^\\s*" + x + ":"));
   var sosMagics = sosMagicWords.map(x => '%' + x);
 
   // hint word for SoS mode
