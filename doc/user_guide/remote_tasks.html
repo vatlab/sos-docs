@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>process_engine</title>
+<title>remote_tasks</title>
 
 <style type="text/css">
     /*!
@@ -12850,7 +12850,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="How-to-execute-tasks-on-a-remote-server-without-a-batch-system">How to execute tasks on a remote server without a batch system<a class="anchor-link" href="#How-to-execute-tasks-on-a-remote-server-without-a-batch-system"></a></h1>
+<h1 id="Execution-of-tasks-on-remote-hosts,-an-overview">Execution of tasks on remote hosts, an overview<a class="anchor-link" href="#Execution-of-tasks-on-remote-hosts,-an-overview"></a></h1>
 </div>
 </div>
 </div>
@@ -12860,9 +12860,14 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:</li>
+<li><strong>Difficulty level</strong>: intermediate</li>
+<li><strong>Time need to lean</strong>: 15 minutes or less</li>
+<li><strong>Key points</strong>:<ul>
+<li>A configuration file specifies how SoS should interact with a remote host</li>
+<li>Tasks should be written in a way that can be executed remotely</li>
+<li>Tasks can be submitted to remote hosts with option <code>-q</code></li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -12873,21 +12878,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="queue_type"><code>queue_type</code><a class="anchor-link" href="#queue_type"></a></h4>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Option <code>query_type</code> determines the type of remote server or job queue. SoS currently supports the following types of job queues:</p>
-<ol>
-<li><strong><code>process</code></strong>: this is the default queue type. Tasks are executed directly, either on local host or on a server.</li>
-<li><strong><code>pbs</code></strong>: A PBS/MOAB/LFS/Slurm cluster system where tasks are submitted using commands such as <code>qsub</code>.</li>
-<li><strong><code>rq</code></strong>: A redis queue where tasks are submitted to the rq server and monitored through rq-dashboard.</li>
-</ol>
+<p>This tutorial gives an overview of the SoS task model and steps to submit tasks to remote hosts.</p>
 
 </div>
 </div>
@@ -12897,7 +12888,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Common-host-configuration">Common host configuration<a class="anchor-link" href="#Common-host-configuration"></a></h3>
+<h2 id="How-remote-task-execution-works">How remote task execution works<a class="anchor-link" href="#How-remote-task-execution-works"></a></h2>
 </div>
 </div>
 </div>
@@ -12906,31 +12897,30 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS needs to know how to connect to a remote host, how to synchronize files between local and remote hosts, and how to execute commands on the remote host. These should be defined with the following keys:</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="address"><code>address</code><a class="anchor-link" href="#address"></a></h4>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>IP address or URL of the host. Note that</p>
+<p>Executing tasks on remote hosts can be very tricky so it is important to understand how SoS works, what SoS provides and what are the limitations. Here is a summary of how SoS execute tasks on remote hosts:</p>
+<p><strong>Step 1: Prepare task</strong></p>
 <ul>
-<li><code>address</code> should be ignored for hosts, for example your desktop, that do not accept remote execution.</li>
-<li>If you have a different user name on the the remote host, specify the <code>address</code> in the format of <code>username@hostaddress</code>.</li>
-<li>SoS does not support username/password authentication so <strong>public key authentication between local and remote hosts is reuired for communication between local and remote host</strong>.</li>
-<li>SoS currently does not support remote execution on windows hosts so no <code>address</code> is needed for windows hosts.</li>
+<li>SoS generates a task file, which contains information such as the content of the task (e.g. script to execute) and environments (variables, parameter etc).</li>
+<li>If the remote system is a batch system such as <code>PBS</code>, <code>SLURM</code> and <code>LSF</code>, a shell script is generated from a host-specific template. </li>
+</ul>
+<p><strong>Step 2: Copying tasks and reuired files to remote host</strong></p>
+<ul>
+<li>SoS prepares the task file to be executed on the remote host. It essentially records the path definitions of remote host so that the task can be executed with correct paths.</li>
+<li>SoS copies the task file, shell script, and sometimes input files to remote host using <code>rsync</code> or <code>rcp</code>.</li>
+</ul>
+<p><strong>Step 3: Execute task remotely, optionally througgh a task queue</strong></p>
+<ul>
+<li>If the remote system is not a batch system, a <code>sos execute task_id</code> is started on the remote host (through <code>ssh</code>) to execute the task.</li>
+<li>If the remote system is a batch system, a system-dependent command (e.g. <code>qsub task_id.sh</code>) is executed on the remote host to submit the task to the scheduler. The shell script is essentially a wrapper to the <code>sos execute</code> command.</li>
+</ul>
+<p><strong>Step 4: Monitor the execute of jobs</strong></p>
+<ul>
+<li>The task is run on remote host, either directly or by a batch system.</li>
+<li>SoS periodically sends a <code>sos status</code> command to remote host to check the status of the task.</li>
+</ul>
+<p><strong>Step 5: Retrieve its result once it is done</strong></p>
+<ul>
+<li>Once the task is completed, SoS copies the task file and specified output file back to local host.</li>
 </ul>
 
 </div>
@@ -12941,7 +12931,9 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="hostname"><code>hostname</code><a class="anchor-link" href="#hostname"></a></h4>
+<p align="center">
+  <img src="https://vatlab.github.io/sos-docs/doc/media/task_overview.png">
+</p>
 </div>
 </div>
 </div>
@@ -12950,7 +12942,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>hostname</code> of the machine, as reported by command <code>hostname</code> or Python's <code>socket.gethostname()</code>. This entry is used to identify the machine on which sos starts. It is needed only if the hostname is different from <code>alias</code> and <code>address</code>.</p>
+<p>Let us walk through the setup and execution of remote tasks through an example. I will be using a Ubuntu VM with a task-spooler program that mimics a task queue system, and I will make some intentional errors to show how things work.</p>
 
 </div>
 </div>
@@ -12960,7 +12952,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="port"><code>port</code><a class="anchor-link" href="#port"></a></h4>
+<h2 id="One-time-system-configuration">One-time system configuration<a class="anchor-link" href="#One-time-system-configuration"></a></h2>
 </div>
 </div>
 </div>
@@ -12969,7 +12961,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>ssh port of the remote host, which is <code>22</code> by default.</p>
+<p>SoS requires public-key access to remote hosts and tools such as <code>ssh</code>, <code>rsync</code> and <code>scp</code> to copy files. Unlike other programs that require a deamon process (a service) on the server to coordinate the execution of tasks, SoS relies on a basic remote access toolchain to access the remote host and execute commands remotely, which makes it possible to configure any remote server that you have access to to use SoS.</p>
 
 </div>
 </div>
@@ -12979,37 +12971,51 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="shared"><code>shared</code><a class="anchor-link" href="#shared"></a></h4>
+<h3 id="1.-Describe-the-host-in-~/.sos/hosts.yml">1. Describe the host in <code>~/.sos/hosts.yml</code><a class="anchor-link" href="#1.-Describe-the-host-in-~/.sos/hosts.yml"></a></h3>
 </div>
 </div>
 </div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">report: output='~/.sos/hosts.yml'
+
+    localhost: macpro
+    hosts:
+        macpro:
+            address: localhost
+            paths:
+                home:  /Users/{user_name}
+                project: /Users/{user_name}/Documents
+        vm:
+            address: 192.168.47.134
+            paths:
+                home: /home/{user_name}
+                project: /home/{user_name}/projects</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Option <code>shared</code> tells SoS which file systems are shared between localhost and some remote hosts so that it does not have to synchronize files under these directories between the hosts.</p>
-<p>The <code>shared</code> entry should be defined with <code>name</code> and <code>path</code> pairs in the format of</p>
-
-<pre><code>hosts:
-    desktop:
-    server:
-        shared:
-            project: /myprojects
-            HTFS: /
-    worker:
-        shared:
-            HTFS: /
-    server1:
-        shared:
-            project: /scratch/myprojects
-            data: /scratch/data
-`</code></pre>
-<p>The above cooked configuration says:</p>
+<p>here</p>
 <ol>
-<li><code>desktop</code> does not share any volume with any other machine so all files need to be transferred.</li>
-<li><code>server</code> and <code>worker</code> shares <code>HTFS</code> with directory <code>/</code>, so all files are shared.</li>
-<li><code>server</code> and <code>server1</code> share a <code>project</code> volume but the volume is mounted at different locations. So files under <code>myprojects</code> are not synchronized if you are submitting jobs from <code>server</code> to <code>server1</code>, and files under <code>/scratch/myprojects</code> are not synchronized if you are submitting jobs from <code>server1</code> to <code>server</code>.</li>
+<li><code>localhost</code> specifies the machine I am working on, which is a Mac Pro desktop.</li>
+<li><code>vm</code> specifies the remote host, with <code>192.169.47.134</code> being the IP address of the VM.</li>
+<li>Two <code>paths</code> named <code>home</code> and <code>project</code> are defined for each host.</li>
 </ol>
 
 </div>
@@ -13020,7 +13026,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="paths"><code>paths</code><a class="anchor-link" href="#paths"></a></h4>
+<h3 id="2.-Set-up-public-key-access-to-the-server">2. Set up public-key access to the server<a class="anchor-link" href="#2.-Set-up-public-key-access-to-the-server"></a></h3>
 </div>
 </div>
 </div>
@@ -13029,28 +13035,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>paths</code> defines paths that will be translated when a task is executed remotely. For example, your input file on a mac might be <code>/Users/myuser/project/KS28.fa</code>, but it should be named <code>/home/myuser/project/KS28.fa</code> if it is processed on a remote server. In this case, you should define directories <code>/Users/myuser</code> and <code>/home/myuser</code> as equivalent directories on the two hosts, using</p>
+<p>There are plenty of online tutorials for setting up public-key access to remote hosts. You can do this manually or simply enter the following command</p>
 
-<pre><code>hosts:
-    desktop:
-        paths:
-            home: /Users/myuser
-    server:
-        paths:
-            home: /home/myuser</code></pre>
-<p>Multiple entried could be defined and the files would be mapped by the longest mapping path. For example, if you have on the server a shared location for all resources, you could define</p>
-
-<pre><code>hosts:
-    desktop:
-        paths:            
-            home: /Users/myuser
-            resource: /Users/myuser/resources
-    server:
-        paths:
-            home: /home/myuser
-            resource: /shared/resources</code></pre>
-<p>so that <code>/Users/myuser/resources/hg19.fa</code> could be mapped to <code>/shared/resources/hg19.fa</code> on the server. Note that <code>/Users/myuser/resource/hg19.fa</code> would be mapped to <code>resource</code> instead of <code>home</code> because <code>resource</code> matches longer piece of the input path.</p>
-<p>A remote host can be accessible from a local host only if the remote host defines all paths defined by the local host. More specifically, if host A defines path <code>home</code> and host B defines paths <code>home</code> and <code>resource</code>, it is possible to connect from host A to host B using <code>home</code>, but not from host B to A because SoS does not know how to map paths under <code>resource</code>.</p>
+<pre><code>$ sos remote setup vm</code></pre>
+<p>where <code>vm</code> is the name of the remote host as registered in <code>~/.sos/hosts.yml</code>.</p>
 
 </div>
 </div>
@@ -13060,7 +13048,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="path_map-(derived)"><code>path_map</code> (derived)<a class="anchor-link" href="#path_map-(derived)"></a></h4>
+<h3 id="3.-Install-sos-on-remote-host">3. Install <code>sos</code> on remote host<a class="anchor-link" href="#3.-Install-sos-on-remote-host"></a></h3>
 </div>
 </div>
 </div>
@@ -13069,15 +13057,42 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>With definitions of <code>shared</code> and <code>paths</code> on both hosts, SoS would derive a set of <code>path_maps</code> between all hosts using common keys in <code>shared</code> and <code>path</code> between the hosts. Actually, when you run</p>
+<p>If you have a local Python installation (e.g. Anaconda), you can easily install <code>SoS</code> with command</p>
+<div class="highlight"><pre><span></span>$ pip install sos
+</pre></div>
+<p>Otherwise you might have to first ask your system administrator to install <code>SoS</code>.</p>
 
-<pre><code>sos status -q -v3</code></pre>
-<p>to list all host configurations, SoS would list all hosts accessible from <code>localhost</code>, with host-specific <code>path_map</code>, which is a list of directory mappings between local and remote directories. For example, the <code>path_map</code> from <code>desktop</code> to <code>server</code> using the above example would be</p>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="4.-Testing-the-remote-host">4. Testing the remote host<a class="anchor-link" href="#4.-Testing-the-remote-host"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now you will need to run command</p>
 
-<pre><code>/Users/myuser -&gt; /home/myuser
-/Users/myuser/resoruces -&gt; /shared/resources</code></pre>
-<p>Note that if a directory shows in both <code>shared</code> and <code>paths</code> (e.g. <code>/scratch</code> in <code>shared</code> and <code>/scratch/user</code> in <code>paths</code>), files can still be synchronized following <code>path_map</code> to a different directory even if they are shared and are already on the remote server.</p>
+<pre><code>$ sos remote test vm</code></pre>
+<p>to verify if the remote host is ready to use.</p>
 
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Submit-a-task-to-remote-host">Submit a task to remote host<a class="anchor-link" href="#Submit-a-task-to-remote-host"></a></h2>
 </div>
 </div>
 </div>
@@ -13204,7 +13219,7 @@ function add_hoverdoc(){
     .concat(sosMagicWords);
 
   var sosDirectives = sosKeywords.map(x => x + ":");
-  var sosActions = sosActionWords.map(x => x + ":");
+  var sosActions = sosActionWords.map(x => new RegExp("^\\s*" + x + ":"));
   var sosMagics = sosMagicWords.map(x => '%' + x);
 
   // hint word for SoS mode
