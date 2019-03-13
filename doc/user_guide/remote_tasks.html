@@ -13092,7 +13092,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Submit-a-task-to-remote-host">Submit a task to remote host<a class="anchor-link" href="#Submit-a-task-to-remote-host"></a></h2>
+<h2 id="Writting-tasks-that-can-be-executed-remotely">Writting tasks that can be executed remotely<a class="anchor-link" href="#Writting-tasks-that-can-be-executed-remotely"></a></h2>
 </div>
 </div>
 </div>
@@ -13101,7 +13101,207 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h3 id="Reminder:-named-paths">Reminder: named paths<a class="anchor-link" href="#Reminder:-named-paths"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Host-dependent paths play a key role in the portability of SoS tasks. As described in <a href="config_files.html#Host-dependent-paths">this tutorial</a>,</p>
+
+<pre><code>path(name='home')</code></pre>
+<p>refers to entry <code>home</code> in the <code>paths</code> definition of local host. What that tutorial did not say is that <code>path(name='home')</code> will refer to the named path of the host on which the tasks will be executed.</p>
+<p>That is to say, with the configuration of the <code>macpro</code> and <code>vm</code>, the shell script will be executed under <code>/Users/bpeng1</code> on <code>macpro</code> and under <code>/home/bpeng1</code> in the <code>vm</code> because <code>path(name='project')</code> returns host-dependent values for the named path <code>project</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">task:
+
+run: workdir=path(name='project')
+  echo "I am working at `pwd`"</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="task_macpro_5afa824d28b68f06" class="task_table completed">
+<tr>
+  <td class="task_icon">
+    <i id="task_status_icon_macpro_5afa824d28b68f06" class="fa fa-2x fa-fw fa-check-square-o"
+    null null null></i>
+  </td>
+  <td class="task_id">
+    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>5afa824d28b68f06<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'5afa824d28b68f06', queue: 'macpro'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'5afa824d28b68f06', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'5afa824d28b68f06', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'5afa824d28b68f06', queue: 'macpro'})"></i></div></pre></span>
+  </td>
+  <td class="task_tags">
+    <span id="status_tags_macpro_5afa824d28b68f06"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_2c1300c4eac2562c">2c1300c4eac2562c<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'2c1300c4eac2562c', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'2c1300c4eac2562c', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'2c1300c4eac2562c', queue: 'macpro'})"></i></div></pre><pre class="task_tags task_tag_scratch_0">scratch_0<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'scratch_0', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'scratch_0', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'scratch_0', queue: 'macpro'})"></i></div></pre></span>
+  </td>
+  <td class="task_timer">
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_macpro_5afa824d28b68f06" class="completed" datetime="1552442572090.852">Ran for < 5 seconds</time></pre>
+  </td>
+  <td class="task_status">
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_macpro_5afa824d28b68f06">completed</span></pre>
+  </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="1.-workdir-of-tasks-and-actions">1. <code>workdir</code> of tasks and actions<a class="anchor-link" href="#1.-workdir-of-tasks-and-actions"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4><code>workdir</code> of tasks and actions</h4>
+    <p>All SoS tasks and actions (scripts) executed within the tasks have a <code>workdir</code>, which determines the starting location when the task will be executed. Users can use either the default <code>workdir</code>, which is the current directory, or specify a <code>workdir</code>. For the task to be executable on a remote host, the <code>workdir</code> needs to exist on remote host. That is to say</p>
+    <ul>
+        <li>If a default <code>workdir</code> is used, the current directory must be under one of the named directories such as <code>home</code> </li>
+        <li>User specified <code>workdir</code> should better use one of the named directories.</li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first rule to remember is that you should <strong>either work under one of the named directories (e.g. <code>home</code>, or <code>project</code>) or specify a <code>workdir</code> that is under one of the named directrories</strong>. The reason behind this rule is that SoS executes task on remote host either under user-specified <code>workdir</code> or a <code>workdir</code> that is derived from current working directory, so whereas <code>workdir</code> in tasks</p>
+
+<pre><code>task: workdir=path(name='project')</code></pre>
+<p>and</p>
+
+<pre><code>task:</code></pre>
+<p>with default <code>workdir</code> = <code>path(name='home') / 'sos-docs'</code> could be located on remote host,</p>
+
+<pre><code>task: workdir='/some/local/path'</code></pre>
+<p>would fail if <code>/some/local/path</code> is not a valid path on remote host. Note that the last example would work perfectly locally, but it cannot be executed on remote host without <code>/some/local/path</code>. On the other hand, it is perfectly ok for you to hard-code remote path as in</p>
+
+<pre><code>task: workdir='/some/remote/path'</code></pre>
+<p>if you only intend to execute the task on a particular remote host.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2.-Interpreters,-applications,-libraries,-and-the-use-of-containers">2. Interpreters, applications, libraries, and the use of containers<a class="anchor-link" href="#2.-Interpreters,-applications,-libraries,-and-the-use-of-containers"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The second problem with remote execution is the availability of language interpreters (e.g. <code>R</code>), applications (e.g. <code>STAR</code>), libraries (e.g. <code>bioconductor</code>) on remote host. Your tasks will not be able to run if they need to use these tools but they are not available on the remote host.</p>
+<p>Other than installing these applications and libaries on the remote host, or begging your system adminstrator to do so for you, you can use containers in your task. If the remote host has internet access, if might be able to pull the images and execute the scripts directly. Otherwise you will have to transfer the images to remote host manually.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="3.-Input-and-supporting-files">3. Input and supporting files<a class="anchor-link" href="#3.-Input-and-supporting-files"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Working-with-batch-systems">Working with batch systems<a class="anchor-link" href="#Working-with-batch-systems"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="1.-Task-queues,-queue,-CPU,-and-memory-specifications">1. Task queues, queue, CPU, and memory specifications<a class="anchor-link" href="#1.-Task-queues,-queue,-CPU,-and-memory-specifications"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the remote host is a batch system such as <code>PBS</code>, your task needs to be submitted as a job using particular commands. SoS allows you to define the submission scripts and a job template and automatically execute the command to submit the task for you.</p>
+<p>However, all batch systems require the specification of CPU and memory usages, so you will have to estimate the required resources and specify them with task.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2.-Monitoring-task-status">2. Monitoring task status<a class="anchor-link" href="#2.-Monitoring-task-status"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="config_files.html#Host-dependent-paths">Named host-dependent paths</a></li>
+</ul>
 
 </div>
 </div>
