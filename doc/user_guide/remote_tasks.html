@@ -13037,12 +13037,27 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>There are plenty of online tutorials for setting up public-key access to remote hosts. You can do this manually or simply enter the following command</p>
 
-<pre><code>$ sos remote setup vm</code></pre>
-<p>where <code>vm</code> is the name of the remote host as registered in <code>~/.sos/hosts.yml</code>.</p>
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!sos remote setup vm</textarea>
+  </div>
+</div>
+
+</div>
 
 </div>
 </div>
-</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -13081,8 +13096,61 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now you will need to run command</p>
 
-<pre><code>$ sos remote test vm</code></pre>
-<p>to verify if the remote host is ready to use.</p>
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!sos remote test vm</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Alias Address        Queue Type ssh scp sos paths shared
+----- -------        ---------- --- --- --- ----- ------
+vm    192.168.47.134 process    OK  OK  OK  OK    OK    
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>to verify if the remote host is ready to use. This command tests</p>
+<ul>
+<li><code>ssh</code>: whether or not sos can ssh to the host without being prompt for password. If this test fails after <code>sos remote setup</code>, please try to manually enable public-key access.</li>
+<li><code>scp</code>: whether or not <code>rsync</code>, <code>rcp</code> etc are available and can be used. Install these tools if they are not available.</li>
+<li><code>sos</code>: whether or not <code>sos</code> command can be called directly on server. If you have installed <code>sos</code> and this test fails, it is likely that your <code>PATH</code> is set in <code>.bashrc</code>, not <code>.bash_profile</code>, and <code>sos</code> is called with command <code>ssh host "bash --login -c sos"</code>. Check the <a href="https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html">bash manual</a> for details.</li>
+<li><code>paths</code>: if all named paths actually exist and accessible.</li>
+<li><code>shared</code>: useful only when two hosts share some or all file systems.</li>
+</ul>
+<p>If you see five <code>OK</code>s, the remote host <code>vm</code> is ready to use.</p>
 
 </div>
 </div>
@@ -13092,7 +13160,243 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Writting-tasks-that-can-be-executed-remotely">Writting tasks that can be executed remotely<a class="anchor-link" href="#Writting-tasks-that-can-be-executed-remotely"></a></h2>
+<h2 id="Writting-tasks-for-remote-execution">Writting tasks for remote execution<a class="anchor-link" href="#Writting-tasks-for-remote-execution"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="1.-Writing-tasks-with-remote-paths">1. Writing tasks with remote paths<a class="anchor-link" href="#1.-Writing-tasks-with-remote-paths"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>vm</code> host has type <code>process</code>, which means the task will be executed directly on the host. This is good enough in many cases and let us write and submit a task to VM:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">task: queue='vm', workdir='/home/bpeng1/projects'
+sh:
+   echo 'This is my first task on vm' > 'result.txt'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="task_vm_a5dbf5181f2cf8d5" class="task_table failed">
+<tr>
+  <td class="task_icon">
+    <i id="task_status_icon_vm_a5dbf5181f2cf8d5" class="fa fa-2x fa-fw fa-times-circle-o"
+    null null null></i>
+  </td>
+  <td class="task_id">
+    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>a5dbf5181f2cf8d5<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'a5dbf5181f2cf8d5', queue: 'vm'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'a5dbf5181f2cf8d5', queue: 'vm'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'a5dbf5181f2cf8d5', queue: 'vm'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'a5dbf5181f2cf8d5', queue: 'vm'})"></i></div></pre></span>
+  </td>
+  <td class="task_tags">
+    <span id="status_tags_vm_a5dbf5181f2cf8d5"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_76998591254477ab">76998591254477ab<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'76998591254477ab', queue: 'vm'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'76998591254477ab', queue: 'vm'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'76998591254477ab', queue: 'vm'})"></i></div></pre><pre class="task_tags task_tag_scratch_0">scratch_0<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'scratch_0', queue: 'vm'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'scratch_0', queue: 'vm'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'scratch_0', queue: 'vm'})"></i></div></pre></span>
+  </td>
+  <td class="task_timer">
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_vm_a5dbf5181f2cf8d5" class="failed" datetime="1552453283773.5916">Ran for < 5 seconds</time></pre>
+  </td>
+  <td class="task_status">
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_vm_a5dbf5181f2cf8d5">failed</span></pre>
+  </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that here we use <code>workdir='/home/bpeng1/projects</code>, which is a directory that does not exist locally. We use task option <code>queue</code> to specify the remote queue, which can also be specified with command line option <code>-q</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run -q vm
+task: workdir='/home/bpeng1/projects'
+sh:
+   echo 'This is my first task on vm' > 'result.txt'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>INFO: a5dbf5181f2cf8d5 <span class="ansi-green-fg">started</span>
+<span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[default]: 
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+script_3713756263537653551 in &lt;module&gt;
+----&gt; sh(&#34;echo &#39;This is my first task on vm&#39; &gt; &#39;result.txt&#39;\n&#34;)
+
+NameError: name &#39;sh&#39; is not defined</span>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2.-Interpreters,-applications,-libraries,-and-the-use-of-containers">2. Interpreters, applications, libraries, and the use of containers<a class="anchor-link" href="#2.-Interpreters,-applications,-libraries,-and-the-use-of-containers"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The second problem with remote execution is the availability of language interpreters (e.g. <code>R</code>), applications (e.g. <code>STAR</code>), libraries (e.g. <code>bioconductor</code>) on remote host. Your tasks will not be able to run if they need to use these tools but they are not available on the remote host.</p>
+<p>Other than installing these applications and libaries on the remote host, or begging your system adminstrator to do so for you, you can use containers in your task. If the remote host has internet access, if might be able to pull the images and execute the scripts directly. Otherwise you will have to transfer the images to remote host manually.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="3.-Input-and-supporting-files">3. Input and supporting files<a class="anchor-link" href="#3.-Input-and-supporting-files"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Input data of tasks can be small or large, can be available locally or remotely, and you do not always want the data to be synchronized. So here is the rule of thumb for data synchronization:</p>
+<ol>
+<li><p>SoS by default automatically synchronize input and output files. If you specify <code>input</code> and <code>output</code> statements and specifies <code>_input</code> and <code>_output</code> of your task, SoS will synchronize input files to remote host before task execution, and synchronize output files from remote host after task execution.</p>
+</li>
+<li><p>If you are submitting tasks to process data on remote host. Do not specify <code>input</code>. If do want to specify them for clarity, use <code>remote()</code> function to let SoS know that the data is on remote host.</p>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Working-with-batch-systems">Working with batch systems<a class="anchor-link" href="#Working-with-batch-systems"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="1.-Job-submission-script">1. Job submission script<a class="anchor-link" href="#1.-Job-submission-script"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the remote host is a batch system such as <code>PBS</code>, your task needs to be submitted as a job using particular commands. SoS allows you to define the submission scripts and a job template and automatically execute the command to submit the task for you.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2.-Queue,-CPU,-and-memory-specifications">2. Queue, CPU, and memory specifications<a class="anchor-link" href="#2.-Queue,-CPU,-and-memory-specifications"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All batch systems require the specification of CPU and memory usages, so you will have to estimate the required resources and specify them with task.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Writing-portable-tasks">Writing portable tasks<a class="anchor-link" href="#Writing-portable-tasks"></a></h2>
 </div>
 </div>
 </div>
@@ -13223,98 +13527,6 @@ run: workdir=path(name='project')
 
 <pre><code>task: workdir='/some/remote/path'</code></pre>
 <p>if you only intend to execute the task on a particular remote host.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="2.-Interpreters,-applications,-libraries,-and-the-use-of-containers">2. Interpreters, applications, libraries, and the use of containers<a class="anchor-link" href="#2.-Interpreters,-applications,-libraries,-and-the-use-of-containers"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The second problem with remote execution is the availability of language interpreters (e.g. <code>R</code>), applications (e.g. <code>STAR</code>), libraries (e.g. <code>bioconductor</code>) on remote host. Your tasks will not be able to run if they need to use these tools but they are not available on the remote host.</p>
-<p>Other than installing these applications and libaries on the remote host, or begging your system adminstrator to do so for you, you can use containers in your task. If the remote host has internet access, if might be able to pull the images and execute the scripts directly. Otherwise you will have to transfer the images to remote host manually.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="3.-Input-and-supporting-files">3. Input and supporting files<a class="anchor-link" href="#3.-Input-and-supporting-files"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Input data of tasks can be small or large, can be available locally or remotely, and you do not always want the data to be synchronized. So here is the rule of thumb for data synchronization:</p>
-<ol>
-<li><p>SoS by default automatically synchronize input and output files. If you specify <code>input</code> and <code>output</code> statements and specifies <code>_input</code> and <code>_output</code> of your task, SoS will synchronize input files to remote host before task execution, and synchronize output files from remote host after task execution.</p>
-</li>
-<li><p>If you are submitting tasks to process data on remote host. Do not specify <code>input</code>. If do want to specify them for clarity, use <code>remote()</code> function to let SoS know that the data is on remote host.</p>
-</li>
-</ol>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Working-with-batch-systems">Working with batch systems<a class="anchor-link" href="#Working-with-batch-systems"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="1.-Job-submission-script">1. Job submission script<a class="anchor-link" href="#1.-Job-submission-script"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If the remote host is a batch system such as <code>PBS</code>, your task needs to be submitted as a job using particular commands. SoS allows you to define the submission scripts and a job template and automatically execute the command to submit the task for you.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="2.-Queue,-CPU,-and-memory-specifications">2. Queue, CPU, and memory specifications<a class="anchor-link" href="#2.-Queue,-CPU,-and-memory-specifications"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>All batch systems require the specification of CPU and memory usages, so you will have to estimate the required resources and specify them with task.</p>
 
 </div>
 </div>
