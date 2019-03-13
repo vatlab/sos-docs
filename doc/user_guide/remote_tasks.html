@@ -13261,26 +13261,13 @@ run: workdir=path(name='project')
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Working-with-batch-systems">Working with batch systems<a class="anchor-link" href="#Working-with-batch-systems"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="1.-Task-queues,-queue,-CPU,-and-memory-specifications">1. Task queues, queue, CPU, and memory specifications<a class="anchor-link" href="#1.-Task-queues,-queue,-CPU,-and-memory-specifications"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If the remote host is a batch system such as <code>PBS</code>, your task needs to be submitted as a job using particular commands. SoS allows you to define the submission scripts and a job template and automatically execute the command to submit the task for you.</p>
-<p>However, all batch systems require the specification of CPU and memory usages, so you will have to estimate the required resources and specify them with task.</p>
+<p>Input data of tasks can be small or large, can be available locally or remotely, and you do not always want the data to be synchronized. So here is the rule of thumb for data synchronization:</p>
+<ol>
+<li><p>SoS by default automatically synchronize input and output files. If you specify <code>input</code> and <code>output</code> statements and specifies <code>_input</code> and <code>_output</code> of your task, SoS will synchronize input files to remote host before task execution, and synchronize output files from remote host after task execution.</p>
+</li>
+<li><p>If you are submitting tasks to process data on remote host. Do not specify <code>input</code>. If do want to specify them for clarity, use <code>remote()</code> function to let SoS know that the data is on remote host.</p>
+</li>
+</ol>
 
 </div>
 </div>
@@ -13290,7 +13277,71 @@ run: workdir=path(name='project')
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="2.-Monitoring-task-status">2. Monitoring task status<a class="anchor-link" href="#2.-Monitoring-task-status"></a></h3>
+<h2 id="Working-with-batch-systems">Working with batch systems<a class="anchor-link" href="#Working-with-batch-systems"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="1.-Job-submission-script">1. Job submission script<a class="anchor-link" href="#1.-Job-submission-script"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the remote host is a batch system such as <code>PBS</code>, your task needs to be submitted as a job using particular commands. SoS allows you to define the submission scripts and a job template and automatically execute the command to submit the task for you.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2.-Queue,-CPU,-and-memory-specifications">2. Queue, CPU, and memory specifications<a class="anchor-link" href="#2.-Queue,-CPU,-and-memory-specifications"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All batch systems require the specification of CPU and memory usages, so you will have to estimate the required resources and specify them with task.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Summary">Summary<a class="anchor-link" href="#Summary"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So at the end of the day, after you set up everything, or if are lucky that a system adminstrator has set up everything for you, you can almost execute your tasks on every defined remote hosts, and you only need to remember:</p>
+<ol>
+<li>Unless you want to execute the task only locally or only remotely, use named paths in your task.</li>
+<li>Verify if the applications, libraries, or containers are available on remote host.</li>
+<li>Do not specify <code>input</code> and/or <code>output</code>, or use <code>remote()</code> if your tasks are designed to process data remotely (and do not need to be synchronized to local host).</li>
+<li>Specify CPU and memory usages of tasks if you are submitting the tasks to a batch system</li>
+</ol>
+<p>Good luck.</p>
+
 </div>
 </div>
 </div>
