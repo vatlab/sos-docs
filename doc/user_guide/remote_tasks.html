@@ -12897,7 +12897,18 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Executing tasks on remote hosts can be very tricky so it is important to understand how SoS works, what SoS provides and what are the limitations. Here is a summary of how SoS execute tasks on remote hosts:</p>
+<p align="center">
+  <img src="https://vatlab.github.io/sos-docs/doc/media/task_overview.png" width="80%">
+</p>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Executing tasks on remote hosts is generally easy once everything is set up correctly, but  can be very tricky if you do not have a clear idea how things work. As illustrated avove, here is a summary of how SoS execute tasks on remote hosts:</p>
 <p><strong>Step 1: Prepare task</strong></p>
 <ul>
 <li>SoS generates a task file, which contains information such as the content of the task (e.g. script to execute) and environments (variables, parameter etc).</li>
@@ -12931,18 +12942,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p align="center">
-  <img src="https://vatlab.github.io/sos-docs/doc/media/task_overview.png" width="80%">
-</p>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let us walk through the setup and execution of remote tasks through an example. I will be using a Ubuntu VM with a task-spooler program that mimics a task queue system, and I will make some intentional errors to show how things work.</p>
+<p>This tutorial walks through the setup and execution of remote tasks through simple examples. I will be using a Ubuntu VM with a task-spooler program that mimics a task queue system, and I will make some intentional errors to show how things work.</p>
 
 </div>
 </div>
@@ -12961,7 +12961,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS requires public-key access to remote hosts and tools such as <code>ssh</code>, <code>rsync</code> and <code>scp</code> to copy files. Unlike other programs that require a deamon process (a service) on the server to coordinate the execution of tasks, SoS relies on a basic remote access toolchain to access the remote host and execute commands remotely, which makes it possible to configure any remote server that you have access to to use SoS.</p>
+<p>SoS requires public-key access to remote hosts and tools such as <code>ssh</code>, <code>rsync</code> and <code>scp</code> to copy files. Unlike other programs that require a deamon process (a service) on the server to coordinate the execution of tasks, SoS relies on a basic remote access toolchain to access the remote host and execute commands remotely, which makes it easy to deploy SoS to a majority of the servers.</p>
 
 </div>
 </div>
@@ -12972,6 +12972,31 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="1.-Describe-the-host-in-~/.sos/hosts.yml">1. Describe the host in <code>~/.sos/hosts.yml</code><a class="anchor-link" href="#1.-Describe-the-host-in-~/.sos/hosts.yml"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A VM is created with basic system and a SSH server. After getting the IP address of the VM with commna <code>ifconfig</code>, it is time to add it to SoS host definition file <code>~/.sos/hosts.yml</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here I create such a file using the <code>report</code> action where</p>
+<ol>
+<li><code>localhost</code> specifies the machine I am working on, which is a Mac Pro desktop.</li>
+<li><code>vm</code> specifies the remote host, with <code>192.169.47.134</code> being the IP address of the VM.</li>
+<li>Two <code>paths</code> named <code>home</code> and <code>project</code> are defined for each host.</li>
+</ol>
+
 </div>
 </div>
 </div>
@@ -13006,21 +13031,6 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 
 
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>here</p>
-<ol>
-<li><code>localhost</code> specifies the machine I am working on, which is a Mac Pro desktop.</li>
-<li><code>vm</code> specifies the remote host, with <code>192.169.47.134</code> being the IP address of the VM.</li>
-<li>Two <code>paths</code> named <code>home</code> and <code>project</code> are defined for each host.</li>
-</ol>
-
-</div>
-</div>
-</div>
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -13063,6 +13073,16 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>and enter password when prompted.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="3.-Install-sos-on-remote-host">3. Install <code>sos</code> on remote host<a class="anchor-link" href="#3.-Install-sos-on-remote-host"></a></h3>
 </div>
 </div>
@@ -13072,10 +13092,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you have a local Python installation (e.g. Anaconda), you can easily install <code>SoS</code> with command</p>
+<p>Since the VM comes with only Python 2.7 and SoS requires Python 3.6+, I installed <a href="https://www.anaconda.com/distribution/">Anaconda python 3</a> and then <code>SoS</code> with command</p>
 <div class="highlight"><pre><span></span>$ pip install sos
 </pre></div>
-<p>Otherwise you might have to first ask your system administrator to install <code>SoS</code>.</p>
+<p>If you are on a system without root privilege, you can ask your system administrator to install <code>SoS</code> or install anaconda Python locally.</p>
 
 </div>
 </div>
@@ -13147,7 +13167,7 @@ vm    192.168.47.134 process    OK  OK  OK  OK    OK
 <li><code>ssh</code>: whether or not sos can ssh to the host without being prompt for password. If this test fails after <code>sos remote setup</code>, please try to manually enable public-key access.</li>
 <li><code>scp</code>: whether or not <code>rsync</code>, <code>rcp</code> etc are available and can be used. Install these tools if they are not available.</li>
 <li><code>sos</code>: whether or not <code>sos</code> command can be called directly on server. If you have installed <code>sos</code> and this test fails, it is likely that your <code>PATH</code> is set in <code>.bashrc</code>, not <code>.bash_profile</code>, and <code>sos</code> is called with command <code>ssh host "bash --login -c sos"</code>. Check the <a href="https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html">bash manual</a> for details.</li>
-<li><code>paths</code>: if all named paths actually exist and accessible.</li>
+<li><code>paths</code>: if all named paths actually exist and accessible. I had to login to the VM and create <code>~/projects</code> to fix this test.</li>
 <li><code>shared</code>: useful only when two hosts share some or all file systems.</li>
 </ul>
 <p>If you see five <code>OK</code>s, the remote host <code>vm</code> is ready to use.</p>
@@ -13178,6 +13198,18 @@ vm    192.168.47.134 process    OK  OK  OK  OK    OK
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Tasks written for remote host</h4>
+    Task written for remote host can use paths on remote host directly. It is recommended to specify queue directly using task option <code>queue</code>.
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>The <code>vm</code> host has type <code>process</code>, which means the task will be executed directly on the host. This is good enough in many cases and let us write and submit a task to VM:</p>
 
 </div>
@@ -13188,7 +13220,7 @@ vm    192.168.47.134 process    OK  OK  OK  OK    OK
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">task: queue='vm', workdir='/home/bpeng1/projects'
@@ -13211,10 +13243,10 @@ sh:
 
 <div class="output_html rendered_html output_subarea ">
 
-<table id="task_vm_a5dbf5181f2cf8d5" class="task_table failed">
+<table id="task_vm_a5dbf5181f2cf8d5" class="task_table completed">
 <tr>
   <td class="task_icon">
-    <i id="task_status_icon_vm_a5dbf5181f2cf8d5" class="fa fa-2x fa-fw fa-times-circle-o"
+    <i id="task_status_icon_vm_a5dbf5181f2cf8d5" class="fa fa-2x fa-fw fa-check-square-o"
     null null null></i>
   </td>
   <td class="task_id">
@@ -13224,10 +13256,10 @@ sh:
     <span id="status_tags_vm_a5dbf5181f2cf8d5"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_76998591254477ab">76998591254477ab<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'76998591254477ab', queue: 'vm'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'76998591254477ab', queue: 'vm'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'76998591254477ab', queue: 'vm'})"></i></div></pre><pre class="task_tags task_tag_scratch_0">scratch_0<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'scratch_0', queue: 'vm'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'scratch_0', queue: 'vm'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'scratch_0', queue: 'vm'})"></i></div></pre></span>
   </td>
   <td class="task_timer">
-    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_vm_a5dbf5181f2cf8d5" class="failed" datetime="1552453283773.5916">Ran for < 5 seconds</time></pre>
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_vm_a5dbf5181f2cf8d5" class="completed" datetime="1552531458406.1199">Ran for 10 sec</time></pre>
   </td>
   <td class="task_status">
-    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_vm_a5dbf5181f2cf8d5">failed</span></pre>
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_vm_a5dbf5181f2cf8d5">completed</span></pre>
   </td>
 </tr>
 </table>
@@ -13248,7 +13280,7 @@ sh:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that here we use <code>workdir='/home/bpeng1/projects</code>, which is a directory that does not exist locally. We use task option <code>queue</code> to specify the remote queue, which can also be specified with command line option <code>-q</code>.</p>
+<p>In this workflow, we use <code>queue='vm'</code> to let SoS know that the task will be submitted to host <code>vm</code>, and the task uses a workdir (<code>/home/bpeng1/projects</code>) that is only available on the remote host. You can specify the queue using command line option <code>-q</code>,</p>
 
 </div>
 </div>
@@ -13258,7 +13290,7 @@ sh:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
       class="sos-source" name="SoS">%run -q vm
@@ -13281,15 +13313,79 @@ sh:
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>INFO: a5dbf5181f2cf8d5 <span class="ansi-green-fg">started</span>
-<span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[default]: 
----------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
-script_3713756263537653551 in &lt;module&gt;
-----&gt; sh(&#34;echo &#39;This is my first task on vm&#39; &gt; &#39;result.txt&#39;\n&#34;)
-
-NameError: name &#39;sh&#39; is not defined</span>
+INFO: a5dbf5181f2cf8d5 <span class="ansi-green-fg">completed</span>
 </pre>
 </div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, the task cannot be executed locally because <code>/home/bpeng1/projects</code> is not a valid <code>workdir</code> locally.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">task: workdir='/home/bpeng1/projects'
+sh:
+   echo 'This is my first task on vm' > 'result.txt'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="task_macpro_a5dbf5181f2cf8d5" class="task_table running">
+<tr>
+  <td class="task_icon">
+    <i id="task_status_icon_macpro_a5dbf5181f2cf8d5" class="fa fa-2x fa-fw fa-spinner fa-pulse fa-spin"
+    null null null></i>
+  </td>
+  <td class="task_id">
+    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>a5dbf5181f2cf8d5<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'a5dbf5181f2cf8d5', queue: 'macpro'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'a5dbf5181f2cf8d5', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'a5dbf5181f2cf8d5', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'a5dbf5181f2cf8d5', queue: 'macpro'})"></i></div></pre></span>
+  </td>
+  <td class="task_tags">
+    <span id="status_tags_macpro_a5dbf5181f2cf8d5"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_76998591254477ab">76998591254477ab<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'76998591254477ab', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'76998591254477ab', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'76998591254477ab', queue: 'macpro'})"></i></div></pre><pre class="task_tags task_tag_scratch_0">scratch_0<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'scratch_0', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'scratch_0', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'scratch_0', queue: 'macpro'})"></i></div></pre></span>
+  </td>
+  <td class="task_timer">
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_macpro_a5dbf5181f2cf8d5" class="running" datetime="1552531601750.3918"></time></pre>
+  </td>
+  <td class="task_status">
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_macpro_a5dbf5181f2cf8d5">running</span></pre>
+  </td>
+</tr>
+</table>
+
+</div>
+
 </div>
 
 </div>
@@ -13314,7 +13410,57 @@ NameError: name &#39;sh&#39; is not defined</span>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The second problem with remote execution is the availability of language interpreters (e.g. <code>R</code>), applications (e.g. <code>STAR</code>), libraries (e.g. <code>bioconductor</code>) on remote host. Your tasks will not be able to run if they need to use these tools but they are not available on the remote host.</p>
-<p>Other than installing these applications and libaries on the remote host, or begging your system adminstrator to do so for you, you can use containers in your task. If the remote host has internet access, if might be able to pull the images and execute the scripts directly. Otherwise you will have to transfer the images to remote host manually.</p>
+<p>Other than installing these applications and libaries on the remote host, or begging your system adminstrator to do so for you, you can use containers in your task. For example,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">task:
+R: container='r-base'
+   cat('this is R')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to execute process
+&#34;&#39;R(&#34;cat(\&#39;this is R\&#39;)\\n&#34;, container=\&#39;r-base\&#39;)\n&#39;&#34;
+name &#39;path&#39; is not defined
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the remote host has internet access, if might be able to pull the images and execute the scripts directly. Otherwise you will have to transfer the images to remote host manually.</p>
 
 </div>
 </div>

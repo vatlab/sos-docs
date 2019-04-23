@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>target_oriented</title>
+<title>Untitled</title>
 
 <style type="text/css">
     /*!
@@ -12316,8 +12316,8 @@ font-style: italic;
 
 
 <style>
-   .sos_lan_Bash .input_prompt {
-      background-color: #E6EEFF !important;
+   .sos_lan_Python3 .input_prompt {
+      background-color: #FFD91A !important;
     }.sos_lan_R .input_prompt {
       background-color: #DCDCDA !important;
     }
@@ -12845,95 +12845,36 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="notebook-container" id="notebook-container">
 
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="How-to-execute-workflow-to-generate-specific-output">How to execute workflow to generate specific output<a class="anchor-link" href="#How-to-execute-workflow-to-generate-specific-output"></a></h1>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li><strong>Difficulty level</strong>: intemediate</li>
-<li><strong>Time need to lean</strong>: 20 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li>Instead of executing workflows, you can use option <code>-t</code> to specify targets to generate</li>
-<li>Targets can be filenames or names of named output</li>
-<li>Steps that provides targets can be process-oriented steps with static or named outputs, or outcome-oriented with pattern matching</li>
-</ul>
-</li>
-</ul>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Process-oriented-and-outcome-oriented-workflows">Process-oriented and outcome-oriented workflows<a class="anchor-link" href="#Process-oriented-and-outcome-oriented-workflows"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-primary" role="alert">
-    <h4>Process- vs outcome-oriented workflows</h4>
-    <p>SoS supports both process-oriented and outcome-oriented workflow styles</p>
-    <ul>    
-    <li><b>Process-oriented workflows</b> execute user-specified workflows or steps. For example, <code>sos run script A</code> would execute a workflow named <code>A</code>, which can be a single-step workflow with step <code>A</code>, or a multi-step workflow with steps such as <code>A_10</code>, <code>A_20</code>. The workflow may or may not generate any output. </li>
-    <li><b>Outcome-oriented workflows</b> aims at generating specified outcomes. For example, <code>sos run script -t result.html</code> would execute any step needed to genearte <code>result.html</code>.</li>
-    </ul>
-    The distinction between these two styles are mostly conceptual, and on how workflows are executed. In SoS, the same workflow can be executed in both process-oriented and outcome-oriented styles.
- </div>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Process-oriented</strong> workflows execute steps. For example, the first example in our tutorial on <a href="doc/user_guide/sos_in_notebook.html">Using SoS workflow system in Jupyter and from command line</a> defines a workflow <code>plot</code> with two steps <code>plot_10</code> and <code>plot_20</code>. The magic <code>%run plot</code> or command <code>sos run script plot</code> executes all steps in the workflow, regardless of these steps produce any output.</p>
-
-</div>
-</div>
-</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 21.74293em">
-   <textarea rows="17"
-      class="sos-source" name="SoS">%run plot
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">par=100</textarea>
+  </div>
+</div>
 
-[global]
-excel_file = 'data/DEG.xlsx'
-csv_file = 'DEG.csv'
-figure_file = 'output.pdf'
+</div>
 
-[plot_10]
-run: expand=True
-    xlsx2csv {excel_file} > {csv_file}
+</div>
+</div>
 
-[plot_20]
-R: expand=True
-    data <- read.csv('{csv_file}')
-    pdf('{figure_file}')
-    plot(data$log2FoldChange, data$stat)
-    dev.off()</textarea>
+
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="R">%expand ${ }
+if (${par} > 50) {
+    cat('A parameter ${par} greater than 50 is specified.');
+}</textarea>
   </div>
 </div>
 
@@ -12948,12 +12889,9 @@ R: expand=True
 <div class="prompt"></div>
 
 
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">plot_10</span>: 
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A parameter 100 greater than 50 is specified.</pre>
 </div>
-</div>
-
 </div>
 
 </div>
@@ -12963,85 +12901,76 @@ R: expand=True
 </div>
 
 
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Outcome-oriented</strong> workflows aim at generating particular outcomes. For example,</p>
-
-</div>
-</div>
-</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
-      class="sos-source" name="SoS">%sos -t data/DEG.csv
-
-[convert: provides='{filename}.csv']
-input: f'{filename}.xlsx'
-run: expand=True
-    xlsx2csv {_input} > {_output}</textarea>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%with SoS -i a -o b
+b = a + 1</textarea>
   </div>
 </div>
 
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+script_948916133623693931 in &lt;module&gt;
+----&gt; b = a + 1
+
+NameError: name &#39;a&#39; is not defined
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 </div>
 
 
 
-<div class="sos_lan_SoS">
+<div class="sos_lan_Python3">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">## Generating plain output files</textarea>
+      class="sos-source" name="Python3">%pwdb</textarea>
   </div>
 </div>
 
 </div>
 
-</div>
-</div>
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
 
 
 
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">## Generating output files through pattern matching</textarea>
-  </div>
-</div>
 
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">## Generating outputs from their names</textarea>
-  </div>
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;/Users/bpeng1/sos/sos-docs/src/user_guide&#39;</pre>
 </div>
 
 </div>
@@ -13049,19 +12978,10 @@ run: expand=True
 </div>
 </div>
 
+</div>
+</div>
 
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
-<li><a href="doc/user_guide/target_label.html">How to define named inputs and outputs</a></li>
-</ul>
 
-</div>
-</div>
-</div>
     </div>
   </div>
 
