@@ -13013,8 +13013,8 @@ b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><spa
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h4 id="cd_command"><code>cd_command</code><a class="anchor-link" href="#cd_command"></a></h4><p><code>cd_command</code> is a command to change current working directory, specified with <code>{dir}</code> intepolated with option of magic <code>%cd</code>. For example, the command for R is</p>
-
-<pre><code>cd_command = 'setwd({dir!r})'</code></pre>
+<div class="highlight"><pre><span></span><span class="n">cd_command</span> <span class="o">=</span> <span class="s1">&#39;setwd({dir!r})&#39;</span>
+</pre></div>
 <p>where <code>!r</code> quotes the provided <code>dir</code>. Note that <code>{ }</code> are used as a Python f-string but no <code>f</code> prefix should be used.</p>
 
 </div>
@@ -13127,8 +13127,8 @@ b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><spa
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Obtain-variable-from-SoS">Obtain variable from SoS<a class="anchor-link" href="#Obtain-variable-from-SoS"></a></h2><p>The <code>get_vars</code> function should be defined as</p>
-
-<pre><code>def get_vars(self, var_names)</code></pre>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_names</span><span class="p">)</span>
+</pre></div>
 <p>where</p>
 <ul>
 <li><code>self</code> is the language instance with access to the SoS kernel, and</li>
@@ -13160,8 +13160,8 @@ b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><spa
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Send-variables-to-other-kernels">Send variables to other kernels<a class="anchor-link" href="#Send-variables-to-other-kernels"></a></h2><p>The <code>put_vars</code> function should be defined as</p>
-
-<pre><code>def put_vars(self, var_names, to_kernel=None)</code></pre>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">put_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_names</span><span class="p">,</span> <span class="n">to_kernel</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</pre></div>
 <p>where</p>
 <ol>
 <li><code>self</code> is the language instance with access to the SoS kernel</li>
@@ -13287,6 +13287,18 @@ msg_type, msg_data
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-primary" role="alert">
+  <h4>Debug Jupyter Messages</h4>
+    <p>Because it is sometime difficult to figure out from the notebook interface what messages have been passed (e.g. <code>display_data</code> and <code>stream</code> can look alike), you can define environment variable <code>SOS_DEBUG=MESSAGE</code> (or <code>MESSAGE,KERNEL</code> etc) before starting the notebook server. This will cause SoS to, among other things, log messages processed by <code>get_response</code> function to <code>~/sos_debug.log</code>.</p>
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Testing-the-language-module">Testing the language module<a class="anchor-link" href="#Testing-the-language-module"></a></h2>
 </div>
 </div>
@@ -13304,7 +13316,7 @@ msg_type, msg_data
 <li>Copy three test files from <a href="https://github.com/vatlab/sos-r/tree/master/test">tests for <code>sos-r</code></a> and adapt them for your language.</li>
 </ul>
 <h3 id="Test-files">Test files<a class="anchor-link" href="#Test-files"></a></h3><p>The test suite contains three files:</p>
-<ol>
+<ul>
 <li><p><code>conftest.py</code></p>
 <p>This is the configuration file for <code>pytest</code> that defines how to start a Jupyter server with the notebook with the right kernel. You can simply copy this file for your purpose.</p>
 </li>
@@ -13319,12 +13331,12 @@ msg_type, msg_data
 <li>Test for the <code>%sessioninfo</code> magic</li>
 </ul>
 </li>
-</ol>
-<ol>
+</ul>
+<ul>
 <li><p><code>test_data_exchange.py</code></p>
 <p>This file should contain tests for data exchange between SoS (Python) and the language, and optionally between subkernels. It should separate by data types and direction of data transfer.</p>
 </li>
-</ol>
+</ul>
 <p>All tests should be derived from <code>NotebookTest</code> derived from <code>sos_notebook.test_utils</code>, and use a <a href="https://docs.pytest.org/en/latest/fixture.html">pytest fixture</a> <code>notebook</code> as follows:</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sos_notebook.test_utils</span> <span class="kn">import</span> <span class="n">NotebookTest</span>
 
@@ -13383,11 +13395,11 @@ msg_type, msg_data
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>To register a language module with SoS, you will need to add your module to an entry point under section <code>sos-language</code>. This can be done by adding the something like the following to your <code>setup.py</code>:</p>
-
-<pre><code>    entry_points='''
-[sos_language]
-Perl = sos_perl.kernel:sos_Perl
-'''</code></pre>
+<div class="highlight"><pre><span></span><span class="n">entry_points</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">[sos_language]</span>
+<span class="s1">Perl = sos_perl.kernel:sos_Perl</span>
+<span class="s1">&#39;&#39;&#39;</span>
+</pre></div>
 <p>With the installation of this package, <code>sos</code> would be able to import a class <code>sos_Perl</code> from module <code>sos_perl.kernel</code>, and use it to work with the <code>Perl</code> language.</p>
 
 </div>
