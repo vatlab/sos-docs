@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
-<title>sos_magics</title>
+<title>language_module</title>
 
 <style type="text/css">
     /*!
@@ -12316,10 +12316,8 @@ font-style: italic;
 
 
 <style>
-   .sos_lan_Python3 .input_prompt {
-      background-color: #FFD91A !important;
-    }.sos_lan_R .input_prompt {
-      background-color: #DCDCDA !important;
+   .sos_lan_sparql .input_prompt {
+      background-color:  !important;
     }
 </style>
 
@@ -12850,7 +12848,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="SoS-Magics">SoS Magics<a class="anchor-link" href="#SoS-Magics"></a></h1>
+<h1 id="Add-a-new-language-to-SoS">Add a new language to SoS<a class="anchor-link" href="#Add-a-new-language-to-SoS"></a></h1>
 </div>
 </div>
 </div>
@@ -12860,11 +12858,11 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><strong>Difficulty level</strong>: hard</li>
-<li><strong>Time need to lean</strong>: refer to this document only when needed</li>
+<li><strong>Difficulty level</strong>: difficult</li>
+<li><strong>Time need to lean</strong>: 30 minutes or more</li>
 <li><strong>Key points</strong>:<ul>
-<li>Use <code>%&lt;tab&gt;</code> to get a list of magics</li>
-<li>Use <code>%MAGIC -h</code> to get the help messages  </li>
+<li>It is relatively easy to write a language module with basic functions</li>
+<li>Data exchange for different data types are handled independently so you can start from most common types and add more types gradually</li>
 </ul>
 </li>
 </ul>
@@ -12877,7 +12875,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Getting-help">Getting help<a class="anchor-link" href="#Getting-help"></a></h2>
+<h2 id="Role-of-a-language-modual">Role of a language modual<a class="anchor-link" href="#Role-of-a-language-modual"></a></h2>
 </div>
 </div>
 </div>
@@ -12886,11 +12884,31 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In addition to SoS statements, you can use a few SoS magics in Jupyter notebooks with a SoS kernel. Note that</p>
+<p>SoS can interact with any Jupyter kernel. As shown in <a href="multi_kernel_notebook.html">the SoS notebook tutorial</a>, SoS can</p>
 <ul>
-<li>SoS magics have to be specified at the beginning of a cell, although they can be specified after empty lines and comments.</li>
-<li>Lines ending with <code>"\"</code> will be joined so you can break long magics into multiple lines</li>
-<li>Multiple magics can be used in a single cell.</li>
+<li>List the kernel in the language dropdown box and use it to execute associated cells</li>
+<li>Use <code>%expand</code> magic to prepare input before sending to the kernel</li>
+<li>Use <code>%capture</code> magic to capture the output from the kernel</li>
+<li>Use <code>%render</code> magic to render output from the kernel</li>
+</ul>
+<p>without knowing what the kernel does.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, if the kernel supports the concept of variable (not all kernel does), a language module for the kernel would allow SoS to work more efficiently with the kernel. More specifically, SoS can</p>
+<ul>
+<li>Mark the prompt areas of each cell to differentiate cells that belong to different kernels</li>
+<li>Preview variables when an assignment is executed during line-by-line execution</li>
+<li>Change current directory of all subkernels with <code>%cd</code> magic</li>
+<li>Exchange variables between subkernels using magics <code>%put</code>, <code>%get</code> and <code>%with</code></li>
+<li>Preview the content of variables using magic <code>%preview</code></li>
+<li>Show the version information of kernels using magic <code>%sessioninfo</code></li>
 </ul>
 
 </div>
@@ -12901,7 +12919,18 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In any SoS cell, you can type <code>%</code> and use the <code>&lt;TAB&gt;</code> key to get a list of SoS magics. Then, for any magic you need to use, you can type <code>%MAGIC -h</code> to get the help information. This reference manual is simply a composition of these help messages.</p>
+<p>Whereas data exchange among subkernels is really powerful, it is important to understand that, <strong>SoS does not tranfer any variables among kernels, it creates independent homonymous variables of similar types that are native to the destination language</strong>. For example, if you have the following two variables</p>
+<div class="highlight"><pre><span></span>a <span class="o">=</span> <span class="m">1</span>
+b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+<p>in R and executes a magic</p>
+<div class="highlight"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">a</span> <span class="n">b</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
+</pre></div>
+<p>in a SoS cell, SoS actually execute the following statements, in the background, to create variables <code>a</code> and <code>b</code> in Python</p>
+<div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+<p>These variables are independent so that changing the value of variables <code>a</code> or <code>b</code> in one kernel will not affect another. We also note that <code>a</code> and <code>b</code> are of different types in Python although they are of the same <code>numeric</code> type in <code>R</code> (<code>a</code> is technically speaking an array of size 1).</p>
 
 </div>
 </div>
@@ -12911,7 +12940,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="List-of-Magics">List of Magics<a class="anchor-link" href="#List-of-Magics"></a></h2>
+<h2 id="Define-a-new-language-Module">Define a new language Module<a class="anchor-link" href="#Define-a-new-language-Module"></a></h2>
 </div>
 </div>
 </div>
@@ -12920,808 +12949,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%capture"><a id="magic_capture" /><code>%capture</code><a class="anchor-link" href="#%capture"></a></h3>
-</div>
-</div>
-</div>
+<p>The best way to start a new language module is to read the source code of an existing language module and adapt it to your language. Our <a href="https://github.com/vatlab">github oraganization</a> has a number of language modules. Module <a href="https://github.com/vatlab/sos-r"><code>sos-r</code></a> is a good choice and you should try to match the corresponding items with code in <a href="https://github.com/vatlab/sos-r/blob/master/src/sos_r/kernel.py"><code>kernel.py</code></a> when going through this tutorial.</p>
 
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%capture -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %capture [-h] [--as [{text,json,csv,tsv}]] [-t VAR | -a VAR]
-                [{stdout,stderr,text,markdown,html,raw}]
-
-Capture output (stdout) or output file from a subkernel as variable in SoS
-
-positional arguments:
-  {stdout,stderr,text,markdown,html,raw}
-                        Message type to capture, default to standard output.
-                        In terms of Jupyter message types, &#34;stdout&#34; refers to
-                        &#34;stream&#34; message with &#34;stdout&#34; type, &#34;stderr&#34; refers
-                        to &#34;stream&#34; message with &#34;stderr&#34; type, &#34;text&#34;,
-                        &#34;markdown&#34; and &#34;html&#34; refers to &#34;display_data&#34; message
-                        with &#34;text/plain&#34;, &#34;text/markdown&#34; and &#34;text/html&#34;
-                        type respectively. If &#34;raw&#34; is specified, all returned
-                        messages will be returned in a list format.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --as [{text,json,csv,tsv}]
-                        How to interpret the captured text. This only
-                        applicable to stdout, stderr and text message type
-                        where the text from cell output will be collected. If
-                        this option is given, SoS will try to parse the text
-                        as json, csv (comma separated text), tsv (tab
-                        separated text), and store text (from text), Pandas
-                        DataFrame (from csv or tsv), dict or other types (from
-                        json) to the variable.
-  -t VAR, --to VAR      Name of variable to which the captured content will be
-                        saved. If no varialbe is specified, the return value
-                        will be saved to variable &#34;__captured&#34; and be
-                        displayed at the side panel.
-  -a VAR, --append VAR  Name of variable to which the captured content will be
-                        appended. This option is equivalent to --to if VAR
-                        does not exist. If VAR exists and is of the same type
-                        of new content (str or dict or DataFrame), the new
-                        content will be appended to VAR if VAR is of str (str
-                        concatenation), dict (dict update), or DataFrame
-                        (DataFrame.append) types. If VAR is of list type, the
-                        new content will be appended to the end of the list.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%cd"><a id="magic_cd" /><code>%cd</code><a class="anchor-link" href="#%cd"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%cd -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %cd [-h] dir
-
-change directory of SoS and all subkernels.
-
-positional arguments:
-  dir         destination directory
-
-optional arguments:
-  -h, --help  show this help message and exit
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%clear"><a id="magic_clear" /><code>%clear</code><a class="anchor-link" href="#%clear"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%clear -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %clear [-h] [-a] [-s STATUS [STATUS ...] | -c ELEM_CLASS
-              [ELEM_CLASS ...]]
-
-Clear the output of the current cell, or the current active cell if executed
-in the sidepanel.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -a, --all             Clear all output or selected status or class of the
-                        current notebook.
-  -s STATUS [STATUS ...], --status STATUS [STATUS ...]
-                        Clear tasks that match specifie status (e.g.
-                        completed).
-  -c ELEM_CLASS [ELEM_CLASS ...], --class ELEM_CLASS [ELEM_CLASS ...]
-                        Clear all HTML elements with specified classes (e.g.
-                        sos_hint)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%dict"><a id="magic_dict" /><code>%dict</code><a class="anchor-link" href="#%dict"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%dict -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %dict [-h] [-k] [-r] [-a] [-d VAR [VAR ...]] [vars [vars ...]]
-
-Inspect or reset SoS dictionary
-
-positional arguments:
-  vars
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -k, --keys            Return only keys
-  -r, --reset           Rest SoS dictionary (clear all user variables)
-  -a, --all             Return all variales, including system functions and
-                        variables
-  -d VAR [VAR ...], --del VAR [VAR ...]
-                        Remove specified variables from SoS dictionary
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%expand"><a id="magic_expand" /><code>%expand</code><a class="anchor-link" href="#%expand"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%expand -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %expand [-h] [sigil] [right_sigil]
-
-Expand the script in the current cell with default ({}) or specified sigil.
-
-positional arguments:
-  sigil        Sigil to be used to interpolated the texts. It can be quoted,
-               or be specified as two options.
-  right_sigil  Right sigil if the sigil is specified as two pieces.
-
-optional arguments:
-  -h, --help   show this help message and exit
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%get"><a id="magic_get" /><code>%get</code><a class="anchor-link" href="#%get"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%get -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %get [-h] [--from __FROM__] [vars [vars ...]]
-
-Get specified variables from another kernel, which is by default the SoS
-kernel.
-
-positional arguments:
-  vars             Names of SoS variables
-
-optional arguments:
-  -h, --help       show this help message and exit
-  --from __FROM__  Name of kernel from which the variables will be obtained.
-                   Default to the SoS kernel.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%matplotlib"><a id="magic_matplotlib" /><code>%matplotlib</code><a class="anchor-link" href="#%matplotlib"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%matplotlib -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %matplotlib [-h] [-l]
-                   [{agg,gtk,gtk3,inline,ipympl,nbagg,notebook,osx,pdf,ps,qt,qt4,qt5,svg,tk,widget,wx}]
-
-Set matplotlib parser type
-
-positional arguments:
-  {agg,gtk,gtk3,inline,ipympl,nbagg,notebook,osx,pdf,ps,qt,qt4,qt5,svg,tk,widget,wx}
-                        Name of the matplotlib backend to use (‘agg’, ‘gtk’,
-                        ‘gtk3’,
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -l, --list            Show available matplotlib backends
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%put"><a id="magic_put" /><code>%put</code><a class="anchor-link" href="#%put"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%put -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %put [-h] [--to __TO__] [vars [vars ...]]
-
-Put specified variables in the subkernel to another kernel, which is by
-default the SoS kernel.
-
-positional arguments:
-  vars         Names of SoS variables
-
-optional arguments:
-  -h, --help   show this help message and exit
-  --to __TO__  Name of kernel from which the variables will be obtained.
-               Default to the SoS kernel.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%preview"><a id="magic_preview" /><code>%preview</code><a class="anchor-link" href="#%preview"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%preview -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %preview [-h] [-k KERNEL] [-w] [-o] [-s {table,scatterplot,png}]
-                [-r HOST] [-p | -n] [-c CONFIG]
-                [items [items ...]]
-
-Preview files, sos variables, or expressions in the side panel, or notebook if
-side panel is not opened, unless options --panel or --notebook is specified.
-
-positional arguments:
-  items                 Filename, variable name, or expression. Wildcard
-                        characters such as &#39;*&#39; and &#39;?&#39; are allowed for
-                        filenames.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -k KERNEL, --kernel KERNEL
-                        kernel in which variables will be previewed. By
-                        default the variable will be previewed in the current
-                        kernel of the cell.
-  -w, --workflow        Preview notebook workflow
-  -o, --keep-output     Do not clear the output of the side panel.
-  -s {table,scatterplot,png}, --style {table,scatterplot,png}
-                        Option for preview file or variable, which by default
-                        is &#34;table&#34; for Pandas DataFrame. The %preview magic
-                        also accepts arbitrary additional keyword arguments,
-                        which would be interpreted by individual style.
-                        Passing &#39;-h&#39; with &#39;--style&#39; would display the usage
-                        information of particular style.
-  -r HOST, --host HOST  Preview files on specified remote host, which should
-                        be one of the hosts defined in sos configuration
-                        files.
-  -p, --panel           Preview in side panel even if the panel is currently
-                        closed
-  -n, --notebook        Preview in the main notebook.
-  -c CONFIG, --config CONFIG
-                        A configuration file with host definitions, in case
-                        the definitions are not defined in global or local sos
-                        config.yml files.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%render"><a id="magic_render" /><code>%render</code><a class="anchor-link" href="#%render"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%render -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %render [-h] [--as [AS_TYPE]] [{stdout,text}]
-
-Treat the output of a SoS cell as another format, default to markdown.
-
-positional arguments:
-  {stdout,text}   Message type to capture, default to standard output. In
-                  terms of Jupyter message types, &#34;stdout&#34; refers to &#34;stream&#34;
-                  message with &#34;stdout&#34; type, and &#34;text&#34; refers to
-                  &#34;display_data&#34; message with &#34;text/plain&#34; type.
-
-optional arguments:
-  -h, --help      show this help message and exit
-  --as [AS_TYPE]  Format to render output of cell, default to Markdown, but
-                  can be any format that is supported by the IPython.display
-                  module such as HTML, Math, JSON, JavaScript and SVG.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%revisions"><a id="magic_revisions" /><code>%revisions</code><a class="anchor-link" href="#%revisions"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%revisions -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %revision [-h] [-s [SOURCE]] [-l LINKS [LINKS ...]]
-
-Revision history of the document, parsed from the log message of the notebook
-if it is kept in a git repository. Additional parameters to &#34;git log&#34; command
-(e.g. -n 5 --since --after) could be specified to limit the revisions to
-display.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -s [SOURCE], --source [SOURCE]
-                        Source URL to to create links for revisions. SoS
-                        automatically parse source URL of the origin and
-                        provides variables &#34;repo&#34; for complete origin URL
-                        without trailing &#34;.git&#34; (e.g.
-                        https://github.com/vatlab/sos-notebook), &#34;path&#34; for
-                        complete path name (e.g. src/document/doc.ipynb),
-                        &#34;filename&#34; for only the name of the &#34;path&#34;, and
-                        &#34;revision&#34; for revisions. Because sos interpolates
-                        command line by default, variables in URL template
-                        should be included with double braceses (e.g. --source
-                        {{repo}}/blob/{{revision}}/{{path}})). If this option
-                        is provided without value and the document is hosted
-                        on github, a default template will be provided.
-  -l LINKS [LINKS ...], --links LINKS [LINKS ...]
-                        Name and URL or additional links for related files
-                        (e.g. --links report URL_to_repo ) with URL
-                        interpolated as option --source.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%run"><a id="magic_run" /><code>%run</code><a class="anchor-link" href="#%run"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%run -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: sos run /var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/interactive_82889.sos
-               [workflow_name | -t targets] [options] [workflow_options]
-  workflow_name:        Single or combined workflows defined in this script
-  targets:              One or more targets to generate
-  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
-  workflow_options:     Double-hyphen workflow-specific parameters
-
-Workflows:
-  default
-
-Sections
-  default:
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%runfile"><a id="magic_runfile" /><code>%runfile</code><a class="anchor-link" href="#%runfile"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%runfile -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %runfile [-h] script
-
-Execute an external SoS script, which is identical to run !sos run script but
-allows the display of task and workflow status in notebook. It also accepts
-default parameters of %set magic.
-
-positional arguments:
-  script      Script to be executed.
-
-optional arguments:
-  -h, --help  show this help message and exit
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%save"><a id="magic_save" /><code>%save</code><a class="anchor-link" href="#%save"></a></h3>
 </div>
 </div>
 </div>
@@ -13730,660 +12959,428 @@ optional arguments:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Magic <code>%save</code> saves the content of the current cell (after the magic itself) to specified file. It accepts the following options:</p>
-
+<h3 id="Class-attributes">Class attributes<a class="anchor-link" href="#Class-attributes"></a></h3>
 </div>
 </div>
 </div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%save -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %save [-h] [-r] [-f] [-a] [-x] filename
-
-Save the content of the cell to specified file. It ignores magic lines after
-the %save magic unless a blank line is used to separate the magics and the
-content to be saved.
-
-positional arguments:
-  filename              Filename of saved report or script.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -r, --run             Continue to execute the cell once content is saved.
-  -f, --force           If destination file already exists, overwrite it.
-  -a, --append          If destination file already exists, append to it.
-  -x, --set-executable  Set `executable` permission to saved script.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%sosrun"><a id="magic_sosrun" /><code>%sosrun</code><a class="anchor-link" href="#%sosrun"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%sosrun -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %sosrun [-h]
-
-Execute the entire notebook with steps consisting of SoS cells (cells with SoS
-kernel) with section header, with specified command line arguments. Arguments
-set by magic %set will be appended at the end of command line. If the magic
-ends with &#34;&amp;&#34;, it will be sent to a queue to be executed sequentially.
-
-optional arguments:
-  -h, --help  show this help message and exit
-</pre>
-</div>
-</div>
+<p>To support a new language, you will need to write a Python package that defines a class, say <code>mylanguage</code>, that provides the following class attributes:</p>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%sossave"><a id="magic_sossave" /><code>%sossave</code><a class="anchor-link" href="#%sossave"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%sossave -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %sossave [-h] [-t {sos,html}] [-c] [-a] [-m MESSAGE] [-p] [-f] [-x]
-                [--template TEMPLATE]
-                [filename]
-
-Save the jupyter notebook as workflow (consisting of all sos steps defined in
-cells starting with section header) or a HTML report to specified file.
-
-positional arguments:
-  filename              Filename of saved report or script. Default to
-                        notebookname with file extension determined by option
-                        --to.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -t {sos,html}, --to {sos,html}
-                        Destination format, default to sos.
-  -c, --commit          Commit the saved file to git directory using command
-                        git commit FILE
-  -a, --all             The --all option for sos convert script.ipynb
-                        script.sos, which saves all cells and their metadata
-                        to a .sos file, that contains all input information of
-                        the notebook but might not be executable in batch
-                        mode.
-  -m MESSAGE, --message MESSAGE
-                        Message for git commit. Default to &#34;save FILENAME&#34;
-  -p, --push            Push the commit with command &#34;git push&#34;
-  -f, --force           If destination file already exists, overwrite it.
-  -x, --set-executable  Set `executable` permission to saved script.
-  --template TEMPLATE   Template to generate HTML output. The default template
-                        is a template defined by configuration key default-
-                        sos-template, or sos-report-toc if such a key does not
-                        exist.
-</pre>
-</div>
-</div>
+<h4 id="supported_kernels"><code>supported_kernels</code><a class="anchor-link" href="#supported_kernels"></a></h4><p><code>supported_kernels</code> should be a dictionary of language and names of the kernels that the language supports. For example, <code>ir</code> is the name of kernel for language <code>R</code> so this attribute should be defined as:</p>
+<div class="highlight"><pre><span></span><span class="n">supported_kernels</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ir&#39;</span><span class="p">]}</span>
+</pre></div>
+<p>If multiple kernels are supported, SoS will look for a kernel with matched name in the order that is specified. This is the case for <code>JavaScript</code> where multiple kernels are available:</p>
+<div class="highlight"><pre><span></span><span class="n">supported_kernels</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;JavaScript&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ijavascript&#39;</span><span class="p">,</span> <span class="s1">&#39;inodejs&#39;</span><span class="p">]}</span>
+</pre></div>
+<p>Multiple languages can be specified if a language module supports multiple languages. For example, <code>MATLAB</code> and <code>Octave</code> share the same language module</p>
+<div class="highlight"><pre><span></span><span class="n">supported_kernels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MATLAB&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;imatlab&#39;</span><span class="p">,</span> <span class="s1">&#39;matlab&#39;</span><span class="p">],</span> <span class="s1">&#39;Octave&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;octave&#39;</span><span class="p">]}</span>
+</pre></div>
+<p>Finally, wildcard characters are allowd in kernel names, which are useful for kernels that contain version numbers:</p>
+<div class="highlight"><pre><span></span><span class="n">supported_kernels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Julia&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;julia-?.?&#39;</span><span class="p">]}</span>
+</pre></div>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%set"><a id="magic_set" /><code>%set</code><a class="anchor-link" href="#%set"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%set -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %set [-h]
-
-Set persistent command line options for SoS runs.
-
-optional arguments:
-  -h, --help  show this help message and exit
-</pre>
-</div>
-</div>
+<h4 id="background_color"><code>background_color</code><a class="anchor-link" href="#background_color"></a></h4><p><code>background_color</code> should be a name or <code>#XXXXXX</code> value for a color that will be used in the prompt area of cells that are executed by the subkernel. An empty string can be used for using default notebook color. If the language module defines multiple languages, a dictionary <code>{language: color}</code> can be used to specify different colors for supported languages. For example,</p>
+<div class="highlight"><pre><span></span><span class="n">background_color</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MATLAB&#39;</span><span class="p">:</span> <span class="s1">&#39;#8ee7f1&#39;</span><span class="p">,</span> <span class="s1">&#39;Octave&#39;</span><span class="p">:</span> <span class="s1">&#39;#dff8fb&#39;</span><span class="p">}</span>
+</pre></div>
+<p>is used for <code>MATLAB</code> and <code>Octave</code>.</p>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%sandbox"><a id="magic_sandbox" /><code>%sandbox</code><a class="anchor-link" href="#%sandbox"></a></h3>
-</div>
-</div>
-</div>
+<h4 id="cd_command"><code>cd_command</code><a class="anchor-link" href="#cd_command"></a></h4><p><code>cd_command</code> is a command to change current working directory, specified with <code>{dir}</code> intepolated with option of magic <code>%cd</code>. For example, the command for R is</p>
 
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%sandbox -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %sandbox [-h] [-d DIR] [-k] [-e]
-
-Execute content of a cell in a temporary directory with fresh dictionary (by
-default).
-
-optional arguments:
-  -h, --help          show this help message and exit
-  -d DIR, --dir DIR   Execute workflow in specified directory. The directory
-                      will be created if does not exist, and will not be
-                      removed after the completion.
-  -k, --keep-dict     Keep current sos dictionary.
-  -e, --expect-error  If set, expect error from the excution and report
-                      success if an error occurs.
-</pre>
-</div>
-</div>
+<pre><code>cd_command = 'setwd({dir!r})'</code></pre>
+<p>where <code>!r</code> quotes the provided <code>dir</code>. Note that <code>{ }</code> are used as a Python f-string but no <code>f</code> prefix should be used.</p>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%sessioninfo"><a id="magic_sessioninfo" /><code>%sessioninfo</code><a class="anchor-link" href="#%sessioninfo"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%sessioninfo -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %sessioninfo [-h]
-
-List the session info of all subkernels, and information stored in variable
-sessioninfo
-
-optional arguments:
-  -h, --help  show this help message and exit
-</pre>
-</div>
-</div>
+<h4 id="options"><code>options</code><a class="anchor-link" href="#options"></a></h4><p>A Python dictionary with options that will be passed to the frontend. Currently two options <code>variable_pattern</code> and <code>assignment_pattern</code> are supported. Both options should be regular expressions in JS style.</p>
+<ul>
+<li><p>Option <code>variable_pattern</code> is used to identify if a statement is a simple variable (nothing else). If this option is defined and the input text (if executed at the side panel) matches the pattern, SoS will prepend <code>%preview</code> to the code. This option is useful only when <code>%preview var</code> displays more information than <code>var</code>.</p>
+</li>
+<li><p>Option <code>assignment_pattern</code> is used to identify if a statement is an assignment operation. If this option is defined and the input text matches the pattern, SoS will prepend <code>%preview var</code> to the code where <code>var</code> should be the first matched portion of the pattern (use <code>( )</code>). This mechanism allows SoS to automatically display result of an assignment when you step through the code.</p>
+</li>
+</ul>
+<p>Both <code>options</code> are optional.</p>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%shutdown-"><code>%shutdown</code> <a id="magic_shutdown" /><a class="anchor-link" href="#%shutdown-"></a></h3>
+<h3 id="Instance-attributes">Instance attributes<a class="anchor-link" href="#Instance-attributes"></a></h3>
 </div>
 </div>
 </div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%shutdown -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %shutdown [-h] [-r] [kernel]
-
-Shutdown or restart specified subkernel
-
-positional arguments:
-  kernel         Name of the kernel to be restarted, default to the current
-                 running kernel.
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -r, --restart  Restart the kernel
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%task"><a id="magic_task" /><code>%task</code><a class="anchor-link" href="#%task"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%task -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %task [-h] {status,execute,kill,purge} ...
-
-Get information on specified task. By default sos would query against all
-running task queues but it would start a task queue and query status if option
--q is specified.
-
-positional arguments:
-  {status,execute,kill,purge}
-                        actions
-    status              task status
-    execute             execute task
-    kill                kill single task or tasks with the same tags
-    purge               kill and purge task
-
-optional arguments:
-  -h, --help            show this help message and exit
-</pre>
-</div>
-</div>
+<p>An instance of the class would be initialized with the sos kernel and the name of the subkernel, which does not have to be one of the <code>supported_kernels</code> (could be self-defined) and should provide the following attributes and functions. Because these attributes are instantiated with kernel name, they can vary (slightly) from kernel to kernel.</p>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%toc"><a id="magic_toc" /><code>%toc</code><a class="anchor-link" href="#%toc"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%toc -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %toc [-h] [-p | -n] [--id ID]
-
-Generate a table of content from the current notebook.
-
-optional arguments:
-  -h, --help      show this help message and exit
-  -p, --panel     Show the TOC in side panel even if the panel is currently
-                  closed
-  -n, --notebook  Show the TOC in the main notebook.
-  --id ID         Optional ID of the generated TOC.
-</pre>
-</div>
-</div>
+<h4 id="String-init_statement">String <code>init_statement</code><a class="anchor-link" href="#String-init_statement"></a></h4><p><code>init_statements</code> is a statement that will be executed by the sub-kernel when the kernel starts. This statement usually defines a number of utility functions.</p>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%use"><a id="magic_use" /><code>%use</code><a class="anchor-link" href="#%use"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%use -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %use [-h] [-k KERNEL] [-l LANGUAGE] [-c COLOR] [-r] [name]
-
-Switch to an existing subkernel or start a new subkernel.
-
-positional arguments:
-  name                  Displayed name of kernel to start (if no kernel with
-                        name is specified) or switch to (if a kernel with this
-                        name is already started). The name is usually a kernel
-                        name (e.g. %use ir) or a language name (e.g. %use R)
-                        in which case the language name will be used. One or
-                        more parameters --language or --kernel will need to be
-                        specified if a new name is used to start a separate
-                        instance of a kernel.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -k KERNEL, --kernel KERNEL
-                        kernel name as displayed in the output of jupyter
-                        kernelspec list. Default to the default kernel of
-                        selected language (e.g. ir for language R.
-  -l LANGUAGE, --language LANGUAGE
-                        Language extension that enables magics such as %get
-                        and %put for the kernel, which should be in the name
-                        of a registered language (e.g. R), or a specific
-                        language module in the format of package.module:class.
-                        SoS maitains a list of languages and kernels so this
-                        option is only needed for starting a new instance of a
-                        kernel.
-  -c COLOR, --color COLOR
-                        Background color of new or existing kernel, which
-                        overrides the default color of the language. A special
-                        value &#34;default&#34; can be used to reset color to default.
-  -r, --restart         Restart the kernel if it is running.
-</pre>
-</div>
-</div>
+<h4 id="Function-get_vars(self,-names)">Function <code>get_vars(self, names)</code><a class="anchor-link" href="#Function-get_vars(self,-names)"></a></h4><p>should be a Python function that transfer specified Python variables to the subkernel. We will discussion this in detail in the next section.</p>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%with"><a id="magic_with" /><code>%with</code><a class="anchor-link" href="#%with"></a></h3>
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%with -h</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>usage: %with [-h] [-i [IN_VARS [IN_VARS ...]]] [-o [OUT_VARS [OUT_VARS ...]]]
-             [name]
-
-Use specified subkernel to evaluate current cell, with optional input and
-output variables
-
-positional arguments:
-  name                  Name of an existing kernel.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i [IN_VARS [IN_VARS ...]], --in [IN_VARS [IN_VARS ...]]
-                        Input variables (variables to get from SoS kernel)
-  -o [OUT_VARS [OUT_VARS ...]], --out [OUT_VARS [OUT_VARS ...]]
-                        Output variables (variables to put back to SoS kernel
-                        before switching back to the SoS kernel
-</pre>
-</div>
-</div>
+<h4 id="Function-put_vars(self,-items,-to_kernel=None)">Function <code>put_vars(self, items, to_kernel=None)</code><a class="anchor-link" href="#Function-put_vars(self,-items,-to_kernel=None)"></a></h4><p>Function <code>put_vars</code> should be a Python function that put one or more variables in the subkernel to SoS or another subkernel.  We will discussion this in detail in the next section.</p>
 
 </div>
 </div>
-
 </div>
-</div>
-
-
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="!shell-command"><a href="shell_command" /><code>!shell-command</code><a class="anchor-link" href="#!shell-command"></a></h3><p>If any other command is entered after <code>!</code>, sos will treat the rest of the line as a shell command and execute it. Only single-line commands are supported. String interpolation is supported. Note that <code>!cd</code> does not change the current working directory because the command is executed in a separate process. Use magic <code>%cd</code> for that purpose.</p>
+<h4 id="Function-preview(self,-item)">Function <code>preview(self, item)</code><a class="anchor-link" href="#Function-preview(self,-item)"></a></h4><p>Function <code>preview</code> accepts a name, which should be the name of a variable in the subkernel. This function should return a tuple of two items <code>(desc, preview)</code> where</p>
+<ul>
+<li><code>desc</code> should be a text (can be empty) that describes the type, size, dimension, or other general information of the variable, which will be displayed after variable name.</li>
+<li><code>preview</code> can be<ul>
+<li>A single <code>str</code> that are printed as <code>stdout</code></li>
+<li>A dictionary, which should contain keys such as <code>text/plain</code>, <code>text/html</code>, <code>image/png</code> and corresponding data. The data will be sent directly as <code>display_data</code> and allows you to return different types of preview result, even images.</li>
+<li>A list or tuple of two dictionaries, with the first being the <code>data</code> dictionary, and the second being the <code>metadata</code> directionary for a <code>display_data</code> message.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Function-sessioninfo(self)">Function <code>sessioninfo(self)</code><a class="anchor-link" href="#Function-sessioninfo(self)"></a></h4><p>Function <code>sessioninfo</code> should a Python function that returns information of the running kernel, usually including version of the language, the kernel, and currently used packages and their versions. For <code>R</code>, this means a call to <code>sessionInfo()</code> function. The return value of this function can be</p>
+<ul>
+<li>A string</li>
+<li>A list of strings or <code>(key, value)</code> pairs, or</li>
+<li>A dictinary.</li>
+</ul>
+<p>The function will be called by the <code>%sessioninfo</code> magic of SoS.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Obtain-variable-from-SoS">Obtain variable from SoS<a class="anchor-link" href="#Obtain-variable-from-SoS"></a></h2><p>The <code>get_vars</code> function should be defined as</p>
+
+<pre><code>def get_vars(self, var_names)</code></pre>
+<p>where</p>
+<ul>
+<li><code>self</code> is the language instance with access to the SoS kernel, and</li>
+<li><code>var_names</code> are names in the sos dictionary.</li>
+</ul>
+<p>This function is responsible for probing the type of Python variable and create a similar object in the subkernel.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, to create a Python object <code>b = [1, 2]</code> in <code>R</code> (magic <code>%get</code>), this function could</p>
+<ol>
+<li>Obtain a R expression to create this variable (e.g. <code>b &lt;- c(1, 2)</code>)</li>
+<li>Execute the expression in the subkernel to create variable <code>b</code> in it.</li>
+</ol>
+<p>Note that the function <code>get_vars</code> can change the variable name because a valid variable name in Python might not be a valid variable name in another language. The function should give a warning (call <code>self.sos_kernel.warn()</code>) if this happens.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Send-variables-to-other-kernels">Send variables to other kernels<a class="anchor-link" href="#Send-variables-to-other-kernels"></a></h2><p>The <code>put_vars</code> function should be defined as</p>
+
+<pre><code>def put_vars(self, var_names, to_kernel=None)</code></pre>
+<p>where</p>
+<ol>
+<li><code>self</code> is the language instance with access to the SoS kernel</li>
+<li><code>var_name</code> is a list of variables that should exist in the subkernel. Because a subkernel is responsible for sharing variables with names starting with <code>sos</code> to SoS automatically, this function should be called to pass these variables even when <code>var_names</code> is empty.</li>
+<li><code>to_kernel</code> is the destination kernel to which the variables should be passed.</li>
+</ol>
+<p>Depending on destination kernel, this function can:</p>
+<ul>
+<li>If the destination kernel is <code>sos</code>, the function should return a dictionary of variables that will be merged to the SoS dictionary.</li>
+<li>If direct variable transfer is not supported by the language, the function can return a Python dictionary, in which case the language transfers the variables to SoS and let SoS pass along to the destination kernel.</li>
+<li>If direct variable transfer is supported, the function should return a string. SoS will evaluate the string in the destination kernel to pass variables directly to the destination kernel.</li>
+</ul>
+<p>So basically, a language can start with an implementation of <code>put_vars(to_kernel='sos')</code> and let SoS handle the rest. If need arises, it can</p>
+<ul>
+<li>Implement variable exchanges between instances of the same language. This can be useful because there are usually lossness and more efficient methods in this case.</li>
+<li>Put variable to another languages where direct varable transfer is much more efficient than transferring through SoS.</li>
+</ul>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, to send a <code>R</code> object <code>b &lt;- c(1, 2)</code> from subkernel <code>R</code> to <code>SoS</code> (magic <code>%put</code>), this function can</p>
+<ol>
+<li>Execute an statement in the subkernel to get the value(s) of variable(s) in some format, for example, a string <code>"{'b': [1, 2]}"</code>.</li>
+<li>Post-process these varibles to return a dictionary to SoS.</li>
+</ol>
+<p>The <a href="https://github.com/vatlab/SOS/blob/master/src/sos/R/kernel.py"><code>R</code> sos extension</a> provides a good example to get you started.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>NOTE</strong>: Unlike other language extension mechanisms in which the python module can get hold of the "engine" of the interpreter (e.g. <code>saspy</code> and matlab's Python extension start the interpreter for direct communication) or have access to lower level API of the language (e.g. <code>rpy2</code>), SoS only have access to the interface of the language and perform all conversions by executing commands in the subkernels and intercepting their response. Consequently,</p>
+<ol>
+<li>Data exchange can be slower than other methods.</li>
+<li>Data exchange is less dependent on version of the interpreter.</li>
+<li>Data exchange can happen between a local and a remote kernel.</li>
+</ol>
+<p>Also, although it can be more efficient to save large datasets to disk files and load in another kernel, this method does not work for kernels that do not share the same filesystem. We currently ignore this issue and assume all kernels have access to the same file system.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Functions-of-sos_kernel">Functions of <code>sos_kernel</code><a class="anchor-link" href="#Functions-of-sos_kernel"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With access to an instance of SoS kernel, you can call various functions of this kernel. However, the SoS kernel does not provide a stable API yet so you are advised to use only the following functions:</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos_kernel.warn(msg)"><code>sos_kernel.warn(msg)</code><a class="anchor-link" href="#sos_kernel.warn(msg)"></a></h3><p>This function produces a warning message.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos_kernel.run_cell(statement,-True,-False,-on_error='msg')"><code>sos_kernel.run_cell(statement, True, False, on_error='msg')</code><a class="anchor-link" href="#sos_kernel.run_cell(statement,-True,-False,-on_error='msg')"></a></h3><p>Execute a <code>statement</code> in the current subkernel, with <code>True</code>, <code>False</code> indicating that the execution should be done in the background and no output should be displayed. A message <code>on_error</code> will be displayed if the <code>statement</code> fails to execute.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="sos_kernel.get_response(statement,-msg_type,-name)"><code>sos_kernel.get_response(statement, msg_type, name)</code><a class="anchor-link" href="#sos_kernel.get_response(statement,-msg_type,-name)"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This function executes the statement and collects messages send back from the subkernel. Only messages in specified <code>msg_type</code> are kept (e.g. <code>stream</code>, <code>display_data</code>), and <code>name</code> can be one or both of <code>stdout</code> and <code>stderr</code> when <code>stream</code> is specified.</p>
+<p>The returned value is a list of</p>
+
+<pre><code>msg_type, msg_data</code></pre>
+<p>so</p>
+<div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">sos_kernel</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="s1">&#39;ls()&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;stream&#39;</span><span class="p">,</span> <span class="p">),</span> 
+                <span class="n">name</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;stdout&#39;</span><span class="p">,</span> <span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+<p>runs a function <code>ls()</code> in the subkernel, collects <code>stdout</code>, and get the content of the fist message.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Testing-the-language-module">Testing the language module<a class="anchor-link" href="#Testing-the-language-module"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although you can test your language module in many ways, it is highly recommended that you adopt a standard set of selenium-based tests that are executed by <code>pytest</code>. To create and run these tests, you should</p>
+<ul>
+<li>Install <a href="https://selenium-python.readthedocs.io/installation.html"><code>selenium</code></a> and <a href="https://docs.pytest.org/en/latest/"><code>pytest</code></a></li>
+<li>Install Google Chrome and <a href="http://chromedriver.chromium.org/">chrome driver</a></li>
+<li>Set environment variable <code>JUPYTER_TEST_BROWSER</code> to <code>live</code> if you would like to the test running. Otherwise the tests will be run in a virtual chrome browser without display.</li>
+<li>Copy three test files from <a href="https://github.com/vatlab/sos-r/tree/master/test">tests for <code>sos-r</code></a> and adapt them for your language.</li>
+</ul>
+<h3 id="Test-files">Test files<a class="anchor-link" href="#Test-files"></a></h3><p>The test suite contains three files:</p>
+<ol>
+<li><p><code>conftest.py</code></p>
+<p>This is the configuration file for <code>pytest</code> that defines how to start a Jupyter server with the notebook with the right kernel. You can simply copy this file for your purpose.</p>
+</li>
+<li><p><code>test_interface.py</code></p>
+<p>This file contains tests on the interface of the language module, including</p>
+<ul>
+<li>Test for prompt color</li>
+<li>Test for magic <code>%cd</code></li>
+<li>Test for change of variable names for magics <code>%put</code> and <code>%get</code></li>
+<li>Test for the automatic exchange of <code>sos</code> variables (variables with names starting with <code>sos</code></li>
+<li>Test for the <code>%preview</code> magic</li>
+<li>Test for the <code>%sessioninfo</code> magic</li>
+</ul>
+</li>
+<li><p><code>test_data_exchange.py</code></p>
+<p>This file should contain tests for data exchange between SoS (Python) and the language, and optionally between subkernels. It should separate by data types and direction of data transfer.</p>
+</li>
+</ol>
+<p>All tests should be derived from <code>NotebookTest</code> derived from <code>sos_notebook.test_utils</code>, and use a <a href="https://docs.pytest.org/en/latest/fixture.html">pytest fixture</a> <code>notebook</code> as follows:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sos_notebook.test_utils</span> <span class="kn">import</span> <span class="n">NotebookTest</span>
+
+<span class="k">class</span> <span class="nc">TestDataExchange</span><span class="p">(</span><span class="n">NotebookTest</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_something</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notebook</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-notebook-fixture">The <code>notebook</code> fixture<a class="anchor-link" href="#The-notebook-fixture"></a></h3><p>The <code>notebook</code> fixture that is passed to each test function contains a notebook instance that you can operate on. Although there are a large number of functions, you most likely only need to learn two of them for your tests:</p>
+<ol>
+<li><p><code>notebook.call(statement, kernel, expect_error=False)</code></p>
+<p>This function append a new cell to the end of notebook, insert the specified <code>statement</code> as its content, change the kernel of the cell to <code>kernel</code>, and executes the cell. It automatically dedent <code>statement</code> so you can indent multiple statements and cal</p>
+<div class="highlight"><pre><span></span><span class="n">notebook</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">         %put df --to R</span>
+<span class="s1">         import pandas as pd</span>
+<span class="s1">         import numpy as np</span>
+<span class="s1">         arr = np.random.randn(1000)</span>
+<span class="s1">         arr[::10] = np.nan</span>
+<span class="s1">         df = pd.DataFrame({&#39;column_{0}&#39;.format(i): arr for i in range(10)})</span>
+<span class="s1">         &#39;&#39;&#39;</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;SoS&#39;</span><span class="p">)</span>
+</pre></div>
+<p>This function returns the index of the cell so that you can call <code>notebook.get_cell_output(idx)</code> if needed. If you are supposed to see some warning messages, use <code>expect_error=True</code>. Otherwise the function will raise an exception that fails the test.</p>
+</li>
+<li><p><code>notebook.check_output(statement, kernel, expect_error=False, selector=None, attribute=None)</code></p>
+<p>This function calls the <code>notebook.call(statement, kernel)</code> and then <code>notebook.get_cell_output(idx, selector, attribute)</code> to get the output. The output contains all the <code>text</code> of the output, and additional text from non-text elements. For example, <code>selector='img', attribute='src'</code> would return text in <code>&lt;img src="blah"&gt;</code> output.</p>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Registering-the-new-language-module">Registering the new language module<a class="anchor-link" href="#Registering-the-new-language-module"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To register a language module with SoS, you will need to add your module to an entry point under section <code>sos-language</code>. This can be done by adding the something like the following to your <code>setup.py</code>:</p>
+
+<pre><code>    entry_points='''
+[sos_language]
+Perl = sos_perl.kernel:sos_Perl
+'''</code></pre>
+<p>With the installation of this package, <code>sos</code> would be able to import a class <code>sos_Perl</code> from module <code>sos_perl.kernel</code>, and use it to work with the <code>Perl</code> language.</p>
 
 </div>
 </div>

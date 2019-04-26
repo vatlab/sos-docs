@@ -16346,6 +16346,162 @@ nrow(mtcars)</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, with the variable <code>artist</code> defined in SoS</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">artist = 'van gogh'</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can use magic <code>%expand</code> to create a SPARQL query with variable <code>artist</code>, and capture the output to another variable <code>html_table</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_sparql">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 20.528640000000003em">
+   <textarea rows="16"
+      class="sos-source" name="sparql">%expand ${ }
+%capture html --to html_table
+
+%format json
+%display table 
+%endpoint http://dbpedia.org/sparql
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+SELECT ?person ?name
+WHERE {
+    ?person a foaf:Person .
+    ?person rdfs:label ?name
+    FILTER regex(?name,"${artist}","i")
+    FILTER langMatches(lang(?name),"en")
+} LIMIT 2</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="krn-spql"><div class="magic">Return format: JSON</div><div class="magic">Display: table</div><div class="magic">Endpoint set to: http://dbpedia.org/sparql</div></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="krn-spql"><table><tr class=hdr><th>person</th>
+<th>name</th></tr><tr class=odd><td class=val><a href="http://dbpedia.org/resource/Vincent_van_Gogh" target="_other">http://dbpedia.org/resource/Vincent_van_Gogh</a></td>
+<td class=val>Vincent van Gogh</td></tr><tr class=even><td class=val><a href="http://dbpedia.org/resource/Johanna_van_Gogh-Bonger" target="_other">http://dbpedia.org/resource/Johanna_van_Gogh-Bonger</a></td>
+<td class=val>Johanna van Gogh-Bonger</td></tr></table><div class="tinfo">Total: 2, Shown: 2</div></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Variable <code>html_table</code> now contains the resulting HTML table and you can parse it in Python (SoS) to extract the information.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">from bs4 import BeautifulSoup
+soup = BeautifulSoup(html_table, 'html.parser')
+soup.find_all('a')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&lt;a href=&#34;http://dbpedia.org/resource/Vincent_van_Gogh&#34; target=&#34;_other&#34;&gt;http://dbpedia.org/resource/Vincent_van_Gogh&lt;/a&gt;,
+ &lt;a href=&#34;http://dbpedia.org/resource/Johanna_van_Gogh-Bonger&#34; target=&#34;_other&#34;&gt;http://dbpedia.org/resource/Johanna_van_Gogh-Bonger&lt;/a&gt;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Variable-exchange-among-subkernels">Variable exchange among subkernels<a class="anchor-link" href="#Variable-exchange-among-subkernels"></a></h2>
 </div>
 </div>
