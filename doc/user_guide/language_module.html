@@ -13270,7 +13270,9 @@ b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><spa
 <p>This function executes the statement and collects messages send back from the subkernel. Only messages in specified <code>msg_type</code> are kept (e.g. <code>stream</code>, <code>display_data</code>), and <code>name</code> can be one or both of <code>stdout</code> and <code>stderr</code> when <code>stream</code> is specified.</p>
 <p>The returned value is a list of</p>
 
-<pre><code>msg_type, msg_data</code></pre>
+<pre><code>msg_type, msg_data
+msg_type, msg_data
+...</code></pre>
 <p>so</p>
 <div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">sos_kernel</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="s1">&#39;ls()&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;stream&#39;</span><span class="p">,</span> <span class="p">),</span> 
                 <span class="n">name</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;stdout&#39;</span><span class="p">,</span> <span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
@@ -13317,6 +13319,8 @@ b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><spa
 <li>Test for the <code>%sessioninfo</code> magic</li>
 </ul>
 </li>
+</ol>
+<ol>
 <li><p><code>test_data_exchange.py</code></p>
 <p>This file should contain tests for data exchange between SoS (Python) and the language, and optionally between subkernels. It should separate by data types and direction of data transfer.</p>
 </li>
@@ -13353,7 +13357,11 @@ b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><spa
 <p>This function returns the index of the cell so that you can call <code>notebook.get_cell_output(idx)</code> if needed. If you are supposed to see some warning messages, use <code>expect_error=True</code>. Otherwise the function will raise an exception that fails the test.</p>
 </li>
 <li><p><code>notebook.check_output(statement, kernel, expect_error=False, selector=None, attribute=None)</code></p>
-<p>This function calls the <code>notebook.call(statement, kernel)</code> and then <code>notebook.get_cell_output(idx, selector, attribute)</code> to get the output. The output contains all the <code>text</code> of the output, and additional text from non-text elements. For example, <code>selector='img', attribute='src'</code> would return text in <code>&lt;img src="blah"&gt;</code> output.</p>
+<p>This function calls the <code>notebook.call(statement, kernel)</code> and then <code>notebook.get_cell_output(idx, selector, attribute)</code> to get the output. The output contains all the <code>text</code> of the output, and additional text from non-text elements. For example, <code>selector='img', attribute='src'</code> would return text in <code>&lt;img src="blah"&gt;</code> output. Using this function, most of your unittests can look like the following</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_sessioninfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notebook</span><span class="p">):</span>
+   <span class="k">assert</span> <span class="s1">&#39;R version&#39;</span> <span class="ow">in</span> <span class="n">notebook</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">essioninfo&#39;</span><span class="p">,</span>
+                                                 <span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;SoS&quot;</span><span class="p">)</span>
+</pre></div>
 </li>
 </ol>
 
