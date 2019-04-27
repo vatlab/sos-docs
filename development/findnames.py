@@ -12,90 +12,77 @@ import sys
 
 
 def fileDict(docFile, folder):
-    docString="var " + os.path.basename(folder) + "Dict={"
+    docString = "var " + os.path.basename(folder) + "Dict={"
     for file in sorted(glob.glob(os.path.join(folder, "*.ipynb"))):
-        name=file.replace(".ipynb", "").split("/")[-1]
+        name = file.replace(".ipynb", "").split("/")[-1]
         with open(file, encoding='utf-8') as json_data:
-             try:
-                 d=json.load(json_data)
-                 title=d["cells"][0]["source"][0].replace(" ","-")[2:].strip()+"-1"
-             except Exception as e:
+            try:
+                d = json.load(json_data)
+                title = d["cells"][0]["source"][0].replace(
+                    " ", "-")[2:].strip() + "-1"
+            except Exception as e:
                 sys.exit('Failed to load "{}": {}'.format(file, e))
-         # title=d["cells"]
-        docString+='"'+title+'":"'+name+'",'
-    docString=docString[:-1]
-    docString+="}"
+        # title=d["cells"]
+        docString += '"' + title + '":"' + name + '",'
+    docString = docString[:-1]
+    docString += "}"
     # print (docString)
-    docFile.write(docString+"\n")
+    docFile.write(docString + "\n")
 
 
 def findImages(docFile, folder):
-    docString="var images=["
+    docString = "var images=["
     for file in sorted(glob.glob(os.path.join(folder, "img", "banner_*"))):
-        docString += '"'+os.path.basename(file)+'",'
-    docString=docString[:-1]
-    docString+="]"
-    docFile.write(docString+"\n")
+        docString += '"' + os.path.basename(file) + '",'
+    docString = docString[:-1]
+    docString += "]"
+    docFile.write(docString + "\n")
+
 
 def generate_doc_toc(docs_dir):
 
-    tutString="var tutorials=["
-    docString="var documentation=["
-    guideString="var guides=["
-    with open(os.path.join(docs_dir, "src", "homepage", "notebook.ipynb")) as json_data:
-         d = json.load(json_data)
-    for cell in d["cells"]:
-        for sentence in cell["source"]:
-            tut=re.search('doc/tutorials/(.+?).html',sentence)
-            if tut:
-                name=tut.group(1)
-                tutString+='"'+name+'", '
-            doc=re.search('doc/documentation/(.+?).html',sentence)
-            if doc:
-                name=doc.group(1)
-                docString+='"'+name+'", '
-    with open(os.path.join(docs_dir, "src", "homepage", "workflow.ipynb")) as json_data:
-         d = json.load(json_data)
-    for cell in d["cells"]:
-        for sentence in cell["source"]:
-            tut=re.search('doc/tutorials/(.+?).html',sentence)
-            if tut:
-                name=tut.group(1)
-                tutString+='"'+name+'", '
-            doc=re.search('doc/documentation/(.+?).html',sentence)
-            if doc:
-                name=doc.group(1)
-                docString+='"'+name+'", '
-    if tutString.endswith(', '):
-        tutString=tutString[:-2]
-    tutString+="]"
-    if docString.endswith(', '):
-        docString=docString[:-2]
-    docString+="]"
+    tutString = "var tutorials=[]"
+    docString = "var documentation=[]"
 
-    with open(os.path.join(docs_dir, "src", "homepage", "guide.ipynb")) as json_data:
-         d = json.load(json_data)
+    guideString = "var guides=["
+    with open(os.path.join(docs_dir, "src", "homepage",
+                           "notebook.ipynb")) as json_data:
+        d = json.load(json_data)
     for cell in d["cells"]:
         for sentence in cell["source"]:
-            guide=re.search('doc/user_guide/(.+?).html',sentence)
+            guide = re.search('doc/user_guide/(.+?).html', sentence)
             if guide:
-                name=guide.group(1)
-                guideString+='"'+name+'", '
-    guideString=guideString[:-2]
-    guideString+="]"
+                name = guide.group(1)
+                guideString += '"' + name + '", '
+
+    with open(os.path.join(docs_dir, "src", "homepage",
+                           "workflow.ipynb")) as json_data:
+        d = json.load(json_data)
+    for cell in d["cells"]:
+        for sentence in cell["source"]:
+            guide = re.search('doc/user_guide/(.+?).html', sentence)
+            if guide:
+                name = guide.group(1)
+                guideString += '"' + name + '", '
+    guideString = guideString[:-2]
+    guideString += "]"
 
     with open(os.path.join(docs_dir, "js", "docs.js"), "w") as docFile:
         fileDict(docFile, os.path.join(docs_dir, "src", "documentation"))
         fileDict(docFile, os.path.join(docs_dir, "src", "tutorials"))
         findImages(docFile, docs_dir)
-        docFile.write(docString+"\n")
-        docFile.write(tutString+"\n")
-        docFile.write(guideString+"\n")
+        docFile.write(docString + "\n")
+        docFile.write(tutString + "\n")
+        docFile.write(guideString + "\n")
         docFile.close()
 
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Search for names from SoS website')
-    parser.add_argument('docs_dir', metavar='DIR',
+    parser = argparse.ArgumentParser(
+        description='Search for names from SoS website')
+    parser.add_argument(
+        'docs_dir',
+        metavar='DIR',
         help='''Path of the top SoS docs directory. This script will parse content of
         SoS notebooks files under $DOC_DIR (e.g. /src/documentation/*.ipynb), get
         the headers of the files, and write the results in $DOC_DIR/doc_toc.js

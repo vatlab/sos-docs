@@ -8,12 +8,11 @@ import glob
 import re
 import argparse
 from bs4 import BeautifulSoup
-
-
-'''ite
+'''
 A simple script to create tipue content by searching for documentation
 files under the top docs directory of the SoS website.
 '''
+
 
 def parse_html(url, html):
     print('Parsing {}'.format(html))
@@ -32,7 +31,7 @@ def parse_html(url, html):
             title = os.path.basename(html).rsplit('.')[0]
         else:
             title = title.get_text()
-            
+
         maintitle = soup.find('h1')
         if maintitle is None:
             maintitle = soup.find('h2')
@@ -50,47 +49,60 @@ def parse_html(url, html):
         all_text = []
         for header in soup.find_all(re.compile('^h[1-6]$')):
             # remove special character
-            
-            part = re.sub(r'[^a-zA-Z0-9_\-=\'".,\\]', ' ', header.get_text()).replace('"', "'").strip() + "\n"
+
+            part = re.sub(r'[^a-zA-Z0-9_\-=\'".,\\]', ' ',
+                          header.get_text()).replace('"', "'").strip() + "\n"
             part = re.sub(r'\s+', ' ', part)
             ids = [x for x in header.findAll('a') if x.get('id')]
             if ids:
                 tag = '#' + ids[0].get('id')
             else:
                 hrefs = header.findAll('a', {'class': 'anchor-link'})
-                if hrefs: 
+                if hrefs:
                     tag = hrefs[0].get('href')
                 else:
                     tag = ''
-                
+
             part = '{{"mainTitle": "{}", "title": "{}", "text": "{}", "tags": "", "mainUrl": "{}", "url": "{}"}}'.format(
-                    maintitle.replace('¶', '').strip(), header.get_text().replace('¶', '').replace('"', r'\"').strip(), 
-                    part, url, url + tag.replace('"', r'\"'))
+                maintitle.replace('¶', '').strip(),
+                header.get_text().replace('¶', '').replace('"', r'\"').strip(),
+                part, url, url + tag.replace('"', r'\"'))
             all_text.append(part)
-       
+
     return all_text
+
 
 def generate_tipue_content(docs_dir):
 
     # get a list of html files and their url
-    documentations = glob.glob(os.path.join(docs_dir, 'doc', 'documentation', '*.html'))
+    documentations = glob.glob(
+        os.path.join(docs_dir, 'doc', 'documentation', '*.html'))
     tutorials = glob.glob(os.path.join(docs_dir, 'doc', 'tutorials', '*.html'))
     examples = glob.glob(os.path.join(docs_dir, 'doc', 'examples', '*.html'))
 
-    text = [parse_html(url, html) for (url, html) in [
-            ('https://vatlab.github.io/sos-docs/', os.path.join(docs_dir, 'index.html')),
-            ('https://vatlab.github.io/sos-docs/running.html',
-                os.path.join(docs_dir, 'running.html')),
-            ('https://vatlab.github.io/sos-docs/notebook.html',
-                os.path.join(docs_dir, 'notebook.html')), 
-            ('https://vatlab.github.io/sos-docs/workflow.html',
-                os.path.join(docs_dir, 'workflow.html')), 
-            ('https://vatlab.github.io/sos-docs/guide.html', os.path.join(docs_dir, 'guide.html'))] + 
-            [('https://vatlab.github.io/sos-docs/doc/documentation/{}'.format(os.path.basename(x)), x) for x in documentations] + 
-            [('https://vatlab.github.io/sos-docs/doc/tutorials/{}'.format(os.path.basename(x)), x) for x in tutorials] + 
-            [('https://vatlab.github.io/sos-docs/doc/examples/{}'.format(os.path.basename(x)), x) for x in examples]]
+    text = [
+        parse_html(url, html)
+        for (url, html) in [('https://vatlab.github.io/sos-docs/',
+                             os.path.join(docs_dir, 'index.html')),
+                            ('https://vatlab.github.io/sos-docs/running.html',
+                             os.path.join(docs_dir, 'running.html')),
+                            ('https://vatlab.github.io/sos-docs/notebook.html',
+                             os.path.join(docs_dir, 'notebook.html')),
+                            ('https://vatlab.github.io/sos-docs/workflow.html',
+                             os.path.join(docs_dir, 'workflow.html')),
+                            ('https://vatlab.github.io/sos-docs/guide.html',
+                             os.path.join(docs_dir, 'guide.html'))] +
+        [('https://vatlab.github.io/sos-docs/doc/documentation/{}'.format(
+            os.path.basename(x)), x) for x in documentations] +
+        [('https://vatlab.github.io/sos-docs/doc/tutorials/{}'.format(
+            os.path.basename(x)), x) for x in tutorials] +
+        [('https://vatlab.github.io/sos-docs/doc/examples/{}'.format(
+            os.path.basename(x)), x) for x in examples]
+    ]
     # write the output to file.
-    with open(os.path.join(docs_dir, 'tipuesearch', 'tipuesearch_content.js'), 'w') as out:
+    with open(
+            os.path.join(docs_dir, 'tipuesearch', 'tipuesearch_content.js'),
+            'w') as out:
         out.write('''\
 var tipuesearch = {{"pages": [
 {}
@@ -100,7 +112,9 @@ var tipuesearch = {{"pages": [
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Index SoS website')
-    parser.add_argument('docs_dir', metavar='DIR',
+    parser.add_argument(
+        'docs_dir',
+        metavar='DIR',
         help='''Path of the top SoS docs directory. This script will parse content of
         HTML files under $DOC_DIR (e.g. Overview.html, /doc/documentation/*.html), get
         the headers of the files, and write the results in $DOC_DIR/tipuesearch_content.hs
