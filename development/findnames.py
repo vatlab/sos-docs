@@ -66,9 +66,11 @@ def generate_doc_toc(docs_dir):
             if doc:
                 name=doc.group(1)
                 docString+='"'+name+'", '
-    tutString=tutString[:-2]
+    if tutString.endswith(', '):
+        tutString=tutString[:-2]
     tutString+="]"
-    docString=docString[:-2]
+    if docString.endswith(', '):
+        docString=docString[:-2]
     docString+="]"
 
     with open(os.path.join(docs_dir, "src", "homepage", "guide.ipynb")) as json_data:
