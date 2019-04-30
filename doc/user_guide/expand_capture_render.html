@@ -12320,6 +12320,8 @@ font-style: italic;
       background-color: #E6EEFF !important;
     }.sos_lan_R .input_prompt {
       background-color: #DCDCDA !important;
+    }.sos_lan_sparql .input_prompt {
+      background-color:  !important;
     }
 </style>
 
@@ -12861,8 +12863,9 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Time need to lean</strong>: 20 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
+<li>SoS works with any Jupyter kernel</li>
 <li><code>%expand</code> treats input of cell as a Python f-string and expand it before sendint to subkernel</li>
 <li><code>%capture</code> captures output from subkernels and save them into Python variables</li>
 <li><code>%render</code> renders output from subkernels in different formats</li>
@@ -12878,7 +12881,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="%expand"><a id="magic_expand" /><code>%expand</code><a class="anchor-link" href="#%expand"></a></h2>
+<p>A SoS kernel is a master kernel that can start, stop, and interact with any Jupyter kernel, which are called <em>subkernels</em> by SoS. Although most of the times SoS just passes user input to subkernels and sendes outputs from subkernels to the frontend (notebook), you can use a few SoS magics to modify user inputs before they are sent to the subkernel, and process outputs before they are sent to the frontend.</p>
+
 </div>
 </div>
 </div>
@@ -12887,46 +12891,41 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Script in SoS cells are by default sent to SoS or the subkernels in verbatim. However, similar to the <code>expand</code> option of the SoS actions, you can interpolate scripts before they are executed by the kernels. Basically,</p>
-<ol>
-<li>By default, scripts are not interpolated.</li>
-<li>With <code>%expand</code> magic, scripts are treated as Python f-string and are interpolated with sigil <code>{ }</code></li>
-<li>With <code>%expand ${ }</code> or other sigils, scripts are interpolated with specified sigil so that you can avoid using symbols that already used in the script.</li>
-</ol>
-<p>As you can imagine, string interpolation allows passing information from the SoS kernel to the subkernels. Although this method is less flexible and powerful than inter-kernel variable exchange using magics such as <code>%get</code>, it is sometimes easier to use and can be especially useful if you plan to include the script as a SoS action in a SoS workflow.</p>
-<p>For example,</p>
+<p align="center">
+  <img src="https://vatlab.github.io/sos-docs/doc/media/subkernel.png">
+</p>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="-Magic-%expand"><a id="magic_expand" /> Magic <code>%expand</code><a class="anchor-link" href="#-Magic-%expand"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Script in SoS cells are by default sent to SoS or the subkernels in verbatim. However, similar to the <code>expand</code> option of the SoS actions, you can interpolate scripts before they are executed by the kernels.</p>
+<p>For example, without a <code>%expand</code> magic, user inputs are sent to the subkernel in verbatim:</p>
 
 </div>
 </div>
 </div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">par = 100</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
 
 <div class="sos_lan_R">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">%expand
-cat("A parameter {par} is specified.")</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">print("A parameter {par} is specified.")</textarea>
   </div>
 </div>
 
@@ -12942,7 +12941,83 @@ cat("A parameter {par} is specified.")</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>A parameter 100 is specified.</pre>
+<pre>[1] &#34;A parameter {par} is specified.&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With variable <code>par</code> defined in the SoS kernel,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">par = 100</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>the <code>%expand</code> treats the content of the following cell as a <a href="https://www.python.org/dev/peps/pep-0498/">Python f-string</a> and expands expressions inside braces:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%expand
+print("A parameter {par} is specified.")</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;A parameter 100 is specified.&#34;
+</pre>
 </div>
 </div>
 
@@ -12968,12 +13043,12 @@ cat("A parameter {par} is specified.")</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
       class="sos-source" name="R">%expand
 if ({par} > 50) {{
-    cat("A parameter {par} greater than 50 is specified.");
+    print("A parameter {par} greater than 50 is specified.");
 }}</textarea>
   </div>
 </div>
@@ -12990,7 +13065,8 @@ if ({par} > 50) {{
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>A parameter 100 greater than 50 is specified.</pre>
+<pre>[1] &#34;A parameter 100 greater than 50 is specified.&#34;
+</pre>
 </div>
 </div>
 
@@ -13016,12 +13092,12 @@ if ({par} > 50) {{
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
       class="sos-source" name="R">%expand ${ }
 if (${par} > 50) {
-    cat("A parameter ${par} greater than 50 is specified.");
+    print("A parameter ${par} greater than 50 is specified.");
 }</textarea>
   </div>
 </div>
@@ -13038,291 +13114,12 @@ if (${par} > 50) {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>A parameter 100 greater than 50 is specified.</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="%get"><a id="magic_get" /><code>%get</code><a class="anchor-link" href="#%get"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Magics <code>%get</code> retrieve variables from SoS or another subkernel to the current subkernel started by magic <code>%use</code>.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For example,</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
-   <textarea rows="4"
-      class="sos-source" name="SoS">%use sos
-a = [1, 2, 3]
-b = [1, 2, "3"]
-c = True</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="R">%use R
-%get a b c
-a</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<ol class=list-inline>
-	<li>1</li>
-	<li>2</li>
-	<li>3</li>
-</ol>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="R">b</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<ol>
-	<li>1</li>
-	<li>2</li>
-	<li>'3'</li>
-</ol>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="R">c</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-TRUE
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>%preview</code> magic cannot be used to preview variables in the subkernel so we have to list them one by one. As you can see, a Python list can be converted to <code>R</code> array or list depending on its content.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Similar to the <code>%put</code> magic, SoS automatically translate variables with invalid Python names. For example</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%use sos
-_var = 'Hi, Bob'</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="R">%use R
-%get _var
-.var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Variable _var is passed from SoS to kernel ir as .var
+<pre>[1] &#34;A parameter 100 greater than 50 is specified.&#34;
 </pre>
 </div>
 </div>
 
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-'Hi, Bob'
 </div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%use sos</textarea>
-  </div>
-</div>
-
 </div>
 
 </div>
@@ -13334,39 +13131,220 @@ _var = 'Hi, Bob'</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Also similar to the <code>--to</code> option of magic <code>%put</code>, magic <code>%get</code> accept a parameter <code>--from</code> to get variables from SoS (default) any kernel. For example,</p>
+<p>Although not the topic of this tutorial, it is worth mentioning that the usage of the <code>%expand</code> magic is the same as the <code>expand</code> option of SoS actions so that you can convert the above script that was executed in a R session to an R action in a SoS workflow as follows:</p>
 
 </div>
 </div>
 </div>
 
-<div class="sos_lan_R">
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="R">R_var <- 'R variable'</textarea>
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">R: expand='${ }'
+if (${par} > 50) {
+    print("A parameter ${par} greater than 50 is specified.");
+}</textarea>
   </div>
 </div>
 
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;A parameter 100 greater than 50 is specified.&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Magic-%capture"><a id="magic_capture" />Magic <code>%capture</code><a class="anchor-link" href="#Magic-%capture"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%capture</code> all or part of the output of a cell to a SoS variable. To understand how this magic works, you will need to understand <a href="https://jupyter-client.readthedocs.io/en/stable/messaging.html">how Jupyter  works</a>. Briefly, after a cell is executed, the kernel sends one or more of messages <code>stream</code>, <code>display_data</code>, and other controlling messages before it sends <code>execute_result</code> to conclude the execution. The <code>stream</code> message type can contain standard output (<code>stdout</code>) and standard error output (<code>stderr</code>), and the <code>display_data</code> message can contain a lot more complex data under a dictionary with keys <code>text/html</code>, <code>text/plain</code>, <code>text/markdown</code> etc, and the frontend will decide how to display these messages.</p>
 
-<div class="sos_lan_Python3">
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Determine-what-to-capture">Determine what to capture<a class="anchor-link" href="#Determine-what-to-capture"></a></h3><p>The <code>%capture</code> magic can capture the following types of information</p>
+<table>
+<thead><tr>
+<th>name</th>
+<th>message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stdout</code></td>
+<td><code>stdout</code> of <code>stream</code> messages</td>
+</tr>
+<tr>
+<td><code>stderr</code></td>
+<td><code>stderr</code> of <code>stream</code> messages</td>
+</tr>
+<tr>
+<td><code>text</code></td>
+<td><code>text/plain</code> of <code>display_data</code> messages</td>
+</tr>
+<tr>
+<td><code>html</code></td>
+<td><code>text/html</code> of <code>display_data</code> messages</td>
+</tr>
+<tr>
+<td><code>markdown</code></td>
+<td><code>text/markdown</code> of <code>display_data</code> messages</td>
+</tr>
+<tr>
+<td><code>raw</code></td>
+<td>All above messages</td>
+</tr>
+</tbody>
+</table>
+<p>So the first step to capture output from a cell is to determine what types of messages are sent by the cell. If you are uncertain, you can open the console panel (right click and select <code>New Console for Notebook</code> if you are using Jupyter Lab), and use capture the <code>raw</code> type.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_Bash">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Bash">%capture raw
+echo "I am from Bash"</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I am from Bash
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The messages will be displayed in the console window, and is</p>
+<div class="highlight"><pre><span></span><span class="p">[(</span><span class="s1">&#39;stream&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;stdout&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;I am from Bash</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">})]</span>
+</pre></div>
+<p>for this cell.</p>
+<p>You can then specify the <code>stdout</code> type,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_Bash">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Bash">%capture stdout
+echo "I am from Bash"</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I am from Bash
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the result is saved to a variable <code>__captured</code> in the SoS kernel:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="Python3">%get --from R R_var
-R_var</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">__captured</textarea>
   </div>
 </div>
 
@@ -13384,7 +13362,7 @@ R_var</textarea>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;R variable&#39;</pre>
+<pre>&#39;I am from Bash\n&#39;</pre>
 </div>
 
 </div>
@@ -13401,26 +13379,288 @@ R_var</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Depending on how the language module is defined, such cross-subkernel variable exchange can be achived directly, or by way of SoS, so after the <code>%get --from R R_var</code> statement, the <code>R_var</code> variable might or might not exist in the SoS kernel.</p>
+<p>This is just for convenience and you usually use option <code>-t</code> (<code>--to</code>) to assign the name of the variable</p>
 
 </div>
 </div>
 </div>
+
+<div class="sos_lan_Bash">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Bash">%capture stdout --to bash_output
+echo "I am from Bash"</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I am from Bash
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">bash_output</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[23]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;I am from Bash\n&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="%render"><a id="magic_render" /><code>%render</code><a class="anchor-link" href="#%render"></a></h2>
+<p>As a more complex example, the following cell runs a SPARQL query and returns multiple messages.</p>
+
 </div>
 </div>
 </div>
+
+<div class="sos_lan_sparql">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="sparql">%capture raw
+
+%format json
+%display table 
+%endpoint http://dbpedia.org/sparql
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+SELECT ?person ?name
+WHERE {
+    ?person a foaf:Person .
+    ?person rdfs:label ?name
+    FILTER regex(?name,"da Vinci","i")
+    FILTER langMatches(lang(?name),"en")
+} LIMIT 2</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="krn-spql"><div class="magic">Return format: JSON</div><div class="magic">Display: table</div><div class="magic">Endpoint set to: http://dbpedia.org/sparql</div></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="krn-spql"><table><tr class=hdr><th>person</th>
+<th>name</th></tr><tr class=odd><td class=val><a href="http://dbpedia.org/resource/Paul_Da_Vinci" target="_other">http://dbpedia.org/resource/Paul_Da_Vinci</a></td>
+<td class=val>Paul Da Vinci</td></tr><tr class=even><td class=val><a href="http://dbpedia.org/resource/Leonardo_da_Vinci" target="_other">http://dbpedia.org/resource/Leonardo_da_Vinci</a></td>
+<td class=val>Leonardo da Vinci</td></tr></table><div class="tinfo">Total: 2, Shown: 2</div></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+The `__captured` variable shows all returned messages
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">__captured</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[28]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;display_data&#39;,
+  {&#39;data&#39;: {&#39;text/html&#39;: &#39;&lt;div class=&#34;krn-spql&#34;&gt;&lt;div class=&#34;magic&#34;&gt;Return format: JSON&lt;/div&gt;&lt;div class=&#34;magic&#34;&gt;Display: table&lt;/div&gt;&lt;div class=&#34;magic&#34;&gt;Endpoint set to: http://dbpedia.org/sparql&lt;/div&gt;&lt;/div&gt;&#39;,
+    &#39;text/plain&#39;: &#39;Return format: JSON\nDisplay: table\nEndpoint set to: http://dbpedia.org/sparql\n&#39;},
+   &#39;metadata&#39;: {}}),
+ (&#39;display_data&#39;,
+  {&#39;data&#39;: {&#39;text/html&#39;: &#39;&lt;div class=&#34;krn-spql&#34;&gt;&lt;table&gt;&lt;tr class=hdr&gt;&lt;th&gt;person&lt;/th&gt;\n&lt;th&gt;name&lt;/th&gt;&lt;/tr&gt;&lt;tr class=odd&gt;&lt;td class=val&gt;&lt;a href=&#34;http://dbpedia.org/resource/Paul_Da_Vinci&#34; target=&#34;_other&#34;&gt;http://dbpedia.org/resource/Paul_Da_Vinci&lt;/a&gt;&lt;/td&gt;\n&lt;td class=val&gt;Paul Da Vinci&lt;/td&gt;&lt;/tr&gt;&lt;tr class=even&gt;&lt;td class=val&gt;&lt;a href=&#34;http://dbpedia.org/resource/Leonardo_da_Vinci&#34; target=&#34;_other&#34;&gt;http://dbpedia.org/resource/Leonardo_da_Vinci&lt;/a&gt;&lt;/td&gt;\n&lt;td class=val&gt;Leonardo da Vinci&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;div class=&#34;tinfo&#34;&gt;Total: 2, Shown: 2&lt;/div&gt;&lt;/div&gt;&#39;},
+   &#39;metadata&#39;: {}})]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>%render</code> magic converts the output of a cell to certain format before displaying it in the notebook. The format can be any format supported by the <a href="https://ipython.org/ipython-doc/3/api/generated/IPython.display.html"><code>IPython.display</code> module</a> and is default to <code>Markdown</code>. For example, the following code displays all supported options of <code>%render</code> by checking the subclasses of <code>IPython.display</code>. The cell returns a string in markdown format and is rendered in <code>Markdown</code>.</p>
+<p>You can then save the content of <code>text/html</code> to a variable <code>html_table</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_sparql">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
+   <textarea rows="15"
+      class="sos-source" name="sparql">%capture html --to html_table
+
+%format json
+%display table 
+%endpoint http://dbpedia.org/sparql
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+SELECT ?person ?name
+WHERE {
+    ?person a foaf:Person .
+    ?person rdfs:label ?name
+    FILTER regex(?name,"da Vinci","i")
+    FILTER langMatches(lang(?name),"en")
+} LIMIT 2</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="krn-spql"><div class="magic">Return format: JSON</div><div class="magic">Display: table</div><div class="magic">Endpoint set to: http://dbpedia.org/sparql</div></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="krn-spql"><table><tr class=hdr><th>person</th>
+<th>name</th></tr><tr class=odd><td class=val><a href="http://dbpedia.org/resource/Paul_Da_Vinci" target="_other">http://dbpedia.org/resource/Paul_Da_Vinci</a></td>
+<td class=val>Paul Da Vinci</td></tr><tr class=even><td class=val><a href="http://dbpedia.org/resource/Leonardo_da_Vinci" target="_other">http://dbpedia.org/resource/Leonardo_da_Vinci</a></td>
+<td class=val>Leonardo da Vinci</td></tr></table><div class="tinfo">Total: 2, Shown: 2</div></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>which contains the <code>text/html</code> data of two messages</p>
 
 </div>
 </div>
@@ -13430,24 +13670,479 @@ R_var</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 20.528640000000003em">
-   <textarea rows="16"
-      class="sos-source" name="SoS">%render
-import IPython.display
-import inspect
+<div class="prompt input_prompt">In&nbsp;[34]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">print(html_table)</textarea>
+  </div>
+</div>
 
-res = '''
-Options of magic %render
+</div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;div class=&#34;krn-spql&#34;&gt;&lt;div class=&#34;magic&#34;&gt;Return format: JSON&lt;/div&gt;&lt;div class=&#34;magic&#34;&gt;Display: table&lt;/div&gt;&lt;div class=&#34;magic&#34;&gt;Endpoint set to: http://dbpedia.org/sparql&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;krn-spql&#34;&gt;&lt;table&gt;&lt;tr class=hdr&gt;&lt;th&gt;person&lt;/th&gt;
+&lt;th&gt;name&lt;/th&gt;&lt;/tr&gt;&lt;tr class=odd&gt;&lt;td class=val&gt;&lt;a href=&#34;http://dbpedia.org/resource/Paul_Da_Vinci&#34; target=&#34;_other&#34;&gt;http://dbpedia.org/resource/Paul_Da_Vinci&lt;/a&gt;&lt;/td&gt;
+&lt;td class=val&gt;Paul Da Vinci&lt;/td&gt;&lt;/tr&gt;&lt;tr class=even&gt;&lt;td class=val&gt;&lt;a href=&#34;http://dbpedia.org/resource/Leonardo_da_Vinci&#34; target=&#34;_other&#34;&gt;http://dbpedia.org/resource/Leonardo_da_Vinci&lt;/a&gt;&lt;/td&gt;
+&lt;td class=val&gt;Leonardo da Vinci&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;div class=&#34;tinfo&#34;&gt;Total: 2, Shown: 2&lt;/div&gt;&lt;/div&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, if you would like to process the output programatically, you can use one of the many powerful Python modules</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">from bs4 import BeautifulSoup
+soup = BeautifulSoup(html_table, 'html.parser')
+soup.find_all('a')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[35]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&lt;a href=&#34;http://dbpedia.org/resource/Paul_Da_Vinci&#34; target=&#34;_other&#34;&gt;http://dbpedia.org/resource/Paul_Da_Vinci&lt;/a&gt;,
+ &lt;a href=&#34;http://dbpedia.org/resource/Leonardo_da_Vinci&#34; target=&#34;_other&#34;&gt;http://dbpedia.org/resource/Leonardo_da_Vinci&lt;/a&gt;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Capture-formatted-content">Capture formatted content<a class="anchor-link" href="#Capture-formatted-content"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the output of a cell is well-formatted, it is possible to capture the output as variables in a type other than <code>str</code>.</p>
+<p>For example, if you would like to capture the size of some files from a few notebook files. Instead of using Python scripts, you could possibly use a shell command as follows</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[60]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!ls -l ex*.ipynb  | awk '{{printf("%s,%d\n", $9, $5)}}'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> !ls -l ex*.ipynb  | awk '{printf("%s,%d\n", $9, $5)}'<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>exchange_variable.ipynb,26525
+expand_capture_render.ipynb,28337
+export.ipynb,4390
+extending_sos.ipynb,13098
+external_scripts.ipynb,4211
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The output is well formatted so you can capture it in csv format as follows</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[66]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%capture stdout --as csv --to notebooks
+!ls -l ex*.ipynb  | awk '{{printf("%s,%d\n", $9, $5)}}'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> !ls -l ex*.ipynb  | awk '{printf("%s,%d\n", $9, $5)}'<br></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>exchange_variable.ipynb,26525
+expand_capture_render.ipynb,28337
+export.ipynb,4390
+extending_sos.ipynb,13098
+external_scripts.ipynb,4211
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The resulting variable is a Pandas DataFrame but unfortunately treated the first data line as header, which is not entirely correct here.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[67]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">notebooks</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[67]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>exchange_variable.ipynb</th>
+      <th>26525</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>expand_capture_render.ipynb</td>
+      <td>28337</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>export.ipynb</td>
+      <td>4390</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>extending_sos.ipynb</td>
+      <td>13098</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>external_scripts.ipynb</td>
+      <td>4211</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%capture</code> magic can capture data in <code>text</code> (default), <code>json</code>, <code>csv</code>, and <code>tsv</code> format, and can append to instead of replacing an existing variable (option <code>-a</code>). Please refer to the <a href="sos_magics.html">SoS Magics reference</a> or command <code>%capture -h</code> for a comlete list of options.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Magic-%render"><a id="magic_render" />Magic <code>%render</code><a class="anchor-link" href="#Magic-%render"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%render</code> magic intercepts the output of a cell, convert it to certain format before displaying it in the notebook. The format can be any format supported by the <a href="https://ipython.org/ipython-doc/3/api/generated/IPython.display.html"><code>IPython.display</code> module</a> and is default to <code>Markdown</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, if you have a dataset</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[80]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">data = [('John', 'Smith', 50),
+        ('Eve', 'Jackson', 35)
+       ]</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can format it in HTML format</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[85]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 24.171510000000005em">
+   <textarea rows="19"
+      class="sos-source" name="SoS">res = '''
+<table>
+  <tr>
+    <th>Firstname</th>
+    <th>Lastname</th> 
+    <th>Age</th>
+  </tr>
 '''
+for first_name, last_name, age in data:
+    res += f'''
+  <tr>
+    <td>{first_name}</td>
+    <td>{last_name}</td> 
+    <td>{age}</td>
+  </tr>
+'''
+res += '</table>'
 
-for key in IPython.display.__dict__.keys():
-    cls = getattr(IPython.display, key)
-    if inspect.isclass(cls) and issubclass(cls, IPython.display.DisplayObject):
-        res += '* {}\n'.format(key)
+print(res)</textarea>
+  </div>
+</div>
 
-# this is the output of this cell and will be rendered in Markdown format
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Firstname&lt;/th&gt;
+    &lt;th&gt;Lastname&lt;/th&gt; 
+    &lt;th&gt;Age&lt;/th&gt;
+  &lt;/tr&gt;
+
+  &lt;tr&gt;
+    &lt;td&gt;John&lt;/td&gt;
+    &lt;td&gt;Smith&lt;/td&gt; 
+    &lt;td&gt;50&lt;/td&gt;
+  &lt;/tr&gt;
+
+  &lt;tr&gt;
+    &lt;td&gt;Eve&lt;/td&gt;
+    &lt;td&gt;Jackson&lt;/td&gt; 
+    &lt;td&gt;35&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and render it as a HTML table.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[86]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%render --as HTML
 res</textarea>
   </div>
 </div>
@@ -13460,11 +14155,164 @@ res</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[1]:</div>
+<div class="prompt output_prompt">Out[86]:</div>
 
 
 
-<div class="output_markdown rendered_html output_subarea output_execute_result">
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+<table>
+  <tr>
+    <th>Firstname</th>
+    <th>Lastname</th> 
+    <th>Age</th>
+  </tr>
+
+  <tr>
+    <td>John</td>
+    <td>Smith</td> 
+    <td>50</td>
+  </tr>
+
+  <tr>
+    <td>Eve</td>
+    <td>Jackson</td> 
+    <td>35</td>
+  </tr>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Currently <code>%render</code> only renders <code>stdout</code> (of <code>stream</code> messages, default) and <code>text</code> (<code>text/plain</code> of <code>display_data</code> messages) contents, and you should probably use <code>%capture raw</code> to check the type of output before you <code>%render</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%render</code> magic accepts any renderer that is defined in the <code>IPython.display</code> module. The following cell lists all renderers,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[87]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">import IPython.display
+import inspect
+
+print('Options of magic %render')
+for key in IPython.display.__dict__.keys():
+    cls = getattr(IPython.display, key)
+    if inspect.isclass(cls) and issubclass(cls, IPython.display.DisplayObject):
+        print('* {}'.format(key))</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Options of magic %render
+* DisplayObject
+* TextDisplayObject
+* Pretty
+* HTML
+* Markdown
+* Math
+* Latex
+* SVG
+* ProgressBar
+* JSON
+* GeoJSON
+* Javascript
+* Image
+* Video
+* Audio
+* Code
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and of course a <code>%render</code> magic would treat the output as markdown format and display the items as bullet points:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[73]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">%render
+import IPython.display
+import inspect
+
+print('Options of magic %render')
+for key in IPython.display.__dict__.keys():
+    cls = getattr(IPython.display, key)
+    if inspect.isclass(cls) and issubclass(cls, IPython.display.DisplayObject):
+        print('* {}'.format(key))</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_markdown rendered_html output_subarea ">
 <p>Options of magic %render</p>
 <ul>
 <li>DisplayObject</li>
@@ -13501,187 +14349,8 @@ res</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Similarly, you can use magic <code>%render</code> to render output in other formats:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 26.60009em">
-   <textarea rows="21"
-      class="sos-source" name="SoS">%render --as HTML
-'''
-This is a table in HTML format <br>
-<table style="width:100%">
-  <tr>
-    <th>Firstname</th>
-    <th>Lastname</th> 
-    <th>Age</th>
-  </tr>
-  <tr>
-    <td>Jill</td>
-    <td>Smith</td> 
-    <td>50</td>
-  </tr>
-  <tr>
-    <td>Eve</td>
-    <td>Jackson</td> 
-    <td>94</td>
-  </tr>
-</table>
-'''</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[2]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-
-This is a table in HTML format <br>
-<table style="width:100%">
-  <tr>
-    <th>Firstname</th>
-    <th>Lastname</th> 
-    <th>Age</th>
-  </tr>
-  <tr>
-    <td>Jill</td>
-    <td>Smith</td> 
-    <td>50</td>
-  </tr>
-  <tr>
-    <td>Eve</td>
-    <td>Jackson</td> 
-    <td>94</td>
-  </tr>
-</table>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>%render</code> magic captures not only the return value of SoS cell, but also standard output of SoS and other cells. For example, a subprocess of the following cell (a Python script) prints the content of a SVG file to standard output, which is captured and displayed by magic <code>%render</code>.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
-   <textarea rows="15"
-      class="sos-source" name="SoS">%render --as SVG
-python:
-print(r'''
- <svg height="140" width="140">
-  <defs>
-    <filter id="f1" x="0" y="0" width="200%" height="200%">
-      <feOffset result="offOut" in="SourceAlpha" dx="20" dy="20" />
-      <feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />
-      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-    </filter>
-  </defs>
-  <rect width="90" height="90" stroke="green" stroke-width="3" fill="yellow" filter="url(#f1)" />
-  Sorry, your browser does not support inline SVG.
- </svg>
-''')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
- &lt;svg height=&#34;140&#34; width=&#34;140&#34;&gt;
-  &lt;defs&gt;
-    &lt;filter id=&#34;f1&#34; x=&#34;0&#34; y=&#34;0&#34; width=&#34;200%&#34; height=&#34;200%&#34;&gt;
-      &lt;feOffset result=&#34;offOut&#34; in=&#34;SourceAlpha&#34; dx=&#34;20&#34; dy=&#34;20&#34; /&gt;
-      &lt;feGaussianBlur result=&#34;blurOut&#34; in=&#34;offOut&#34; stdDeviation=&#34;10&#34; /&gt;
-      &lt;feBlend in=&#34;SourceGraphic&#34; in2=&#34;blurOut&#34; mode=&#34;normal&#34; /&gt;
-    &lt;/filter&gt;
-  &lt;/defs&gt;
-  &lt;rect width=&#34;90&#34; height=&#34;90&#34; stroke=&#34;green&#34; stroke-width=&#34;3&#34; fill=&#34;yellow&#34; filter=&#34;url(#f1)&#34; /&gt;
-  Sorry, your browser does not support inline SVG.
- &lt;/svg&gt;
-
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_svg output_subarea ">
-<svg height="140" width="140">
-  <defs>
-    <filter height="200%" id="f1" width="200%" x="0" y="0">
-      <feOffset dx="20" dy="20" in="SourceAlpha" result="offOut"/>
-      <feGaussianBlur in="offOut" result="blurOut" stdDeviation="10"/>
-      <feBlend in="SourceGraphic" in2="blurOut" mode="normal"/>
-    </filter>
-  </defs>
-  <rect fill="yellow" filter="url(#f1)" height="90" stroke="green" stroke-width="3" width="90"/>
-  Sorry, your browser does not support inline SVG.
- </svg>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>%render</code> magic also works for other kernels although it can be tricky to determine what is printed to standard output. For kernel R, the function to print to standard output is <code>cat</code> so you can use <code>cat</code> to print something to the standard output for <code>%render</code> to process. For example,</p>
+<p>The ability to render text output as markdown text alleviatea a problem with the Jupyter notebooks in that its markdown cells cannot contain variables, so you cannot really mix results with their descriptions as easily as what Rmarkdown inline expressions do. However, with the <code>%render</code> magic, you can write markdown text as a string in any kernel, and use the <code>%render</code> magic to display it.</p>
+<p>For example, if you have <code>res</code> obtained from some analysis</p>
 
 </div>
 </div>
@@ -13691,13 +14360,40 @@ print(r'''
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
-   <textarea rows="4"
+<div class="prompt input_prompt">In&nbsp;[98]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">res <- rnorm(5)</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can report the result by generating a markdown text programmatically and use the <code>%render</code> magic to render it</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[111]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
       class="sos-source" name="R">%render
-a <- rnorm(5)
-cat(paste(length(a), "random numbers"))
-cat(paste('*', a, collapse='\n'))</textarea>
+cat(paste0('Array of size ', length(res), '\n\n'),
+    paste('*', res, '\n'))</textarea>
   </div>
 </div>
 
@@ -13712,28 +14408,15 @@ cat(paste('*', a, collapse='\n'))</textarea>
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>5 random numbers* -1.50442651757407
-* -0.977242498620981
-* 0.534575832846015
-* -0.390538801124654
-* 0.107239275008704</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
 
 <div class="output_markdown rendered_html output_subarea ">
-<p>5 random numbers* -1.50442651757407</p>
+<p>Array of size 5</p>
 <ul>
-<li>-0.977242498620981</li>
-<li>0.534575832846015</li>
-<li>-0.390538801124654</li>
-<li>0.107239275008704</li>
+<li>0.620339576471122 </li>
+<li>-0.67703109377573 </li>
+<li>1.18774922149472 </li>
+<li>0.40924135757458 </li>
+<li>-0.268002293723921 </li>
 </ul>
 
 </div>
@@ -13752,7 +14435,7 @@ cat(paste('*', a, collapse='\n'))</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Finally, it worth noting that <code>%render</code> captures <code>stdout</code> by default but it can also capture and render text from <code>text/html</code> from <code>display_data</code> messages. This requires a parameter <code>text</code> after <code>%render</code>. Please check the details about this capture mechanism from magic <code>%capture</code>.</p>
+<p>This is less intuitive than writing down markdown text directly but you have the flexibility to generate the markdown text using any language and you can use conditions and loops to automate the output of long reports.</p>
 
 </div>
 </div>
@@ -13762,7 +14445,9 @@ cat(paste('*', a, collapse='\n'))</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="doc/user_guide/exchange_variable.html">Exchanging data among kernels</a> for other options to exchange data between kernels</li>
+</ul>
 
 </div>
 </div>
