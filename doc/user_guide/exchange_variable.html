@@ -12316,8 +12316,10 @@ font-style: italic;
 
 
 <style>
-   .sos_lan_Bash .input_prompt {
-      background-color: #E6EEFF !important;
+   .sos_lan_Julia .input_prompt {
+      background-color: #ebd8eb !important;
+    }.sos_lan_Python3 .input_prompt {
+      background-color: #FFD91A !important;
     }.sos_lan_R .input_prompt {
       background-color: #DCDCDA !important;
     }
@@ -12850,7 +12852,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="How-to-exchange-variables-among-living-subkernels">How to exchange variables among living subkernels<a class="anchor-link" href="#How-to-exchange-variables-among-living-subkernels"></a></h1>
+<h1 id="How-to-exchange-variables-among-subkernels">How to exchange variables among subkernels<a class="anchor-link" href="#How-to-exchange-variables-among-subkernels"></a></h1>
 </div>
 </div>
 </div>
@@ -12863,8 +12865,11 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to lean</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
+<li>Passing data across kernels allows you to use the best tool of each language</li>
 <li>Magic <code>%get</code> get variable from another kernel</li>
-<li>Magic <code>%with</code> execute the cell in another kernel with input and output variables</li>
+<li>Magic <code>%put</code> put variables to another kernel</li>
+<li>Variables with names starting with <code>sos</code> are automatically transferred</li>
+<li>Magic <code>%with</code> execute the cell in another kernel with input and output variables  </li>
 </ul>
 </li>
 </ul>
@@ -12877,16 +12882,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Data-exchange-among-kernels">Data exchange among kernels<a class="anchor-link" href="#Data-exchange-among-kernels"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>A SoS notebook can have multiple live kernels. A SoS notebook can be used as a collection of cells from multiple independent notebooks. However, the real power of SoS Notebook lies in its ability to exchange data among kernels.</p>
+<p>A SoS notebook can have multiple live kernels with SoS serving as the master kernel to all other kernels (called subkernels). As described in <a href="expand_capture_render.html">this tutorial</a>, SoS can process input and output of subkernels without knowing what they actually do. However, if SoS knows what the kernels do via appropriate language modules, it provides much more powerful ways to communicate with the kernels, the most important of which is the exchange of variables among subkernels.</p>
 
 </div>
 </div>
@@ -12896,7 +12892,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="String-interpolation-(magic-%expand)-">String interpolation (magic <code>%expand</code>) <a id="String_Interpolation" /><a class="anchor-link" href="#String-interpolation-(magic-%expand)-"></a></h3>
+<h2 id="Basic-concepts">Basic concepts<a class="anchor-link" href="#Basic-concepts"></a></h2>
 </div>
 </div>
 </div>
@@ -12905,7 +12901,39 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Cell content is by default sent to SoS or subkernels untouched. A <code>expand</code> magic interpolate cell content with variables in the SoS kernel as if the content is a Python f-string. For example,</p>
+<p>Before we get to the actual magics on how to exchange variables between kernels, it is helpful to understand that, <strong>SoS does not tranfer any variables among kernels, it creates independent homonymous variables of similar types that are native to the destination language</strong>. For example, if you have the following two variables</p>
+<div class="highlight"><pre><span></span>a <span class="o">=</span> <span class="m">1</span>
+b <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+<p>in R and executes a magic</p>
+<div class="highlight"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">a</span> <span class="n">b</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
+</pre></div>
+<p>in a SoS cell, SoS actually execute the following statements, in the background, to create variables <code>a</code> and <code>b</code> in Python</p>
+<div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+<p>As shown in the following figure, language modules try to choose the best method, sometimes in memory and sometimes via disk, to pass variables from one to another kernel, but all the complexity is hidden from you. Variables in different kernels are independent so that changing the value of variables <code>a</code> or <code>b</code> in one kernel will not affect the variable in another kernel. We also note that <code>a</code> and <code>b</code> are of different types in Python although they are of the same <code>numeric</code> type in <code>R</code> (<code>a</code> is technically speaking an array of size 1). That is to say, <strong>SoS does not gurantee one to one correspondence between datatypes, and does not gurantee lossless data exchange</strong>.</p>
+<p><img src="../media/notebook_overview.png" alt="user_interface"></p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Explicit-data-exchange-with-magic-%get">Explicit data exchange with magic <code>%get</code><a class="anchor-link" href="#Explicit-data-exchange-with-magic-%get"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The eastest way to get variable from another kernel is to use magic <code>%get</code>. It accepts one or more variable names and an option <code>--from</code> if you are not getting from the master <code>SoS</code> kernel.</p>
+<p>For example, with a variable <code>data</code> defined in SoS,</p>
 
 </div>
 </div>
@@ -12916,160 +12944,13 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">filename = 'somefile'</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_Bash">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="Bash">echo {filename}</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>{filename}
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_Bash">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="Bash">%expand
-echo {filename}</textarea>
+      class="sos-source" name="SoS">data = [-1, 0, 1, 2, 3]
+filename = 'test.txt'</textarea>
   </div>
 </div>
 
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>somefile
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_Python3">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="Python3">filename = 'myfile'
-print(f'A filename "{filename}" is passed ')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>A filename &#34;myfile&#34; is passed 
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_Python3">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="Python3">%expand
-filename = 'myfile'
-print(f'A filename "{filename}" is passed ')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>A filename &#34;somefile&#34; is passed 
-</pre>
-</div>
-</div>
-
-</div>
 </div>
 
 </div>
@@ -13081,167 +12962,20 @@ print(f'A filename "{filename}" is passed ')</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In the last example, <code>{filename}</code> is expanded by the <code>%expand</code> magic so the following statements are sent to Python 3:</p>
-
-<pre><code>filename = 'myfile'
-print(f'A filename "somefile" is passed ')</code></pre>
+<p>you can <code>%get</code> the variables in a R kernel as follows</p>
 
 </div>
 </div>
 </div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can imagine, you can keep constants such as filenames and parameters  in SoS and use these information to compose scripts in subkernels for execution.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>By default, the <code>expand</code> magic expands expressions in braces <code>{ }</code>. However, as you can see from the last example, <code>%expand</code> can be awkward if the script already contains <code>{ }</code>. Although the official method is to double the braces, as in</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_Python3">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="Python3">%expand
-filename = 'myfile'
-print(f'A filename "{{filename}}" is passed ')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>A filename &#34;myfile&#34; is passed 
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS recommend the use of an alternative sigil so that you do not have to change the syntax of the original script</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_Python3">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="Python3">%expand ${ }
-filename = 'myfile'
-print(f'SoS filename ${filename}, Python 3 filename: "{filename}"')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>SoS filename somefile, Python 3 filename: &#34;myfile&#34;
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Explicit-data-exchange-(magic-%get)-">Explicit data exchange (magic <code>%get</code>) <a id="Explicit_data_exchange" /><a class="anchor-link" href="#Explicit-data-exchange-(magic-%get)-"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The SoS kernel provides a mechanism to pass variables between SoS and some subkernels using SoS magics.</p>
-<p>For example, magic <code>%get</code> can get specified SoS variables from the SoS kernel to the subkernel <code>ir</code>.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">data = [-1, 0, 1, 2, 3]</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
 
 <div class="sos_lan_R">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="R">%get data
+      class="sos-source" name="R">%get data filename
 data</textarea>
   </div>
 </div>
@@ -13278,12 +13012,49 @@ data</textarea>
 </div>
 
 
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">filename</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'test.txt'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS tries its best to find the best-matching data types between SoS and the subkernel and convert the data in the subkernel's native datatypes (e.g. Python's <code>DataFrame</code> to R's <code>data.frame</code>), so the variables you get will always be in the subkernel's native data types, not a wrapper of a foreign object (for example objects provided by <code>rpy2</code>).</p>
+<p>The type of the data is <code>numeric</code> because <code>data</code> is a numeric list in Python</p>
 
 </div>
 </div>
@@ -13330,58 +13101,49 @@ data</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Similarly, using magic <code>%put</code>, you can put a variable in the subkernel to the sos kernel.</p>
+<p>However, if the variable contains different types of data, for example integer and string,</p>
 
 </div>
 </div>
 </div>
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">data[ data < 1] = 0
-data[ data > 1] = 1</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="R">%put data</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">data_mixed = [1, 'abs']</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It will be translated to a list in R</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="SoS">%use sos
-data</textarea>
+      class="sos-source" name="R">%get data_mixed
+data_mixed</textarea>
   </div>
 </div>
 
@@ -13393,62 +13155,36 @@ data</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[42]:</div>
+<div class="prompt"></div>
 
 
 
+<div class="output_html rendered_html output_subarea ">
+<ol>
+	<li>1</li>
+	<li>'abs'</li>
+</ol>
 
-<div class="output_text output_subarea output_execute_result">
-<pre>[0, 0, 1, 1, 1]</pre>
-</div>
-
-</div>
-
-</div>
 </div>
 
 </div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Variables can also be transferred with options <code>--in</code> (<code>-i</code>) and <code>--out</code> (<code>-o</code>) of magics <code>%use</code> and <code>%with</code>. For example, if you would like to add <code>2</code> to all elements in <code>data</code> but not sure if <code>pandas</code> can do that, you can send the dataframe to <code>R</code>, add <code>2</code> and send it back.</p>
 
 </div>
 </div>
+
 </div>
+</div>
+
+
 
 <div class="sos_lan_R">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">%with R -i data -o data
-data <- data + 2</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">data</textarea>
+      class="sos-source" name="R">class(data_mixed)</textarea>
   </div>
 </div>
 
@@ -13460,13 +13196,590 @@ data <- data + 2</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[44]:</div>
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'list'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similarly, you can get a <code>data.frame</code> <code>mtcars</code> from R in SoS, but an option <code>--from R</code> is needed to specify the source kernel</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%get mtcars --from R
+mtcars</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mpg</th>
+      <th>cyl</th>
+      <th>disp</th>
+      <th>hp</th>
+      <th>drat</th>
+      <th>wt</th>
+      <th>qsec</th>
+      <th>vs</th>
+      <th>am</th>
+      <th>gear</th>
+      <th>carb</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Mazda RX4</th>
+      <td>21.0</td>
+      <td>6.0</td>
+      <td>160.0</td>
+      <td>110.0</td>
+      <td>3.90</td>
+      <td>2.620</td>
+      <td>16.46</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Mazda RX4 Wag</th>
+      <td>21.0</td>
+      <td>6.0</td>
+      <td>160.0</td>
+      <td>110.0</td>
+      <td>3.90</td>
+      <td>2.875</td>
+      <td>17.02</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Datsun 710</th>
+      <td>22.8</td>
+      <td>4.0</td>
+      <td>108.0</td>
+      <td>93.0</td>
+      <td>3.85</td>
+      <td>2.320</td>
+      <td>18.61</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Hornet 4 Drive</th>
+      <td>21.4</td>
+      <td>6.0</td>
+      <td>258.0</td>
+      <td>110.0</td>
+      <td>3.08</td>
+      <td>3.215</td>
+      <td>19.44</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Hornet Sportabout</th>
+      <td>18.7</td>
+      <td>8.0</td>
+      <td>360.0</td>
+      <td>175.0</td>
+      <td>3.15</td>
+      <td>3.440</td>
+      <td>17.02</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Valiant</th>
+      <td>18.1</td>
+      <td>6.0</td>
+      <td>225.0</td>
+      <td>105.0</td>
+      <td>2.76</td>
+      <td>3.460</td>
+      <td>20.22</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Duster 360</th>
+      <td>14.3</td>
+      <td>8.0</td>
+      <td>360.0</td>
+      <td>245.0</td>
+      <td>3.21</td>
+      <td>3.570</td>
+      <td>15.84</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Merc 240D</th>
+      <td>24.4</td>
+      <td>4.0</td>
+      <td>146.7</td>
+      <td>62.0</td>
+      <td>3.69</td>
+      <td>3.190</td>
+      <td>20.00</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Merc 230</th>
+      <td>22.8</td>
+      <td>4.0</td>
+      <td>140.8</td>
+      <td>95.0</td>
+      <td>3.92</td>
+      <td>3.150</td>
+      <td>22.90</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Merc 280</th>
+      <td>19.2</td>
+      <td>6.0</td>
+      <td>167.6</td>
+      <td>123.0</td>
+      <td>3.92</td>
+      <td>3.440</td>
+      <td>18.30</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Merc 280C</th>
+      <td>17.8</td>
+      <td>6.0</td>
+      <td>167.6</td>
+      <td>123.0</td>
+      <td>3.92</td>
+      <td>3.440</td>
+      <td>18.90</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Merc 450SE</th>
+      <td>16.4</td>
+      <td>8.0</td>
+      <td>275.8</td>
+      <td>180.0</td>
+      <td>3.07</td>
+      <td>4.070</td>
+      <td>17.40</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>Merc 450SL</th>
+      <td>17.3</td>
+      <td>8.0</td>
+      <td>275.8</td>
+      <td>180.0</td>
+      <td>3.07</td>
+      <td>3.730</td>
+      <td>17.60</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>Merc 450SLC</th>
+      <td>15.2</td>
+      <td>8.0</td>
+      <td>275.8</td>
+      <td>180.0</td>
+      <td>3.07</td>
+      <td>3.780</td>
+      <td>18.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>Cadillac Fleetwood</th>
+      <td>10.4</td>
+      <td>8.0</td>
+      <td>472.0</td>
+      <td>205.0</td>
+      <td>2.93</td>
+      <td>5.250</td>
+      <td>17.98</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Lincoln Continental</th>
+      <td>10.4</td>
+      <td>8.0</td>
+      <td>460.0</td>
+      <td>215.0</td>
+      <td>3.00</td>
+      <td>5.424</td>
+      <td>17.82</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Chrysler Imperial</th>
+      <td>14.7</td>
+      <td>8.0</td>
+      <td>440.0</td>
+      <td>230.0</td>
+      <td>3.23</td>
+      <td>5.345</td>
+      <td>17.42</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Fiat 128</th>
+      <td>32.4</td>
+      <td>4.0</td>
+      <td>78.7</td>
+      <td>66.0</td>
+      <td>4.08</td>
+      <td>2.200</td>
+      <td>19.47</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Honda Civic</th>
+      <td>30.4</td>
+      <td>4.0</td>
+      <td>75.7</td>
+      <td>52.0</td>
+      <td>4.93</td>
+      <td>1.615</td>
+      <td>18.52</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Toyota Corolla</th>
+      <td>33.9</td>
+      <td>4.0</td>
+      <td>71.1</td>
+      <td>65.0</td>
+      <td>4.22</td>
+      <td>1.835</td>
+      <td>19.90</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Toyota Corona</th>
+      <td>21.5</td>
+      <td>4.0</td>
+      <td>120.1</td>
+      <td>97.0</td>
+      <td>3.70</td>
+      <td>2.465</td>
+      <td>20.01</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Dodge Challenger</th>
+      <td>15.5</td>
+      <td>8.0</td>
+      <td>318.0</td>
+      <td>150.0</td>
+      <td>2.76</td>
+      <td>3.520</td>
+      <td>16.87</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>AMC Javelin</th>
+      <td>15.2</td>
+      <td>8.0</td>
+      <td>304.0</td>
+      <td>150.0</td>
+      <td>3.15</td>
+      <td>3.435</td>
+      <td>17.30</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Camaro Z28</th>
+      <td>13.3</td>
+      <td>8.0</td>
+      <td>350.0</td>
+      <td>245.0</td>
+      <td>3.73</td>
+      <td>3.840</td>
+      <td>15.41</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Pontiac Firebird</th>
+      <td>19.2</td>
+      <td>8.0</td>
+      <td>400.0</td>
+      <td>175.0</td>
+      <td>3.08</td>
+      <td>3.845</td>
+      <td>17.05</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Fiat X1-9</th>
+      <td>27.3</td>
+      <td>4.0</td>
+      <td>79.0</td>
+      <td>66.0</td>
+      <td>4.08</td>
+      <td>1.935</td>
+      <td>18.90</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>Porsche 914-2</th>
+      <td>26.0</td>
+      <td>4.0</td>
+      <td>120.3</td>
+      <td>91.0</td>
+      <td>4.43</td>
+      <td>2.140</td>
+      <td>16.70</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Lotus Europa</th>
+      <td>30.4</td>
+      <td>4.0</td>
+      <td>95.1</td>
+      <td>113.0</td>
+      <td>3.77</td>
+      <td>1.513</td>
+      <td>16.90</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>Ford Pantera L</th>
+      <td>15.8</td>
+      <td>8.0</td>
+      <td>351.0</td>
+      <td>264.0</td>
+      <td>4.22</td>
+      <td>3.170</td>
+      <td>14.50</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>Ferrari Dino</th>
+      <td>19.7</td>
+      <td>6.0</td>
+      <td>145.0</td>
+      <td>175.0</td>
+      <td>3.62</td>
+      <td>2.770</td>
+      <td>15.50</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>Maserati Bora</th>
+      <td>15.0</td>
+      <td>8.0</td>
+      <td>301.0</td>
+      <td>335.0</td>
+      <td>3.54</td>
+      <td>3.570</td>
+      <td>14.60</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <th>Volvo 142E</th>
+      <td>21.4</td>
+      <td>4.0</td>
+      <td>121.0</td>
+      <td>109.0</td>
+      <td>4.11</td>
+      <td>2.780</td>
+      <td>18.60</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The type of <code>mtcars</code> in SoS (Python) is, not surprisingly, a Pandas DataFrame</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">type(mtcars)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[2, 2, 3, 3, 3]</pre>
+<pre>pandas.core.frame.DataFrame</pre>
 </div>
 
 </div>
@@ -13483,17 +13796,66 @@ data <- data + 2</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Implicit-data-exchange-(sos*-variables)">Implicit data exchange (<code>sos*</code> variables)<a id="Implicit_data_exchange" /><a class="anchor-link" href="#Implicit-data-exchange-(sos*-variables)"></a></h3>
+<p>You can also <code>%get</code> variables from one subkernel in another subkernel. For example the following cell gets <code>mtcars</code> from a <code>Julia</code> kernel. As the warning message says, because Julia dataframe does not yet support row labels, <code>mtcars</code> in Julia will not have row label.</p>
+
 </div>
 </div>
 </div>
+
+<div class="sos_lan_Julia">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Julia">%get mtcars --from R
+mtcars</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Raw index is ignored because Julia DataFrame does not support raw index.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="data-frame"><thead><tr><th></th><th>mpg</th><th>cyl</th><th>disp</th><th>hp</th><th>drat</th><th>wt</th><th>qsec</th><th>vs</th><th>am</th></tr><tr><th></th><th>Float64</th><th>Float64</th><th>Float64</th><th>Float64</th><th>Float64</th><th>Float64</th><th>Float64</th><th>Float64</th><th>Float64</th></tr></thead><tbody><p>32 rows × 11 columns (omitted printing of 2 columns)</p><tr><th>1</th><td>21.0</td><td>6.0</td><td>160.0</td><td>110.0</td><td>3.9</td><td>2.62</td><td>16.46</td><td>0.0</td><td>1.0</td></tr><tr><th>2</th><td>21.0</td><td>6.0</td><td>160.0</td><td>110.0</td><td>3.9</td><td>2.875</td><td>17.02</td><td>0.0</td><td>1.0</td></tr><tr><th>3</th><td>22.8</td><td>4.0</td><td>108.0</td><td>93.0</td><td>3.85</td><td>2.32</td><td>18.61</td><td>1.0</td><td>1.0</td></tr><tr><th>4</th><td>21.4</td><td>6.0</td><td>258.0</td><td>110.0</td><td>3.08</td><td>3.215</td><td>19.44</td><td>1.0</td><td>0.0</td></tr><tr><th>5</th><td>18.7</td><td>8.0</td><td>360.0</td><td>175.0</td><td>3.15</td><td>3.44</td><td>17.02</td><td>0.0</td><td>0.0</td></tr><tr><th>6</th><td>18.1</td><td>6.0</td><td>225.0</td><td>105.0</td><td>2.76</td><td>3.46</td><td>20.22</td><td>1.0</td><td>0.0</td></tr><tr><th>7</th><td>14.3</td><td>8.0</td><td>360.0</td><td>245.0</td><td>3.21</td><td>3.57</td><td>15.84</td><td>0.0</td><td>0.0</td></tr><tr><th>8</th><td>24.4</td><td>4.0</td><td>146.7</td><td>62.0</td><td>3.69</td><td>3.19</td><td>20.0</td><td>1.0</td><td>0.0</td></tr><tr><th>9</th><td>22.8</td><td>4.0</td><td>140.8</td><td>95.0</td><td>3.92</td><td>3.15</td><td>22.9</td><td>1.0</td><td>0.0</td></tr><tr><th>10</th><td>19.2</td><td>6.0</td><td>167.6</td><td>123.0</td><td>3.92</td><td>3.44</td><td>18.3</td><td>1.0</td><td>0.0</td></tr><tr><th>11</th><td>17.8</td><td>6.0</td><td>167.6</td><td>123.0</td><td>3.92</td><td>3.44</td><td>18.9</td><td>1.0</td><td>0.0</td></tr><tr><th>12</th><td>16.4</td><td>8.0</td><td>275.8</td><td>180.0</td><td>3.07</td><td>4.07</td><td>17.4</td><td>0.0</td><td>0.0</td></tr><tr><th>13</th><td>17.3</td><td>8.0</td><td>275.8</td><td>180.0</td><td>3.07</td><td>3.73</td><td>17.6</td><td>0.0</td><td>0.0</td></tr><tr><th>14</th><td>15.2</td><td>8.0</td><td>275.8</td><td>180.0</td><td>3.07</td><td>3.78</td><td>18.0</td><td>0.0</td><td>0.0</td></tr><tr><th>15</th><td>10.4</td><td>8.0</td><td>472.0</td><td>205.0</td><td>2.93</td><td>5.25</td><td>17.98</td><td>0.0</td><td>0.0</td></tr><tr><th>16</th><td>10.4</td><td>8.0</td><td>460.0</td><td>215.0</td><td>3.0</td><td>5.424</td><td>17.82</td><td>0.0</td><td>0.0</td></tr><tr><th>17</th><td>14.7</td><td>8.0</td><td>440.0</td><td>230.0</td><td>3.23</td><td>5.345</td><td>17.42</td><td>0.0</td><td>0.0</td></tr><tr><th>18</th><td>32.4</td><td>4.0</td><td>78.7</td><td>66.0</td><td>4.08</td><td>2.2</td><td>19.47</td><td>1.0</td><td>1.0</td></tr><tr><th>19</th><td>30.4</td><td>4.0</td><td>75.7</td><td>52.0</td><td>4.93</td><td>1.615</td><td>18.52</td><td>1.0</td><td>1.0</td></tr><tr><th>20</th><td>33.9</td><td>4.0</td><td>71.1</td><td>65.0</td><td>4.22</td><td>1.835</td><td>19.9</td><td>1.0</td><td>1.0</td></tr><tr><th>21</th><td>21.5</td><td>4.0</td><td>120.1</td><td>97.0</td><td>3.7</td><td>2.465</td><td>20.01</td><td>1.0</td><td>0.0</td></tr><tr><th>22</th><td>15.5</td><td>8.0</td><td>318.0</td><td>150.0</td><td>2.76</td><td>3.52</td><td>16.87</td><td>0.0</td><td>0.0</td></tr><tr><th>23</th><td>15.2</td><td>8.0</td><td>304.0</td><td>150.0</td><td>3.15</td><td>3.435</td><td>17.3</td><td>0.0</td><td>0.0</td></tr><tr><th>24</th><td>13.3</td><td>8.0</td><td>350.0</td><td>245.0</td><td>3.73</td><td>3.84</td><td>15.41</td><td>0.0</td><td>0.0</td></tr><tr><th>25</th><td>19.2</td><td>8.0</td><td>400.0</td><td>175.0</td><td>3.08</td><td>3.845</td><td>17.05</td><td>0.0</td><td>0.0</td></tr><tr><th>26</th><td>27.3</td><td>4.0</td><td>79.0</td><td>66.0</td><td>4.08</td><td>1.935</td><td>18.9</td><td>1.0</td><td>1.0</td></tr><tr><th>27</th><td>26.0</td><td>4.0</td><td>120.3</td><td>91.0</td><td>4.43</td><td>2.14</td><td>16.7</td><td>0.0</td><td>1.0</td></tr><tr><th>28</th><td>30.4</td><td>4.0</td><td>95.1</td><td>113.0</td><td>3.77</td><td>1.513</td><td>16.9</td><td>1.0</td><td>1.0</td></tr><tr><th>29</th><td>15.8</td><td>8.0</td><td>351.0</td><td>264.0</td><td>4.22</td><td>3.17</td><td>14.5</td><td>0.0</td><td>1.0</td></tr><tr><th>30</th><td>19.7</td><td>6.0</td><td>145.0</td><td>175.0</td><td>3.62</td><td>2.77</td><td>15.5</td><td>0.0</td><td>1.0</td></tr><tr><th>&vellip;</th><td>&vellip;</td><td>&vellip;</td><td>&vellip;</td><td>&vellip;</td><td>&vellip;</td><td>&vellip;</td><td>&vellip;</td><td>&vellip;</td><td>&vellip;</td></tr></tbody></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In addition to the use of magics <code>%put</code> and <code>%get</code> and parameters <code>--in</code> and <code>--out</code> of magics <code>%use</code> and <code>%with</code> to explicitly exchange variables between SoS and subkernels, SoS automatically shares variables with names starting with <code>sos</code> among all subkernels.</p>
-<p>For example,</p>
+<p>If you really need such information for your analysis in Julia, you will have to transfer it separately,</p>
 
 </div>
 </div>
@@ -13503,11 +13865,190 @@ data <- data + 2</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">cars = row.names(mtcars)</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_Julia">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="R">%use R
-sos_var = 100</textarea>
+      class="sos-source" name="Julia">%get cars --from R
+cars</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>32-element Array{String,1}:
+ &#34;Mazda RX4&#34;        
+ &#34;Mazda RX4 Wag&#34;    
+ &#34;Datsun 710&#34;       
+ &#34;Hornet 4 Drive&#34;   
+ &#34;Hornet Sportabout&#34;
+ &#34;Valiant&#34;          
+ &#34;Duster 360&#34;       
+ &#34;Merc 240D&#34;        
+ &#34;Merc 230&#34;         
+ &#34;Merc 280&#34;         
+ &#34;Merc 280C&#34;        
+ &#34;Merc 450SE&#34;       
+ &#34;Merc 450SL&#34;       
+ ⋮                  
+ &#34;Toyota Corona&#34;    
+ &#34;Dodge Challenger&#34; 
+ &#34;AMC Javelin&#34;      
+ &#34;Camaro Z28&#34;       
+ &#34;Pontiac Firebird&#34; 
+ &#34;Fiat X1-9&#34;        
+ &#34;Porsche 914-2&#34;    
+ &#34;Lotus Europa&#34;     
+ &#34;Ford Pantera L&#34;   
+ &#34;Ferrari Dino&#34;     
+ &#34;Maserati Bora&#34;    
+ &#34;Volvo 142E&#34;       </pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Putting-variable-to-another-kernel-using-magic-%put">Putting variable to another kernel using magic <code>%put</code><a class="anchor-link" href="#Putting-variable-to-another-kernel-using-magic-%put"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Magic <code>%put</code> is similar to <code>%get</code> but it puts variable from the current kernel to another. It by default put variables to SoS but can put to another subkernel with option <code>--to</code>.</p>
+<p>For example, the following cell puts variable <code>ncars</code> to SoS:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%put ncars
+ncars = length(cars)</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is important to note here, that although the <code>%put</code> magic is specified at the beginning of the cell (as required by SoS), it is actually executed after the cell is executed.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>ncars</code> is available in SoS after the <code>%put</code> magic</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">ncars</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>32</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">Similarly, you can put variables to another kernel using the `--to` option:</textarea>
   </div>
 </div>
 
@@ -13522,11 +14063,363 @@ sos_var = 100</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="Python3">%put df --to R
+
+import pandas as pd
+
+df = pd.DataFrame({'num_legs': [2, 4, 8, 0],
+                   'num_wings': [2, 0, 0, 0],
+                   'num_specimen_seen': [10, 2, 1, 8]},
+             index=['falcon', 'dog', 'spider', 'fish'])</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and the variable <code>df</code> will be available in R</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">df</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>num_legs</th><th scope=col>num_wings</th><th scope=col>num_specimen_seen</th></tr></thead>
+<tbody>
+	<tr><th scope=row>falcon</th><td>2 </td><td>2 </td><td>10</td></tr>
+	<tr><th scope=row>dog</th><td>4 </td><td>0 </td><td> 2</td></tr>
+	<tr><th scope=row>spider</th><td>8 </td><td>0 </td><td> 1</td></tr>
+	<tr><th scope=row>fish</th><td>0 </td><td>0 </td><td> 8</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Evaluating-statements-in-another-kernel-with-input-and-output-variables-using-%with-magic">Evaluating statements in another kernel with input and output variables using <code>%with</code> magic<a class="anchor-link" href="#Evaluating-statements-in-another-kernel-with-input-and-output-variables-using-%with-magic"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Say during a Python-based data analysis procedure you are in need of a bunch of random numbers, and either you do not have Scipy installed or are more familiar with how R, you can call R as follows</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">n = 5</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%with R --in n --out rn
+rn = rnorm(n)</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">rn</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[0.68311250202401,
+ 0.0299101911493427,
+ 0.72708897434066,
+ -0.611054536349475,
+ -1.49315432697787]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here the <code>%with</code> magic is just a shortcut to</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
-      class="sos-source" name="Python3">%with Python3
-sos_var += 100
+      class="sos-source" name="R">%get n
+%put rn
+rn = rnorm(n)</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>but <code>%with R</code> magic will appear to be function-call like procedure without changing the cell kernel.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>%with</code> magic can also be used from a subkernel and calling statements in SoS or another subkernel. For example, the following cell calls the <code>head</code> function of <code>DataFrame</code> to get the first few rows of <code>mtcars</code>, and return as <code>data.frame</code> in R.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%with SoS -i mtcars -o head
+head = mtcars.head()</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">head</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>mpg</th><th scope=col>cyl</th><th scope=col>disp</th><th scope=col>hp</th><th scope=col>drat</th><th scope=col>wt</th><th scope=col>qsec</th><th scope=col>vs</th><th scope=col>am</th><th scope=col>gear</th><th scope=col>carb</th></tr></thead>
+<tbody>
+	<tr><th scope=row>Mazda RX4</th><td>21.0 </td><td>6    </td><td>160  </td><td>110  </td><td>3.90 </td><td>2.620</td><td>16.46</td><td>0    </td><td>1    </td><td>4    </td><td>4    </td></tr>
+	<tr><th scope=row>Mazda RX4 Wag</th><td>21.0 </td><td>6    </td><td>160  </td><td>110  </td><td>3.90 </td><td>2.875</td><td>17.02</td><td>0    </td><td>1    </td><td>4    </td><td>4    </td></tr>
+	<tr><th scope=row>Datsun 710</th><td>22.8 </td><td>4    </td><td>108  </td><td> 93  </td><td>3.85 </td><td>2.320</td><td>18.61</td><td>1    </td><td>1    </td><td>4    </td><td>1    </td></tr>
+	<tr><th scope=row>Hornet 4 Drive</th><td>21.4 </td><td>6    </td><td>258  </td><td>110  </td><td>3.08 </td><td>3.215</td><td>19.44</td><td>1    </td><td>0    </td><td>3    </td><td>1    </td></tr>
+	<tr><th scope=row>Hornet Sportabout</th><td>18.7 </td><td>8    </td><td>360  </td><td>175  </td><td>3.15 </td><td>3.440</td><td>17.02</td><td>0    </td><td>0    </td><td>3    </td><td>2    </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Compare to all other multi-language approaches such as Python's <a href="https://rpy2.readthedocs.io/en/version_2.8.x/"><code>rpy2</code></a>, Julia's <a href="https://github.com/JuliaPy/PyCall.jl"><code>PyCall</code></a>, or MATLAB's python engine, it is important to note that <strong>all statements and datatypes in a SoS environment are native</strong> and therefore easier to work with, <strong>with the disadvantage that your analyses can only be executed in SoS notebook</strong> (not as a standalone script).</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Implicit-exchange-of-sos*-variables-">Implicit exchange of <code>sos*</code> variables <a id="Implicit_data_exchange" /><a class="anchor-link" href="#Implicit-exchange-of-sos*-variables-"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to the use of magics <code>%put</code> and <code>%get</code> and parameters <code>--in</code> and <code>--out</code> of magics <code>%with</code> to explicitly exchange variables between SoS and subkernels, SoS automatically shares variables with names starting with <code>sos</code> among all subkernels.</p>
+<p>For example, if you have <code>sos_var</code> defined in <code>R</code> (or any other kernel)</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">sos_var = 100</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can use it directly in <code>Python3</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_Python3">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Python3">sos_var += 100
 print("sos_var is changed to {}".format(sos_var))</textarea>
   </div>
 </div>
@@ -13555,12 +14448,22 @@ print("sos_var is changed to {}".format(sos_var))</textarea>
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And back in R the value of <code>sos_var</code> has been changed</p>
+
+</div>
+</div>
+</div>
 
 <div class="sos_lan_R">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="R"># I am still in R
@@ -13593,16 +14496,25 @@ sos_var</textarea>
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And the same variable is available in SoS and holds the latest value</p>
+
+</div>
+</div>
+</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%use sos
-sos_var</textarea>
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">sos_var</textarea>
   </div>
 </div>
 
@@ -13614,7 +14526,7 @@ sos_var</textarea>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[48]:</div>
+<div class="prompt output_prompt">Out[13]:</div>
 
 
 
@@ -13637,55 +14549,8 @@ sos_var</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS supports an increasing number of languages and provides <a href="Language_Module.html">an interface to add support for other languages</a>. Please refer to chapter <a href="Supported_Languages.html">Supported Language</a> for details on each supported language. If your language of choice is not yet supported, please considering adding SoS support for your favoriate kernel with a pull request.</p>
+<p>Under the hood SoS puts all <code>sos*</code> variable from the source kernel to destination kernel with every kernel switch, so it is recommended that you avoid using <code>sos*</code> variables for large variables.</p>
 
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[49]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS"># clean up
-%use sos
-!rm mydata.csv </textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>rm: mydata.csv: No such file or directory
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Capture-output-(Magic-%capture)">Capture output (Magic <code>%capture</code>)<a class="anchor-link" href="#Capture-output-(Magic-%capture)"></a></h3>
 </div>
 </div>
 </div>
@@ -13694,784 +14559,9 @@ sos_var</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Magic <code>capture</code> captures output from a cell, optionally parse it in specified format (option <code>--as</code>, and save or append the result to a variable in SoS (<code>--to</code> or <code>--append</code>). The output of the cell (namely the input to magic <code>%capture</code>) can be</p>
-<ul>
-<li>standard output, <code>%capture stdout</code> or just <code>%capture</code></li>
-<li>standard error, <code>%capture stderr</code></li>
-<li>plain text, <code>%capture text</code> from <code>text/plain</code> of message <code>display_data</code></li>
-<li>markdown, <code>%capture markdown</code> from <code>text/markdown</code> of message <code>display_data</code></li>
-<li>html, <code>%capture html</code> from <code>text/html</code> of message <code>display_data</code>, or</li>
-<li>raw, which simply returns a list of messages.</li>
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="language_module.html">How to write a language module</a> if you would like to write a language module for the kernel you rely on</li>
 </ul>
-<p>For example</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">%capture --to r_var
-cat(paste(c(1,2,3)))</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>1 2 3</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>captures standard output of the cell to variable <code>r_var</code></p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">r_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[51]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;1 2 3&#39;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[52]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">%capture text --to r_var
-paste(c(1,2,3))</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<ol class=list-inline>
-	<li>'1'</li>
-	<li>'2'</li>
-	<li>'3'</li>
-</ol>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[53]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">r_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[53]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;[1] &#34;1&#34; &#34;2&#34; &#34;3&#34;&#39;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The <code>capture</code> magic allows passing information from the output of cells back to SoS. If the output text is structured, it can even parse the output in <code>json</code>, <code>csv</code> (comma separated values), or <code>tsv</code> (tab separated values) formats and save them in Python <code>dict</code> or <code>Pandas.DataFrame</code>.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For example,</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[54]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%capture --as csv --to table
-print('a,b\n1,2\n3,4')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>a,b
-1,2
-3,4
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">table</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[55]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>a</th>
-      <th>b</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>3</td>
-      <td>4</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This method is especially suitable for kernels without a language module so there is no way to use a <code>%get</code> magic to retrieve information from it. For example, a <a href="https://www.w3.org/TR/rdf-sparql-query/"><code>sparql</code> kernel</a> simply executes sparql queries and return results. It does not have a concept of variable so you will have to capture its output to handle it in SoS:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_sparql">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
-   <textarea rows="11"
-      class="sos-source" name="sparql">%capture html --to sparql
-
-%endpoint http://dbpedia.org/sparql
-%format JSON
-
-SELECT DISTINCT ?property
-WHERE {
-   ?s ?property ?person .
-   ?person rdf:type foaf:Person .
-}
-LIMIT 3</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="krn-spql"><div class="magic">Endpoint set to: http://dbpedia.org/sparql</div><div class="magic">Return format: JSON</div></div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="krn-spql"><table><tr class=hdr><th>property</th></tr><tr class=odd><td class=val><a href="http://www.w3.org/2002/07/owl#differentFrom" target="_other">http://www.w3.org/2002/07/owl#differentFrom</a></td></tr><tr class=even><td class=val><a href="http://www.w3.org/2000/01/rdf-schema#seeAlso" target="_other">http://www.w3.org/2000/01/rdf-schema#seeAlso</a></td></tr><tr class=odd><td class=val><a href="http://www.w3.org/2002/07/owl#sameAs" target="_other">http://www.w3.org/2002/07/owl#sameAs</a></td></tr></table><div class="tinfo">Total: 3, Shown: 3</div></div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">from bs4 import BeautifulSoup
-soup = BeautifulSoup(sparql)
-soup.find_all('a')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[63]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[&lt;a href=&#34;http://www.w3.org/2002/07/owl#differentFrom&#34; target=&#34;_other&#34;&gt;http://www.w3.org/2002/07/owl#differentFrom&lt;/a&gt;,
- &lt;a href=&#34;http://www.w3.org/2000/01/rdf-schema#seeAlso&#34; target=&#34;_other&#34;&gt;http://www.w3.org/2000/01/rdf-schema#seeAlso&lt;/a&gt;,
- &lt;a href=&#34;http://www.w3.org/2002/07/owl#sameAs&#34; target=&#34;_other&#34;&gt;http://www.w3.org/2002/07/owl#sameAs&lt;/a&gt;]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In addition to option <code>--to</code>, the <code>%capture</code> magic can also append cell output to an existing variable using paramter <code>--append</code>. How newly captured data is appended to the existing variable depends on type of existing and new data. Basically,</p>
-<ol>
-<li>If the variable does not exist, <code>--append</code> is equivalent to <code>--to</code>.</li>
-<li>If the existing variable is a list, the new data is appended to the list.</li>
-<li>If the new data has the same type with the existing one, the new data will be appended to existing variable. That it to say, strings are appended to existing string, dictionaries are merged to existing dictionaries, and rows of data frames are appended to existing data frame.</li>
-</ol>
-<p>For example, we already have a variable <code>table</code></p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">table</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[64]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>a</th>
-      <th>b</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>3</td>
-      <td>4</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_Python3">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[67]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="Python3">%capture --as csv -a table
-print('a,b\n5,6\n7,8')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>a,b
-5,6
-7,8
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[68]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">table</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[68]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>a</th>
-      <th>b</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>3</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>5</td>
-      <td>6</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>7</td>
-      <td>8</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If you would like to collect results from multiple cells, you can create a list and use it to capture them</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[69]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">results = []</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[70]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%capture -a results
-sh:
-  echo result from sh</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>result from sh
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[71]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%capture -a results
-python:
-   print('result from python')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>result from python
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[72]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">results</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[72]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[&#39;result from sh\n&#39;, &#39;result from python\n&#39;]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
 
 </div>
 </div>
