@@ -76,7 +76,7 @@ function add_nav_header() {
         <div class="toc-header">
             <div class="row">
                 <div class="nav-home">
-                    <a href="https://vatlab.github.io/sos-docs/guide.html#content"><i class="fa fa-home"></i></a>
+                    <a href="https://vatlab.github.io/sos-docs/notebook.html#content"><i class="fa fa-home"></i></a>
                 </div>
                 <div class="nav-buttons">
                         ${prev_link}
