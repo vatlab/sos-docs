@@ -16,6 +16,7 @@ RUN     chmod +x /usr/local/bin/create-pr
 
 # update start-singleuser.sh to git pull sos-docs
 COPY start-singleuser.sh /usr/local/bin/
+RUN    chmod +x /usr/local/bin/start-singleuser.sh
 
 USER    jovyan
 
