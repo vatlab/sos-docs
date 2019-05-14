@@ -11722,19 +11722,6 @@ ul.typeahead-list > li > a {
 .ansi-bold { font-weight: bold; }
 
     </style>
-<style type="text/css">
-    /*This file contains any manual css for this page that needs to override the global styles.
-This is only required when different pages style the same element differently. This is just
-a hack to deal with our current css styles and no new styling should be added in this file.*/
-
-#ipython-main-app {
-    position: relative;
-}
-#jupyter-main-app {
-    position: relative;
-}
-
-    </style>
 
 
 <style type="text/css">
@@ -12316,9 +12303,7 @@ font-style: italic;
 
 
 <style>
-   .sos_lan_Bash .input_prompt {
-      background-color: #E6EEFF !important;
-    }.sos_lan_R .input_prompt {
+   .sos_lan_R .input_prompt {
       background-color: #DCDCDA !important;
     }
 </style>
@@ -12861,7 +12846,11 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Time need to lean</strong>: 15 minutes or less</li>
+<li><strong>Key points</strong>:<ul>
+<li>There are intuitive corresponding data types between most Python (SoS) and R datatypes</li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -12872,7 +12861,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="R-">R <a id="R" /><a class="anchor-link" href="#R-"></a></h2>
+<h2 id="Installation">Installation<a class="anchor-link" href="#Installation"></a></h2>
 </div>
 </div>
 </div>
@@ -12881,7 +12870,14 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Because there is no one to one correspondence of data types between Python and R datatypes, SoS tries to translate variables in the most natural way. For example, although <code>3</code> and <code>[1, 4]</code> are both <code>numeric</code> type in R (the former have length 1), they are translated to Python variables <code>3</code> (an integer) and <code>[1, 4]</code> (a list).</p>
+<p>There are several options to install <code>R</code> and its jupyter kernel <a href="https://github.com/IRkernel/IRkernel">irjernel</a>, the easiest of which might be using <code>conda</code> but it could be tricky to install third-party libraries of R to conda, and mixing R packages from the <code>base</code> and <code>r</code> channels can lead to devastating results.</p>
+<p>Anyway, after you have a working R installation with <code>irkernel</code> installed, you will need to install</p>
+<ul>
+<li>The <code>sos-r</code> language module,</li>
+<li>The <code>feather</code> library of R, and</li>
+<li>The <code>feather-format</code> module of Python</li>
+</ul>
+<p>The feature modules are needed to exchange dataframe between Python and R</p>
 
 </div>
 </div>
@@ -12891,7 +12887,16 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS <code>%put</code> variables in SoS to R as follows:</p>
+<h2 id="Overview">Overview<a class="anchor-link" href="#Overview"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS transfers Python variables in the following types to R as follows:</p>
 <table>
 <thead><tr>
 <th>Python</th>
@@ -12902,32 +12907,37 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <tbody>
 <tr>
 <td><code>None</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td><code>NULL</code></td>
 </tr>
 <tr>
-<td><code>boolean</code></td>
-<td></td>
-<td><code>logical</code></td>
-</tr>
-<tr>
 <td><code>integer</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td><code>integer</code></td>
 </tr>
 <tr>
-<td><code>float</code></td>
-<td></td>
+<td><code>integer</code></td>
+<td><code>large</code></td>
 <td><code>numeric</code></td>
 </tr>
 <tr>
+<td><code>float</code></td>
+<td>&nbsp;</td>
+<td><code>numeric</code></td>
+</tr>
+<tr>
+<td><code>boolean</code></td>
+<td>&nbsp;</td>
+<td><code>logical</code></td>
+</tr>
+<tr>
 <td><code>complex</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td><code>complex</code></td>
 </tr>
 <tr>
 <td><code>str</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td><code>character</code></td>
 </tr>
 <tr>
@@ -12942,32 +12952,31 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </tr>
 <tr>
 <td><code>set</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td><code>list</code></td>
 </tr>
 <tr>
 <td><code>dict</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td><code>list</code> with names</td>
 </tr>
 <tr>
 <td><code>numpy.ndarray</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td>array</td>
 </tr>
 <tr>
 <td><code>numpy.matrix</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td><code>matrix</code></td>
 </tr>
 <tr>
 <td><code>pandas.DataFrame</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td>R <code>data.frame</code></td>
 </tr>
 </tbody>
 </table>
-<p>Python objects in other datatypes are transferred as string <code>"Unsupported datatype"</code>.</p>
 
 </div>
 </div>
@@ -12977,43 +12986,43 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS <code>%get</code> data from R as follows:</p>
+<p>SoS gets variables in the following types to SoS as follows (<code>n</code> in <code>condition</code> column is the length of R datatype):</p>
 <table>
 <thead><tr>
 <th>R</th>
-<th>length (n)</th>
+<th>condition</th>
 <th>Python</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>NULL</code></td>
-<td></td>
+<td>&nbsp;</td>
 <td><code>None</code></td>
 </tr>
 <tr>
 <td><code>logical</code></td>
-<td><code>1</code></td>
+<td><code>n == 1</code></td>
 <td><code>boolean</code></td>
 </tr>
 <tr>
 <td><code>integer</code></td>
-<td><code>1</code></td>
+<td><code>n == 1</code></td>
 <td><code>integer</code></td>
 </tr>
 <tr>
 <td><code>numeric</code></td>
-<td><code>1</code></td>
+<td><code>n == 1</code></td>
 <td><code>double</code></td>
 </tr>
 <tr>
 <td><code>character</code></td>
-<td><code>1</code></td>
+<td><code>n == 1</code></td>
 <td><code>string</code></td>
 </tr>
 <tr>
 <td><code>complex</code></td>
-<td><code>1</code></td>
+<td><code>n == 1</code></td>
 <td><code>complex</code></td>
 </tr>
 <tr>
@@ -13043,27 +13052,27 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </tr>
 <tr>
 <td><code>list</code> without names</td>
-<td><code>n &gt; 0</code></td>
+<td>&nbsp;</td>
 <td><code>list</code></td>
 </tr>
 <tr>
 <td><code>list</code> with names</td>
-<td><code>n &gt; 0</code></td>
+<td>&nbsp;</td>
 <td><code>dict</code> (with ordered keys)</td>
 </tr>
 <tr>
 <td><code>matrix</code></td>
-<td><code>n &gt; 0</code></td>
+<td>&nbsp;</td>
 <td><code>numpy.array</code></td>
 </tr>
 <tr>
 <td><code>data.frame</code></td>
-<td><code>n &gt; 0</code></td>
+<td>&nbsp;</td>
 <td><code>DataFrame</code></td>
 </tr>
 <tr>
 <td><code>array</code></td>
-<td><code>n &gt;= 0</code></td>
+<td>&nbsp;</td>
 <td><code>numpy.array</code></td>
 </tr>
 </tbody>
@@ -13077,7 +13086,84 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For example, the scalar data is converted from SoS to R as follows:</p>
+<p>One of the key problems in mapping R datatypes to Python is that R does not have scalar types and all scalar variables are actually array of size 1. That is to say, in theory, variable <code>a=1</code> should be represented in Python as <code>a=[1]</code>. However, because Python does differentiate scalar and array values, we chose to represent R arraies of size 1 as scalar types in Python.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="R">%put a b
+a = c(1)
+b = c(1, 2)</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">print(f'a={a} with type {type(a)}')
+print(f'b={b} with type {type(b)}')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a=1 with type &lt;class &#39;int&#39;&gt;
+b=[1, 2] with type &lt;class &#39;list&#39;&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simple-data-types">Simple data types<a class="anchor-link" href="#Simple-data-types"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Most simple Python data types can be converted to R types easily,</p>
 
 </div>
 </div>
@@ -13087,11 +13173,12 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
-   <textarea rows="5"
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
       class="sos-source" name="SoS">null_var = None
-num_var = 123
+int_var = 123
+float_var = 3.1415925
 logic_var = True
 char_var = '1"23'
 comp_var = 1+2j</textarea>
@@ -13109,11 +13196,11 @@ comp_var = 1+2j</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="R">%get null_var num_var logic_var char_var comp_var
-%preview -n null_var num_var logic_var char_var comp_var</textarea>
+      class="sos-source" name="R">%get null_var int_var float_var logic_var char_var comp_var
+%preview -n null_var int_var float_var logic_var char_var comp_var</textarea>
   </div>
 </div>
 
@@ -13130,7 +13217,181 @@ comp_var = 1+2j</textarea>
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> null_var:</div>
+<div class="sos_hint">> null_var: </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> NULL
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> int_var: </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> num 123
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> float_var: </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> num 3.14
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> logic_var: </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> logi TRUE
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> char_var: </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> chr &#34;1\&#34;23&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> comp_var: </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> cplx 1+2i
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The variables can be sent back to SoS without losing information</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%get null_var int_var float_var logic_var char_var comp_var --from R
+%preview -n null_var int_var float_var logic_var char_var comp_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> null_var: NoneType</div>
 </div>
 
 </div>
@@ -13143,7 +13404,7 @@ comp_var = 1+2j</textarea>
 
 
 <div class="output_text output_subarea ">
-<pre>NULL</pre>
+<pre>None</pre>
 </div>
 
 </div>
@@ -13155,7 +13416,20 @@ comp_var = 1+2j</textarea>
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> num_var:</div>
+<div class="sos_hint">> int_var: int</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>123</pre>
 </div>
 
 </div>
@@ -13167,7 +13441,20 @@ comp_var = 1+2j</textarea>
 
 
 <div class="output_html rendered_html output_subarea ">
-123
+<div class="sos_hint">> float_var: float</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>3.1415925</pre>
 </div>
 
 </div>
@@ -13179,7 +13466,20 @@ comp_var = 1+2j</textarea>
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> logic_var:</div>
+<div class="sos_hint">> logic_var: bool</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>True</pre>
 </div>
 
 </div>
@@ -13191,7 +13491,20 @@ comp_var = 1+2j</textarea>
 
 
 <div class="output_html rendered_html output_subarea ">
-TRUE
+<div class="sos_hint">> char_var: str of length 4</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>&#39;1&#34;23&#39;</pre>
 </div>
 
 </div>
@@ -13203,7 +13516,7 @@ TRUE
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> char_var:</div>
+<div class="sos_hint">> comp_var: complex</div>
 </div>
 
 </div>
@@ -13214,11 +13527,78 @@ TRUE
 
 
 
-<div class="output_html rendered_html output_subarea ">
-'1"23'
+
+<div class="output_text output_subarea ">
+<pre>(1+2j)</pre>
 </div>
 
 </div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, because Python allows integers of arbitrary precision which is not supported by R, large integers would be presented in R as float point numbers, which might not be able to keep the precision of the original number.</p>
+<p>For example, if we put a large integer with 18 significant digits to R</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%put large_int --to R
+large_int = 123456789123456789</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The last digit would be different because of floating point presentation</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%put large_int
+large_int</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
 
 <div class="output_area">
 
@@ -13227,10 +13607,45 @@ TRUE
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> comp_var:</div>
+123456789123456784
 </div>
 
 </div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is not a problem with SoS because you would get the same result if you enter this number in R</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="R">123456789123456789</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
 
 <div class="output_area">
 
@@ -13239,7 +13654,7 @@ TRUE
 
 
 <div class="output_html rendered_html output_subarea ">
-1+2i
+123456789123456784
 </div>
 
 </div>
@@ -13251,6 +13666,64 @@ TRUE
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Consequently, if you send <code>large_int</code> back to <code>SoS</code>, the number would be different</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%get large_int --from R
+large_int</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>123456789123456784</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Array,-matrix,-and-dataframe">Array, matrix, and dataframe<a class="anchor-link" href="#Array,-matrix,-and-dataframe"></a></h2>
+</div>
+</div>
+</div>
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -14404,7 +14877,7 @@ Rlist</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="R-">R <a id="R" /><a class="anchor-link" href="#R-"></a></h2>
+<h2 id="Set,-dictionary-(mapping),-and-nested-datatypes">Set, dictionary (mapping), and nested datatypes<a class="anchor-link" href="#Set,-dictionary-(mapping),-and-nested-datatypes"></a></h2>
 </div>
 </div>
 </div>
@@ -14413,1540 +14886,9 @@ Rlist</textarea>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Because there is no one to one correspondence of data types between Python and R datatypes, SoS tries to translate variables in the most natural way. For example, although <code>3</code> and <code>[1, 4]</code> are both <code>numeric</code> type in R (the former have length 1), they are translated to Python variables <code>3</code> (an integer) and <code>[1, 4]</code> (a list).</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS <code>%put</code> variables in SoS to R as follows:</p>
-<table>
-<thead><tr>
-<th>Python</th>
-<th>condition</th>
-<th>R</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>None</code></td>
-<td></td>
-<td><code>NULL</code></td>
-</tr>
-<tr>
-<td><code>boolean</code></td>
-<td></td>
-<td><code>logical</code></td>
-</tr>
-<tr>
-<td><code>integer</code></td>
-<td></td>
-<td><code>integer</code></td>
-</tr>
-<tr>
-<td><code>float</code></td>
-<td></td>
-<td><code>numeric</code></td>
-</tr>
-<tr>
-<td><code>complex</code></td>
-<td></td>
-<td><code>complex</code></td>
-</tr>
-<tr>
-<td><code>str</code></td>
-<td></td>
-<td><code>character</code></td>
-</tr>
-<tr>
-<td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
-<td>homogenous type</td>
-<td><code>c()</code></td>
-</tr>
-<tr>
-<td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
-<td>multiple types</td>
-<td><code>list</code></td>
-</tr>
-<tr>
-<td><code>set</code></td>
-<td></td>
-<td><code>list</code></td>
-</tr>
-<tr>
-<td><code>dict</code></td>
-<td></td>
-<td><code>list</code> with names</td>
-</tr>
-<tr>
-<td><code>numpy.ndarray</code></td>
-<td></td>
-<td>array</td>
-</tr>
-<tr>
-<td><code>numpy.matrix</code></td>
-<td></td>
-<td><code>matrix</code></td>
-</tr>
-<tr>
-<td><code>pandas.DataFrame</code></td>
-<td></td>
-<td>R <code>data.frame</code></td>
-</tr>
-</tbody>
-</table>
-<p>Python objects in other datatypes are transferred as string <code>"Unsupported datatype"</code>.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS <code>%get</code> data from R as follows:</p>
-<table>
-<thead><tr>
-<th>R</th>
-<th>length (n)</th>
-<th>Python</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>NULL</code></td>
-<td></td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>logical</code></td>
-<td><code>1</code></td>
-<td><code>boolean</code></td>
-</tr>
-<tr>
-<td><code>integer</code></td>
-<td><code>1</code></td>
-<td><code>integer</code></td>
-</tr>
-<tr>
-<td><code>numeric</code></td>
-<td><code>1</code></td>
-<td><code>double</code></td>
-</tr>
-<tr>
-<td><code>character</code></td>
-<td><code>1</code></td>
-<td><code>string</code></td>
-</tr>
-<tr>
-<td><code>complex</code></td>
-<td><code>1</code></td>
-<td><code>complex</code></td>
-</tr>
-<tr>
-<td><code>logical</code></td>
-<td><code>n &gt; 1</code></td>
-<td><code>list</code></td>
-</tr>
-<tr>
-<td><code>integer</code></td>
-<td><code>n &gt; 1</code></td>
-<td><code>list</code></td>
-</tr>
-<tr>
-<td><code>complex</code></td>
-<td><code>n &gt; 1</code></td>
-<td><code>list</code></td>
-</tr>
-<tr>
-<td><code>numeric</code></td>
-<td><code>n &gt; 1</code></td>
-<td><code>list</code></td>
-</tr>
-<tr>
-<td><code>character</code></td>
-<td><code>n &gt; 1</code></td>
-<td><code>list</code></td>
-</tr>
-<tr>
-<td><code>list</code> without names</td>
-<td><code>n &gt; 0</code></td>
-<td><code>list</code></td>
-</tr>
-<tr>
-<td><code>list</code> with names</td>
-<td><code>n &gt; 0</code></td>
-<td><code>dict</code> (with ordered keys)</td>
-</tr>
-<tr>
-<td><code>matrix</code></td>
-<td><code>n &gt; 0</code></td>
-<td><code>numpy.array</code></td>
-</tr>
-<tr>
-<td><code>data.frame</code></td>
-<td><code>n &gt; 0</code></td>
-<td><code>DataFrame</code></td>
-</tr>
-<tr>
-<td><code>array</code></td>
-<td><code>n &gt;= 0</code></td>
-<td><code>numpy.array</code></td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For example, the scalar data is converted from SoS to R as follows:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
-   <textarea rows="5"
-      class="sos-source" name="SoS">null_var = None
-num_var = 123
-logic_var = True
-char_var = '1"23'
-comp_var = 1+2j</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">%get null_var num_var logic_var char_var comp_var
-%preview -n null_var num_var logic_var char_var comp_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> null_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>NULL</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> num_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-123
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> logic_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-TRUE
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> char_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-'1"23'
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> comp_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-1+2i
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The one-dimension (vector) data is converted from SoS to R as follows:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
-   <textarea rows="9"
-      class="sos-source" name="SoS">import numpy
-import pandas
-char_arr_var = ['1', '2', '3']
-list_var = [1, 2, '3']
-dict_var = dict(a=1, b=2, c='3')
-set_var = {1, 2, '3'}
-recursive_var = {'a': {'b': 123}, 'c': True}
-logic_arr_var = [True, False, True]
-seri_var = pandas.Series([1,2,3,3,3,3])</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">%get char_arr_var list_var dict_var set_var recursive_var logic_arr_var seri_var
-%preview -n char_arr_var list_var dict_var set_var recursive_var logic_arr_var seri_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> char_arr_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<ol class=list-inline>
-	<li>'1'</li>
-	<li>'2'</li>
-	<li>'3'</li>
-</ol>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> list_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<ol>
-	<li>1</li>
-	<li>2</li>
-	<li>'3'</li>
-</ol>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> dict_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<dl>
-	<dt>$a</dt>
-		<dd>1</dd>
-	<dt>$b</dt>
-		<dd>2</dd>
-	<dt>$c</dt>
-		<dd>'3'</dd>
-</dl>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> set_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<ol>
-	<li>1</li>
-	<li>2</li>
-	<li>'3'</li>
-</ol>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> recursive_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<dl>
-	<dt>$a</dt>
-		<dd><strong>$b</strong> = 123</dd>
-	<dt>$c</dt>
-		<dd>TRUE</dd>
-</dl>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> logic_arr_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<ol class=list-inline>
-	<li>TRUE</li>
-	<li>FALSE</li>
-	<li>TRUE</li>
-</ol>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> seri_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<dl class=dl-horizontal>
-	<dt>0</dt>
-		<dd>1</dd>
-	<dt>1</dt>
-		<dd>2</dd>
-	<dt>2</dt>
-		<dd>3</dd>
-	<dt>3</dt>
-		<dd>3</dd>
-	<dt>4</dt>
-		<dd>3</dd>
-	<dt>5</dt>
-		<dd>3</dd>
-</dl>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The multi-dimension data is converted from SoS to R as follows:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">num_arr_var = numpy.array([1, 2, 3, 4]).reshape(2,2)
-mat_var = numpy.matrix([[1,2],[3,4]])</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">%get num_arr_var mat_var
-%preview -n num_arr_var mat_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> num_arr_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<table>
-<tbody>
-	<tr><td>1</td><td>2</td></tr>
-	<tr><td>3</td><td>4</td></tr>
-</tbody>
-</table>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> mat_var:</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<table>
-<thead><tr><th scope=col>0</th><th scope=col>1</th></tr></thead>
-<tbody>
-	<tr><td>1</td><td>2</td></tr>
-	<tr><td>3</td><td>4</td></tr>
-</tbody>
-</table>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The scalar data is converted from R to SoS as follows:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
-   <textarea rows="5"
-      class="sos-source" name="R">null_var = NULL
-num_var = 123
-logic_var = TRUE
-char_var = '1\"23'
-comp_var = 1+2i</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%get null_var num_var logic_var char_var comp_var --from R
-%preview -n null_var num_var logic_var char_var comp_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> null_var: NoneType</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>None</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> num_var: int</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>123</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> logic_var: bool</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>True</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> char_var: str of length 4</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>&#39;1&#34;23&#39;</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> comp_var: complex</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>(1+2j)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The one-dimension (vector) data is converted from R to SoS as follows:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
-   <textarea rows="7"
-      class="sos-source" name="R">num_vector_var = c(1, 2, 3)
-logic_vector_var = c(TRUE, FALSE, TRUE)
-char_vector_var = c(1, 2, '3')
-list_var = list(1, 2, '3')
-named_list_var = list(a=1, b=2, c='3')
-recursive_var = list(a=1, b=list(c=3, d='whatever'))
-seri_var = setNames(c(1,2,3,3,3,3),c(0:5))</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%get num_vector_var logic_vector_var char_vector_var list_var named_list_var recursive_var seri_var --from R
-%preview -n num_vector_var logic_vector_var char_vector_var list_var named_list_var recursive_var seri_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> num_vector_var: list of length 3</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>[1, 2, 3]</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> logic_vector_var: list of length 3</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>[True, False, True]</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> char_vector_var: list of length 3</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>[&#39;1&#39;, &#39;2&#39;, &#39;3&#39;]</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> list_var: list of length 3</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>[1, 2, &#39;3&#39;]</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> named_list_var: dict of length 3</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>{&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: &#39;3&#39;}</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> recursive_var: dict of length 2</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>{&#39;a&#39;: 1, &#39;b&#39;: {&#39;c&#39;: 3, &#39;d&#39;: &#39;whatever&#39;}}</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> seri_var: Series of shape (6,)</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>0    1
-1    2
-2    3
-3    3
-4    3
-5    3
-dtype: int64</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The multi-dimension data is converted from R to SoS as follows:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="R">mat_var = matrix(c(1,2,3,4), nrow=2)
-arr_var = array(c(1:16),dim=c(2,2,2,2))</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%get mat_var arr_var --from R
-%preview -n mat_var arr_var</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> mat_var: ndarray of shape (2, 2)</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>array([[ 1.,  3.],
-       [ 2.,  4.]])</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> arr_var: ndarray of shape (2, 2, 2, 2)</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>array([[[[ 1,  3],
-         [ 2,  4]],
-
-        [[ 5,  7],
-         [ 6,  8]]],
-
-
-       [[[ 9, 11],
-         [10, 12]],
-
-        [[13, 15],
-         [14, 16]]]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>It is worth noting that R's named <code>list</code> is transferred to Python as dictionaries but SoS preserves the order of the keys so that you can recover the order of the list. For example,</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_R">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="R">Rlist = list(A=1, C='C', B=3, D=c(2, 3))</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Although the dictionary might appear to have different order</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">%get Rlist --from R
-Rlist</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[14]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;A&#39;: 1, &#39;B&#39;: 3, &#39;C&#39;: &#39;C&#39;, &#39;D&#39;: [2, 3]}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The order of the keys and values are actually preserved</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">Rlist.keys()</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[15]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>dict_keys([&#39;A&#39;, &#39;C&#39;, &#39;B&#39;, &#39;D&#39;])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">Rlist.values()</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[16]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>dict_values([1, &#39;C&#39;, 3, [2, 3]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>so it is safe to enumerate the R list in Python as</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">for idx, (key, val) in enumerate(Rlist.items()):
-  print(f"{idx+1} item of Rlist has key {key} and value {val}")</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>1 item of Rlist has key A and value 1
-2 item of Rlist has key C and value C
-3 item of Rlist has key B and value 3
-4 item of Rlist has key D and value [2, 3]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that SoS uses the feather modules in Python and R to exchange Python Pandas <code>Dataframe</code> and R <code>data.frame</code> so this module is required if you would like to exchange data frames between these two languages.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="exchange_variable.html">Exchanging data among kernels</a></li>
+</ul>
 
 </div>
 </div>
