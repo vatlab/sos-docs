@@ -41,4 +41,5 @@ else
 fi
 
 cd /home/jovyan/sos-docs; git pull
+cd /home/jovyan
 . /usr/local/bin/start.sh $NOTEBOOK_BIN $NOTEBOOK_ARGS "$@"
