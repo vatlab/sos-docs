@@ -12863,8 +12863,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <li><strong>Difficulty level</strong>: intermediate</li>
 <li><strong>Time need to lean</strong>: 30 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>SoS workflows recognizes cluster systems (PBS, Torque, Slurm, LSF, and Sun Grid) and make use of allocated nodes as workers</li>
-<li>Option <code>-j</code> will be ignored and <code>-q</code> will be set to <code>none</code> when a workflow is executed under a cluster environment. That is to say, external tasks will be executed internally.</li>
+<li>SoS workflows recognizes cluster systems (PBS, Torque, Slurm, LSF, and Sun Grid) and make use of allocated nodes to start workers</li>
+<li>Option <code>-j</code> will be ignored when a workflow is executed under a cluster environment because it will be inferred from cluster environment variables.</li>
 </ul>
 </li>
 </ul>
@@ -12877,7 +12877,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Use-of-multiple-workers-to-execute-SoS-workflows">Use of multiple workers to execute SoS workflows<a class="anchor-link" href="#Use-of-multiple-workers-to-execute-SoS-workflows"></a></h2>
+<h2 id="Use-multiple-workers-to-execute-SoS-workflows">Use multiple workers to execute SoS workflows<a class="anchor-link" href="#Use-multiple-workers-to-execute-SoS-workflows"></a></h2>
 </div>
 </div>
 </div>
@@ -12886,7 +12886,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS uses multiple worker processes to execute steps, substeps, and subworkflows. By default, SoS creates <code>n/2</code> workers on a local computer where <code>n</code> is the number of CPU cores, although it limits the default number of workers to 8 on computers with more than 16 cores because those computers are most likely shared by multiple users.</p>
+<p>SoS uses multiple worker processes to execute steps, substeps, and subworkflows. By default, SoS creates <code>n/2</code> workers on a local computer with <code>n</code> CPU cores, although it limits the default number of workers to 8 when there are more than 16 cores because those computers are most likely shared by multiple users.</p>
 <p>The number of workers used by SoS can be controlled by option <code>-j</code>, where <code>-j 4</code> creates 4 workers so that you will see 5 sos processes (1 master and 4 worker) when you execute a workflow with command</p>
 
 <pre><code>sos run script -j 4</code></pre>
@@ -12899,11 +12899,24 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you have multiple machines with a shared file system, it is possible to start workers on remote machines by specifying the name of the machine and number of processes with an extended version of option <code>-j</code>. For example</p>
+<p>It is possible to start workers on multiple remote machines by specifying the name of the machine and number of processes on each of them with an extended version of option <code>-j</code>. For example</p>
 
-<pre><code>sos run script -j 4 pc1:4 pc2:4</code></pre>
-<p>will create 12 workers, 4 on localhost, 4 on <code>pc1</code> and 4 on <code>pc2</code>, where <code>pc1</code> and <code>pc2</code> can be name or IP address of machines, or an aliaes defined in SoS configuration files. This usage of option <code>-j</code> is, however, rarely used because personal computers rarely share file systems with remote computers.</p>
+<pre><code>sos run script -j 4 node1:4 node2:4</code></pre>
+<p>will create 12 workers, 4 on localhost on which the master SoS process resides, 4 on <code>node1</code> and 4 on <code>node2</code>, where <code>node1</code> and <code>node2</code> can be name or IP address of machines, or an aliaes defined in SoS configuration files. A limitation of starting workers on remote servers is that the remote servers must share the same file systems as the local host so this approach only works for workstations with auto-mount home directories, or computing nodes of cluster systems.</p>
 
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="bs-callout bs-callout-alert" role="alert">
+  <h4>Using workers on remote hosts</h4>
+    <p>SoS assumes that <b>all local and remote hosts share the same file systems</b> and propagates environment variables such as <code>$PATH</code> to all remote hosts. This ensures that all worker processes have identical running environments. </p>
+    <p>You should create and execute external tasks if you would like to execute code on remote computing environments that do not share file systems with the local host.</p>
+</div>
 </div>
 </div>
 </div>
@@ -12921,7 +12934,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A more likely scenario for multiple computers with a shared file system is computer clusters. In this case, multiple nodes can be allocated to execute a single SoS workflow, effectively creating a "mini-cluster" inside a cluster system. The master SoS process will be started on one of the computing nodes and start multiple workers on the head and the rest of the allocated computing nodes.</p>
+<p>It is easy to execute SoS workflows on multiple computing nodes of a cluster system such as PBS, Slurm, and IBM LSF. In this case, multiple nodes can be allocated to execute a single SoS workflow, effectively creating a "mini-cluster" inside the cluster system. The master SoS process will be started on one of the computing nodes and start multiple workers on the head and the rest of the allocated computing nodes.</p>
 
 </div>
 </div>
@@ -12942,7 +12955,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Because the <code>sos</code> command does not know the exact computing node allocated, SoS automaticaly detects the scheduler of a PBS-like cluster system and set <code>-j</code> accordingly. So a typical way to execute a large workflow on multiple nodes would be the creation of a wrapper script as follows:</p>
+<p>An obvious problem with the use of option <code>-j</code> to start workers on multiple computing nodes of a cluster system is that the computing resources (nodes) are allocated dynamically by the scheduler so it is difficult to know in advance which computing nodes will be assigned. Because cluster systems usually specify nodes used by a particular job with environment variables (e.g. <code>PBS_NODEFILE</code> for a PBS system, and <code>LSB_MCPU_HOSTS</code> for a LSF system), SoS addresses this problem by automatically translate node information from these variables to option <code>-j</code> if a supported cluster environment is detected. Therefore, a typical way to execute a large workflow on multiple nodes would be the creation of a wrapper script as follows:</p>
 
 </div>
 </div>
@@ -12971,7 +12984,7 @@ sos run my_workflow.sos
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>and submit to the cluster with appropriate command (e.g. <code>qsub workflow.sh</code>). Note that this script is used for PBS cluster and the syntax for other cluster systems such as LSF and SLURM will vary.</p>
+<p>and submit to the cluster with appropriate command (e.g. <code>qsub workflow.sh</code>). Note that this script is used for PBS cluster and the syntax for other cluster systems such as LSF and SLURM will vary. There is no need to specify option <code>-j</code> because it will be generated automatically by SoS.</p>
 
 </div>
 </div>
@@ -12981,12 +12994,7 @@ sos run my_workflow.sos
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that</p>
-<ol>
-<li>Option <code>-j</code> is ignored if specified because it will be inferred from environment-specific variables such as <code>PBS_NODEFILE</code>.</li>
-<li>Option <code>-q</code> is also ignored if specified because all external tasks will be executed internally when the workflow is executed under a cluster environment.</li>
-<li>SoS currently supports PBS, Torque, Slurm, IBM LSF, and Sun Grid systems. You will have to specify option <code>-q</code> and <code>-j</code> explicitly for your cluster system if it is not supported by SoS (basically creating <code>-j</code> from an relevant environment variable). It can be easier to create a ticket or a pull request to support your cluster environment though.</li>
-</ol>
+<p>SoS currently supports PBS, Torque, Slurm, IBM LSF, and Sun Grid systems. If your system is not supported, you can specify option <code>-j</code> explicitly by parsing the environment varialbe specific to your cluster system. It can be easier, however, to <a href="https://github.com/vatlab/sos/issues">create a ticket</a> or submit a pull request to enable native support to your system.</p>
 
 </div>
 </div>
