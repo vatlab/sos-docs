@@ -242,7 +242,103 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="SoS-Workflow-System-(CLI)"><a id="workflow_cli" />SoS Workflow System (CLI)<a class="anchor-link" href="#SoS-Workflow-System-(CLI)"></a></h1>
+<h1 id="Live-SoS-server">Live SoS server<a class="anchor-link" href="#Live-SoS-server"></a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you are curious on what SoS and SoS Notebook are, you can try it out by clicking <a href="http://128.135.144.117:8000/">this link</a>. This will lead you to our live SoS server from which you can click <code>New</code> -&gt; <code>SoS</code> and create a SoS Notebook with all supported languages except for two proprietary ones (<code>MATLAB</code> and <code>SAS</code>).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="SoS-Docker-Images">SoS Docker Images<a class="anchor-link" href="#SoS-Docker-Images"></a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you are using docker, you can run SoS directly using command</p>
+
+<pre><code>% docker run -it mdabioinfo/sos:latest /bin/bash</code></pre>
+<p>to enter a command prompt with sos command. More usefully, you can start a Jupyter server with <a href="https://www.r-project.org/">R</a> and <a href="https://github.com/IRkernel/IRkernel">IRkernel</a>, Julia, Python, and SoS kernels, and many Python and R modules for data sciencists using command</p>
+
+<pre><code>% docker run -d -p 8888:8888 mdabioinfo/sos-notebook</code></pre>
+<p>After the docker is running in the background, you will need to find the name of the instance from the last column of the output of command <code>docker ps</code> and get the log message of the docker instance with <code>docker logs</code> followed by the name of your docker instance, e.g.</p>
+
+<pre><code>% docker logs eager_volhard
+Execute the command: jupyter notebook
+...
+    Copy/paste this URL into your browser when you connect for the first time,
+    to login with a token:
+        http://localhost:8888/?token=754a646651c82657725be887a1a2579ab69a702ba80ae4b3</code></pre>
+<p>You can then enter the URL in the log message to a browser and start working with a complete SoS environment. You could also set up the docker image to disable password as discussed <a href="https://github.com/jupyter/docker-stacks/tree/master/scipy-notebook">here</a> but using a Jupyter server without password is strongly discouraged.</p>
+<p>You can even use this docker image for your daily data analysis if you make your local directory available to the Jupyter server using command</p>
+
+<pre><code>% docker run -d -p 8888:8888 -v $HOME:/home/jovyan/work  mdabioinfo/sos-notebook</code></pre>
+<p>This command mounts your home directory (<code>$HOME</code>) to directory <code>work</code> under the home directory of the docker machine but you can mount any local directory to the docker image. This container is hosted at <a href="http://ec2-34-192-184-206.compute-1.amazonaws.com:8000/">our public Jupyter
+server</a> from which you can open our sample notebooks and create your own notebooks without installing anything.</p>
+<p><strong>Note</strong>: If you get an error message stating <code>Bind for 0.0.0.0:8888 failed: port is already allocated</code>, your local port <code>8888</code> is already taken by some other processes and you can use options such as <code>-p 9999:8888</code> to use another local port. Using a different port actually allows you to execute multiple instances of the docker image.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Local-installation">Local installation<a class="anchor-link" href="#Local-installation"></a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conda-installation">Conda installation<a class="anchor-link" href="#Conda-installation"></a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you are using a conda environment, you can install <code>sos</code>, <code>sos-notebook</code>, and its language modules, and required interpreters all from a conda environment. For example, you can install SoS Workflow with command</p>
+
+<pre><code>conda install sos sos-pbs -c conda-forge</code></pre>
+<p>and SoS Notebook with command</p>
+
+<pre><code>conda install sos-notebook -c conda-forge</code></pre>
+<p>You can install language modules with commands such as</p>
+
+<pre><code>conda install sos-r sos-python sos-bash -c conda-forge</code></pre>
+<p>Note that conda strives to provide complete environment for you so</p>
+
+<pre><code>conda install sos-r -c conda-forge</code></pre>
+<p>will install <code>sos</code>, <code>sos-notebook</code>, the language module <code>sos-r</code>, and a complete R environment including <code>r-base</code> and <code>r-irkernel</code>, and required python module <code>feather-format</code> and R library <code>feather</code>.</p>
+<p>Similarly,</p>
+
+<pre><code>conda install sos-bash -c conda-forge</code></pre>
+<p>will install <code>sos</code>, <code>sos-notebook</code>, the language module <code>sos-bash</code>, <a href="https://anaconda.org/conda-forge/bash"><code>bash</code></a> if under Linux or MacOSX, and <a href="https://anaconda.org/conda-forge/m2-bash"><code>m2-bash</code></a> if under windows.</p>
+<p>If you would like to have the flexibility to use system <code>R</code> (or <code>bash</code> etc), you can install <code>sos-notebook</code>, its language modules and required libraries separately using <code>pip</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="SoS-Workflow-System-(CLI)"><a id="workflow_cli" />SoS Workflow System (CLI)<a class="anchor-link" href="#SoS-Workflow-System-(CLI)"></a></h2>
 </div>
 </div>
 </div>
@@ -297,7 +393,7 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="SoS-Notebook">SoS Notebook<a class="anchor-link" href="#SoS-Notebook"></a></h1>
+<h2 id="SoS-Notebook">SoS Notebook<a class="anchor-link" href="#SoS-Notebook"></a></h2>
 </div>
 </div>
 </div>
@@ -307,68 +403,6 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>SoS Notebook can be used as both a polyglot notebook and an IDE for the SoS workflow system. It should be installed locally, or on a server to which you access remotely with a browser.</p>
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Live-SoS-server">Live SoS server<a class="anchor-link" href="#Live-SoS-server"></a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If you are curious on what SoS and SoS Notebook are, you can try it out by clicking <a href="http://128.135.144.117:8000/">this link</a>. This will lead you to our live SoS server from which you can click <code>New</code> -&gt; <code>SoS</code> and create a SoS Notebook with all supported languages except for two proprietary ones (<code>MATLAB</code> and <code>SAS</code>).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="SoS-Docker-Images">SoS Docker Images<a class="anchor-link" href="#SoS-Docker-Images"></a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If you are using docker, you can run SoS directly using command</p>
-
-<pre><code>% docker run -it mdabioinfo/sos:latest /bin/bash</code></pre>
-<p>to enter a command prompt with sos command. More usefully, you can start a Jupyter server with <a href="https://www.r-project.org/">R</a> and <a href="https://github.com/IRkernel/IRkernel">IRkernel</a>, Julia, Python, and SoS kernels, and many Python and R modules for data sciencists using command</p>
-
-<pre><code>% docker run -d -p 8888:8888 mdabioinfo/sos-notebook</code></pre>
-<p>After the docker is running in the background, you will need to find the name of the instance from the last column of the output of command <code>docker ps</code> and get the log message of the docker instance with <code>docker logs</code> followed by the name of your docker instance, e.g.</p>
-
-<pre><code>% docker logs eager_volhard
-Execute the command: jupyter notebook
-...
-    Copy/paste this URL into your browser when you connect for the first time,
-    to login with a token:
-        http://localhost:8888/?token=754a646651c82657725be887a1a2579ab69a702ba80ae4b3</code></pre>
-<p>You can then enter the URL in the log message to a browser and start working with a complete SoS environment. You could also set up the docker image to disable password as discussed <a href="https://github.com/jupyter/docker-stacks/tree/master/scipy-notebook">here</a> but using a Jupyter server without password is strongly discouraged.</p>
-<p>You can even use this docker image for your daily data analysis if you make your local directory available to the Jupyter server using command</p>
-
-<pre><code>% docker run -d -p 8888:8888 -v $HOME:/home/jovyan/work  mdabioinfo/sos-notebook</code></pre>
-<p>This command mounts your home directory (<code>$HOME</code>) to directory <code>work</code> under the home directory of the docker machine but you can mount any local directory to the docker image. This container is hosted at <a href="http://ec2-34-192-184-206.compute-1.amazonaws.com:8000/">our public Jupyter
-server</a> from which you can open our sample notebooks and create your own notebooks without installing anything.</p>
-<p><strong>Note</strong>: If you get an error message stating <code>Bind for 0.0.0.0:8888 failed: port is already allocated</code>, your local port <code>8888</code> is already taken by some other processes and you can use options such as <code>-p 9999:8888</code> to use another local port. Using a different port actually allows you to execute multiple instances of the docker image.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Local-installation">Local installation<a class="anchor-link" href="#Local-installation"></a></h2>
 </div>
 </div>
 </div>
@@ -398,48 +432,6 @@ server</a> from which you can open our sample notebooks and create your own note
 <li><a href="https://pypi.python.org/pypi/sos-stata/"><strong><code>sos-stata</code></strong></a>: SoS extension for Stata</li>
 </ul>
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Conda-installation">Conda installation<a class="anchor-link" href="#Conda-installation"></a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If you are using a conda environment, you can install <code>sos</code>, <code>sos-notebook</code>, and its language modules, and required interpreters all from a conda environment. For example, you can install SoS Workflow with command</p>
-
-<pre><code>conda install sos sos-pbs -c conda-forge</code></pre>
-<p>and SoS Notebook with command</p>
-
-<pre><code>conda install sos-notebook -c conda-forge</code></pre>
-<p>You can install language modules with commands such as</p>
-
-<pre><code>conda install sos-r sos-python sos-bash -c conda-forge</code></pre>
-<p>Note that conda strives to provide complete environment for you so</p>
-
-<pre><code>conda install sos-r -c conda-forge</code></pre>
-<p>will install <code>sos</code>, <code>sos-notebook</code>, the language module <code>sos-r</code>, and a complete R environment including <code>r-base</code> and <code>r-irkernel</code>, and required python module <code>feather-format</code> and R library <code>feather</code>.</p>
-<p>Similarly,</p>
-
-<pre><code>conda install sos-bash -c conda-forge</code></pre>
-<p>will install <code>sos</code>, <code>sos-notebook</code>, the language module <code>sos-bash</code>, <a href="https://anaconda.org/conda-forge/bash"><code>bash</code></a> if under Linux or MacOSX, and <a href="https://anaconda.org/conda-forge/m2-bash"><code>m2-bash</code></a> if under windows.</p>
-<p>If you would like to have the flexibility to use system <code>R</code> (or <code>bash</code> etc), you can install <code>sos-notebook</code>, its language modules and required libraries separately using <code>pip</code>.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Pip-installation">Pip installation<a class="anchor-link" href="#Pip-installation"></a></h3>
 </div>
 </div>
 </div>
