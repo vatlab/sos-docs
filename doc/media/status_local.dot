@@ -1,0 +1,32 @@
+digraph task_status {
+	/* source nodes */
+    subgraph cluster_0 {
+        label="Local";
+
+
+        subgraph cluster_1 {
+            style=filled;
+            color=pink;
+            label="SoS Task Queue";
+            rankdir=TB;
+
+            pending_task [label="pending", style=filled];
+        }
+
+        completed_task [label="completed", style=filled];
+
+        running_task [ label="running", style=filled];
+        completed_task [label="completed", style=filled];
+        result_mismatch [label="result-mismatch"];
+        failed_task [label="failed"];
+        aborted_task [label="aborted"];
+        running_task -> completed_task [label="completed\nwith result", style=bold, color=blue];
+        running_task -> aborted_task [label="killed or self-aborted\nwithout result", color=red];
+        running_task -> failed_task [label="failed\nwith result", color=red];
+        completed_task -> result_mismatch [label="Result removed\nor changed", color=red];
+    pending_task -> completed_task [label="Reuse existing result\n(resume without -s force)", style=bold, color=green];
+    pending_task -> running_task [label="Running task\n(w/o existing result)", style=bold, color=blue];
+    pending_task -> running_task [style=invis];
+    }
+}
+

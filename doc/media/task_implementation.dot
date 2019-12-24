@@ -1,0 +1,54 @@
+digraph task_status {
+	label = "Task workflow"
+
+	/* source nodes */
+	def_file [shape=box, style=rounded, label="create task\n.def file\nstatus=queued", style=filled];
+
+	style=solid;
+	pending [shape=box, style=rounded, label="Waiting\nstatus=pending", style=filled];
+
+	local [shape=diamond, label="local host?"];
+
+	remote [shape=box, style=rounded, label="Translated .task file\nstatus=submitted", style=filled];
+
+	job_queue [shape=diamond, label="job queue"];
+	job_queue_state [shape=box, style=rounded, label="Job Queue\nstatus=submitted", style=filled];
+
+	running [shape=parallelogram, label="Execute task\nstatus=running", style=filled];
+
+	style=dotted;
+
+	check_status [shape=parallelogram, label="check status"];
+	forced [shape=diamond, label="-s force?"];
+	resumed [shape=diamond, label="resumed?"];
+	failed [shape=box, style=rounded, label="Failed\nstatus=failed/aborted/result-mismatch", style=filled];
+	completed [shape=box, style=rounded, label="completed\nstatus=completed", style=filled];
+
+
+	check_status -> forced [label="completed"];
+	check_status -> pending [label="non-exist\naborted\nfailed\noutput_mismatch"];
+
+	pending -> local [label=""];
+	local -> job_queue [label="yes"];
+	local -> remote [label="no"];
+	remote -> job_queue [label=""];
+
+	job_queue -> running [label="no"];
+
+	job_queue -> job_queue_state [label="yes"];
+
+	job_queue_state -> running [label=""];
+
+	forced -> resumed [label="yes"];
+	forced -> completed [label="no"];
+	resumed -> completed [label="yes"];
+	resumed -> pending [label="no"];
+
+	running -> completed [label="OK"];
+	running -> failed [label="Failed"];
+
+
+
+	def_file -> check_status [label="max_running_jobs ok"];
+
+}

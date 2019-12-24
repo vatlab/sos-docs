@@ -1,0 +1,62 @@
+digraph job_queue {
+	/* source nodes */
+	subgraph cluster_regular {
+		label="SoS step without task";
+		subgraph cluster_1 {
+			label="Master SoS Process";
+			style=dotted;
+			step1;
+			step2;
+			step1 -> step2 [style=dotted, label="6"];
+		}
+		subgraph cluster_2 {
+			label="SoS Worker";
+			style=dotted;
+			worker1[shape=box, label="Manager"];
+			worker1 -> statement1 [label="2"];
+			statement1 -> statement2 [label="3"];
+			statement2 -> worker1 [label="4"];
+		}
+
+		step1 -> worker1[label="1. queue (step)"];
+		worker1 -> step1[label="5. pipe (result)"];
+	 }
+	 subgraph cluster_with_task {
+		 label="SoS step with task";
+		 subgraph cluster_3 {
+			label="Master SoS Process";
+			style=dotted;
+			rankdir = "TB";
+			subgraph cluster_4 {
+				label="Workflow Executor";
+				style=dotted;
+				step3 [label="step1"];
+				step4 [label="step2"];
+				step3 -> step4 [style=dotted, label="10"];
+			}
+			subgraph cluster_5 {
+				label="Task Engine (with workers)";
+				style="dotted";
+				task_engine [label="Task Engine", shape=box];
+
+				task_engine -> task_worker[label="5"];
+				task_worker -> task_engine[label="6"];
+			}
+		}
+		subgraph cluster_6 {
+			style=dotted;
+			label="SoS Worker";
+			style=dotted;
+			worker2[shape=box, label="Manager"];
+			statement4 [label="statement1"];
+			worker2 -> statement4 [label="2"];
+			statement4 -> task [label="3"];
+			task -> worker2 [label="8 (task result)"];
+		}
+		step4 -> task_engine[style=invis];
+		step3 -> worker2 [label="1. queue (step)"];
+		worker2 -> step3 [label="9. pipe (step result)"];
+		task -> task_engine[label="4. pipe (task)"];
+		task_engine -> task [label="7. pipe (task result)"];
+	}
+}

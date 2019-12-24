@@ -1,0 +1,34 @@
+strict digraph  {
+    hg19_100 [label="input fastq_files"];
+    hg19_100 -> hg19_110 -> hg19_120;
+    hg19_100 -> hg19_400;
+    hg19_500 [label="hg19_500 (genebody average)"];
+    hg19_800 [label="hg19_800 (GATK UnifiedGenotyper)"];
+    hg19_820 [label="hg19_820 (GATK Recalibration)"];
+    counts [label="statistics (variables)"];
+    before_tophat [label="before_tophat (Gene.txt)"];
+    hg19_600 [label="hg19_600 (sort sam)"];
+    mean_depth [ label="statistics (mean_depth)"];
+    hg19_900 [label="hg19_900 (reports)"];
+    hg19_400 -> hg19_440 -> hg19_460 -> hg19_470 -> hg19_500 -> hg19_1000;
+    hg19_470 -> hg19_800 -> hg19_820 -> hg19_1000;
+    hg19_820 -> counts;
+    before_tophat -> hg19_720 -> hg19_730 -> hg19_1000;
+    hg19_730 -> counts;
+    hg19_440 -> hg19_600 -> hg19_630 -> hg19_640;
+    hg19_610 [label="hg19_610 (htseq_count)"];
+    hg19_600 -> hg19_610 -> hg19_620 -> hg19_1000;
+    hg19_620 -> counts;
+    hg19_640 -> counts -> hg19_900;
+    hg19_640 -> mean_depth -> hg19_900;
+    hg19_120 -> mean_depth;
+    hg19_440 -> hg19_480;
+    hg19_440 -> hg19_720;
+    hg19_440 -> hg19_900 -> hg19_1000;
+    hg19_110 -> hg19_1000;
+    hg19_440 -> hg19_510 -> hg19_1000;
+    hg19_440 -> mapped_reads  -> hg19_640;
+    mapped_reads -> hg19_620;
+    mapped_reads -> hg19_900;
+
+}

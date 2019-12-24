@@ -1,0 +1,84 @@
+#!/usr/bin/env sos-runner
+# fileformat=SOS1.0
+# Author: Gao Wang and Bo Peng
+
+#
+# Linear-model based prediction
+#
+# This script fits linear models
+# using Lasso and Ridge regression
+# and summarizes their prediction performance
+# This script is written in process-oriented style
+
+[global]
+# The "true" sparse regression coefficient
+parameter: beta = [3, 1.5, 0, 0, 2, 0, 0, 0]
+
+# Simulate sparse data-sets
+[lasso_1, ridge_1]
+depends: R_library("MASS>=7.3")
+# training and testing samples
+parameter: N = (40, 200)
+parameter: rstd = 3
+parameter: replicate = [x+1 for x in range(5)]
+source='regression_modules/simulate.R'
+input: None, for_each = ['replicate']
+output: train = f"data_{_replicate}.train.csv", test = f"data_{_replicate}.test.csv"
+bash: expand = True
+  Rscript {source} seed={_replicate} N="c({paths(N):,})" b="c({paths(beta):,})" rstd={rstd} oftrain="'{_output[0]}'" oftest="'{_output[1]}'"
+
+# Ridge regression model implemented in R
+# Build predictor via cross-validation and make prediction
+[ridge_2]
+depends: R_library("glmnet>=2.0")
+parameter: nfolds = 5
+source='regression_modules/ridge.R'
+output: pred = f"{_input[0]:nn}.ridge.predicted.csv", coef = f"{_input[0]:nn}.ridge.coef.csv"
+bash: expand = True
+  Rscript {source} train="'{_input[0]}'" test="'{_input[1]}'" nfolds={nfolds} ofpred="'{_output[0]}'" ofcoef="'{_output[1]}'"
+
+# LASSO model implemented in Python
+# Build predictor via cross-validation and make prediction
+[lasso_2]
+depends: Py_Module("sklearn>=0.18.1"), Py_Module("numpy>=1.6.1"), Py_Module("scipy>=0.9")
+parameter: nfolds = 5
+source='regression_modules/lasso.py'
+output: pred = f"{_input[0]:nn}.lasso.predicted.csv", coef = f"{_input[0]:nn}.lasso.coef.csv"
+bash: expand = True
+  python {source} {_input[0]} {_input[1]} {nfolds} {_output[0]} {_output[1]}
+
+# Evaluate predictors by calculating mean squared error
+# of prediction vs truth (first line of output)
+# and of betahat vs truth (2nd line of output)
+[lasso_3, ridge_3]
+source='regression_modules/evaluate.R'
+input:  y = output_from(1)['test'], yhat = output_from(2)['pred'], coef = output_from(2)['coef']
+output: f"{_input['yhat']:nn}.mse.csv"
+bash: expand = True, stderr = False
+  Rscript {source} b="c({paths(beta):,})" test="'{_input[0]}'" fpred="'{_input[1]}'" fcoef="'{_input[2]}'" output="'{_output}'"
+ 
+# Run default core analysis
+[default_1]
+sos_run(['ridge', 'lasso'])
+
+# Compute and report error estimates
+# in HTML table format
+[default_2]
+depends: executable("pandoc")
+input: dynamic("*.mse.csv")
+import numpy as np
+ridge_summary = np.mean(np.array([sum([x.strip().split() for x in open(f).readlines()], []) for f in _input if 'ridge' in str(f)], dtype = float).T, axis = 1).tolist()
+lasso_summary = np.mean(np.array([sum([x.strip().split() for x in open(f).readlines()], []) for f in _input if 'lasso' in str(f)], dtype = float).T, axis = 1).tolist()
+
+report: output = "report.md", expand = "${ }"
+%% Comparison summary
+
+| Method | Avg. Estimation Error | Avg. Prediction Error |
+|:------:|:-------:|:-------:|
+| LASSO | ${lasso_summary[1]} | ${lasso_summary[0]} |
+| Ridge | ${ridge_summary[1]} | ${ridge_summary[0]} |
+
+download:
+  https://vatlab.github.io/sos-docs/css/pandoc.css
+
+pandoc: input = "report.md", output = "report.html", args = '{input:q} --css pandoc.css --self-contained -s --output {output:q}'

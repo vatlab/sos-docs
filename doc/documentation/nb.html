@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+
+<title>nb</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments)};
+   gtag('js', new Date());
+   
+   gtag('config', 'UA-107286198-1');
+</script>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.css">
+  
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<style>  /* defined here in case the main.css below cannot be loaded */
+   .lev1 {margin-left: 80px}
+   .lev2 {margin-left: 100px}
+   .lev3 {margin-left: 120px}
+   .lev4 {margin-left: 140px}
+   .lev5 {margin-left: 160px}
+   .lev6 {margin-left: 180px}
+   .cm-sos-interpolated {
+  background-color: #EDD5F3;
+}
+.cm-sos-sigil {
+  background-color: #EDD5F3;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+<script src="../../js/doc_toc.js"></script>
+<script src="../../js/docs.js"></script>
+<script>
+   MathJax.Hub.Config({
+       "HTML-CSS": {
+           preferredFont: "TeX",
+           availableFonts: ["STIX","TeX"],
+           styles: {
+               scale: 110,
+               ".MathJax_Display": {
+                   "font-size": "110%",
+               }
+           }
+       }
+   });
+</script>
+<script>
+   function filterDataFrame(id) {
+       var input = document.getElementById("search_" + id);
+       var filter = input.value.toUpperCase();
+       var table = document.getElementById("dataframe_" + id);
+       var tr = table.getElementsByTagName("tr");
+   
+       // Loop through all table rows, and hide those who don't match the search query
+       for (var i = 1; i < tr.length; i++) {
+           for (var j = 0; j < tr[i].cells.length; ++j) {
+               var matched = false;
+               if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                   tr[i].style.display = "";
+                   matched = true
+                   break;
+               }
+               if (!matched)
+                   tr[i].style.display = "none";
+           } 
+       }
+   }
+   
+   function sortDataFrame(id, n, dtype) {
+       var table = document.getElementById("dataframe_" + id);
+   
+       var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+       var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+   
+       if (dtype === 'numeric') {
+           var fn = function(a, b) { 
+               return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+           }
+       } else {
+           var fn = function(a, b) {
+               var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+               return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+       }
+       var isSorted = function(array, fn) {
+           if (array.length < 2)
+               return 1;
+           var direction = fn(array[0], array[1]); 
+           for (var i = 1; i < array.length - 1; ++i) {
+               var d = fn(array[i], array[i+1]);
+               if (d == 0)
+                   continue;
+               else if (direction == 0)
+                   direction = d;
+               else if (direction != d)
+                   return 0;
+               }
+           return direction;
+       }
+   
+       var sorted = isSorted(tr, fn);
+   
+       if (sorted == 1 || sorted == -1) {
+           // if sorted already, reverse it
+           for(var i = tr.length - 1; i >= 0; --i)
+               tb.appendChild(tr[i]); // append each row in order
+       } else {
+           tr = tr.sort(fn);
+           for(var i = 0; i < tr.length; ++i)
+               tb.appendChild(tr[i]); // append each row in order
+       }
+   }
+   
+   $( document ).ready(function(){
+   
+               var cfg={'threshold':4,     // depth of toc (number of levels)
+                // 'number_sections': true,  // sections numbering
+                'number_sections': false, 
+                'toc_cell': false,          // useless here
+                'toc_window_display': true, // display the toc window
+                "toc_section_display": "block", // display toc contents in the window
+                // 'sideBar':true,      
+                'sideBar':true,       // sidebar or floating window
+                'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+               }
+   
+               var st={};                  // some variables used in the script
+               st.rendering_toc_cell = false;
+               st.config_loaded = false;
+               st.extension_initialized=false;
+               st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+               st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+               st.nbcontainer_width = $('#notebook-container').css('width')
+               st.oldTocHeight = undefined
+               st.cell_toc = undefined;
+               st.toc_index=0;
+   
+               // fire the main function with these parameters
+   
+   
+   
+               table_of_contents(cfg,st);
+   
+               var file=documentationDict[$("h1:first").attr("id")];
+               var path="http://vatlab.github.io/sos-docs"
+               $("#toc-level0 a").css("color","#126dce");
+               $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+               var docs=documentation;
+               var pos=documentation.indexOf(file);
+           
+               for (var a=pos;a>=0;a--){
+                     var name=docs[a]
+                     $('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
+                      + '&nbsp ' + '<i class="fa ' +
+                         (a === pos ? 'fa-caret-down' : 'fa-caret-right') + '"></i>' +'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+               }
+               $('a[href="'+path+'/doc/documentation/'+file+'.html'+'"]').css("color","#126dce");
+   
+   
+               for (var a=pos+1;a<docs.length;a++){
+                     var name=docs[a]
+                     $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.replace(/_/g," ")
+                       + '&nbsp' + '<i class="fa fa-caret-right"></i>' +'</a></li>');
+               }
+   
+               // var docs=documentation
+               // for (var a =0;a<docs.length;a++){
+               //       var name =docs[a];
+               //       $(".toc #toc-level0").append('<li><a href="'+path+'/doc/documentation/'+name+'.html">'+name.split("_").join(" ")+'</a></li>');
+               // }
+               // var home=$("#toc-level0 #indexHome");
+             
+               // home.insertBefore("#toc-level0 li:eq(0)");
+   
+               // $("#toc-level0 li").filter(".home").insertBefore($("#toc-level0 li").filter(':nth-child(1)'));
+               // $("#toc").attr("style","max-height:938px")
+   
+   
+       });
+</script><style>  /* defined here in case the main.css below cannot be loaded */
+   .lan_Bash .input_prompt { background-color: #E6EEFF !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}.lan_sparql {}
+</style>
+
+
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+<div class="cell border-box-sizing code_cell rendered lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%preview -n rand.txt
+output: 'rand.txt'
+R: expand=True
+    cat(rnorm(5), file='{_output}')</textarea>
+
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> rand.txt (49 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1.486479 -0.9230241 0.3021701 -0.1997381 2.336216</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The last type of SoS cell contains formal definition of SoS steps. These cells define complete SoS workflows and can only be executed by SoS magics (with magics <code>%run</code> or <code>%sosrun</code>) in Jupyter or by SoS commands from command line. For example, executing the following cell would not execute any statement.</p>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="SoS">%sosrun wf
+[wf_30]
+print(f"This is step {step_name} of a workflow")</textarea>
+
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This is step wf_20 of a workflow
+This is step wf_30 of a workflow
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS provides a rich environment for you to analyze data in different languages. Generally speaking, you can</p>
+<ul>
+<li>Use subkernels to analyze data interactively using different languages.</li>
+<li>Use SoS cells to execute complete (and separate) scripts to analyze data or test steps of workflows, and</li>
+<li>If needed, convert SoS cells to workflow cells to create complete workflows to analyze data in batch mode.</li>
+</ul>
+
+</div>
+</div>
+</div><div class="cell border-box-sizing code_cell rendered lan_Bash">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="Bash">%expand
+echo {filename}</textarea>
+
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>somefile
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered lan_Python3">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="Python3">filename = 'myfile'
+print(f'A filename "{filename}" is passed ')</textarea>
+
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A filename &#34;myfile&#34; is passed 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered lan_Python3">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell">
+  <div class="input_area cm-s-ipython">
+   <textarea class="sos-source" name="Python3">%expand
+filename = 'myfile'
+print(f'A filename "{filename}" is passed ')</textarea>
+
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A filename &#34;somefile&#34; is passed 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+    </div>
+  </div>
+</body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+	  <script src="../../js/sos-mode.js"> </script>
+      <script>
+		   function highlight_cells(cells, i, interval) {
+			  setTimeout(function() {
+				var editor = CodeMirror.fromTextArea(cells[i], {
+		           lineNumbers: false,
+				   styleActiveLine: true,
+		           matchBrackets: true,
+				   readOnly: true,
+		           mode: 'sos',
+				   base_mode: cells[i].name,
+		         });
+				$(cells[i]).parent().prepend("<select class='cell-kernel-selector'><option>" 
+					+ cells[i].name + "</option></select>");
+		      if (i < cells.length)
+			    highlight_cells(cells, i + 1, interval);
+			}, interval);
+		  }
+
+	      highlight_cells(document.getElementsByClassName("sos-source"), 0, 10);
+      </script>
+
+
+
+ 
+
+
+</html>

@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+#
+# This is a fake STAR command for the execution of scripts
+# in quick tutorial guide. The command will be put into
+# ~/.sos/bin before execution.
+#
+
+import argparse
+import os
+
+def prepareOutput(output):
+    if not os.path.isdir(os.path.split(output)[0]):
+        os.makedirs(os.path.split(output)[0])
+   
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--runMode')
+    parser.add_argument('--genomeDir')
+    parser.add_argument('--readFilesIn')
+    parser.add_argument('--outFileNamePrefix')
+    args, unknown_args = parser.parse_known_args()
+    if args.runMode == 'genomeGenerate':
+        outFile = os.path.join(args.genomeDir, 'chrName.txt')
+        prepareOutput(outFile)
+        with open(outFile, 'w') as cn:
+            cn.write('chromosome name\n')
+        print('Generating ' + outFile)
+    else:
+        outFile = args.outFileNamePrefix + '.out.tab'
+        prepareOutput(outFile)
+        with open(outFile, 'w') as ou:
+            ou.write('sequence\tresult\tfrom\t{}\n1\t2\t\3\t4\n'.format(args.readFilesIn))
+        print('Generating {} from {}'.format(outFile, args.readFilesIn))
+
+

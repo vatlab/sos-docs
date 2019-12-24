@@ -1,0 +1,203 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+[global]
+# a file containing sample names
+parameter: samples = path() 
+# work directory
+parameter: wd = path('./WGS_Call_SoS')
+# name of reference genome file
+parameter: ref_genome = path(f'{wd:a}/ref/reference.fa')
+# name of known variant sites file
+parameter: ref_variants = path(f'{wd:a}/ref/known_variants.vcf.gz')
+# name of known indel file
+parameter: ref_indel = path(f'{wd:a}/ref/known_variants.vcf.gz')
+# download link for reference fasta file, in gz format
+parameter: genome_url = "https://github.com/vatlab/sos-docs/raw/master/src/examples/k9-test/reference.fa.gz"
+# download link for known variants vcf file, in gz format
+parameter: variants_url = "https://github.com/vatlab/sos-docs/raw/master/src/examples/k9-test/known.vcf.gz"
+# whether or not to remove files from intermediate steps
+parameter: zap = True
+# bcftools default quality filter
+parameter: bcftools_filter = '%QUAL>10'
+# number of CPU threads to use per process
+parameter: ncpu = 3
+# can be empty, or chr, or Chr depending on input data-set.
+parameter: chr_prefix = 'chr'
+# Human is 23, Bovine is 29, Canine is 38; 
+# we focus on autosome and X.
+parameter: n_chrom = 38
+chroms = ' '.join([f'{chr_prefix}{x+1}' for x in range(n_chrom)] + [f'{chr_prefix}X'])
+# Set to True to only call variant sites not "wildtype"
+parameter: variants_only = False
+# Keep a list of specified variants only
+parameter: keep_coord = path()
+
+# Download reference genome
+[get_ref_genome_1]
+output: ref_genome
+download: dest_file = f'{_output}.gz', expand = True
+    {genome_url}
+bash: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand = True
+    gunzip -f {ref_genome}.gz
+
+# Index reference genome
+[get_ref_genome_2]
+output: f'{ref_genome:n}.dict', f'{ref_genome}.fai', f'{ref_genome}.bwt',
+        f'{ref_genome}.pac', f'{ref_genome}.ann', f'{ref_genome}.amb', f'{ref_genome}.sa'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{ref_genome}.err', stdout=f'{ref_genome}.out'
+    rm -f {_output}
+    samtools faidx {_input} && \
+    bwa index {_input}a && \
+    gatk CreateSequenceDictionary -R {_input} -O {_output[0]}
+
+# Download known variants
+[get_known_variants_1]
+output: f'{ref_variants:nn}.unsorted.vcf.gz'
+download: dest_file = f'{_output}', expand = True
+    {variants_url}
+
+# Index known variants
+[get_known_variants_2]
+output: ref_variants
+bash: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    gatk SortVcf -I {_input} -O {_output} \
+        --SEQUENCE_DICTIONARY {ref_genome:n}.dict \
+        --COMPRESSION_LEVEL 9 && \
+    gatk IndexFeatureFile -F {_output}
+if zap:
+    _input.zap()
+
+# Export workflow to HTML file
+[0]
+input: [item for item in sys.argv if item.endswith('.ipynb')], group_by = 1, pattern = '{fn}.ipynb'
+output: expand_pattern(f'{wd:a}/{path(_fn[0]):b}.html')
+bash: expand=True, stderr=False
+  sos convert {_input} {_output}
+
+# BWA mapping & samtools postprocessing
+[1]
+fail_if(not samples.is_file(), msg = 'Need sample name list file!')
+sample_files = list(set(get_output(f"awk '{{print $1}}' {samples:e}").strip().split('\n')))
+fail_if(len(sample_files) == 0, msg = 'Need input sample files!')
+input: [(f'{samples:d}/{x}_1.fq.gz', f'{samples:d}/{x}_2.fq.gz') for x in sample_files], group_by = 2, concurrent = True
+output: f'{wd:a}/{samples:bn}_bam/{_input[0]:bnn}.fixmate.bam'
+run: container='gaow/debian-ngs', volumes=[f'{samples:da}:{samples:da}', f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    bwa mem -t {ncpu} -M -R "@RG\\tID:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tSM:{os.path.basename(sample_files[_index].replace('-', '_'))}\\tLB:library1\\tPL:ILLUMINA\\tPU:{os.path.basename(sample_files[_index].replace('-', '_'))}.library1" {ref_genome} {_input[0]} {_input[1]} | samtools sort -n - | samtools fixmate -O bam - {_output}
+
+# Sort BAM files
+[2]
+# sort via GATK4 is way faster
+# https://software.broadinstitute.org/gatk/blog?id=9644
+input: group_by = 1, concurrent = True
+output: f'{_input:n}.sorted.bam'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    gatk SortSam -I {_input} -O {_output} -SO coordinate
+if zap:
+    _input.zap()
+
+# Extract relevant chromosomes for analysis
+[3]
+input: group_by = 1, concurrent = True
+output: f'{_input:n}.cleaned.bam'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    samtools index {_input}
+    samtools view -@ {ncpu} -b {_input} {chroms} > {_output}
+if zap:
+    _input.zap()
+
+# Re-order bam files
+[4]
+input: group_by = 1, concurrent = True
+output: f'{_input:n}.reordered.bam'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    gatk ReorderSam -I {_input} -O {_output} -R {ref_genome} \
+        --CREATE_INDEX TRUE \
+        --ALLOW_INCOMPLETE_DICT_CONCORDANCE TRUE
+if zap:
+    _input.zap()
+
+# Indel re-alignment
+[5]
+input: group_by = 1, concurrent = True
+output: f'{_input:n}.realigned.bam'
+run: container='gaow/gatk3', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    java -jar /opt/GenomeAnalysisTK.jar -T RealignerTargetCreator \
+        -R {ref_genome} \
+        -I {_input} \
+        -o {_input:n}.intervals \
+        --known {ref_indel} && \
+    java -jar /opt/GenomeAnalysisTK.jar -T IndelRealigner \
+        -R {ref_genome} \
+        -I {_input} \
+        -targetIntervals {_input:n}.intervals \
+        -known {ref_indel} \
+        -o {_output}
+if zap:
+    _input.zap()
+
+# Base recalibration
+[6]
+input: group_by = 1, concurrent = True
+output: f'{_input:n}.recal.bam'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output}.err', stdout=f'{_output}.out'
+    gatk BaseRecalibrator \
+        -R {ref_genome} \
+        --known-sites {ref_variants} \
+        -I {_input} -O {_input:n}.table && \
+    gatk ApplyBQSR -I {_input} -bqsr {_input:n}.table -O {_output} # --create-output-bam-index TRUE
+if zap:
+    _input.zap()
+
+# Mark duplicates
+[7]
+input: group_by = 1, concurrent = True
+output: f'{_input:n}.dedup.bam'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    gatk MarkDuplicates \
+        --VALIDATION_STRINGENCY LENIENT \
+        --INPUT {_input} --OUTPUT {_output} \
+        --METRICS_FILE {_output:n}.metrics_file \
+        --CREATE_INDEX TRUE
+if zap:
+    _input.zap()
+
+# Multi-sample variant calling -- pileup
+[8]
+# the 2nd line can have many samples separated by space
+output: f'{wd:a}/{samples:bn}_vcf/{samples:bn}.bcf'
+run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    bcftools mpileup -Ob -f {ref_genome} --threads {ncpu} -o {_output} {_input}
+
+# Multi-sample variant calling -- call
+[9]
+output: f'{_input:n}.vcf.gz'
+run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    bcftools call -{"v" if variants_only else ""}mO z --threads {ncpu} -o {_output} {_input} \
+    && tabix -p vcf {_output}
+
+# Quality summary plots for VCF file
+[10]
+output: f'{_input:n}.stats'
+run: container='gaow/debian-ngs-gatk4', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    bcftools stats -F {ref_genome} -s - {_input} > {_output}
+    mkdir -p {_input:nn}_plots
+    plot-vcfstats -P -p {_input:nn}_plots {_output}
+
+# Quality filtering
+[11]
+output: f'{_input:nn}.filtered.vcf.gz'
+run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    bcftools filter -O z -o {_output} \
+        -s LOWQUAL -i'{bcftools_filter}' {_input:nn}.vcf.gz \
+    && tabix -p vcf {_output}
+
+# Only extract regions we are interested in
+[12]
+stop_if(not keep_coord.is_file(), msg = 'Skip extracting selected SNPs because no list (--keep_coord coord.list) was provided to extract from.')
+output: f'{_input:nn}.extracted.vcf.gz'
+run: container='gaow/debian-ngs', volumes=[f'{wd:a}:{wd:a}'], expand=True, stderr=f'{_output:n}.err', stdout=f'{_output:n}.out'
+    tabix -H {_input} > {_output:n}
+    tabix {_input} -R {keep_coord} >> {_output:n}
+    bgzip {_output:n}
+

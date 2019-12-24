@@ -1,0 +1,177 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+[getFileNames]
+run: 
+    python findnames.py ..
+
+[convert-documentation]
+input:  '../src/documentation/*.ipynb', group_by=1
+depends: '../src/templates/sos-doc-with-banner.tpl'
+output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
+
+run: expand=True
+    sos convert {_input:a} {_output:a}  --template {_depends}
+
+[convert-tutorials]
+input:  '../src/tutorials/*.ipynb', group_by=1
+depends: '../src/templates/sos-doc-with-banner.tpl'
+output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
+
+run: expand=True
+    sos convert {_input:a} {_output:a}  --template {_depends}
+
+[rerun]
+parameter: notebook = str
+
+input: f'../src/user_guide/{notebook}*.ipynb'
+run: expand=True
+    papermill --engine sos {_input} {_input:bn}_rerun.ipynb  --cwd {_input:d}
+
+
+[convert-guide]
+parameter: rerun = False
+
+input: '../src/user_guide/*.ipynb', group_by=1
+depends: '../src/templates/sos-doc-with-banner.tpl'
+output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
+
+if rerun:
+    sh: expand=True
+        [ -f {_input:bn}_rerun.ipynb ] && rm -f  {_input:bn}_rerun.ipynb
+        papermill --engine sos {_input} {_input:bn}_rerun.ipynb --cwd {_input:d}
+        if [ $? -eq 0 ]; then
+            rm -f {_input:bn}_rerun.ipynb
+        fi
+
+
+run: expand=True
+    sos convert {_input:a} {_output:a}  --template {_depends}
+
+[convert-homepage]
+input:  html=sos_targets('../src/homepage/*.ipynb', group_by=1), 
+        template='../src/homepage/template.html',
+        template_toc='../src/homepage/template_toc.html'
+output: f"../{_input['html']:bn}.html"
+
+
+run: expand=True
+    cd ../src/tutorials
+    sos convert {_input["html"]:a} {_output:a} --template basic
+
+with_toc = 'index' not in str(_input)
+
+# insert the temporaty output into the destination
+with open(_input["template_toc"] if with_toc else _input["template"], 'r') as template, open(_output, 'r+') as dest:
+    content = dest.read()
+    dest.seek(0)
+    for line in template:
+        if line.strip() == '<!-- insert the content of page here -->':
+            dest.write(content.replace('¶', '').replace('&#182;', ''))
+        elif _output.name in line:
+            dest.write(line.replace('<li>', '<li class="active">'))
+        else:
+            dest.write(line)
+
+[convert-example-scripts]
+input:  '../src/examples/*.sos', 'update-website', group_by=1
+output: f"../doc/examples/{_input:bn}.html"
+
+run: workdir='../doc/examples', expand=True
+    cp {_input:a} .
+    sos convert {_input:b} {_output:b} --raw {_input:b} 
+
+[convert-example-notebooks]
+input:  '../src/examples/*.ipynb', group_by=1
+output: f"../doc/examples/{_input:bn}.html"
+
+has_header = '"## ' in open(_input).read()
+
+run: workdir='../doc/examples', expand=True
+    cp {_input:a} .
+    sos convert {_input:b} {_output:b} --template {'sos-cm-toc' if has_header else 'sos-cm'}
+
+[convert-example-report]
+input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/RNASeqDE.ipynb', 
+    '../src/examples/RNASeqGTEx.ipynb', group_by=1
+output: f"../doc/examples/{_input:bn}_report.html"
+
+has_header = '"## ' in open(_input).read()
+run: workdir='../doc/examples', expand=True
+    cp {_input:a} .
+    sos convert {_input:b} {_output:b} --template {'sos-report-toc' if has_header else 'sos-report'}
+
+[convert-large-examples]
+input:  '../src/examples/*/*.sos', group_by=1
+output: f"../doc/examples/{_input:db}/{_input:bn}.html"
+
+run: workdir='../doc/examples', expand=True
+    [ -d {_input:db} ] || mkdir {_input:db}
+    cp {_input:a} {_input:db}
+    cp {_input:da}/README.md {_input:db}
+    cd {_input:db}
+    sos convert {_input:b} {_output:b} --raw {_input:b}
+
+[index-site]
+input: '../*.html', '../doc/documentation/*.html',
+    '../doc/tutorials/*.html', '../doc/examples/*.html'
+output: '../tipuesearch/tipuesearch_content.js'
+depends: Py_Module('bs4', autoinstall='beautifulsoup4')
+run:
+    python index_site.py ..
+    
+
+[check-doc]
+# check if examples in the documentation can be run successfully
+input: '../src/documentation/*.ipynb', group_by=1
+
+run: expand=True
+    # convert ipynb to sos
+    sos convert {_input:a} {_input:bn}.sos
+    # then from sos to ipynb with execution
+    sos convert {_input:bn}.sos {_input:b} --execute
+
+[check-link]
+
+# https://www.npmjs.com/package/broken-link-checker
+# use command
+#
+#     npm install broken-link-checker -g
+#
+# to install
+depends: executable('blc')
+
+# check homepage
+run:
+    blc http://vatlab.github.io/SoS
+
+input: '../src/*/*.ipynb', group_by=1
+
+if 'homepage' in _input[0]:
+    run(f"blc http://vatlab.github.io/sos-docs/{_input:bn}.html")
+else:
+    run(f"blc http://vatlab.github.io/sos-docs/doc/{_input:db}/{_input:bn}.html")
+
+
+[default]
+
+# convert ipynb to HTML
+sos_run('getFileNames')
+sos_run('convert-documentation')
+sos_run('convert-tutorials')
+sos_run('convert-homepage')
+sos_run('convert-guide')
+sos_run('convert-example-scripts')
+sos_run('convert-example-notebooks')
+sos_run('convert-example-report')
+sos_run('convert-large-examples')
+sos_run('index-site')
+
+# push changes to website
+parameter: msg = "Update website"
+
+run: workdir='..', expand=True
+    git add --all doc/documentation doc/tutorials doc/examples doc/user_guide doc/media tipuesearch/*.js *.html
+    git commit --no-verify -m '{msg}' || true
+    git commit js src -m '{msg}' || true
+    git push --no-verify || true

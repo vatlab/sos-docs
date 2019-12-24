@@ -1,0 +1,113 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+#
+# This script uses command `vtools_report sequence` to retrieve DNA and mRNA sequence around
+# break points of fusions.
+#
+
+[DNA]
+#
+# Get DNA sequence for a particular fusion candidate with parameter
+#  row:      a row from the oncofuse output.
+#  filename: a filename to write output
+#  lead:     length of left and right sequence around the breakpoint
+#
+parameter: row=None
+parameter: filename=str
+parameter: lead=int
+
+break_point = row['GENOMIC']
+five_prime, three_prime = break_point.split('>')
+five_chr, five_pos = five_prime.split(':')
+three_chr, three_pos = three_prime.split(':')
+
+run: allow_error=True
+    echo >> ${filename}
+    echo "==> ${row['5_FPG_GENE_NAME']} > ${row['3_FPG_GENE_NAME']}  ${row['GENOMIC']}" >> ${filename}
+    vtools_report sequence ${five_chr}:${int(five_pos)-lead}-${five_pos} --zero-based\
+         --mark ${five_chr}:${int(five_pos)-lead}-${five_pos} --marked-region -v0 >> ${filename}
+    vtools_report sequence ${three_chr}:${three_pos}-${int(three_pos)+lead} --zero-based \
+         --mark ${three_chr}:${three_pos}-${int(three_pos)+lead} --marked-region -v0 >> ${filename}
+
+[RNA]
+#
+# Get RNA sequence for a particular fusion candidate with parameter
+#  row:      a row from the oncofuse output.
+#  filename: a filename to write output
+#  lead:     length of left and right sequence around the breakpoint
+#
+parameter: row=None
+parameter: filename=str
+parameter: lead=int
+
+break_point = row['GENOMIC']
+five_prime, three_prime = break_point.split('>')
+five_chr, five_pos = five_prime.split(':')
+three_chr, three_pos = three_prime.split(':')
+
+run: allow_error=True
+    echo >> ${filename}
+    echo "==> mRNA sequence (might be on reverse strand)"  >> ${filename}
+    vtools_report sequence ${five_chr}:${int(five_pos)-lead}-${five_pos} --transcribe --zero-based \
+        --first-transcript \
+         --mark ${five_chr}:${int(five_pos)-lead}-${five_pos} --marked-region -v1 >> ${filename}
+    vtools_report sequence ${three_chr}:${three_pos}-${int(three_pos)+lead} --transcribe \
+        --zero-based --first-transcript \
+         --mark ${three_chr}:${three_pos}-${int(three_pos)+lead} --marked-region -v1 >> ${filename}
+
+[DNA_all]
+#
+# Print DNA sequence for all fusions in all fusion report files under current directory
+#
+parameter: filename=str
+parameter: lead=int
+
+run:
+    echo "DNA sequence (${lead} bp to the left and right of break point)" > ${filename}
+    echo >> ${filename}
+
+import pandas as pd
+fusion_files = glob.glob('*/fusion/fusions_oncofuse.xls')
+input: for_each={'fusion_file': fusion_files}
+
+run:
+    echo "Sample ID: ${fusion_file!dd}" >> ${filename}
+
+fusions = pd.read_csv(fusion_file, sep='\t')
+for idx, row in fusions.iterrows():
+    sos_run('DNA', row=row, filename=filename, lead=lead)
+
+[RNA_all]
+#
+# Print RNA sequence for all fusions in all fusion report files under current directory
+#
+parameter: filename=str
+parameter: lead=int
+
+run:
+    echo "mRNA sequence (${lead} bp to the left and right of break point)" > ${filename}
+    echo "(sequence might be on reverse strand) " >> ${filename}
+    echo >> ${filename}
+
+import pandas as pd
+fusion_files = glob.glob('*/fusion/fusions_oncofuse.xls')
+input: for_each={'fusion_file': fusion_files}
+
+run:
+    echo "Sample ID: ${fusion_file!dd}" >> ${filename}
+
+fusions = pd.read_csv(fusion_file, sep='\t')
+for idx, row in fusions.iterrows():
+    sos_run('RNA', row=row, filename=filename, lead=lead)
+
+[default]
+#
+# Print fusion sequence for all files with different lead length.
+#
+sos_run('DNA_all', filename='DNA50.txt', lead=50-1)
+sos_run('DNA_all', filename='DNA300.txt', lead=300-1)
+sos_run('RNA_all', filename='RNA50.txt', lead=50-1)
+sos_run('RNA_all', filename='RNA300.txt', lead=300-1)
+
+

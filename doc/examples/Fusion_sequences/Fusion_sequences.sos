@@ -1,0 +1,90 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+#
+# This script uses command `vtools_report sequence` to retrieve DNA and mRNA sequence around
+# break points of fusions.
+#
+
+
+[RNA]
+#
+#  Get RNA sequence for a particular fusion candidate with parameter
+#  break_point:  break point in the format of chr1:pos1>chr2:pos2
+#  gene1:  5-prime gene
+#  gene2:  3-prime gene
+#
+parameter: break_point = str
+parameter: gene1 = str
+parameter: gene2 = str
+parameter: filename = '/dev/stdout'
+parameter: lead = 50
+
+five_prime, three_prime = break_point.split('>')
+five_chr, five_pos = five_prime.split(':')
+three_chr, three_pos = three_prime.split(':')
+
+
+gene1_strand = get_output("vtools_report transcript ${five_chr}:${int(five_pos)-lead}-${five_pos} --first-transcript --strand-only -v0").strip()
+if gene1_strand == '-':
+    # | <==== 
+    gene1_range = "${int(five_pos)}-${int(five_pos)+lead-1}"
+else:
+    # =====> |
+    gene1_range = "${int(five_pos)-lead+1}-${five_pos}"
+
+gene2_strand = get_output("vtools_report transcript ${three_chr}:${int(three_pos)}-${int(three_pos)+lead} --first-transcript --strand-only -v0").strip()
+if gene2_strand == '-':
+    # <==== |
+    gene2_range = "${int(three_pos)-lead+1}-${int(three_pos)}"
+else:
+    # | ====>
+    gene2_range = "${three_pos}-${int(three_pos)+lead - 1}"
+
+run: allow_error=True
+    echo >> ${filename}
+    echo "==> ${gene1} > ${gene2}  ${break_point} (${gene1_strand} ${gene2_strand})" >> ${filename}
+    vtools_report sequence ${five_chr}:${gene1_range} --transcribe --zero-based \
+         --show-transcript \
+         --mark ${five_chr}:${gene1_range} --marked-region -v0 >> ${filename}
+    echo  >> ${filename}
+    vtools_report sequence ${three_chr}:${gene2_range} --transcribe \
+        --zero-based --show-transcript \
+         --mark ${three_chr}:${gene2_range} --marked-region -v0 >> ${filename}
+
+[RNA_all]
+#
+# Print RNA sequence for all fusions in all fusion report files under current directory
+#
+parameter: filename= '/dev/stdout'
+parameter: lead= 50
+
+import pandas as pd
+fusion_files = glob.glob('*/fusion/fusions_oncofuse.xls')
+input: for_each={'fusion_file': fusion_files}
+
+run:
+    echo >> ${filename}
+    echo >> ${filename}
+    echo "Sample ID: ${fusion_file!dd}" >> ${filename}
+
+fusions = pd.read_csv(fusion_file, sep='\t')
+for idx, row in fusions.iterrows():
+    sos_run('RNA', break_point=row['GENOMIC'], gene1=row['5_FPG_GENE_NAME'], 
+		gene2=row['3_FPG_GENE_NAME'], filename=filename, lead=lead)
+
+[init: provides='fusion.proj']
+
+run:
+    vtools init fusion -f --build hg19
+
+[default]
+#
+# Print fusion sequence for all files with different lead length.
+#
+depends: 'fusion.proj'
+
+sos_run('RNA_all', filename='RNA50.txt', lead=50)
+sos_run('RNA_all', filename='RNA300.txt', lead=300)
+
+
