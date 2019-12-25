@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
 
-<title>dynamic_input</title>
+<title>testpaper</title>
 
 
 
@@ -13606,7 +13606,9 @@ font-style: italic;
 
 
 <style>
-   
+   .sos_lan_R .input_prompt {
+      background-color: #DCDCDA !important;
+    }
 </style>
 
 
@@ -14129,84 +14131,143 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="notebook-container" id="notebook-container">
 
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Dynamically-determined-input-files">Dynamically-determined input files<a class="anchor-link" href="#Dynamically-determined-input-files"></a></h1>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li><strong>Difficulty level</strong>: intermediate</li>
-<li><strong>Time need to lean</strong>: 20 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li><code>dynamic</code> input targets are resolved only when the step is executed</li>
-</ul>
-</li>
-</ul>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="dynamic-input-files"><code>dynamic</code> input files<a class="anchor-link" href="#dynamic-input-files"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In order to determine the best execution strategy, SoS evaluates all expressions for all steps before the execution of a workflow to figure out input and output of steps. This works most of the time but sometimes the input of a step can only be determined at runtime. For example, if you would like your workflow to automatically scan an input directory and process all fasta files under it, or if a previous step produces
-files that cannot be determined beforehand, you might want to specify input files as follows,</p>
-<div class="highlight"><pre><span></span><span class="nb">input</span><span class="p">:</span> <span class="s1">&#39;input/*.fasta&#39;</span>
-</pre></div>
-<p>The problem is that no file or a wrong set files might exist during the planing stage so SoS might skip this step or start the step
-with a wrong set of files. To address this problem, you can declare the input files as <strong>dynamic</strong> by passing a <code>dynamic</code> object</p>
-<div class="highlight"><pre><span></span><span class="nb">input</span><span class="p">:</span> <span class="n">dynamic</span><span class="p">(</span><span class="s1">&#39;input/*.fasta&#39;</span><span class="p">)</span>
-</pre></div>
-<p>This tells SoS that the input of this step can only be determined at runtime and will execute the step only after all its previous steps have been completed.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For example, step <code>10</code> of the following workflow generates some random output, and step <code>20</code> only knows it when this step is executed. If <code>dynamic</code> is not used, SoS will try to execute step <code>20</code> and <code>10</code> at the same time, and step <code>20</code> will not get the output of step <code>10</code>.</p>
-
-</div>
-</div>
-</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
-   <textarea rows="12"
-      class="sos-source" name="SoS">!rm -rf temp_dynamic
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%env --expect-error
+%run
+sh:
+  ech 1
+</textarea>
+  </div>
+</div>
 
-%run -v1
-[10]
-import random
+</div>
 
-output: [f'temp_dynamic/{random.randint(1000, 2000)}.out' for x in range(5)]
-_output.touch()
+<div class="output_wrapper">
+<div class="output">
 
-[20]
-input: dynamic('temp_dynamic/*.out'), group_by=1
-print(f'Processing {_input}')</textarea>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/var/folders/ys/gnzk0qbx5wbdgm531v82xxljv5yqy8/T/tmp48uwcsf0.sh: line 1: ech: command not found
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_error">ERROR: ERROR step_executor.py:1743 - default (id=-5777342198698428763) returns an error. - None
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[default]: [0]: 
+Failed to execute </span><span class="ansi-green-fg">/bin/sh .sos/default_0_437bdc4c.sh</span><span class="ansi-red-intense-fg">
+exitcode=127, workdir=</span><span class="ansi-green-fg">/Users/bpeng1/sos/sos-docs/src/user_guide</span><span class="ansi-red-intense-fg">
+---------------------------------------------------------------------------</span>
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>RuntimeError: Workflow exited with code 1</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_R">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="R">%env --expect-error
+pr</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>hhh
+ERROR: Error in eval(expr, envir, enclos): object &#39;pr&#39; not found
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">print(1)</textarea>
   </div>
 </div>
 
@@ -14222,11 +14283,7 @@ print(f'Processing {_input}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Processing temp_dynamic/1052.out
-Processing temp_dynamic/1239.out
-Processing temp_dynamic/1517.out
-Processing temp_dynamic/1764.out
-Processing temp_dynamic/1916.out
+<pre>1
 </pre>
 </div>
 </div>
@@ -14238,19 +14295,6 @@ Processing temp_dynamic/1916.out
 </div>
 
 
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
-<li><a href="input_statement.html"><code>input</code> statement</a></li>
-<li><a href="output_statement.html"><code>output</code> statement</a></li>
-<li><a href="dynamic_output.html">Dynamic output</a></li>
-</ul>
-
-</div>
-</div>
-</div>
     </div>
   </div>
 
