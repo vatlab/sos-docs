@@ -14146,7 +14146,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <li><strong>Time need to lean</strong>: 5 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
 <li><code>get_output</code> gets output of command</li>
-<li><code>expand_pattern</code> expand </li>
+<li><code>expand_pattern</code> expand pattern from lists of variables  </li>
 </ul>
 </li>
 </ul>
@@ -14158,15 +14158,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Functions">Functions<a class="anchor-link" href="#Functions"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Function-get_output">Function <code>get_output</code><a class="anchor-link" href="#Function-get_output"></a></h3>
+<h2 id="Function-get_output">Function <code>get_output</code><a class="anchor-link" href="#Function-get_output"></a></h2>
 </div>
 </div>
 </div>
@@ -14268,7 +14260,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Function--expand_pattern">Function  <code>expand_pattern</code><a class="anchor-link" href="#Function--expand_pattern"></a></h3><p>Function <code>expand_pattern</code> expands a string to multiple ones using items of variables quoted between <code>{ }</code>. For example,</p>
+<h2 id="Function--expand_pattern">Function  <code>expand_pattern</code><a class="anchor-link" href="#Function--expand_pattern"></a></h2><p>Function <code>expand_pattern</code> expands a string to multiple ones using items of variables quoted between <code>{ }</code>. For example,</p>
 <div class="highlight"><pre><span></span><span class="n">output</span><span class="p">:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{a}_{b}.txt&#39;</span><span class="p">)</span>
 </pre></div>
 <p>is equivalent to</p>
@@ -14336,7 +14328,7 @@ expand_pattern("{name}'s salary is {salary}")</textarea>
 <div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
-      class="sos-source" name="SoS">%sandbox --expect-error
+      class="sos-source" name="SoS">%env --expect-error
 
 salary = [200]
 expand_pattern("{name}'s salary is {salary}")</textarea>
@@ -14355,16 +14347,15 @@ expand_pattern("{name}'s salary is {salary}")</textarea>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>[0]: 
+<pre>ExecuteError: [0]: 
 ---------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
-script_7878482860063133357 in &lt;module&gt;
+ValueError                                Traceback (most recent call last)
+script_283448644140210882 in &lt;module&gt;
       salary = [200]
 ----&gt; expand_pattern(&#34;{name}&#39;s salary is {salary}&#34;)
       
 
-NameError: name &#39;expand_pattern&#39; is not defined
-</pre>
+ValueError: Variables in output pattern should have the same length (other=2, len(salary)=1)</pre>
 </div>
 </div>
 
@@ -14405,21 +14396,15 @@ expand_pattern("{name}'s salary is {salary}")</textarea>
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>[0]: 
----------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
-script_5586090483352299072 in &lt;module&gt;
-      salary = 200
-----&gt; expand_pattern(&#34;{name}&#39;s salary is {salary}&#34;)
-      
 
-NameError: name &#39;expand_pattern&#39; is not defined
-</pre>
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#34;Bob&#39;s salary is 200&#34;, &#34;John&#39;s salary is 200&#34;]</pre>
 </div>
+
 </div>
 
 </div>

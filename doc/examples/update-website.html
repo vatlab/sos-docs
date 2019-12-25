@@ -355,13 +355,13 @@ pre.section-header.CodeMirror-line {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               177 lines
+               186 lines
                <span class="file-info-divider"></span>
-               5.4 kB
+               5.7 kB
             </div>
          </div>
          <div class="filecontent">
-            <textarea rows="177" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
+            <textarea rows="186" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
 [getFileNames]
@@ -385,11 +385,20 @@ run: expand=True
     sos convert {_input:a} {_output:a}  --template {_depends}
 
 [rerun]
-parameter: notebook = str
+parameter: notebook = ''
 
-input: f'../src/user_guide/{notebook}*.ipynb'
-run: expand=True
-    papermill --engine sos {_input} {_input:bn}_rerun.ipynb  --cwd {_input:d}
+input: f'../src/user_guide/{notebook}*.ipynb', group_by=1
+output: dynamic(f'{_input:bn}*')
+sh: expand=True
+    papermill --engine sos {_input} {_input:bn}.ipynb  --cwd {_input:d}
+    if [ $? -eq 0 ]; then
+        rm -f {_input:bn}.ipynb.failed
+        python remove_papermill_metadata.py {_input}
+        python remove_papermill_metadata.py {_input:bn}.ipynb
+    else
+        touch {_input:bn}.ipynb.failed
+        echo "\033[91mCould not convert notebook {_input}\033[0m"
+    fi
 
 
 [convert-guide]

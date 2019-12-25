@@ -14182,15 +14182,15 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
    <textarea rows="6"
-      class="sos-source" name="SoS">sum = 0
+      class="sos-source" name="SoS">%run -j4  -v1
 import time
 start_time = time.time()
 input: for_each={'i': range(4)}
-time.sleep(4)
-print(f'sum is {sum} at index {_index}, completed in {time.time() - start_time:.1f} seconds')</textarea>
+time.sleep(i)
+print(f'Substep {_index} completed in {time.time() - start_time:.1f} seconds')</textarea>
   </div>
 </div>
 
@@ -14205,43 +14205,11 @@ print(f'sum is {sum} at index {_index}, completed in {time.time() - start_time:.
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>[(id=-5261056225586299149, index=0)]: 
----------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
-script_8434505913261563409 in &lt;module&gt;
-----&gt; time.sleep(4)
-      print(f&#39;sum is {sum} at index {_index}, completed in {time.time() - start_time:.1f} seconds&#39;)
-      
-
-NameError: name &#39;time&#39; is not defined
-[(id=-5261056225586299149, index=2)]: 
----------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
-script_8434505913261563409 in &lt;module&gt;
-----&gt; time.sleep(4)
-      print(f&#39;sum is {sum} at index {_index}, completed in {time.time() - start_time:.1f} seconds&#39;)
-      
-
-NameError: name &#39;time&#39; is not defined
-[(id=-5261056225586299149, index=3)]: 
----------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
-script_8434505913261563409 in &lt;module&gt;
-----&gt; time.sleep(4)
-      print(f&#39;sum is {sum} at index {_index}, completed in {time.time() - start_time:.1f} seconds&#39;)
-      
-
-NameError: name &#39;time&#39; is not defined
-[(id=-5261056225586299149, index=1)]: 
----------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
-script_8434505913261563409 in &lt;module&gt;
-----&gt; time.sleep(4)
-      print(f&#39;sum is {sum} at index {_index}, completed in {time.time() - start_time:.1f} seconds&#39;)
-      
-
-NameError: name &#39;time&#39; is not defined
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Substep 0 completed in 0.0 seconds
+Substep 1 completed in 1.0 seconds
+Substep 2 completed in 2.0 seconds
+Substep 3 completed in 3.1 seconds
 </pre>
 </div>
 </div>
@@ -14257,7 +14225,7 @@ NameError: name &#39;time&#39; is not defined
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can see, the <code>start_time</code> is the start time of all substeps, and the all substeps complete at about the same time because they are executed concurrently.</p>
+<p>As you can see, the <code>start_time</code> is the start time of all substeps, and all substeps are executed concurrently.</p>
 <p>Concurrent execution can cause some unexpected results. For example, there are 4 substeps in the following example. Each of them adds <code>i</code> to a shared variable <code>sum</code>, but the results are not accumulated because each substep has its own <code>sum</code>.</p>
 
 </div>
@@ -14268,7 +14236,7 @@ NameError: name &#39;time&#39; is not defined
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
       class="sos-source" name="SoS">sum = 0
@@ -14278,6 +14246,27 @@ print(f'sum is {sum} at index {_index}')</textarea>
   </div>
 </div>
 
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sum is 0 at index 0
+sum is 1 at index 1
+sum is 2 at index 2
+sum is 3 at index 3
+</pre>
+</div>
+</div>
+
+</div>
 </div>
 
 </div>
@@ -14298,7 +14287,7 @@ print(f'sum is {sum} at index {_index}')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
       class="sos-source" name="SoS">sum = 0
@@ -14308,6 +14297,27 @@ print(f'sum is {sum} at index {_index}')</textarea>
   </div>
 </div>
 
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sum is 0 at index 0
+sum is 1 at index 1
+sum is 3 at index 2
+sum is 6 at index 3
+</pre>
+</div>
+</div>
+
+</div>
 </div>
 
 </div>

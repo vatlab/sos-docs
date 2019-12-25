@@ -14137,7 +14137,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="How-to-remove-large-intermediate-files-without-breaking-signatures">How to remove large intermediate files without breaking signatures<a class="anchor-link" href="#How-to-remove-large-intermediate-files-without-breaking-signatures"></a></h1>
+<h1 id="Remove-large-intermediate-files-without-breaking-signatures">Remove large intermediate files without breaking signatures<a class="anchor-link" href="#Remove-large-intermediate-files-without-breaking-signatures"></a></h1>
 </div>
 </div>
 </div>
@@ -14195,9 +14195,12 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
-   <textarea rows="11"
-      class="sos-source" name="SoS">%run -s force
+  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
+   <textarea rows="14"
+      class="sos-source" name="SoS">%save test_remove.sos -f
+
+import os
+
 [10]
 output:  "temp/result.txt"
 # added comment
@@ -14222,19 +14225,47 @@ with open(_output[0], 'w') as sz:
     <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">Cell content saved to <a href="test_remove.sos" target="_blank">test_remove.sos</a>, use option -r to also execute the cell.</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">%runfile test_remove.sos -s force -v1</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>2000+0 records in
 2000+0 records out
-1024000 bytes transferred in 0.045143 secs (22683528 bytes/sec)
-<span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[20]: [0]: 
----------------------------------------------------------------------------
-NameError                                 Traceback (most recent call last)
-script_1891641418037190126 in &lt;module&gt;
-      with open(_output[0], &#39;w&#39;) as sz:
-----&gt;     sz.write(f&#34;Modified {_input}: {os.path.getsize(_input[0])}\n&#34;)
-      
-
-NameError: name &#39;os&#39; is not defined</span>
+1024000 bytes transferred in 0.046135 secs (22195755 bytes/sec)
 </pre>
 </div>
 </div>
@@ -14260,7 +14291,7 @@ NameError: name &#39;os&#39; is not defined</span>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="SoS">!sos remove temp/result.txt --zap -y
@@ -14280,10 +14311,10 @@ NameError: name &#39;os&#39; is not defined</span>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>INFO: 404 tracked files are identified.
+<pre>INFO: 80 tracked files are identified.
 Zap tracked file temp/result.txt
 INFO: 1 file zapped
-result.txt.zapped
+result.txt.zapped size.txt
 </pre>
 </div>
 </div>
@@ -14309,34 +14340,13 @@ result.txt.zapped
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">%rerun -s default -v2</textarea>
+      class="sos-source" name="SoS">%runfile test_remove.sos -s default -v2</textarea>
   </div>
 </div>
 
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>File contains parsing errors: 
-	[line  2]: %rerun -s default -v2
-
-Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#39;, 1, 1, &#39;%rerun -s default -v2\n&#39;))
-</pre>
-</div>
-</div>
-
-</div>
 </div>
 
 </div>
@@ -14347,7 +14357,9 @@ Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="sos_datatypes.html">SoS datatypes</a></li>
+</ul>
 
 </div>
 </div>
