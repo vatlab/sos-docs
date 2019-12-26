@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -13025,45 +13022,6 @@ ul.typeahead-list  > li > a.pull-right {
 .highlight .vm { color: #19177C } /* Name.Variable.Magic */
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
     </style>
-<style type="text/css">
-    
-/* Temporary definitions which will become obsolete with Notebook release 5.0 */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-bold { font-weight: bold; }
-
-    </style>
 
 
 <style type="text/css">
@@ -14347,17 +14305,17 @@ let sos_keywords = new Set([
   // keywords
   'input:', 'output:', 'depends:', 'task:',
   // options
-  'expand',
+  'expand', 'provides',
   // input options
   'for_each', 'paired_with', 'group_with', 'pattern',
-  'named_output', 'output_from',
+  'named_output', 'output_from', 'concurrent',
   // functions
   'sos_run', 'fail_if', 'done_if', 'warn_if', 'skip_if',
-  'get_output',
+  'get_output', 'expand_pattern',
   // task options
-  'walltime', 'cores', 'mem', 'queue', 'to_host',
+  'walltime', 'cores', 'mem', 'queue', 'to_host', 'nodes',
   'from_host', 'map_vars', 'trunk_size', 'trunk_workers', 'workdir',
-  'concurrent', 'shared', 'env', 'prepend_path', 'tags',
+  'shared', 'env', 'prepend_path', 'tags',
   // targets
   'file_target', 'executable', 'sos_variable', 'env_variable',
   'sos_step', 'dynamic', 'remote', 'system_resource',
@@ -14367,12 +14325,16 @@ let sos_keywords = new Set([
   'csh:', 'tcsh', 'zsh:', 'perl:', 'ruby:', 'node:',
   'pandoc:', 'docker_build:', 'download:', 'julia:',
   'R:', 'matlab:', 'python:', 'python2:', 'python3:',
+  'singularity_build:',
+  // action options
+  'args', 'allow_error', 'container', 'engine', 'env',
+  'stdout', 'stderr', 'tracked',
   // magics
-  '%capture', '%cd', '%clear', '%debug', '%dict',
-  '%expand', '%get', '%matplotlib', '%preview', '%pull',
-  '%push', '%put', '%render', '%run', '%runfile', '%revisions',
+  '%capture', '%cd', '%env',
+  '%expand', '%get', '%matplotlib', '%preview',
+  '%put', '%render', '%run', '%runfile', '%revisions',
   '%save', '%set', '%sessioninfo', '%shutdown', '%sosrun',
-  '%sossave', '%task', '%toc', '%sandbox', '%use', '%with'
+  '%convert', '%task', '%use', '%with'
   ]
 )
 
@@ -15006,7 +14968,7 @@ function add_hoverdoc(){
 
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js"></script>
 
 <script>
 
@@ -15015,7 +14977,7 @@ function add_hoverdoc(){
 
     if (!headings) {
       let content = document.querySelector('.notebook-container')
-      headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+      headings = content.querySelectorAll('h1, h2, h3')
     }
     Array.prototype.forEach.call(headings, function(heading) {
       var id = heading.id ? heading.id : heading.textContent.toLowerCase();
@@ -15052,7 +15014,7 @@ function add_hoverdoc(){
 
   function updateTOC ( ) {
     var content = document.querySelector('.notebook-container')
-    var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+    var headings = content.querySelectorAll('h1, h2, h3')
 
     fixIDsForToc(headings);
 
@@ -15072,6 +15034,8 @@ function add_hoverdoc(){
       activeListItemClass: 'active',
       //
       orderedList: false,
+      //
+      hasInnerContainers: true,
       //
       scrollSmooth: true
     });
