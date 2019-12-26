@@ -355,34 +355,18 @@ pre.section-header.CodeMirror-line {
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               186 lines
+               153 lines
                <span class="file-info-divider"></span>
-               5.7 kB
+               4.6 kB
             </div>
          </div>
          <div class="filecontent">
-            <textarea rows="186" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
+            <textarea rows="153" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
 [getFileNames]
 run: 
     python findnames.py ..
-
-[convert-documentation]
-input:  '../src/documentation/*.ipynb', group_by=1
-depends: '../src/templates/sos-doc-with-banner.tpl'
-output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
-
-run: expand=True
-    sos convert {_input:a} {_output:a}  --template {_depends}
-
-[convert-tutorials]
-input:  '../src/tutorials/*.ipynb', group_by=1
-depends: '../src/templates/sos-doc-with-banner.tpl'
-output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
-
-run: expand=True
-    sos convert {_input:a} {_output:a}  --template {_depends}
 
 [rerun]
 parameter: notebook = ''
@@ -426,10 +410,6 @@ input:  html=sos_targets('../src/homepage/*.ipynb', group_by=1),
         template_toc='../src/homepage/template_toc.html'
 output: f"../{_input['html']:bn}.html"
 
-
-run: expand=True
-    cd ../src/tutorials
-    sos convert {_input["html"]:a} {_output:a} --template basic
 
 with_toc = 'index' not in str(_input)
 
@@ -485,23 +465,12 @@ run: workdir='../doc/examples', expand=True
     sos convert {_input:b} {_output:b} --raw {_input:b}
 
 [index-site]
-input: '../*.html', '../doc/documentation/*.html',
-    '../doc/tutorials/*.html', '../doc/examples/*.html'
+input: '../*.html', '../doc/user_guide/*.html', '../doc/examples/*.html'
 output: '../tipuesearch/tipuesearch_content.js'
 depends: Py_Module('bs4', autoinstall='beautifulsoup4')
 run:
     python index_site.py ..
     
-
-[check-doc]
-# check if examples in the documentation can be run successfully
-input: '../src/documentation/*.ipynb', group_by=1
-
-run: expand=True
-    # convert ipynb to sos
-    sos convert {_input:a} {_input:bn}.sos
-    # then from sos to ipynb with execution
-    sos convert {_input:bn}.sos {_input:b} --execute
 
 [check-link]
 
@@ -529,8 +498,6 @@ else:
 
 # convert ipynb to HTML
 sos_run('getFileNames')
-sos_run('convert-documentation')
-sos_run('convert-tutorials')
 sos_run('convert-homepage')
 sos_run('convert-guide')
 sos_run('convert-example-scripts')
@@ -543,7 +510,7 @@ sos_run('index-site')
 parameter: msg = "Update website"
 
 run: workdir='..', expand=True
-    git add --all doc/documentation doc/tutorials doc/examples doc/user_guide doc/media tipuesearch/*.js *.html
+    git add --all doc/examples doc/user_guide doc/media tipuesearch/*.js *.html
     git commit --no-verify -m '{msg}' || true
     git commit js src -m '{msg}' || true
     git push --no-verify || true
@@ -554,7 +521,7 @@ run: workdir='..', expand=True
          <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
          </a> &nbsp;See the output of command <samp>sos run update-website -h</samp> for usage information</div>
-         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.21.2</samp></div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.21.3</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
