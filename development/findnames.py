@@ -41,8 +41,6 @@ def findImages(docFile, folder):
 
 def generate_doc_toc(docs_dir):
 
-    tutString = "var tutorials=[]"
-    docString = "var documentation=[]"
 
     guideString = "var guides=["
     with open(os.path.join(docs_dir, "src", "homepage",
@@ -68,11 +66,7 @@ def generate_doc_toc(docs_dir):
     guideString += "]"
 
     with open(os.path.join(docs_dir, "js", "docs.js"), "w") as docFile:
-        fileDict(docFile, os.path.join(docs_dir, "src", "documentation"))
-        fileDict(docFile, os.path.join(docs_dir, "src", "tutorials"))
         findImages(docFile, docs_dir)
-        docFile.write(docString + "\n")
-        docFile.write(tutString + "\n")
         docFile.write(guideString + "\n")
         docFile.close()
 
