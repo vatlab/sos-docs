@@ -5,8 +5,8 @@
 <style>
 
 .toc-container {
-    margin-top: 100px;
-    max-height: calc(100% - 160px);
+    margin-top: 80px;
+    max-height: calc(100% - 140px);
 }
 
 .toc-wrapper {
