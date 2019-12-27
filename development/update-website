@@ -2,7 +2,7 @@
 #fileformat=SOS1.0
 
 [getFileNames]
-run: 
+run:
     python findnames.py ..
 
 [rerun]
@@ -43,7 +43,7 @@ run: expand=True
     python unlink_hint_links.py {_output:a}
 
 [convert-homepage]
-input:  html=sos_targets('../src/homepage/*.ipynb', group_by=1), 
+input:  html=sos_targets('../src/homepage/*.ipynb', group_by=1),
         template='../src/homepage/template.html',
         template_toc='../src/homepage/template_toc.html'
 output: f"../{_input['html']:bn}.html"
@@ -71,7 +71,7 @@ output: f"../doc/examples/{_input:bn}.html"
 
 run: workdir='../doc/examples', expand=True
     cp {_input:a} .
-    sos convert {_input:b} {_output:b} --raw {_input:b} 
+    sos convert {_input:b} {_output:b} --raw {_input:b}
 
 [convert-example-notebooks]
 input:  '../src/examples/*.ipynb', group_by=1
@@ -84,7 +84,7 @@ run: workdir='../doc/examples', expand=True
     sos convert {_input:b} {_output:b} --template {'sos-cm-toc' if has_header else 'sos-cm'}
 
 [convert-example-report]
-input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/RNASeqDE.ipynb', 
+input:  '../src/examples/Preview_and_Report_Generation.ipynb', '../src/examples/RNASeqDE.ipynb',
     '../src/examples/RNASeqGTEx.ipynb', group_by=1
 output: f"../doc/examples/{_input:bn}_report.html"
 
@@ -110,7 +110,7 @@ output: '../tipuesearch/tipuesearch_content.js'
 depends: Py_Module('bs4', autoinstall='beautifulsoup4')
 run:
     python index_site.py ..
-    
+
 
 [check-link]
 
@@ -126,7 +126,7 @@ depends: executable('blc')
 run:
     blc http://vatlab.github.io/SoS
 
-input: '../src/*/*.ipynb', group_by=1, concurrent=False
+input: '../src/user_guide/*.ipynb', group_by=1, concurrent=False
 
 if 'homepage' in str(_input):
     run(f"blc http://vatlab.github.io/sos-docs/{_input:bn}.html")
