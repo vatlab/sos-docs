@@ -4,7 +4,6 @@
 
 
 
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
 
@@ -13730,7 +13729,7 @@ textarea.sos-source {
 <style>
 
 /* The Table of Contents container element */
-.toc-wrapper {
+.toc-container {
     flex-flow: column;
     display: flex;
 
@@ -13746,6 +13745,14 @@ textarea.sos-source {
 }
 
 .toc-header {
+  flex: 0 1 auto;
+}
+
+.toc-before {
+  flex: 0 1 auto;
+}
+
+.toc-after {
   flex: 0 1 auto;
 }
 
@@ -13852,19 +13859,6 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 
 
 
-<style type="text/css">
-
-.sos_hover_doc:hover {
-  cursor: pointer;
-  background: lightgray;
-  opacity: 50%;
-}
-</style>
-
-
-
-
-
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -13954,9 +13948,13 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 
 <style>
 
-.toc-wrapper {
+.toc-container {
     margin-top: 100px;
     max-height: calc(100% - 160px);
+}
+
+.toc-wrapper {
+    overflow: scroll;
 }
 
 .toc-header {
@@ -13983,6 +13981,15 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     outline: 0;
 }
 
+.nav > li > a:hover {
+    background-color: orange !important;
+}
+
+.toc-container .nav > li > a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 .toc-header .fa {
     font-size: 38px;
     color: white;
@@ -13994,6 +14001,17 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 .toc-header .fa:hover {
     color: #6197d5 ;
 }
+
+
+.toc-before {
+    background: lightgray;
+}
+
+
+.toc-after {
+    background: lightgray;
+}
+
 </style>
 
 
@@ -14119,12 +14137,18 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <div class="toc-wrapper">
+      <div class="toc-container">
         <div class="toc-header">
+        </div>
+        <div class="toc-wrapper">
+        <div class="toc-before">
         </div>
         <div id="toc" class="toc">
         </div><!--/.well -->
+        <div class="toc-after">
+        </div>
       </div>
+    </div>
     </div><!--/span-->
     <div class="col-xs-12 col-sm-8 col-md-9">
       
@@ -14874,63 +14898,6 @@ loaded via a namespace (and not attached):
 
 
 
-<script>
-
-let sos_keywords = new Set([
-  // keywords
-  'input:', 'output:', 'depends:', 'task:',
-  // options
-  'expand', 'provides',
-  // input options
-  'for_each', 'paired_with', 'group_with', 'pattern',
-  'named_output', 'output_from', 'concurrent',
-  // functions
-  'sos_run', 'fail_if', 'done_if', 'warn_if', 'skip_if',
-  'get_output', 'expand_pattern',
-  // task options
-  'walltime', 'cores', 'mem', 'queue', 'to_host', 'nodes',
-  'from_host', 'map_vars', 'trunk_size', 'trunk_workers', 'workdir',
-  'shared', 'env', 'prepend_path', 'tags',
-  // targets
-  'file_target', 'executable', 'sos_variable', 'env_variable',
-  'sos_step', 'dynamic', 'remote', 'system_resource',
-  'Py_Module', 'R_Library',
-  // actions
-  'run:', 'script:', 'report:', 'bash:', 'sh:',
-  'csh:', 'tcsh', 'zsh:', 'perl:', 'ruby:', 'node:',
-  'pandoc:', 'docker_build:', 'download:', 'julia:',
-  'R:', 'matlab:', 'python:', 'python2:', 'python3:',
-  'singularity_build:',
-  // action options
-  'args', 'allow_error', 'container', 'engine', 'env',
-  'stdout', 'stderr', 'tracked',
-  // magics
-  '%capture', '%cd', '%env',
-  '%expand', '%get', '%matplotlib', '%preview',
-  '%put', '%render', '%run', '%runfile', '%revisions',
-  '%save', '%set', '%sessioninfo', '%shutdown', '%sosrun',
-  '%convert', '%task', '%use', '%with'
-  ]
-)
-
-function visit_sos_doc(evt) {
-  window.open(`https://vatlab.github.io/sos-docs/redirect_doc.html?${evt.target.innerText}`, '_blank');
-}
-
-function add_hoverdoc(){
-  let elems = ['cm-keyword cm-strong', 'cm-variable cm-sos-option', 'cm-builtin cm-strong', 'cm-meta'].map(
-    cls => Array.from(document.getElementsByClassName(cls))).reduce((r, a) => r.concat(a), [])
-  Array.from(elems).filter(elem => sos_keywords.has(elem.innerText)).forEach(x => {
-    x.classList.add('sos_hover_doc');
-    x.addEventListener('click', visit_sos_doc);
-  })
-
-}
-
-</script>
-
-
-
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
@@ -15543,6 +15510,7 @@ function add_hoverdoc(){
 
 
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js"></script>
 
 <script>
@@ -15576,10 +15544,10 @@ function add_hoverdoc(){
         ++counts[parseInt(headings[i].tagName[1])-1]
       }
       // now, we remove the first 1 if it is the first tag, and if
-      // it has only one, and if it is not the only header
+      // it has only one, and if it is the only header
       let first = counts.findIndex(x => x > 0);
       if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
-         && parseInt(headings[0].tagName[1]) === first + 1) {
+         && parseInt(headings[0].tagName[1]) === first + 1 && false) {
           counts[first] = 0;
       }
       //
@@ -15647,13 +15615,6 @@ function editme() {
 let url = window.location.pathname;
 let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.lastIndexOf('/'));
 
-if (dir == 'documentation') {
-  all_docs = documentation;
-} else if (dir == 'tutorials') {
-  all_docs = tutorials;
-} else {
-  all_docs = guides;
-}
 </script>
 
 
@@ -15670,14 +15631,18 @@ function add_nav_header() {
     if (!header) {
         return;
     }
-    let idx = all_docs.indexOf(filename.replace(/\.[^/.]+$/, ""))
+    let beforetoc = document.getElementsByClassName('toc-before');
+    let aftertoc = document.getElementsByClassName('toc-after');
+    let toc = document.getElementById('toc');
+
+    let idx = guides.indexOf(filename.replace(/\.[^/.]+$/, ""))
     let prev_link = ''
     let next_link = ''
     if (idx != 0) {
-        prev_link = `<button title="${all_docs[idx - 1]}" onclick="loadPage('${all_docs[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+        prev_link = `<button title="${headers[idx - 1]}" onclick="loadPage('${guides[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
     }
-    if (idx != all_docs.length - 1) {
-        next_link = `<button title="${all_docs[idx + 1]}" onclick="loadPage('${all_docs[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+    if (idx != guides.length - 1) {
+        next_link = `<button title="${headers[idx + 1]}" onclick="loadPage('${guides[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
     }
     header[0].outerHTML = `
         <div class="toc-header">
@@ -15692,6 +15657,22 @@ function add_nav_header() {
             </div>
         </div>
     `
+    pre_elements = '<div class="toc-before"><ul class="toc-list nav nav-list">';
+    for (let i = 0; i < idx; ++i) {
+        pre_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i]}');">${ headers[i]}</a></li>`;
+    }
+
+    pre_elements += '</ul></div>';
+    beforetoc[0].outerHTML = pre_elements;
+
+    post_elements = '<div class="toc-after"><ul class="toc-list nav nav-list">';
+    for (let i = idx + 1; i < guides.length; ++i) {
+        post_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i]}');">${ headers[i]}</a></li>`;
+    }
+    post_elements += '</ul></div>';
+    aftertoc[0].outerHTML = post_elements;
+
+    toc.scrollIntoView();
 }
 
 function replacePage(title, url, newdoc, pushState) {

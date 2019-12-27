@@ -13727,7 +13727,7 @@ textarea.sos-source {
 <style>
 
 /* The Table of Contents container element */
-.toc-wrapper {
+.toc-container {
     flex-flow: column;
     display: flex;
 
@@ -13743,6 +13743,14 @@ textarea.sos-source {
 }
 
 .toc-header {
+  flex: 0 1 auto;
+}
+
+.toc-before {
+  flex: 0 1 auto;
+}
+
+.toc-after {
   flex: 0 1 auto;
 }
 
@@ -13850,12 +13858,18 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <div class="toc-wrapper">
+      <div class="toc-container">
         <div class="toc-header">
+        </div>
+        <div class="toc-wrapper">
+        <div class="toc-before">
         </div>
         <div id="toc" class="toc">
         </div><!--/.well -->
+        <div class="toc-after">
+        </div>
       </div>
+    </div>
     </div><!--/span-->
     <div class="col-xs-12 col-sm-8 col-md-9">
       
@@ -14708,6 +14722,7 @@ sh: expand=True
 
 
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js"></script>
 
 <script>
@@ -14741,10 +14756,10 @@ sh: expand=True
         ++counts[parseInt(headings[i].tagName[1])-1]
       }
       // now, we remove the first 1 if it is the first tag, and if
-      // it has only one, and if it is not the only header
+      // it has only one, and if it is the only header
       let first = counts.findIndex(x => x > 0);
       if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
-         && parseInt(headings[0].tagName[1]) === first + 1) {
+         && parseInt(headings[0].tagName[1]) === first + 1 && true) {
           counts[first] = 0;
       }
       //
@@ -14784,6 +14799,7 @@ sh: expand=True
   updateTOC()
 
 </script>
+
 
 
 
