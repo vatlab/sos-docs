@@ -38,7 +38,8 @@
 }
 
 .nav > li > a:hover {
-    background-color: orange !important;
+    background-color: #7b7b7b  !important;
+    color: white !important;
 }
 
 .toc-container .nav > li > a {
