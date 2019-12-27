@@ -4,9 +4,13 @@
 
 <style>
 
-.toc-wrapper {
+.toc-container {
     margin-top: 100px;
     max-height: calc(100% - 160px);
+}
+
+.toc-wrapper {
+    overflow: scroll;
 }
 
 .toc-header {
@@ -33,6 +37,15 @@
     outline: 0;
 }
 
+.nav > li > a:hover {
+    background-color: orange !important;
+}
+
+.toc-container .nav > li > a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 .toc-header .fa {
     font-size: 38px;
     color: white;
@@ -44,13 +57,24 @@
 .toc-header .fa:hover {
     color: #6197d5 ;
 }
+
+
+.toc-before {
+    background: lightgray;
+}
+
+
+.toc-after {
+    background: lightgray;
+}
+
 </style>
 
 {% endmacro %}
 
 
 
-{% macro js(master_list, notebook_id) %}
+{% macro js(master_list, header_list, notebook_id) %}
 
 
 <script>
@@ -63,14 +87,18 @@ function add_nav_header() {
     if (!header) {
         return;
     }
+    let beforetoc = document.getElementsByClassName('toc-before');
+    let aftertoc = document.getElementsByClassName('toc-after');
+    let toc = document.getElementById('toc');
+
     let idx = {{ master_list }}.indexOf(filename.replace(/\.[^/.]+$/, ""))
     let prev_link = ''
     let next_link = ''
     if (idx != 0) {
-        prev_link = `<button title="{{ '${' }}{{ master_list }}[idx - 1]}" onclick="loadPage('{{ '${' }}{{ master_list }}[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+        prev_link = `<button title="{{ '${' }}{{ header_list }}[idx - 1]}" onclick="loadPage('{{ '${' }}{{ master_list }}[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
     }
     if (idx != {{ master_list }}.length - 1) {
-        next_link = `<button title="{{ '${' }}{{ master_list }}[idx + 1]}" onclick="loadPage('{{ '${' }}{{ master_list }}[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+        next_link = `<button title="{{ '${' }}{{ header_list }}[idx + 1]}" onclick="loadPage('{{ '${' }}{{ master_list }}[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
     }
     header[0].outerHTML = `
         <div class="toc-header">
@@ -85,6 +113,22 @@ function add_nav_header() {
             </div>
         </div>
     `
+    pre_elements = '<div class="toc-before"><ul class="toc-list nav nav-list">';
+    for (let i = 0; i < idx; ++i) {
+        pre_elements += `<li class="toc-item"><a href="javascript:loadPage('{{ '${' }}{{ master_list }}[i]}');">${ {{header_list}}[i]}</a></li>`;
+    }
+
+    pre_elements += '</ul></div>';
+    beforetoc[0].outerHTML = pre_elements;
+
+    post_elements = '<div class="toc-after"><ul class="toc-list nav nav-list">';
+    for (let i = idx + 1; i < {{master_list}}.length; ++i) {
+        post_elements += `<li class="toc-item"><a href="javascript:loadPage('{{ '${' }}{{ master_list }}[i]}');">${ {{header_list}}[i]}</a></li>`;
+    }
+    post_elements += '</ul></div>';
+    aftertoc[0].outerHTML = post_elements;
+
+    toc.scrollIntoView();
 }
 
 function replacePage(title, url, newdoc, pushState) {

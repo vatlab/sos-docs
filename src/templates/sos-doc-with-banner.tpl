@@ -1,9 +1,11 @@
-{%  extends 'sos-doc' %}
+{%  extends 'sos-cm-toc' %}
 
 {% import 'parts/doc_panel.tpl' as doc_panel %}
 {% import 'parts/page_header.tpl' as page_header %}
 {% import 'parts/toc_header.tpl' as toc_header %}
 {% import 'parts/edit_button.tpl' as edit_button %}
+
+{% import 'parts/toc.tpl' as toc %}
 
 {% block html_head %}
 
@@ -39,20 +41,17 @@
 let url = window.location.pathname;
 let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.lastIndexOf('/'));
 
-if (dir == 'documentation') {
-  all_docs = documentation;
-} else if (dir == 'tutorials') {
-  all_docs = tutorials;
-} else {
-  all_docs = guides;
-}
 </script>
 
 {# The variable to use will be all_docs.
   1. name of the master list
   2. id of the notebook container.
 #}
-{{ toc_header.js('all_docs' , 'notebook-container') }}
+{{ toc_header.js('guides', 'headers', 'notebook-container') }}
 
 {% endblock body %}
 
+
+{% block toc %}
+{{ toc.js(headers='h1, h2, h3', remove_only_top_header='false') }}
+{% endblock toc %}
