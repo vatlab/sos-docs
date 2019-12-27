@@ -41,33 +41,39 @@ def findImages(docFile, folder):
 
 def generate_doc_toc(docs_dir):
 
-
     guideString = "var guides=["
+    headerString = "var headers=["
     with open(os.path.join(docs_dir, "src", "homepage",
                            "notebook.ipynb")) as json_data:
         d = json.load(json_data)
+
     for cell in d["cells"]:
         for sentence in cell["source"]:
-            guide = re.search('doc/user_guide/(.+?).html', sentence)
+            guide = re.search(r'\[(.+?)(\(.*\)\s*)?\]\(doc/user_guide/(.+?).html\s*\)', sentence)
             if guide:
-                name = guide.group(1)
-                guideString += '"' + name + '", '
+                headerString += '\n  "' + guide.group(1).strip().replace('`', '') + '", '
+                guideString += '\n  "' + guide.group(3) + '", '
 
     with open(os.path.join(docs_dir, "src", "homepage",
                            "workflow.ipynb")) as json_data:
         d = json.load(json_data)
     for cell in d["cells"]:
         for sentence in cell["source"]:
-            guide = re.search('doc/user_guide/(.+?).html', sentence)
+            guide = re.search(r'\[(.+?)(\(.*\)\s*)?\]\(doc/user_guide/(.+?).html\s*\)', sentence)
             if guide:
                 name = guide.group(1)
-                guideString += '"' + name + '", '
+                headerString += '\n  "' + guide.group(1).strip().replace('`', '') + '", '
+                guideString += '\n "' + guide.group(3) + '", '
+
     guideString = guideString[:-2]
-    guideString += "]"
+    guideString += "\n]"
+    headerString = headerString[:-2]
+    headerString += "\n]"
 
     with open(os.path.join(docs_dir, "js", "docs.js"), "w") as docFile:
         findImages(docFile, docs_dir)
         docFile.write(guideString + "\n")
+        docFile.write(headerString + "\n")
         docFile.close()
 
 
