@@ -30,10 +30,10 @@
 {{ page_header.html() }}
 {{ edit_button.html() }}
 
+{{ hover_doc.js() }}
 {{ super() }}
 
 {{ edit_button.js() }}
-{{ hover_doc.js() }}
 
 {# We need to determine the master list. For sos documentation, the list
  is defined in ../../js/docs.js and we will need to decide which one to
