@@ -14171,7 +14171,13 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><strong>Difficulty level</strong>: intermediate</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
+<li><strong>Time need to lean</strong>: 20 minutes or less<ul>
+<li>A remote host might have different paths from the local host, making the execution of tasks difficult</li>
+<li>SoS automatically translates paths specified in <code>_input</code>, <code>_depends</code> and <code>_output</code> according to host configurations</li>
+<li>Options <code>to_host</code> and <code>from_host</code> specify files and directories send before task execution and retrieve after task execution, respectively.</li>
+<li>Use of named path could make your workflow more portable and easier to read.  </li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -14181,7 +14187,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-map_vars">Option <code>map_vars</code><a class="anchor-link" href="#Option-map_vars"></a></h3>
+<h2 id="Translation-of-input-and-output-paths">Translation of input and output paths<a class="anchor-link" href="#Translation-of-input-and-output-paths"></a></h2>
 </div>
 </div>
 </div>
@@ -14189,25 +14195,10 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In addition to <code>input</code> (<code>_input</code>), <code>output</code> (<code>_output</code>), <code>depends</code> (<code>_depends</code>) that are defined implicitly by <code>input:</code>, <code>output:</code> and <code>depends:</code> statements, you can specify additional variables that will be translated from local to remote host. This option accepts paths int he format of <code>str</code> or sequence (<code>list</code>, <code>tuple</code>, <code>set</code> etc) of <code>str</code> and will be mapped to variable of the same type (with paths replaced by remote paths on remote host).</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-workdir">Option <code>workdir</code><a class="anchor-link" href="#Option-workdir"></a></h3><p>Default to current working directory.</p>
-<p>Option <code>workdir</code> controls the working directory of the task. For example, the following step downloads a file to the <code>resource_dir</code> using command <code>wget</code>.</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-
-<span class="n">task</span><span class="p">:</span> <span class="n">workdir</span><span class="o">=</span><span class="n">resource_dir</span>
-
-<span class="n">run</span><span class="p">:</span>
-  <span class="n">wget</span> <span class="n">a_url</span> <span class="o">-</span><span class="n">O</span> <span class="n">filename</span>
-</pre></div>
-<p>Runtime option <code>workdir</code> will be translated to remote host if the task is executed remotely.</p>
+<p>When local and remote hosts do not share file systems (or share only some file systems), things can get a bit complicated because SoS will need to decide what paths to use on the remote host. There are a few things to understand here:</p>
+<p><strong>The current project directory, and all input, output and dependent files that are involved need to be under paths defined for local and remote host.</strong> This is usually not a problem if you are working under your home directory and you have <code>home</code> defined under <code>paths</code> of both local and remote hosts, but can become more complicated if your tasks involves system directories such as <code>resource</code>, <code>temp</code>, and <code>scratch</code> that are outside of <code>home</code>. In these cases, all involved directories need to be defined for both local and remote hosts.</p>
+<p><strong>Unless specified otherwise, the tasks will be executed under the remote version of the current working directory.</strong>. That is to say, the execution of tasks will leave files on remote hosts that will not be automatically removed, and in a worse scenario <strong>might overwrite remote files without warning</strong>. This is why we recommend that you set remote <code>home</code> to a directory other than the true <code>home</code> (e.g. <code>/home/user_name/scratch</code>, or <code>/home/user_name/sos_temp</code>). In this way SoS will write to sos-specified directories on remote hosts and will not containminate your real <code>home</code> directory.</p>
+<p><strong>Unless specified otherwise, input and dependent files will be copied to remote host before execution, and output files will be copied to local host after the completion of the task.</strong> It is therefore important for you to plan ahead and avoid synchronization of large files that should stay on remote hosts.</p>
 
 </div>
 </div>
@@ -14216,7 +14207,126 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-to_host">Option <code>to_host</code><a class="anchor-link" href="#Option-to_host"></a></h3>
+<h2 id="Working-directory-of-tasks-(Option-workdir)">Working directory of tasks (Option <code>workdir</code>)<a class="anchor-link" href="#Working-directory-of-tasks-(Option-workdir)"></a></h2><p>The <code>workdir</code> of task is default to the current working directory, or, in the case of remote execution, the remote counterpart of the current working directory.</p>
+<p>Option <code>workdir</code> controls the working directory of the task. For example, the following step downloads a file to the <code>resource</code> directory using <a href="download.html">action <code>download</code></a>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">task: queue='localhost', workdir='resource'
+
+download:
+  ftp://speedtest.tele2.net/512KB.zip</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: 85ea891331ab4bcb <span class="sos_highlight">re-execute completed</span></div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="task_macpro_85ea891331ab4bcb_afb97088-bddf-498a-84b8-24a91d0f4611" class="task_table completed">
+<tr>
+  <td class="task_icon">
+    <i id="task_status_icon_macpro_85ea891331ab4bcb_afb97088-bddf-498a-84b8-24a91d0f4611" class="fa fa-2x fa-fw fa-check-square-o"
+    null null null></i>
+  </td>
+  <td class="task_id">
+    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>85ea891331ab4bcb<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'85ea891331ab4bcb', queue: 'macpro'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'85ea891331ab4bcb', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'85ea891331ab4bcb', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'85ea891331ab4bcb', queue: 'macpro'})"></i></div></pre></span>
+  </td>
+  <td class="task_tags">
+    <span id="status_tags_macpro_85ea891331ab4bcb_afb97088-bddf-498a-84b8-24a91d0f4611"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_5057fa441d6e1755">5057fa441d6e1755<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'5057fa441d6e1755', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'5057fa441d6e1755', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'5057fa441d6e1755', queue: 'macpro'})"></i></div></pre><pre class="task_tags task_tag_scratch_0">scratch_0<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'scratch_0', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'scratch_0', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'scratch_0', queue: 'macpro'})"></i></div></pre><pre class="task_tags task_tag_user_guide">user_guide<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'user_guide', queue: 'macpro'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'user_guide', queue: 'macpro'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'user_guide', queue: 'macpro'})"></i></div></pre></span>
+  </td>
+  <td class="task_timer">
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_macpro_85ea891331ab4bcb_afb97088-bddf-498a-84b8-24a91d0f4611" class="completed" datetime="1577509858691.54">Ran for < 5 seconds</time></pre>
+  </td>
+  <td class="task_status">
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_macpro_85ea891331ab4bcb_afb97088-bddf-498a-84b8-24a91d0f4611">completed</span></pre>
+  </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">!ls resource</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>512KB.zip
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Sending-additional-files-before-task-execution-(Option-to_host)">Sending additional files before task execution (Option <code>to_host</code>)<a class="anchor-link" href="#Sending-additional-files-before-task-execution-(Option-to_host)"></a></h2>
 </div>
 </div>
 </div>
@@ -14228,14 +14338,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <ul>
 <li>A single file or directory (with respect to local file system), or</li>
 <li>A list of files or directories, or</li>
-<li>A dictinary of <code>{local: remote}</code> file maps that specify how local files are synchronized to the remote host.</li>
 </ul>
-<p>In the first two cases, the files or directories will be translated using the host-specific path maps. In the last case, the <code>remote</code> path (that should be relative to the remote file system) will be used without translating <code>local</code> file.</p>
-<p>Note that</p>
-<ol>
-<li>If a symbolic link is specified in <code>to_host</code>, both the symbolic link and the path it refers to would be synchronized to the remote host.</li>
-<li>If the task is executed on the local host (remote host coincide with local host), <code>to_host</code> is usually ignored unless it is specified in the third dictionary format, which copies files to another location before task execution. </li>
-</ol>
+<p>The files or directories will be translated using the host-specific path maps. Note that if a symbolic link is specified in <code>to_host</code>, both the symbolic link and the path it refers to would be synchronized to the remote host.</p>
 
 </div>
 </div>
@@ -14244,7 +14348,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Option-from_host">Option <code>from_host</code><a class="anchor-link" href="#Option-from_host"></a></h3>
+<h2 id="Retrieving-additional-files-after-task-completion-(Option-from_host)">Retrieving additional files after task completion (Option <code>from_host</code>)<a class="anchor-link" href="#Retrieving-additional-files-after-task-completion-(Option-from_host)"></a></h2>
 </div>
 </div>
 </div>
@@ -14256,9 +14360,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <ul>
 <li>A single file or directory (with respect to local file system), or</li>
 <li>A list of files or directories, or</li>
-<li>A dictinary of <code>{local: remote}</code> file maps that specify how local files are synchronized from the remote host.</li>
 </ul>
-<p>In the first two cases, the files or directories will be translated using the host-specific path maps to determine what remote files to retrieve. In the last case, the <code>remote</code> path (that should be relative to the remote file system) will be used without path translation. If the task is executed on the local host (remote host coincide with local host), this option is usually ignored unless it is specified in the third dictionary format, which copies files to another location after the task is executed.</p>
+<p>The files or directories will be translated using the host-specific path maps to determine what remote files to retrieve.</p>
 
 </div>
 </div>
@@ -14267,7 +14370,9 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><p>*</p>
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="task_statement.html">The <code>task_statement</code></a></li>
+</ul>
 
 </div>
 </div>

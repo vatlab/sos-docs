@@ -14168,7 +14168,11 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <ul>
 <li><strong>Difficulty level</strong>: intermediate</li>
 <li><strong>Time need to lean</strong>: 30 minutes or less</li>
-<li><strong>Key points</strong>:</li>
+<li><strong>Key points</strong>:<ul>
+<li>Using <code>container='library:xxx'</code> etc will enable <code>engine='singularity'</code></li>
+<li><code>engine='singularity'</code> is explicitly needed for docker images.  </li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -14178,7 +14182,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Before you run any script using singularity, please check if <code>singularity</code> is installed by checking the availability of command <code>singularity</code>. Also, it would be helpful for you to read the <a href="https://www.sylabs.io/docs/">sigularity user's guide</a> or some online tutorial to understand how singularity works before you try to use singularity in SoS.</p>
+<p>Before you run any script using singularity, please check if <code>singularity</code> is installed by checking the availability of command <code>singularity</code>. Also, it would be helpful for you to read the <a href="https://sylabs.io/guides/3.3/user-guide/index.html">sigularity user's guide</a> or some online tutorial to understand how singularity works before you try to use singularity in SoS.</p>
 <p>Although running singularity images does not need root privilege, building singularity images often requires <code>sudo</code> access. SoS provides an option <code>sudo=True</code> to the <code>singularity_build</code> action (an equivalence to command <code>singularity build</code>) to execute the command in sudo mode, but it does not accept interactive input of password. So before running any <code>singularity_build</code> action with option <code>sudo=True</code>, please run <code>sudo -i</code> to enter sudo mode, or add your username as a sudo user without password (google "sudo without password" for instructions). The latter is not safe but can be very convenient for you to prepare singularity images on a personal linux workstation.</p>
 
 </div>
@@ -14196,7 +14200,7 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS executes scripts with a singularity container by calling command <code>singularity exec</code> with appropriate parameters. For example, if you specify a container with a <code>shub:</code> schema, sos will first pull the image, save it as a local image, and use <code>singularity exec</code> to run it:</p>
+<p>SoS executes scripts with a singularity container by calling command <code>singularity exec</code> with appropriate parameters. For example, if you specify a container with a <code>library:</code> schema, sos will first pull the image, save it as a local image, and use <code>singularity exec</code> to run it:</p>
 
 </div>
 </div>
@@ -14209,8 +14213,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 <div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
-      class="sos-source" name="SoS">%run
-run: container='shub://vsoch/singularity-hello-world:master'
+      class="sos-source" name="SoS">%run -v1
+sh: container='library://alpine:latest'
   cat /etc/os-release</textarea>
   </div>
 </div>
@@ -14226,66 +14230,15 @@ run: container='shub://vsoch/singularity-hello-world:master'
     <div class="prompt"></div>
 
 
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
-</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>HINT: Pulling image shub://vsoch/singularity-hello-world:master to vsoch-singularity-hello-world-master.simg
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_logging sos_warning">WARNING: WARNING client.py:242 - Failed to pull shub://vsoch/singularity-hello-world:master: [31mFATAL:  [0m While pulling shub image: failed to get manifest for: shub://vsoch/singularity-hello-world:master: 502 Bad Gateway
-
-</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_logging sos_error">ERROR: ERROR step_executor.py:1743 - default (id=1247662052776750943) returns an error. - None
-</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[default]: [0]: 
----------------------------------------------------------------------------
-ValueError                                Traceback (most recent call last)
-script_3016194913819825155 in &lt;module&gt;
-----&gt; run(&#39;cat /etc/os-release\n&#39;, container=&#39;shub://vsoch/singularity-hello-world:master&#39;)
-      
-
-ValueError: Image vsoch-singularity-hello-world-master.simg does not exist after pulling shub://vsoch/singularity-hello-world:master.</span>
+<pre>HINT: Pulling image library://alpine:latest to alpine-latest.sif
+NAME=&#34;Alpine Linux&#34;
+ID=alpine
+VERSION_ID=3.9.2
+PRETTY_NAME=&#34;Alpine Linux v3.9&#34;
+HOME_URL=&#34;https://alpinelinux.org/&#34;
+BUG_REPORT_URL=&#34;https://bugs.alpinelinux.org/&#34;
+[    1.336892] reboot: Power down
 </pre>
 </div>
 </div>
@@ -14312,9 +14265,11 @@ ValueError: Image vsoch-singularity-hello-world-master.simg does not exist after
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%rerun -n</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run -v1 -n
+sh: container='library://alpine:latest'
+  cat /etc/os-release</textarea>
   </div>
 </div>
 
@@ -14329,11 +14284,10 @@ ValueError: Image vsoch-singularity-hello-world-master.simg does not exist after
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>File contains parsing errors: 
-	[line  2]: %rerun -n
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>HINT: singularity exec  alpine-latest.sif /bin/sh /Users/bpeng1/sos/sos-docs/src/user_guide/tmpgc4nzxad/singularity_run_74690.sh
+cat /etc/os-release
 
-Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#39;, 1, 1, &#39;%rerun -n\n&#39;))
 </pre>
 </div>
 </div>
@@ -14351,8 +14305,8 @@ Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>As you can see, the docker command looks similar to</p>
 
-<pre><code>singularity exec singularityhub-ubuntu.simg /bin/bash -ev /path/to/a/temp/script</code></pre>
-<p>Basically, SoS pulls the image and runs command <code>singularity exec</code> to execte the script with <code>/bin/bash</code> with the singularity image.</p>
+<pre><code>singularity exec alpine-latest.sif /bin/sh /path/to/a/temp/script</code></pre>
+<p>Basically, SoS pulls the image and runs command <code>singularity exec</code> to execte the script with <code>/bin/sh</code> with the singularity image.</p>
 
 </div>
 </div>
@@ -14371,15 +14325,46 @@ Invalid statements: SyntaxError(&#39;invalid syntax&#39;, (&#39;&lt;string&gt;&#
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
-      class="sos-source" name="SoS">%run
-run: container='docker://ubuntu', engine='singularity'
+      class="sos-source" name="SoS">%run -v1
+sh: container='docker://ubuntu', engine='singularity'
   cat /etc/os-release</textarea>
   </div>
 </div>
 
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>HINT: Pulling image docker://ubuntu to ubuntu.sif
+NAME=&#34;Ubuntu&#34;
+VERSION=&#34;18.04.3 LTS (Bionic Beaver)&#34;
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME=&#34;Ubuntu 18.04.3 LTS&#34;
+VERSION_ID=&#34;18.04&#34;
+HOME_URL=&#34;https://www.ubuntu.com/&#34;
+SUPPORT_URL=&#34;https://help.ubuntu.com/&#34;
+BUG_REPORT_URL=&#34;https://bugs.launchpad.net/ubuntu/&#34;
+PRIVACY_POLICY_URL=&#34;https://www.ubuntu.com/legal/terms-and-policies/privacy-policy&#34;
+VERSION_CODENAME=bionic
+UBUNTU_CODENAME=bionic
+[    4.659910] reboot: Power down
+</pre>
+</div>
+</div>
+
+</div>
 </div>
 
 </div>
@@ -14416,6 +14401,13 @@ run: container='docker://ubuntu', engine='singularity'
 <td>Image will be pulled to a local image</td>
 </tr>
 <tr>
+<td><code>library://tag</code></td>
+<td><code></code></td>
+<td>singularity</td>
+<td><code>container='library://GodloveD/lolcow'</code></td>
+<td>Image will be pulled to a local image</td>
+</tr>
+<tr>
 <td><code>name</code></td>
 <td><code>singularity</code></td>
 <td>singularity</td>
@@ -14446,6 +14438,404 @@ run: container='docker://ubuntu', engine='singularity'
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running-script-with-singularity-image">Running script with singularity image<a class="anchor-link" href="#Running-script-with-singularity-image"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although singularity accepts <code>docker://</code> and <code>shub://</code> container tags, SoS always pull the image and build a local <code>.sif</code> file before executing it. If the container is used again, the local <code>simg</code> file will be used directly.</p>
+<p>For example, the following action will pull <code>docker://ubuntu</code> and create <code>ubuntu.simg</code></p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='docker://ubuntu', engine='singularity'
+  ls /</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">Pulling image docker://ubuntu to ubuntu.sif</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+ls /
+Users  boot  environment  home	lib64  mnt  proc  run	singularity  sys  usr
+bin    dev   etc	  lib	media  opt  root  sbin	srv	     tmp  var
+[    1.372208] reboot: Power down
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and you can use <code>container='ubuntu.sif'</code> directly if you have an exiting <code>ubuntu.sif</code> file</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif'
+  ls /</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /
+Users  boot  environment  home	lib64  mnt  proc  run	singularity  sys  usr
+bin    dev   etc	  lib	media  opt  root  sbin	srv	     tmp  var
+[    1.383944] reboot: Power down
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Binding-directories-(option-bind)">Binding directories (option <code>bind</code>)<a class="anchor-link" href="#Binding-directories-(option-bind)"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A very useful feature about singularity is that you can use the container almost as a local command with access to local file system,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif'
+  wc -l ~/.bashrc</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>wc -l ~/.bashrc
+171 /Users/bpeng1/.bashrc
+[    1.347007] reboot: Power down
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, singularity only binds current working directory, <code>/tmp</code>, and your home directory. Other directories would be from within the image, or appear to be missing even if they exist on the host file system. For example, the following command lists <code>/usr/local</code> inside the image:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif'
+  ls /usr/local</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /usr/local
+bin  etc  games  include  lib  man  sbin  share  src
+[    1.359987] reboot: Power down
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and <code>/usr/local/var</code> would appear to be missing</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif'
+  ls /usr/local/var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /usr/local/var
+ls: cannot access &#39;/usr/local/var&#39;: No such file or directory
+[    1.367232] reboot: Power down
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To allow singularity to see more directories, you can add one or more parameters to the <code>bind</code> parameter. For example, with <code>bind='/usr/local'</code>, the <code>singularity exec</code> command lists directory <code>/usr/local</code> from the host filesystem:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif', bind='/usr/local'
+  ls /usr/local</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /usr/local
+Caskroom  Frameworks  bin  include  lib      man  sbin	 texlive
+Cellar	  Homebrew    etc  jamf     libexec  opt  share  var
+[    1.370214] reboot: Power down
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and we can see <code>/usr/local/var</code> actually exists</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif', bind='/usr/local'
+  ls /usr/local/var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /usr/local/var
+cache  db  homebrew  log  run
+[    4.705033] reboot: Power down
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Parameter <code>bind</code> accepts <code>host_dir:img_dir</code> pairs to mount <code>host_dir</code> from host as <code>img_dir</code> seen by the image</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run -v1
+run: container='ubuntu.sif', bind='/usr/local/var:/myvar'
+  ls /myvar</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Building-singularity-images">Building singularity images<a class="anchor-link" href="#Building-singularity-images"></a></h2>
 </div>
 </div>
@@ -14458,13 +14848,31 @@ run: container='docker://ubuntu', engine='singularity'
 </div>
 </div>
 </div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS"><b style='color:red'>This option does not work on mac due to perhaps a platform limitation</b></textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
   
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Action <code>singularity_build</code> calls command <code>singularity build</code> with appropriate command line options. The SoS equivalence of the example in the singularity user's guide</p>
 
-<pre><code>singularity build lolcow.simg shub://GodloveD/lolcow</code></pre>
+<pre><code>singularity build lolcow.sif shub://GodloveD/lolcow</code></pre>
 <p>is the <code>singularity_build</code> action with options <code>src</code> and <code>dest</code>:</p>
 
 </div>
@@ -14475,13 +14883,44 @@ run: container='docker://ubuntu', engine='singularity'
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
    <textarea rows="1"
-      class="sos-source" name="SoS">singularity_build(src='shub://GodloveD/lolcow', dest='lolcow.simg')</textarea>
+      class="sos-source" name="SoS">singularity_build(src='library://GodloveD/lolcow', dest='lolcow.sif')</textarea>
   </div>
 </div>
 
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-fg">FATAL:  </span> Only remote builds are supported on this platform
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-intense-fg">[0]: To reproduce this error please run 
+  /usr/local/bin/singularity build lolcow.sif library://GodloveD/lolcow
+from command line</span></pre>
+</div>
+</div>
+
+</div>
 </div>
 
 </div>
@@ -14529,10 +14968,10 @@ run: container='docker://ubuntu', engine='singularity'
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
    <textarea rows="11"
-      class="sos-source" name="SoS">singularity_build: dest='lolcow.simg', sudo=True
+      class="sos-source" name="SoS">singularity_build: dest='lolcow.sif', sudo=True
     Bootstrap: docker
     From: ubuntu:16.04
     %post
@@ -14546,6 +14985,42 @@ run: container='docker://ubuntu', engine='singularity'
   </div>
 </div>
 
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-fg">FATAL:  </span> Only remote builds are supported on this platform
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-intense-fg">[0]: 
+---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+script_2496832107755593776 in &lt;module&gt;
+----&gt; singularity_build(&#39;Bootstrap: docker\nFrom: ubuntu:16.04\n%post\n    apt-get -y update\n    apt-get -y install fortune cowsay lolcat\n%environment\n    export LC_ALL=C\n    export PATH=/usr/games:$PATH\n%runscript\n    fortune | cowsay | lolcat \n&#39;, dest=&#39;lolcow.sif&#39;, sudo=True)
+      
+
+FileNotFoundError: 2</span></pre>
+</div>
+</div>
+
+</div>
 </div>
 
 </div>
@@ -14565,244 +15040,14 @@ run: container='docker://ubuntu', engine='singularity'
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Running-script-with-singularity-image">Running script with singularity image<a class="anchor-link" href="#Running-script-with-singularity-image"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Although singularity accepts <code>docker://</code> and <code>shub://</code> container tags, SoS always pull the image and build a local <code>.simg</code> file before executing it. If the container is used again, the local <code>simg</code> file will be used directly.</p>
-<p>For example, the following action will pull <code>docker://ubuntu</code> and create <code>ubuntu.simg</code></p>
+<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
+<li><a href="docker.html">Using docker with SoS</a></li>
+<li><a href="sos_actions.html">SoS actions</a></li>
+</ul>
 
 </div>
 </div>
 </div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">run: container='docker://ubuntu', engine='singularity'
-  ls /</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>and you can use <code>container='ubuntu.simg'</code> directly if you have an exiting <code>ubuntu.simg</code> file</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">run: container='ubuntu.simg'
-  ls /</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Binding-directories-(option-bind)">Binding directories (option <code>bind</code>)<a class="anchor-link" href="#Binding-directories-(option-bind)"></a></h3>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>A very useful feature about singularity is that you can use the container almost as a local command with access to local file system,</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">run: container='ubuntu.simg'
-  wc -l ~/.bashrc</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>However, singularity only binds current working directory, <code>/tmp</code>, and your home directory. Other directories would be from within the image, or appear to be missing even if they exist on the host file system. For example, the following command lists <code>/usr/local</code> inside the image:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">run: container='ubuntu.simg'
-  ls /usr/local</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>and <code>/usr/local/var</code> would appear to be missing</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">run: container='ubuntu.simg'
-  ls /usr/local/var</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To allow singularity to see more directories, you can add one or more parameters to the <code>bind</code> parameter. For example, with <code>bind='/usr/local'</code>, the <code>singularity exec</code> command lists directory <code>/usr/local</code> from the host filesystem:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">run: container='ubuntu.simg', bind='/usr/local'
-  ls /usr/local</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>and we can see <code>/usr/local/var</code> actually exists</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
-   <textarea rows="2"
-      class="sos-source" name="SoS">run: container='ubuntu.simg', bind='/usr/local'
-  ls /usr/local/var</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Parameter <code>bind</code> accepts <code>host_dir:img_dir</code> pairs to mount <code>host_dir</code> from host as <code>img_dir</code> seen by the image</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run -v3
-run: container='ubuntu.simg', bind='/usr/local/var:/myvar'
-  ls /myvar</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
     </div>
   </div>
 
