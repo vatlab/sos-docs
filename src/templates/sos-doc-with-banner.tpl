@@ -1,5 +1,7 @@
 {%  extends 'sos-cm-toc' %}
 
+{% import 'parts/hover_doc.tpl' as hover_doc %}
+
 {% import 'parts/doc_panel.tpl' as doc_panel %}
 {% import 'parts/page_header.tpl' as page_header %}
 {% import 'parts/toc_header.tpl' as toc_header %}
@@ -11,6 +13,7 @@
 
 {{ super() }}
 
+{{ hover_doc.css() }}
 {{ page_header.css() }}
 {{ toc_header.css() }}
 {{ doc_panel.css('toc_panel') }}
@@ -30,6 +33,7 @@
 {{ super() }}
 
 {{ edit_button.js() }}
+{{ hover_doc.js() }}
 
 {# We need to determine the master list. For sos documentation, the list
  is defined in ../../js/docs.js and we will need to decide which one to
