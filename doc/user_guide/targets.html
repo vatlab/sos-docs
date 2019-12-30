@@ -13793,7 +13793,6 @@ textarea.sos-source {
 #toc > .toc-list .toc-list .toc-list a {
   margin: 0;
   padding-left: 40px;
-  font-size: 12px;
 }
 
 a.toc-link {
@@ -14271,10 +14270,11 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Targets of type <code>file_target</code> represents files on a file system. The type <code>`file_target</code> are usually not used explicitly because SoS treats string type targets as <code>file_target</code>. <code>file_target</code></p>
+<p>Targets of type <code>file_target</code> represents files on a file system. The type <code>file_target</code> are usually not used explicitly because SoS treats string type targets as <code>file_target</code>. <code>file_target</code></p>
 <ul>
 <li>is derived from Python <a href="https://docs.python.org/3/library/pathlib.html">pathlib.Path</a></li>
 <li>automatically expands user from path starting with <code>~</code></li>
+<li>automatically expands named path from <code>CONFIG['hosts'][current_host]['paths'][name]</code></li>
 <li>allows you to extend <code>path</code> with a <code>+</code> operation</li>
 <li>has a special <code>zap</code> operation to replace (large) files with their signatures</li>
 <li>accepts a list of format options to easily format path in different formats</li>
@@ -15719,7 +15719,98 @@ Generating test2.bam.bai from test2.bam
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The third addition of the <code>path</code> type is <strong>a <code>zap()</code> function that removes the file and creates a <code>{filename}.zapped</code> file with file signatures</strong>. This <code>.zapped</code> file is considered to be "existent" by the runtime signature system so that a workflow step will not be repeated of some of its input or output files are zapped, unless the actually files are needed. This function is usually used as <code>sos_targets.zap()</code> to zap all input or output files, and will be demonstrated in detail in <a href="sos_datatypes.html">SoS datatypes</a>.</p>
+<h3 id="Named-paths-(experimental)">Named paths (experimental)<a class="anchor-link" href="#Named-paths-(experimental)"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS uses <a href="config_files.html">configuration files</a> to <a href="host_setup.html">define local and external hosts</a>. One of the host properties are <code>paths</code>, which defines paths on a host that can be mapped to other hosts to <a href="task_files.html">facilitate file synchronization</a>. These <code>paths</code> are host-specific and can be used to specify paths of a <code>file_target</code>.</p>
+<div class="bs-callout bs-callout-primary" role="alert">
+    <h4>Named paths</h4>
+    <b>Named paths</b> are paths that are defined in host configurations and is represented by <code>#name</code> as the first piece of a <code>file_target</code>
+ </div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Similar to <code>~</code> that represent home directory of the current user and <code>~user</code> represents home directory of user <code>user</code>, named paths are presented as <code>#name</code> as the first piece of the path. For example, with a <code>localhost</code> defined with</p>
+<div class="highlight"><pre><span></span><span class="nt">hosts</span><span class="p">:</span>
+    <span class="nt">my_host</span><span class="p">:</span>
+        <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost</span>
+        <span class="nt">paths</span><span class="p">:</span>
+            <span class="nt">home</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/home/{user_name}</span>
+</pre></div>
+<p><code>#home</code> is expanded to <code>/home/bpeng1</code> in the following example.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">file_target('#home/sos/sos-docs')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[1]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>file_target(&#39;/Users/bpeng1/sos/sos-docs&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Named paths could make your SoS workflow more portable because it allows you to move a workflow to another machine, and refer to paths such as <code>#home</code>, <code>#project</code> or <code>#scratch</code> directly on that machine, provided that the named paths exists on that machine. This feature is mostly used for the use of absolute paths for remote tasks and is discussed in more details in <a href="task_files.html">path translation and file synchronization</a>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="zap()-function"><code>zap()</code> function<a class="anchor-link" href="#zap()-function"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another addition of the <code>path</code> type is <strong>a <code>zap()</code> function that removes the file and creates a <code>{filename}.zapped</code> file with file signatures</strong>. This <code>.zapped</code> file is considered to be "existent" by the runtime signature system so that a workflow step will not be repeated of some of its input or output files are zapped, unless the actually files are needed. This function is usually used as <code>sos_targets.zap()</code> to zap all input or output files, and will be demonstrated in detail in <a href="sos_datatypes.html">SoS datatypes</a>.</p>
 
 </div>
 </div>
