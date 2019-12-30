@@ -33,7 +33,7 @@ var guides=[
  "parameter_statement", 
  "config_files", 
  "targets", 
- "sos_datatypes", 
+ "sos_targets", 
  "sos_functions", 
  "extending_sos", 
  "input_statement", 
