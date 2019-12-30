@@ -10,7 +10,7 @@
 }
 
 .toc-wrapper {
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .toc-header {
