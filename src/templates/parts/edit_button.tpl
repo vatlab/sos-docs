@@ -30,6 +30,7 @@
 .edit-me .btn-primary {
     background-color: transparent;
     border-color: transparent;
+    padding-top: 15px;
 }
 
 .edit-me .btn-primary:hover {
