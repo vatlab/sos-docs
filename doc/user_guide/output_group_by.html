@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13021,6 +13023,45 @@ ul.typeahead-list  > li > a.pull-right {
 .highlight .vm { color: #19177C } /* Name.Variable.Magic */
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
     </style>
+<style type="text/css">
+    
+/* Temporary definitions which will become obsolete with Notebook release 5.0 */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+    </style>
 
 
 <style type="text/css">
@@ -13729,7 +13770,7 @@ textarea.sos-source {
 <style>
 
 /* The Table of Contents container element */
-.toc-container {
+.toc-wrapper {
     flex-flow: column;
     display: flex;
 
@@ -13745,14 +13786,6 @@ textarea.sos-source {
 }
 
 .toc-header {
-  flex: 0 1 auto;
-}
-
-.toc-before {
-  flex: 0 1 auto;
-}
-
-.toc-after {
   flex: 0 1 auto;
 }
 
@@ -13787,12 +13820,14 @@ textarea.sos-source {
 #toc > .toc-list .toc-list a {
   margin: 0;
   padding-left: 25px;
+  font-size: 12px;
 }
 
 
 #toc > .toc-list .toc-list .toc-list a {
   margin: 0;
   padding-left: 40px;
+  font-size: 12px;
 }
 
 a.toc-link {
@@ -14013,15 +14048,19 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     color: #6197d5 ;
 }
 
-
+/*
 .toc-before {
     background: lightgray;
 }
 
+.toc {
+    background: lightgray;
+}
 
 .toc-after {
     background: lightgray;
 }
+*/
 
 </style>
 
@@ -14160,7 +14199,7 @@ let sos_keywords = new Set([
   'get_output', 'expand_pattern',
   // task options
   'walltime', 'cores', 'mem', 'queue', 'to_host', 'nodes',
-  'from_host', 'trunk_size', 'trunk_workers', 'workdir',
+  'from_host', 'map_vars', 'trunk_size', 'trunk_workers', 'workdir',
   'shared', 'env', 'prepend_path', 'tags',
   // targets
   'file_target', 'executable', 'sos_variable', 'env_variable',
@@ -14204,18 +14243,12 @@ function add_hoverdoc(){
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <div class="toc-container">
+      <div class="toc-wrapper">
         <div class="toc-header">
-        </div>
-        <div class="toc-wrapper">
-        <div class="toc-before">
         </div>
         <div id="toc" class="toc">
         </div><!--/.well -->
-        <div class="toc-after">
-        </div>
       </div>
-    </div>
     </div><!--/span-->
     <div class="col-xs-12 col-sm-8 col-md-9">
       
@@ -15066,7 +15099,6 @@ Input of substep is b.txt, output of substep is cke.bak
 
 
 
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js"></script>
 
 <script>
@@ -15100,10 +15132,10 @@ Input of substep is b.txt, output of substep is cke.bak
         ++counts[parseInt(headings[i].tagName[1])-1]
       }
       // now, we remove the first 1 if it is the first tag, and if
-      // it has only one, and if it is the only header
+      // it has only one, and if it is not the only header
       let first = counts.findIndex(x => x > 0);
       if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
-         && parseInt(headings[0].tagName[1]) === first + 1 && false) {
+         && parseInt(headings[0].tagName[1]) === first + 1) {
           counts[first] = 0;
       }
       //
@@ -15143,7 +15175,6 @@ Input of substep is b.txt, output of substep is cke.bak
   updateTOC()
 
 </script>
-
 
 
 
