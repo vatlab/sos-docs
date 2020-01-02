@@ -59,15 +59,19 @@
     color: #6197d5 ;
 }
 
-
+/*
 .toc-before {
     background: lightgray;
 }
 
+.toc {
+    background: lightgray;
+}
 
 .toc-after {
     background: lightgray;
 }
+*/
 
 </style>
 
