@@ -78,9 +78,14 @@
 }
 
 .toc-item > a, .toc-header-2, .toc-header-3 {
-  color: #008cba;
+  /* color: #126dce; */
   font-family: "Source Sans Pro", sans-serif;
 }
+
+.toc-header-2, .toc-header-3 {
+  color: #126dce;
+}
+
 </style>
 
 {% endmacro %}
@@ -104,7 +109,7 @@ function add_nav_header() {
     let aftertoc = document.getElementsByClassName('toc-after');
     let toc = document.getElementById('toc');
 
-    let idx = {{ header_list }}.findIndex(item => item.title == filename.replace(/\.[^/.]+$/, ""));
+    let idx = {{ header_list }}.findIndex(item => item.name == filename.replace(/\.[^/.]+$/, ""));
 
     let prev_link = ''
     let next_link = ''
