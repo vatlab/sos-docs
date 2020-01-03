@@ -198,8 +198,7 @@ function add_nav_header() {
         if ( {{header_list}}[i].header === 2) {
             let link = {{header_list}}[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
             pre_elements += `<li class="toc-item toc-header-${ {{header_list}}[i].header }"><a href="${link}">${ {{ header_list}}[i].title }</a></li>`
-        }
-        else if ( {{header_list}}[i].header == 3) {
+        } else if ( {{header_list}}[i].header == 3) {
             pre_elements += `<li class="toc-item toc-header-${ {{header_list}}[i].header }">${ {{ header_list}}[i].title }</li>`
         } else {
             pre_elements += `<li class="toc-item"><a href="javascript:loadPage('{{ '${' }}{{ header_list }}[i].name}');">${ {{header_list}}[i].title}</a></li>`;
@@ -213,9 +212,8 @@ function add_nav_header() {
     for (let i = idx + 1; i < {{header_list}}.length; ++i) {
         if ( {{header_list}}[i].header === 2) {
             let link = {{header_list}}[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
-            pre_elements += `<li class="toc-item toc-header-${ {{header_list}}[i].header }"><a href="${link}">${ {{ header_list}}[i].title }</a></li>`
-        }
-        else if ( {{header_list}}[i].header == 3) {
+            post_elements += `<li class="toc-item toc-header-${ {{header_list}}[i].header }"><a href="${link}">${ {{ header_list}}[i].title }</a></li>`
+        } else if ( {{header_list}}[i].header == 3) {
             post_elements += `<li class="toc-item toc-header-${ {{header_list}}[i].header }">${ {{ header_list}}[i].title }</li>`
         } else {
             post_elements += `<li class="toc-item"><a href="javascript:loadPage('{{ '${' }}{{ header_list }}[i].name}');">${ {{header_list}}[i].title}</a></li>`;
