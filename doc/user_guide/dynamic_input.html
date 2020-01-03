@@ -13957,6 +13957,8 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 .toc-container {
     margin-top: 80px;
     max-height: calc(100% - 140px);
+    box: 0px;
+    margin-left: 0px;
 }
 
 .toc-wrapper {
@@ -14009,20 +14011,26 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     color: #6197d5 ;
 }
 
-/*
-.toc-before {
-    background: lightgray;
+.toc-header-2 {
+   padding-top: 10px;
+   padding-bottom: 10px;
+   font-size: 200%;
+   padding-left: 5px;
+   font-weight: 700;
 }
 
-.toc {
-    background: lightgray;
+.toc-header-3 {
+   padding-top: 6px;
+   padding-bottom: 6px;
+   font-size: 150%;
+   padding-left: 5px;
+   font-weight: 400;
 }
 
-.toc-after {
-    background: lightgray;
+.toc-item > a, .toc-header-2, .toc-header-3 {
+  color: #008cba;
+  font-family: "Source Sans Pro", sans-serif;
 }
-*/
-
 </style>
 
 
@@ -15089,15 +15097,24 @@ function add_nav_header() {
     let aftertoc = document.getElementsByClassName('toc-after');
     let toc = document.getElementById('toc');
 
-    let idx = guides.indexOf(filename.replace(/\.[^/.]+$/, ""))
+    let idx = guides.findIndex(item => item.title == filename.replace(/\.[^/.]+$/, ""));
+
     let prev_link = ''
     let next_link = ''
-    if (idx != 0) {
-        prev_link = `<button title="${headers[idx - 1]}" onclick="loadPage('${guides[idx - 1]}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+
+    for (let i = idx - 1; i > 0; --i) {
+        if (!guides[i].header) {
+            prev_link = `<button title="${guides[i].title}" onclick="loadPage('${guides[i].name}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+            break;
+        }
     }
-    if (idx != guides.length - 1) {
-        next_link = `<button title="${headers[idx + 1]}" onclick="loadPage('${guides[idx + 1]}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+    for (let i = idx + 1; i < guides.length; ++i) {
+        if (!guides[i].header) {
+            next_link = `<button title="${guides[i].title}" onclick="loadPage('${guides[i].name}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+            break;
+        }
     }
+
     header[0].outerHTML = `
         <div class="toc-header">
             <div class="row">
@@ -15113,7 +15130,11 @@ function add_nav_header() {
     `
     pre_elements = '<div class="toc-before"><ul class="toc-list nav nav-list">';
     for (let i = 0; i < idx; ++i) {
-        pre_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i]}');">${ headers[i]}</a></li>`;
+        if ( guides[i].header ) {
+            pre_elements += `<li class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
+        } else {
+            pre_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
+        }
     }
 
     pre_elements += '</ul></div>';
@@ -15121,7 +15142,11 @@ function add_nav_header() {
 
     post_elements = '<div class="toc-after"><ul class="toc-list nav nav-list">';
     for (let i = idx + 1; i < guides.length; ++i) {
-        post_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i]}');">${ headers[i]}</a></li>`;
+        if ( guides[i].header ) {
+            post_elements += `<li class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
+        } else {
+            post_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
+        }
     }
     post_elements += '</ul></div>';
     aftertoc[0].outerHTML = post_elements;
