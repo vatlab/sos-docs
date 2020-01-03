@@ -4,7 +4,7 @@
 
 {% import 'parts/doc_panel.tpl' as doc_panel %}
 {% import 'parts/page_header.tpl' as page_header %}
-{% import 'parts/toc_header.tpl' as toc_header %}
+{% import 'parts/toc_nav.tpl' as toc_nav %}
 {% import 'parts/edit_button.tpl' as edit_button %}
 
 {% import 'parts/toc.tpl' as toc %}
@@ -15,7 +15,7 @@
 
 {{ hover_doc.css() }}
 {{ page_header.css() }}
-{{ toc_header.css() }}
+{{ toc_nav.css() }}
 {{ doc_panel.css('toc_panel') }}
 {{ edit_button.css() }}
 
@@ -51,7 +51,7 @@ let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.last
   1. name of the master list
   2. id of the notebook container.
 #}
-{{ toc_header.js('guides', 'notebook-container') }}
+{{ toc_nav.js('guides', 'notebook-container') }}
 
 {% endblock body %}
 

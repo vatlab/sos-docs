@@ -104,6 +104,37 @@
   color: #126dce;
 }
 
+.nav-links {
+    margin: 20px;
+    margin-top: 40px;
+    background-color: #f1f1f1;
+}
+
+.nav-next, .nav-prev {
+    font-size: 1.4em;
+    padding: 20px;
+    color: #000!important;
+}
+
+.nav-next {
+    text-align: right;
+    border-left: solid 10px white;
+}
+
+.nav-prev {
+    text-align: left;
+    border-right: solid 10px white;
+}
+
+.nav-next a, .nav-prev a {
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+div.nav-next a:hover, div.nav-prev a:hover {
+    color: #337ab7;
+}
+
 </style>
 
 {% endmacro %}
@@ -131,16 +162,20 @@ function add_nav_header() {
 
     let prev_link = ''
     let next_link = ''
+    let prev_nav = ''
+    let next_nav = ''
 
     for (let i = idx - 1; i > 0; --i) {
         if (!{{header_list}}[i].header) {
             prev_link = `<button title="{{ '${' }}{{ header_list }}[i].title}" onclick="loadPage('{{ '${' }}{{ header_list }}[i].name}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+            prev_nav = `<a href="javascript:loadPage('{{ '${' }}{{ header_list }}[i].name}')" ><i class="fa fa-arrow-left"></i>  &nbsp;   {{ '${' }}{{ header_list }}[i].title}</a>`;
             break;
         }
     }
     for (let i = idx + 1; i < {{ header_list}}.length; ++i) {
         if (!{{header_list}}[i].header) {
             next_link = `<button title="{{ '${' }}{{ header_list }}[i].title}" onclick="loadPage('{{ '${' }}{{ header_list }}[i].name}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+            next_nav = `<a href="javascript:loadPage('{{ '${' }}{{ header_list }}[i].name}')" >{{ '${' }}{{ header_list }}[i].title}  &nbsp; <i class="fa fa-arrow-right"></i></a>`;
             break;
         }
     }
@@ -190,6 +225,24 @@ function add_nav_header() {
     aftertoc[0].outerHTML = post_elements;
 
     toc.scrollIntoView();
+
+    if (next_nav) {
+        /* find notebook */
+        let notebook = document.getElementById('{{ notebook_id }}');
+
+        let nav_next = document.createElement('div');
+        nav_next.innerHTML = `
+        <div class='row nav-links'>
+            <div class="col-xs-6 col-sm-6 col-md-6 nav-prev">
+             ${prev_nav}
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 nav-next">
+                ${next_nav}
+            </div>
+        </div>
+        `;
+        notebook.appendChild(nav_next);
+    }
 }
 
 function replacePage(title, url, newdoc, pushState) {
