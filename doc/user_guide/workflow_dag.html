@@ -13773,10 +13773,6 @@ textarea.sos-source {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
-
-  li {
-    list-style: none;
-  }
 }
 
 #toc > .toc-list  a {
@@ -13969,7 +13965,9 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
     overflow-y: scroll;
 }
 
-
+#toc ul.toc-list.nav.nav-list {
+    padding-left: 5px;
+}
 
 .toc-header {
     background-color: #c3dbf7;
@@ -14056,6 +14054,37 @@ h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
 
 .toc-header-3 {
   color: #126dce;
+}
+
+.nav-links {
+    margin: 20px;
+    margin-top: 40px;
+    background-color: #f1f1f1;
+}
+
+.nav-next, .nav-prev {
+    font-size: 1.4em;
+    padding: 20px;
+    color: #000!important;
+}
+
+.nav-next {
+    text-align: right;
+    border-left: solid 10px white;
+}
+
+.nav-prev {
+    text-align: left;
+    border-right: solid 10px white;
+}
+
+.nav-next a, .nav-prev a {
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+div.nav-next a:hover, div.nav-prev a:hover {
+    color: #337ab7;
 }
 
 </style>
@@ -14410,17 +14439,6 @@ sh:
 </div>
 
 
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Further-reading">Further reading<a class="anchor-link" href="#Further-reading"></a></h2><ul>
-<li><a href="workflow_summary.html">Generate a report for workflow execution</a></li>
-</ul>
-
-</div>
-</div>
-</div>
     </div>
   </div>
 
@@ -15167,16 +15185,20 @@ function add_nav_header() {
 
     let prev_link = ''
     let next_link = ''
+    let prev_nav = ''
+    let next_nav = ''
 
     for (let i = idx - 1; i > 0; --i) {
         if (!guides[i].header) {
             prev_link = `<button title="${guides[i].title}" onclick="loadPage('${guides[i].name}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+            prev_nav = `<a href="javascript:loadPage('${guides[i].name}')" ><i class="fa fa-arrow-left"></i>  &nbsp;   ${guides[i].title}</a>`;
             break;
         }
     }
     for (let i = idx + 1; i < guides.length; ++i) {
         if (!guides[i].header) {
             next_link = `<button title="${guides[i].title}" onclick="loadPage('${guides[i].name}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+            next_nav = `<a href="javascript:loadPage('${guides[i].name}')" >${guides[i].title}  &nbsp; <i class="fa fa-arrow-right"></i></a>`;
             break;
         }
     }
@@ -15199,8 +15221,7 @@ function add_nav_header() {
         if ( guides[i].header === 2) {
             let link = guides[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
             pre_elements += `<li class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
-        }
-        else if ( guides[i].header == 3) {
+        } else if ( guides[i].header == 3) {
             pre_elements += `<li class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
         } else {
             pre_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
@@ -15214,9 +15235,8 @@ function add_nav_header() {
     for (let i = idx + 1; i < guides.length; ++i) {
         if ( guides[i].header === 2) {
             let link = guides[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
-            pre_elements += `<li class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
-        }
-        else if ( guides[i].header == 3) {
+            post_elements += `<li class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
+        } else if ( guides[i].header == 3) {
             post_elements += `<li class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
         } else {
             post_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
@@ -15226,6 +15246,24 @@ function add_nav_header() {
     aftertoc[0].outerHTML = post_elements;
 
     toc.scrollIntoView();
+
+    if (next_nav) {
+        /* find notebook */
+        let notebook = document.getElementById('notebook-container');
+
+        let nav_next = document.createElement('div');
+        nav_next.innerHTML = `
+        <div class='row nav-links'>
+            <div class="col-xs-6 col-sm-6 col-md-6 nav-prev">
+             ${prev_nav}
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 nav-next">
+                ${next_nav}
+            </div>
+        </div>
+        `;
+        notebook.appendChild(nav_next);
+    }
 }
 
 function replacePage(title, url, newdoc, pushState) {
