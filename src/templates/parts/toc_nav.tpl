@@ -15,7 +15,9 @@
     overflow-y: scroll;
 }
 
-
+#toc ul.toc-list.nav.nav-list {
+    padding-left: 5px;
+}
 
 .toc-header {
     background-color: #c3dbf7;
