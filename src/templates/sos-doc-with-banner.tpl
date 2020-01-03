@@ -51,7 +51,7 @@ let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.last
   1. name of the master list
   2. id of the notebook container.
 #}
-{{ toc_header.js('guides', 'headers', 'notebook-container') }}
+{{ toc_header.js('guides', 'notebook-container') }}
 
 {% endblock body %}
 
