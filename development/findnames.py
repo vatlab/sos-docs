@@ -41,19 +41,40 @@ def findImages(docFile, folder):
 
 def generate_doc_toc(docs_dir):
 
-    guideString = "var guides=["
-    headerString = "var headers=["
+    guideString = """var guides= [
+    {
+        header: 2,
+        title: "SoS Notebook"
+    }, """
     with open(os.path.join(docs_dir, "src", "homepage",
                            "notebook.ipynb")) as json_data:
         d = json.load(json_data)
+
 
     for cell in d["cells"]:
         for sentence in cell["source"]:
             guide = re.search(r'\[(.+?)(\(.*\)\s*)?\]\(doc/user_guide/(.+?).html\s*\)', sentence)
             if guide:
-                headerString += '\n  "' + guide.group(1).strip().replace('`', '') + '", '
-                guideString += '\n  "' + guide.group(3) + '", '
+                guideString += f'''
+    {{
+        title: "{guide.group(1).strip().replace('`', '')}",
+        name: "{guide.group(3)}"
+    }},'''
+            guide = re.search(r'##\s+(.+)', sentence)
+            if guide:
+                guideString += f'''
+    {{
+        header: 3,
+        title: "{guide.group(1)}"
+    }},
+    '''
 
+    guideString += '''
+    {
+        header: 2,
+        title: "SoS Workflow"
+    },
+    '''
     with open(os.path.join(docs_dir, "src", "homepage",
                            "workflow.ipynb")) as json_data:
         d = json.load(json_data)
@@ -62,18 +83,25 @@ def generate_doc_toc(docs_dir):
             guide = re.search(r'\[(.+?)(\(.*\)\s*)?\]\(doc/user_guide/(.+?).html\s*\)', sentence)
             if guide:
                 name = guide.group(1)
-                headerString += '\n  "' + guide.group(1).strip().replace('`', '') + '", '
-                guideString += '\n "' + guide.group(3) + '", '
+                guideString += f'''
+    {{
+        title: "{guide.group(1).strip().replace('`', '')}",
+        name: "{guide.group(3)}"
+    }},'''
+            guide = re.search(r'##\s+(.+)', sentence)
+            if guide:
+                guideString += f'''
+    {{
+        header: 3,
+        title: "{guide.group(1)}"
+    }},'''
 
-    guideString = guideString[:-2]
+    guideString = guideString.strip()[:-1]
     guideString += "\n]"
-    headerString = headerString[:-2]
-    headerString += "\n]"
 
     with open(os.path.join(docs_dir, "js", "docs.js"), "w") as docFile:
         findImages(docFile, docs_dir)
         docFile.write(guideString + "\n")
-        docFile.write(headerString + "\n")
         docFile.close()
 
 
