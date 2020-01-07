@@ -76,9 +76,7 @@ def generate_tipue_content(docs_dir):
 
     # get a list of html files and their url
     documentations = glob.glob(
-        os.path.join(docs_dir, 'doc', 'documentation', '*.html'))
-    tutorials = glob.glob(os.path.join(docs_dir, 'doc', 'tutorials', '*.html'))
-    examples = glob.glob(os.path.join(docs_dir, 'doc', 'examples', '*.html'))
+        os.path.join(docs_dir, 'doc', 'user_guide', '*.html'))
 
     text = [
         parse_html(url, html)
@@ -89,15 +87,9 @@ def generate_tipue_content(docs_dir):
                             ('https://vatlab.github.io/sos-docs/notebook.html',
                              os.path.join(docs_dir, 'notebook.html')),
                             ('https://vatlab.github.io/sos-docs/workflow.html',
-                             os.path.join(docs_dir, 'workflow.html')),
-                            ('https://vatlab.github.io/sos-docs/guide.html',
-                             os.path.join(docs_dir, 'guide.html'))] +
-        [('https://vatlab.github.io/sos-docs/doc/documentation/{}'.format(
-            os.path.basename(x)), x) for x in documentations] +
-        [('https://vatlab.github.io/sos-docs/doc/tutorials/{}'.format(
-            os.path.basename(x)), x) for x in tutorials] +
-        [('https://vatlab.github.io/sos-docs/doc/examples/{}'.format(
-            os.path.basename(x)), x) for x in examples]
+                             os.path.join(docs_dir, 'workflow.html'))] +
+        [('https://vatlab.github.io/sos-docs/doc/user_guide/{}'.format(
+            os.path.basename(x)), x) for x in documentations]
     ]
     # write the output to file.
     with open(
