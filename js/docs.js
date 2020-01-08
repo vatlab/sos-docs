@@ -357,7 +357,7 @@ var guides= [
         name: "cli"
     },
     {
-        title: "Verbosity",
+        title: "Verbosity and number of workers",
         name: "verbosity_and_jobs"
     },
     {
