@@ -14357,7 +14357,7 @@ function add_hoverdoc(){
 <div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
    <textarea rows="7"
-      class="sos-source" name="SoS">%run A -v0
+      class="sos-source" name="SoS">%run A -v1
 [A_1]
 sh:
   echo do something
@@ -14379,7 +14379,8 @@ print(f'The input of step {step_name} is "{step_input}"')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 2 steps processed (2 jobs completed)
+<pre>do something
+The input of step A_2 is &#34;&#34;
 </pre>
 </div>
 </div>
@@ -14477,7 +14478,21 @@ print(f'_output is {_output}')</textarea>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is very important to remember that <strong>output statement defines output for substeps</strong>.</p>
+<div class="bs-callout bs-callout-warning" role="alert">
+    <p>The <b><code>output</code> statement can define output for a single substep or all substeps</b>. That is to say,</p>
+        <ul>
+            <li>If the <code>output</code> targets are ungrouped, it defines <b><code>_output</code></b>. <code>step_output</code> would be an accumulated version of <code>_output</code>.</li>
+            <li>If the <code>output</code> targets are grouped with options <code>group_by</code> or <code>for_each</code>, it defines <b><code>step_output</code></b>, which should have the same number of groups as <code>step_input</code></li>
+    </ul>
+
+</div>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Let us create a few input files,</p>
 
 </div>
@@ -14505,7 +14520,7 @@ print(f'_output is {_output}')</textarea>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In the following example, option <code>group_by</code> creates two substeps with <code>_input</code> being <code>a.txt</code> and <code>b.txt</code> respectively. The <code>_input</code> (actually <code>_input[0]</code> is of type <code>file_target</code>, which is derived from <code>pathlib.Path</code> so you can use any member function for <code>pathlib.Path</code>. Here we use <code>with_suffix</code> to obtain <code>a.bak</code> from <code>a.txt</code>.</p>
+<p><strong>The <code>output</code> statement usually defines output of a single substep</strong>. In the following example, option <code>group_by</code> creates two substeps with <code>_input</code> being <code>a.txt</code> and <code>b.txt</code> respectively. The <code>_input</code> (actually <code>_input[0]</code> is of type <code>file_target</code>, which is derived from <code>pathlib.Path</code> so you can use any member function for <code>pathlib.Path</code>. Here we use <code>with_suffix</code> to obtain <code>a.bak</code> from <code>a.txt</code>.</p>
 
 </div>
 </div>
@@ -14569,7 +14584,7 @@ Input of substep is b.txt, output of substep is b.bak
 <div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
    <textarea rows="11"
-      class="sos-source" name="SoS">%run -v0
+      class="sos-source" name="SoS">%run -v1
 
 [10]
 input: 'a.txt', 'b.txt', group_by=1
@@ -14595,7 +14610,10 @@ print(f'step_input is {step_input}, substep input is {_input}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 2 steps processed (4 jobs completed)
+<pre>Input of substep is a.txt, output of substep is a.bak
+Input of substep is b.txt, output of substep is b.bak
+step_input is a.bak b.bak, substep input is a.bak
+step_input is a.bak b.bak, substep input is b.bak
 </pre>
 </div>
 </div>
@@ -14668,7 +14686,7 @@ _output.touch()</textarea>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In situations when you have predefined input and output pairs, you can define output groups with option <code>group_by</code>. The key here is that the number of groups should match the number of substeps.</p>
+<p>In situations when you have predefined input and output pairs, you can define output targets with groups using option <code>group_by</code>. The key here is that the number of groups should match the number of substeps. Technically speaking the <code>output</code> statement defines <code>step_output</code> and each substep takes one group as its <code>_output</code>.</p>
 <p>For example,</p>
 
 </div>
@@ -14682,7 +14700,7 @@ _output.touch()</textarea>
 <div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
    <textarea rows="10"
-      class="sos-source" name="SoS">%run -s force -v0
+      class="sos-source" name="SoS">%run -s force -v1
 
 txt_files = ['a.txt', 'b.txt']
 bak_files = ['a.bak', 'b.bak']
@@ -14707,7 +14725,8 @@ _output.touch()</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 1 step processed (2 jobs completed)
+<pre>Input of substep is a.txt, output of substep is a.bak
+Input of substep is b.txt, output of substep is b.bak
 </pre>
 </div>
 </div>
@@ -14794,7 +14813,7 @@ Output of step is a.txt b.txt
 <div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
    <textarea rows="10"
-      class="sos-source" name="SoS">%run -v0
+      class="sos-source" name="SoS">%run -v1
 
 [A]
 output: A='a.txt', B='b.txt'
@@ -14819,7 +14838,7 @@ print(f'Input of step is {_input}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-fg">[</span><span class="ansi-black-intense-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 2 steps processed (1 job completed, 1 job ignored)
+<pre>Input of step is a.txt
 </pre>
 </div>
 </div>
@@ -14899,7 +14918,7 @@ _output.touch()</textarea>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Option <code>group_with</code> can be used to attach variable to output groups, which can be useful as annotations for output files when the output is passed to other steps.</p>
-<p>A potentially confusing part of the <code>group_with</code> option is that it assigns elements to either <code>_output</code> or <code>step_output</code>, depending on how <code>output</code> statement is defined. If the <code>output</code> does not have <code>group_by</code> and <code>for_each</code> option (no group), <code>group_with</code> should assign a single element to the specific substep <code>_output</code>:</p>
+<p>A potentially confusing part of the <code>group_with</code> option is that it assigns elements to either <code>_output</code> or <code>step_output</code>, depending on how <code>output</code> statement is defined. If the <code>output</code> does not have <code>group_by</code> and <code>for_each</code> option, it defines a single <code>_output</code> and <code>group_with</code> should assign a single element to <code>_output</code> of this specific substep:</p>
 
 </div>
 </div>
@@ -14995,8 +15014,8 @@ print(f'seed of output {_input} is {_input.seed}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>seed of output out_0.txt is 21
-seed of output out_1.txt is 490
+<pre>seed of output out_0.txt is 577
+seed of output out_1.txt is 209
 </pre>
 </div>
 </div>
