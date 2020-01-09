@@ -9,10 +9,12 @@
 
 
 .edit-me {
-    position: fixed;
-    top: 0;
+    position: absolute;
+    top: 50%;
     right: 10px;
     z-index: 200;
+    top: 50%;
+    transform: translate(0%, -50%);
 }
 
 .edit-me-hint {
@@ -30,7 +32,6 @@
 .edit-me .btn-primary {
     background-color: transparent;
     border-color: transparent;
-    padding-top: 15px;
 }
 
 .edit-me .btn-primary:hover {
@@ -46,7 +47,7 @@
 {% endmacro %}
 
 {% macro html() %}
-<div class="edit-me">
+<div class="edit-me" id="edit-me">
     <button type="button" onclick="editme()" class="btn btn-primary">
    <i class="fa fa-edit fa-2x"></i></button>
 </div>
@@ -67,6 +68,15 @@ function editme() {
     let new_url = `http://128.135.144.117:8000/hub/user-redirect/notebooks/${filepath}.ipynb`;
     window.open(new_url, target='_blank');
 }
+
+function addEditButton() {
+    let nav = document.getElementById('navigation');
+    let editButton = document.getElementById('edit-me');
+    nav.appendChild(editButton);
+}
+
+addEditButton()
+
 </script>
 
 {% endmacro %}

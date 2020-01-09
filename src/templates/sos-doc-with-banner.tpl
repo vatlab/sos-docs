@@ -6,6 +6,7 @@
 {% import 'parts/page_header.tpl' as page_header %}
 {% import 'parts/toc_nav.tpl' as toc_nav %}
 {% import 'parts/edit_button.tpl' as edit_button %}
+{% import 'parts/search_box.tpl' as search_box %}
 
 {% import 'parts/toc.tpl' as toc %}
 
@@ -18,6 +19,7 @@
 {{ toc_nav.css() }}
 {{ doc_panel.css('toc_panel') }}
 {{ edit_button.css() }}
+{{ search_box.css() }}
 
 <link href="../../css/testtab.css" rel="stylesheet">
 
@@ -29,11 +31,13 @@
 
 {{ page_header.html() }}
 {{ edit_button.html() }}
+{{ search_box.html() }}
 
 {{ hover_doc.js() }}
 {{ super() }}
 
 {{ edit_button.js() }}
+{{ search_box.js() }}
 
 {# We need to determine the master list. For sos documentation, the list
  is defined in ../../js/docs.js and we will need to decide which one to
