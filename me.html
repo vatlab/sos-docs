@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
 
-<title>task_tags</title>
+<title>sos_workflows</title>
 
 
 
@@ -13605,11 +13605,7 @@ font-style: italic;
 
 
 <style>
-   .sos_lan_Bash .input_prompt {
-      background-color: #E6EEFF !important;
-    }.sos_lan_R .input_prompt {
-      background-color: #DCDCDA !important;
-    }
+   
 </style>
 
 
@@ -14138,12 +14134,10 @@ div.nav-next a:hover, div.nav-prev a:hover {
 
 
 .edit-me {
-    position: absolute;
-    top: 50%;
+    position: fixed;
+    top: 0;
     right: 10px;
     z-index: 200;
-    top: 50%;
-    transform: translate(0%, -50%);
 }
 
 .edit-me-hint {
@@ -14182,17 +14176,16 @@ div.nav-next a:hover, div.nav-prev a:hover {
 <style>
 
 .search-box {
+    position: fixed;
+    top: 5px;
     left: 10px;
     z-index: 200;
-    position: absolute;
-    top: 50%;
-    transform: translate(0%, -50%);
 }
 
-.search-box input {
-    background-color: white;
+.search-box .btn-primary {
+    background-color: transparent;
     border-color: transparent;
-    font-size: 14px;
+    padding-top: 15px;
 }
 
 
@@ -14223,7 +14216,7 @@ div.nav-next a:hover, div.nav-prev a:hover {
 
 
 
-<div class="edit-me" id="edit-me">
+<div class="edit-me">
     <button type="button" onclick="editme()" class="btn btn-primary">
    <i class="fa fa-edit fa-2x"></i></button>
 </div>
@@ -14235,9 +14228,9 @@ div.nav-next a:hover, div.nav-prev a:hover {
 
 
 
-<div class="search-box" id="search_toc">
-   <input type="text" class="form-conrol" id="search_toc_input" placeholder="Search"
-   oninput="handleSearchToc()">
+<div class="search-box">
+   <input type="text" class="form-conrol" id="search_toc" placeholder="Search"
+   oninput="handleSearchToc()>
 </div>
 
 
@@ -14326,7 +14319,7 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Task-tags">Task tags<a class="anchor-link" href="#Task-tags"></a></h1>
+<h1 id="Introduction-to-SoS-Workflows">Introduction to SoS Workflows<a class="anchor-link" href="#Introduction-to-SoS-Workflows"></a></h1>
 </div>
 </div>
 </div>
@@ -14335,10 +14328,12 @@ function add_hoverdoc(){
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to lean</strong>: 10 minutes or less</li>
-<li><strong>Key points</strong>:<ul>
-<li>Use task option <code>tag</code> to give additional information to tasks</li>
+<li>Difficulty level: easy</li>
+<li>Time need to lean: 10 minutes or less</li>
+<li>Key points<ul>
+<li>Process-oriented workflows are executed by specifying steps to execute</li>
+<li>Outcome-oriented workflows are executed by specifying files to generate</li>
+<li>Both styles follows the same step dependency rules and can be used together</li>
 </ul>
 </li>
 </ul>
@@ -14350,7 +14345,7 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Task-tags">Task tags<a class="anchor-link" href="#Task-tags"></a></h2>
+<h2 id="Process-oriented-workflows">Process-oriented workflows<a class="anchor-link" href="#Process-oriented-workflows"></a></h2>
 </div>
 </div>
 </div>
@@ -14358,8 +14353,22 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Every task is associated with one or more <strong>tags</strong>, which are simply strings assigned to the task. Tasks can be identified by their unique IDs, or by their tags with option <code>--tags</code> from commands such as <code>sos status</code>, <code>sos kill</code>, and <code>sos purge</code>.</p>
-<p>By default, a task is tagged by step name and workflow ID. For example, three tasks are generated from the following workflow, all the tasks have a tag <code>c43ef3b6fcb97752</code>; the task from step <code>10</code> has a tag <code>10</code>, and two tasks from step <code>20</code> have tag <code>20</code>.</p>
+<h3 id="Workflow-with-numerically-indexed-steps">Workflow with numerically indexed steps<a class="anchor-link" href="#Workflow-with-numerically-indexed-steps"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A SoS workflow has a name and one or more numbered steps. The workflows are defined from sections in a SoS script.</p>
+<ul>
+<li>If unspecified, SoS will execute a default workflow, or the only workflow defined in a script.</li>
+<li>A section with only numeric index belongs to the default workflow</li>
+<li>A section with name NAME, and NAME_idx belongs to the NAME workflow</li>
+<li>A section with wild card character belongs to any workflow that the pattern matches. E.g. <em>_10 belongs to any workflow, m</em>_10 belongs to mouse and mice workflows.</li>
+</ul>
+<p>For example, the following sections specify a workflow with four steps 5, 10, 20, and 100. The workflow steps can be specified in any order and do not have to be consecutive.</p>
 
 </div>
 </div>
@@ -14370,22 +14379,362 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 18.100060000000003em">
-   <textarea rows="14"
-      class="sos-source" name="SoS">%run -q localhost
-
-[10]
-task:
-sh:
- echo "step 1"
- sleep 2
- 
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%run
+[5]
 [20]
-input: for_each=dict(i=range(2))
-task:
-sh: expand=True
-  echo "step 2"
-  sleep {i}
+[10]
+[100]</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">5</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">100</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=7bb58e65207b5898) is executed successfully with 4 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A workflow specified in this way is the default workflow and is actually called default in SoS output. You can specify a workflow with name and give each step a short description as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%run
+[mapping (start)]
+[mapping_5 (get data)]
+[mapping_20 (align)]
+[mapping_10 (quality control)]</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">start</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">get data</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">quality control</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">align</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow mapping (ID=ea4f71b6c0fc2e0b) is executed successfully with 4 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the first step has a name mapping without index, and is assumed to be first step (index 0) of the workflow. That is to say, the following workflow consists of a single step step.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%run -v2
+[step]</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">step</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow step (ID=0fb8831fb99f45c5) is executed successfully with 1 completed step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A SoS script can define multiple workflows. For example, the following sections of SoS script defines two workflows named mouse and human.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%run mouse
+[mouse_10]
+[mouse_20]
+[human_10]
+[human_20]</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">mouse_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">mouse_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow mouse (ID=bebcdf7d6f8eb277) is executed successfully with 2 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this case, a command line option is needed to specify workflow name. This can be done by magic %run in Jupyter notebook, or a positional argument from the command line, e.g.</p>
+
+<pre><code>    % sos run myscript mouse</code></pre>
+<p>Note that the workflow argument is not needed if a default workflow is defined in the script like the following example</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
+   <textarea rows="7"
+      class="sos-source" name="SoS">%run
+[10]
+[20]
+[30]
+[test_10]
+[test_20]
+[test_30]
 </textarea>
   </div>
 </div>
@@ -14401,12 +14750,51 @@ sh: expand=True
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>INFO: 8ae65992fde3b749 <span class="ansi-green-fg">started</span>
-INFO: 285bba6cb33a5590 <span class="ansi-green-fg">started</span>
-INFO: 671ff74845245f7c <span class="ansi-green-fg">started</span>
-</pre>
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">10</span>: 
 </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">30</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=5961501ca6254e36) is executed successfully with 3 completed steps.
+</div>
+</div>
+
 </div>
 
 </div>
@@ -14420,7 +14808,7 @@ INFO: 671ff74845245f7c <span class="ansi-green-fg">started</span>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The tags can be used to identify a group of tasks. For example, the following magic (and equivalently command <code>sos status --tags 20</code>) displays all tasks from step <code>20</code>.</p>
+<p>Multiple steps can share a single step as follows</p>
 
 </div>
 </div>
@@ -14430,10 +14818,14 @@ INFO: 671ff74845245f7c <span class="ansi-green-fg">started</span>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">%task status --tags 20</textarea>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%run mouse
+[mouse_10,human_10]
+[mouse_20]
+[human_20]
+[mouse_30,human_30]</textarea>
   </div>
 </div>
 
@@ -14448,11 +14840,51 @@ INFO: 671ff74845245f7c <span class="ansi-green-fg">started</span>
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>285bba6cb33a5590	20 c43ef3b6fcb97752 user_guide	Signature checked	completed
-671ff74845245f7c	20 c43ef3b6fcb97752 user_guide	Signature checked	completed
-</pre>
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">mouse_10</span>: 
 </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">mouse_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">mouse_30</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow mouse (ID=6a3ab8526e7dfcfe) is executed successfully with 3 completed steps.
+</div>
+</div>
+
 </div>
 
 </div>
@@ -14466,16 +14898,7 @@ INFO: 671ff74845245f7c <span class="ansi-green-fg">started</span>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Option-tags">Option <code>tags</code><a class="anchor-link" href="#Option-tags"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Option <code>tags</code> adds additional tags to each task. A tag can contain alphabetic and numeric characters, dash (<code>-</code>), underscore (<code>_</code>), and dot (<code>.</code>). Tags of other types will be converted to string, and tags with other characters will still be accepted but with non-comforming characters removed.</p>
-<p>For example, in the following workflow, by adding <code>_input</code> as a task tag, it becomes much easier to identify the input file that each task is handling.</p>
+<p>and wildcard steps can be used to define a step for multiple workflows:</p>
 
 </div>
 </div>
@@ -14485,17 +14908,14 @@ INFO: 671ff74845245f7c <span class="ansi-green-fg">started</span>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
-   <textarea rows="8"
-      class="sos-source" name="SoS">!touch a.txt b.txt
-
-%run -q localhost
-input: 'a.txt', 'b.txt', group_by=1
-
-task: tags=_input
-sh: expand=True
-  touch _input</textarea>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%run mouse
+[*_10]
+[mouse_20]
+[human_20]
+[*_30]</textarea>
   </div>
 </div>
 
@@ -14510,11 +14930,820 @@ sh: expand=True
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>INFO: 1dda9e28e78cc509 <span class="ansi-green-fg">started</span>
-INFO: 48e93dd54880d65f <span class="ansi-green-fg">started</span>
-</pre>
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">mouse_10</span>: 
 </div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">mouse_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">mouse_30</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow mouse (ID=49534b8844fd79cd) is executed successfully with 3 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the steps defined in a shared section is similar but not identical, it can use step variable (discussed elsewhere) step_name to behave differently in different workflows. In the following example, the variable step_name will be mouse_20 or human_20 depending on the workflow being executed, and is used to determine the correct reference genome for different workflows.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">[mouse_20,human_20]
+reference = "/path/to/mouse/reference" if \
+  step_name.startswith('mouse') else "/path/to/human/reference"
+
+print(f"Reference genome {reference} is used")</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Subworkflows">Subworkflows<a class="anchor-link" href="#Subworkflows"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although workflows are defined separately with all their steps, they do not have to be executed in their entirety. A subworkflow refers to a workflow that is defined from one or more steps of an existing workflows. It is specified using syntax workflow:[from-to] where from-to can be n (step n), -n (up to n), n-m (step n to m) and m- (from m). For example</p>
+<div class="highlight"><pre><span></span><span class="n">A</span>              <span class="c1"># complete workflow A</span>
+<span class="n">A</span><span class="p">:</span><span class="mi">5</span><span class="o">-</span><span class="mi">10</span>         <span class="c1"># step 5 to 10 of A</span>
+<span class="n">A</span><span class="p">:</span><span class="mi">50</span><span class="o">-</span>          <span class="c1"># step 50 up</span>
+<span class="n">A</span><span class="p">:</span><span class="o">-</span><span class="mi">10</span>          <span class="c1"># up to step 10 of A</span>
+<span class="n">A</span><span class="p">:</span><span class="mi">10</span>           <span class="c1"># step 10 of workflow A</span>
+</pre></div>
+<p>In practice, the -n format is frequently used to execute part of the workflow for debudding purposes, for example:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
+   <textarea rows="4"
+      class="sos-source" name="SoS">%run default:-20
+[10]
+[20]
+[30]</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=93cfb73a2b2e3791) is executed successfully with 2 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Combined-workflows">Combined workflows<a class="anchor-link" href="#Combined-workflows"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also combine subworkflows to execute multiple workflows one after another. For example,</p>
+<div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">+</span> <span class="n">B</span>          <span class="c1"># workflow A, followed by B</span>
+<span class="n">A</span><span class="p">:</span><span class="mi">0</span> <span class="o">+</span> <span class="n">B</span>        <span class="c1"># step 0 of A, followed by B</span>
+<span class="n">A</span><span class="p">:</span><span class="o">-</span><span class="mi">50</span> <span class="o">+</span> <span class="n">B</span> <span class="o">+</span> <span class="n">C</span>  <span class="c1"># up to step 50 of workflow A, followed by B, and C</span>
+</pre></div>
+<p>This syntax can be used from the command line, e.g.</p>
+
+<pre><code>sos-runner myscript align+call</code></pre>
+<p>or from the <code>%run</code> magic of Jupyter notebook</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">%run check+align+call
+[check_10]
+[align_10]
+[align_20]
+[call_10]
+[call_20]</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">check_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">align_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">align_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">call_10</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">call_20</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow check+align+call (ID=de7ec6b500f7ef17) is executed successfully with 5 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dependent-steps-of-workflows">Dependent steps of workflows<a class="anchor-link" href="#Dependent-steps-of-workflows"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When you specify a workflow to execute, the steps might depend on other steps. Section step dependencies lists a number of method to create dependencies, but the general idea is that the execution of workflows can trigger the execution of other steps or workflows.</p>
+<p>Just as a very simple example, step A is executed before the execution of default step of the following workflow because sos_step('A') is listed as a dependency of step default.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">%run
+[A]
+
+[default]
+depends: sos_step('A')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">A</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">A</span> (index=0) is <span class="sos_highlight">ignored</span> due to saved signature
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=b5189ae992731d18) is executed successfully with 1 completed step and 1 ignored step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As another example, step A is executed before step default because step default requires input test_5.txt, which is provided by step A with a provides option.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">%run
+[A: provides='test_{idx}.txt']
+_output.touch()
+
+[default]
+input: 'test_5.txt'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=84884b4a622a88b8) is executed successfully with 1 completed step.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Outcome-oriented-workflows">Outcome-oriented workflows<a class="anchor-link" href="#Outcome-oriented-workflows"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Up till now we execute SoS workflows by specifying the "workflow" to execute. SoS also supports "outcome-oriented" workflows for which all steps are triggered to generate specified files.</p>
+<p>For example, the follow workflow is triggered to generate specified outputs test_15.txt and test_25.txt. Because a step A is designed to generate such files, this step is executed twice to generate two specified files.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">!rm -f test_15.txt test_25.txt
+
+%run -t test_15.txt test_25.txt
+
+[A: provides='test_{idx}.txt']
+_output.touch()</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">A</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">A</span> output:   <span class="sos_highlight">test_25.txt</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">A</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">A</span> output:   <span class="sos_highlight">test_15.txt</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=63f1ebfda7f844d2) is executed successfully with 2 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Nested-workflows">Nested workflows<a class="anchor-link" href="#Nested-workflows"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A workflow could be constructed and executed from a regular step using function sos_run, which is called a "nested workflow".</p>
+<p>For example, the default workflow of the following workflow executes two nested workflows A+B and C.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">%run
+[A_1]
+[A_2]
+[B]
+[C_1]
+[C_2]
+
+[default]
+sos_run('A+B')
+sos_run('C')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">A_1</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">A_2</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">B</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">C_1</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">C_2</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=85cba502fdf229b9) is executed successfully with 6 completed steps.
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nested workflows can also be trigged by targets to generate, which is equivalent to sos run -t from command line.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
+   <textarea rows="9"
+      class="sos-source" name="SoS">!rm -f test_15.txt
+
+%run
+
+[A: provides='test_{idx}.txt']
+_output.touch()
+
+[default]
+sos_run(targets='test_15.txt')</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">A</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">A</span> output:   <span class="sos_highlight">test_15.txt</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=b6659f954bc9f14b) is executed successfully with 2 completed steps.
+</div>
+</div>
+
 </div>
 
 </div>
@@ -15235,48 +16464,16 @@ function editme() {
     let new_url = `http://128.135.144.117:8000/hub/user-redirect/notebooks/${filepath}.ipynb`;
     window.open(new_url, target='_blank');
 }
-
-function addEditButton() {
-    let nav = document.getElementById('navigation');
-    let editButton = document.getElementById('edit-me');
-    nav.appendChild(editButton);
-}
-
-addEditButton()
-
 </script>
 
 
 
 
 <script>
-
-function addSearchBox() {
-    let nav = document.getElementById('navigation');
-    let searchBox = document.getElementById('search_toc');
-    nav.insertBefore(searchBox, nav.firstChild);
-}
-
 function handleSearchToc() {
-    let sb = document.getElementById('search_toc_input');
-    if (sb.value) {
-        /* display all toc */
-        let toc_items = document.getElementsByClassName('toc-item');
-        for (let i = 0; i < toc_items.length; ++i) {
-            let fulltitle = toc_items[i].getAttribute('data-title');
-            toc_items[i].style.display = (fulltitle && fulltitle.includes(sb.value.toLowerCase())) ? 'block' : 'none';
-        }
-    } else {
-        /* display all toc */
-        let toc_items = document.getElementsByClassName('toc-item');
-        for (let i = 0; i < toc_items.length; ++i) {
-            toc_items[i].style.display = 'block';
-        }
-    }
+    let sb = document.getElementById('search_toc');
+    console.log(sb.value);
 }
-
-addSearchBox()
-
 </script>
 
 
@@ -15347,11 +16544,11 @@ function add_nav_header() {
     for (let i = 0; i < idx; ++i) {
         if ( guides[i].header === 2) {
             let link = guides[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
-            pre_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
+            pre_elements += `<li class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
         } else if ( guides[i].header == 3) {
-            pre_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
+            pre_elements += `<li class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
         } else {
-            pre_elements += `<li data-title="${ guides[i].fulltitle }" class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
+            pre_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
         }
     }
 
@@ -15362,11 +16559,11 @@ function add_nav_header() {
     for (let i = idx + 1; i < guides.length; ++i) {
         if ( guides[i].header === 2) {
             let link = guides[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
-            post_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
+            post_elements += `<li class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
         } else if ( guides[i].header == 3) {
-            post_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
+            post_elements += `<li class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
         } else {
-            post_elements += `<li data-title="${ guides[i].fulltitle }" class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
+            post_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
         }
     }
     post_elements += '</ul></div>';

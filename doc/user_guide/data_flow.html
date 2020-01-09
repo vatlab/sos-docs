@@ -14138,10 +14138,12 @@ div.nav-next a:hover, div.nav-prev a:hover {
 
 
 .edit-me {
-    position: fixed;
-    top: 0;
+    position: absolute;
+    top: 50%;
     right: 10px;
     z-index: 200;
+    top: 50%;
+    transform: translate(0%, -50%);
 }
 
 .edit-me-hint {
@@ -14159,7 +14161,6 @@ div.nav-next a:hover, div.nav-prev a:hover {
 .edit-me .btn-primary {
     background-color: transparent;
     border-color: transparent;
-    padding-top: 15px;
 }
 
 .edit-me .btn-primary:hover {
@@ -14169,6 +14170,31 @@ div.nav-next a:hover, div.nav-prev a:hover {
 .edit-me:hover ~ .edit-me-hint {
     display: block;
 }
+
+</style>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+
+.search-box {
+    left: 10px;
+    z-index: 200;
+    position: absolute;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.search-box input {
+    background-color: white;
+    border-color: transparent;
+    font-size: 14px;
+}
+
 
 </style>
 
@@ -14197,7 +14223,7 @@ div.nav-next a:hover, div.nav-prev a:hover {
 
 
 
-<div class="edit-me">
+<div class="edit-me" id="edit-me">
     <button type="button" onclick="editme()" class="btn btn-primary">
    <i class="fa fa-edit fa-2x"></i></button>
 </div>
@@ -14206,6 +14232,13 @@ div.nav-next a:hover, div.nav-prev a:hover {
 <p>Edit this page on our live server and create a PR by running command <code>!create-pr</code> in the console panel</p>
 </div>
 
+
+
+
+<div class="search-box" id="search_toc">
+   <input type="text" class="form-conrol" id="search_toc_input" placeholder="Search"
+   oninput="handleSearchToc()">
+</div>
 
 
 
@@ -15314,6 +15347,48 @@ function editme() {
     let new_url = `http://128.135.144.117:8000/hub/user-redirect/notebooks/${filepath}.ipynb`;
     window.open(new_url, target='_blank');
 }
+
+function addEditButton() {
+    let nav = document.getElementById('navigation');
+    let editButton = document.getElementById('edit-me');
+    nav.appendChild(editButton);
+}
+
+addEditButton()
+
+</script>
+
+
+
+
+<script>
+
+function addSearchBox() {
+    let nav = document.getElementById('navigation');
+    let searchBox = document.getElementById('search_toc');
+    nav.insertBefore(searchBox, nav.firstChild);
+}
+
+function handleSearchToc() {
+    let sb = document.getElementById('search_toc_input');
+    if (sb.value) {
+        /* display all toc */
+        let toc_items = document.getElementsByClassName('toc-item');
+        for (let i = 0; i < toc_items.length; ++i) {
+            let fulltitle = toc_items[i].getAttribute('data-title');
+            toc_items[i].style.display = (fulltitle && fulltitle.includes(sb.value.toLowerCase())) ? 'block' : 'none';
+        }
+    } else {
+        /* display all toc */
+        let toc_items = document.getElementsByClassName('toc-item');
+        for (let i = 0; i < toc_items.length; ++i) {
+            toc_items[i].style.display = 'block';
+        }
+    }
+}
+
+addSearchBox()
+
 </script>
 
 
@@ -15384,11 +15459,11 @@ function add_nav_header() {
     for (let i = 0; i < idx; ++i) {
         if ( guides[i].header === 2) {
             let link = guides[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
-            pre_elements += `<li class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
+            pre_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
         } else if ( guides[i].header == 3) {
-            pre_elements += `<li class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
+            pre_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
         } else {
-            pre_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
+            pre_elements += `<li data-title="${ guides[i].fulltitle }" class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
         }
     }
 
@@ -15399,11 +15474,11 @@ function add_nav_header() {
     for (let i = idx + 1; i < guides.length; ++i) {
         if ( guides[i].header === 2) {
             let link = guides[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
-            post_elements += `<li class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
+            post_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
         } else if ( guides[i].header == 3) {
-            post_elements += `<li class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
+            post_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
         } else {
-            post_elements += `<li class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
+            post_elements += `<li data-title="${ guides[i].fulltitle }" class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
         }
     }
     post_elements += '</ul></div>';
