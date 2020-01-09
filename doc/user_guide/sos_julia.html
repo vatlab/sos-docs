@@ -15669,12 +15669,17 @@ function addSearchBox() {
 
 function handleSearchToc() {
     let sb = document.getElementById('search_toc_input');
-    if (sb.value) {
+    if (sb.value !== '') {
+        let toc_container = document.getElementsByClassName('toc-container');
         /* display all toc */
-        let toc_items = document.getElementsByClassName('toc-item');
+        let toc_items = toc_container[0].getElementsByClassName('toc-item');
         for (let i = 0; i < toc_items.length; ++i) {
             let fulltitle = toc_items[i].getAttribute('data-title');
-            toc_items[i].style.display = (fulltitle && fulltitle.includes(sb.value.toLowerCase())) ? 'block' : 'none';
+            if (!fulltitle) {
+                /* TOC for the current page does not have full-title */
+                fulltitle = toc_items[i].firstChild.textContent.toLowerCase();
+            }
+            toc_items[i].style.display = fulltitle.includes(sb.value.toLowerCase()) ? 'block' : 'none';
         }
     } else {
         /* display all toc */
@@ -15682,6 +15687,8 @@ function handleSearchToc() {
         for (let i = 0; i < toc_items.length; ++i) {
             toc_items[i].style.display = 'block';
         }
+        let toc = document.getElementById('toc');
+        toc.scrollIntoView();
     }
 }
 
