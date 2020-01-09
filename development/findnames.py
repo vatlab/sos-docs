@@ -55,10 +55,13 @@ def generate_doc_toc(docs_dir):
         for sentence in cell["source"]:
             guide = re.search(r'\[(.+?)(\(.*\)\s*)?\]\(doc/user_guide/(.+?).html\s*\)', sentence)
             if guide:
+                sentence = re.sub('[^\w_-]', ' ', sentence.replace('doc/user_guide', '').replace('.html', ''))
+                sentence = re.sub('\s+', ' ', sentence).lower()
                 guideString += f'''
     {{
         title: "{guide.group(1).strip().replace('`', '')}",
-        name: "{guide.group(3)}"
+        name: "{guide.group(3)}",
+        fulltitle: "{sentence}"
     }},'''
             guide = re.search(r'##\s+(.+)', sentence)
             if guide:
@@ -83,10 +86,13 @@ def generate_doc_toc(docs_dir):
             guide = re.search(r'\[(.+?)(\(.*\)\s*)?\]\(doc/user_guide/(.+?).html\s*\)', sentence)
             if guide:
                 name = guide.group(1)
+                sentence = re.sub('[^\w_-]', ' ', sentence.replace('doc/user_guide', '').replace('.html', ''))
+                sentence = re.sub('\s+', ' ', sentence).lower()
                 guideString += f'''
     {{
         title: "{guide.group(1).strip().replace('`', '')}",
-        name: "{guide.group(3)}"
+        name: "{guide.group(3)}",
+        fulltitle: "{sentence}"
     }},'''
             guide = re.search(r'##\s+(.+)', sentence)
             if guide:
