@@ -13021,6 +13021,78 @@ ul.typeahead-list  > li > a.pull-right {
 .highlight .vm { color: #19177C } /* Name.Variable.Magic */
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
     </style>
+<style type="text/css">
+    /* @{KERNEL} sparqlkernel START ======================== */
+/* -*- encoding: utf-8 -*- */
+/* ------------------------------------------------------------------------- */
+/* Styles for the SPARQL kernel */
+
+/* Messages from magics */
+div.krn-spql div.magic { 
+    color: maroon;
+    font-style: italic;
+    margin-top: 3px;
+}
+div.krn-spql div.magic-help { 
+    color: maroon;
+    font-family: DejaVu Sans Mono, Courier New, Courier, Monospace;
+    margin-top: 3px;
+}
+
+
+/* Table output */
+div.krn-spql table { border: 1px solid black;
+                     border-collapse: collapse; }
+div.krn-spql table tr.hdr  { background-color: LightGray; }
+div.krn-spql table tr.odd  { background-color: Ivory; }
+div.krn-spql table tr.even { background-color: AliceBlue; }
+div.krn-spql table td.typ  {
+    font-style: italic;
+    color: gray;
+    font-family: Georgia, Times New Roman, Times Roman, serif;
+}
+
+div.krn-spql table td.val a  {
+    text-decoration: none;
+}
+
+div.krn-spql table td.val a:hover  {
+    text-decoration: underline;
+}
+
+
+/* Table info output */
+div.krn-spql div.tinfo {
+    color: maroon;
+    font-style: italic;
+    margin-top: 3px;
+}
+
+
+/* Error output */
+div.krn-spql div.krn-error {
+    text-align: left;
+    padding: 2px;
+    margin: 2px;
+    border: 1px solid red;
+    font-family: DejaVu Sans Mono, Courier New, Courier, Monospace;
+}
+div.krn-spql div.krn-error span.title { 
+    color: red; font-weight: bold;
+}
+
+/* Warning */
+div.krn-spql div.krn-warn { 
+    color: #e87211;
+    font-weight: bold;
+    padding: 2px;
+    border: 1px solid gray;
+}
+
+/* ------------------------------------------------------------------------- */
+/* @{KERNEL} sparqlkernel END ======================== */
+
+    </style>
 
 
 <style type="text/css">
@@ -13773,6 +13845,10 @@ textarea.sos-source {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
+
+  li {
+    list-style: none;
+  }
 }
 
 #toc > .toc-list  a {
@@ -14338,7 +14414,7 @@ function add_hoverdoc(){
 <li><strong>Difficulty level</strong>: easy</li>
 <li><strong>Time need to learn</strong>: 10 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>Use keyword arguments to specify labels of input</li>
+<li>Use dictionary or keyword arguments to specify labels of input</li>
 <li><code>_input[name]</code> return subset of <code>_input</code>label <code>name</code></li>
 </ul>
 </li>
@@ -14571,6 +14647,53 @@ Output is b.res
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>In addition to the use of keyword arguments, you can use a dictionary directly to specify inputs with names:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 26.60009em">
+   <textarea rows="21"
+      class="sos-source" name="SoS">%run
+
+[global]
+data = {
+    'data': ['a.txt', 'b.txt'], 
+    'reference': 'ref.txt'
+}
+
+[10]
+input: data, group_by='pairlabel'
+output: _input["data"].with_suffix('.res')
+_output.touch()                              
+
+print(f'''\
+Input of step is {_input} with labels {step_input.labels}
+
+Input data is {_input["data"]}
+Reference is {_input["reference"]}
+
+Output is {_output}
+''')</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Named-input-inherited-from-named-output">Named input inherited from named output<a class="anchor-link" href="#Named-input-inherited-from-named-output"></a></h2>
 </div>
 </div>
@@ -14614,7 +14737,7 @@ Output is b.res
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
    <textarea rows="13"
       class="sos-source" name="SoS">%run -v0
@@ -14645,7 +14768,7 @@ print(f'Input from step B is {_input["B"]}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-fg">[</span><span class="ansi-black-intense-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 3 steps processed (2 jobs completed, 1 job ignored)
+<pre><span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 3 steps processed (3 jobs completed)
 </pre>
 </div>
 </div>
@@ -14671,7 +14794,7 @@ print(f'Input from step B is {_input["B"]}')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
    <textarea rows="13"
       class="sos-source" name="SoS">%run -v0
