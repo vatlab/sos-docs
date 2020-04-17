@@ -13771,6 +13771,10 @@ textarea.sos-source {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
+
+  li {
+    list-style: none;
+  }
 }
 
 #toc > .toc-list  a {
@@ -14479,7 +14483,7 @@ function add_hoverdoc(){
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h4 id="cd_command"><code>cd_command</code><a class="anchor-link" href="#cd_command"></a></h4><p><code>cd_command</code> is a command to change current working directory, specified with <code>{dir}</code> intepolated with option of magic <code>%cd</code>. For example, the command for R is</p>
-<div class="highlight"><pre><span></span><span class="n">cd_command</span> <span class="o">=</span> <span class="s1">&#39;setwd({dir!r})&#39;</span>
+<div class="highlight"><pre><span></span><span class="n">cd_command</span> <span class="o">=</span> <span class="s1">&#39;setwd(</span><span class="si">{dir!r}</span><span class="s1">)&#39;</span>
 </pre></div>
 <p>where <code>!r</code> quotes the provided <code>dir</code>. Note that <code>{ }</code> are used as a Python f-string but no <code>f</code> prefix should be used.</p>
 
@@ -14633,7 +14637,7 @@ function add_hoverdoc(){
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Send-variables-to-other-kernels">Send variables to other kernels<a class="anchor-link" href="#Send-variables-to-other-kernels"></a></h3><p>The <code>put_vars</code> function should be defined as</p>
-<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">put_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_names</span><span class="p">,</span> <span class="n">to_kernel</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">put_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_names</span><span class="p">,</span> <span class="n">to_kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 <p>where</p>
 <ol>
@@ -14764,11 +14768,11 @@ msg_type, msg_data
 <h3 id="Logging">Logging<a class="anchor-link" href="#Logging"></a></h3><p>If you would like to add your own debug messages to the log file, you can</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sos.utils</span> <span class="kn">import</span> <span class="n">env</span>
 
-<span class="n">env</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s1">&#39;VARIABLE&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;Processing {var} of type {var.__class__.__name__}.&#39;</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s1">&#39;VARIABLE&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Processing </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> of type </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
 </pre></div>
 <p>If the log message can be expensive to format, you can check if <code>SOS_DEBUG</code> is defined before logging to the log file:</p>
 <div class="highlight"><pre><span></span><span class="k">if</span> <span class="s1">&#39;VARIABLE&#39;</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SOS_DEBUG&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;ALL&#39;</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SOS_DEBUG&#39;</span><span class="p">]:</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s1">&#39;VARIABLE&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;Processing {var} of type {var.__class__.__name__}.&#39;</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s1">&#39;VARIABLE&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Processing </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> of type </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -14840,7 +14844,7 @@ msg_type, msg_data
 <span class="s1">         import numpy as np</span>
 <span class="s1">         arr = np.random.randn(1000)</span>
 <span class="s1">         arr[::10] = np.nan</span>
-<span class="s1">         df = pd.DataFrame({&#39;column_{0}&#39;.format(i): arr for i in range(10)})</span>
+<span class="s1">         df = pd.DataFrame({&#39;column_</span><span class="si">{0}</span><span class="s1">&#39;.format(i): arr for i in range(10)})</span>
 <span class="s1">         &#39;&#39;&#39;</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;SoS&#39;</span><span class="p">)</span>
 </pre></div>
 <p>This function returns the index of the cell so that you can call <code>notebook.get_cell_output(idx)</code> if needed. If you are supposed to see some warning messages, use <code>expect_error=True</code>. Otherwise the function will raise an exception that fails the test.</p>

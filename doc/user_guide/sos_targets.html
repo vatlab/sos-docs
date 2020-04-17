@@ -13771,6 +13771,10 @@ textarea.sos-source {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
+
+  li {
+    list-style: none;
+  }
 }
 
 #toc > .toc-list  a {
@@ -16146,14 +16150,14 @@ test_3.txt
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><code>sos_targets</code> accepts the <code>zap()</code> function which <code>zap</code> all file targets in ths list. This technique is usually used to remove large intermediate files during the execution of the workflow. For example, if you have a workflow that downloads and processs large files, you can do something like</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">download</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{file}.fastq&#39;</span><span class="p">]</span>
-<span class="kn">download:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">some_url</span><span class="o">/</span><span class="p">{</span><span class="nb">file</span><span class="p">}</span><span class="o">.</span><span class="n">fastq</span>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">download</span><span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{file}</span><span class="s1">.fastq&#39;</span><span class="p">]</span>
+<span class="kn">download:</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">some_url</span><span class="o">/</span><span class="p">{</span><span class="n">file</span><span class="p">}</span><span class="o">.</span><span class="n">fastq</span>
 
 <span class="p">[</span><span class="n">default</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{x}.fastq&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)],</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
+<span class="kn">input:</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">.fastq&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)],</span> <span class="n">group_by</span><span class="o">=</span><span class="mi">1</span>
 <span class="kn">output:</span> <span class="n">_input</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.bam&#39;</span><span class="p">)</span>
-<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">sh:</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span>
    <span class="n">process</span> <span class="n">_input</span> <span class="n">to</span> <span class="n">_output</span>
 
 <span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>

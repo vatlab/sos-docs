@@ -13731,6 +13731,10 @@ function sortDataFrame(id, n, dtype) {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
+
+  li {
+    list-style: none;
+  }
 }
 
 #toc > .toc-list  a {
@@ -14079,12 +14083,12 @@ h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
 <span class="kn">parameter:</span> <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SRR1039508&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039509&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039512&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039513&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039516&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039517&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039520&#39;</span><span class="p">,</span> <span class="s1">&#39;SRR1039521&#39;</span><span class="p">]</span>
 <span class="kn">parameter:</span> <span class="n">ncpu</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="c1"># Resource files</span>
-<span class="n">resource_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/hg19&quot;</span>
+<span class="n">resource_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cwd</span><span class="si">:</span><span class="s2">a</span><span class="si">}</span><span class="s2">/hg19&quot;</span>
 <span class="n">ref_fa</span> <span class="o">=</span> <span class="s2">&quot;hg19.fa&quot;</span>
 <span class="n">ref_gtf</span> <span class="o">=</span> <span class="s1">&#39;Homo_sapiens.GRCh38.91.gtf.gz&#39;</span>
 <span class="c1"># when set to False (default) STAR will use ~30GB memory.</span>
 <span class="c1"># set it to `True` to reduce memory consumption to half.</span>
-<span class="kn">parameter:</span> <span class="n">sparse_star</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="kn">parameter:</span> <span class="n">sparse_star</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
 
     </div>
@@ -14173,15 +14177,15 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_cell">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># decrypt SRA files</span>
-<span class="p">[</span><span class="n">sra</span> <span class="p">(</span><span class="n">dump</span> <span class="n">SRA</span> <span class="n">to</span> <span class="n">fastq</span><span class="p">):</span> <span class="kp">provides</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;{data}_2.fastq&#39;</span><span class="p">]]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{data}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{data}_2.fastq&#39;</span>
-<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">[</span><span class="n">sra</span> <span class="p">(</span><span class="n">dump</span> <span class="n">SRA</span> <span class="n">to</span> <span class="n">fastq</span><span class="p">):</span> <span class="kp">provides</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{data}</span><span class="s1">_1.fastq&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{data}</span><span class="s1">_2.fastq&#39;</span><span class="p">]]</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s1">_1.fastq&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s1">_2.fastq&#39;</span>
+<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span>
     <span class="n">fastq</span><span class="o">-</span><span class="n">dump</span> <span class="o">-</span><span class="n">I</span> <span class="o">--</span><span class="n">split</span><span class="o">-</span><span class="n">files</span> <span class="p">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">data</span><span class="p">)}</span>
 </pre></div>
 
@@ -14204,7 +14208,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_cell">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
@@ -14212,15 +14216,15 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># Download `hg19.2bit` and `twoBitToFa` from UCSC</span>
 <span class="p">[</span><span class="n">hg19_reference_1</span> <span class="p">(</span><span class="n">download</span><span class="p">)]</span>
 <span class="n">ucsc_url</span> <span class="o">=</span> <span class="s2">&quot;http://hgdownload.cse.ucsc.edu&quot;</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/hg19.2bit&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/twoBitToFa&quot;</span>
-<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s2">/hg19.2bit&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s2">/twoBitToFa&quot;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">{</span><span class="n">ucsc_url</span><span class="p">}</span><span class="o">/</span><span class="n">goldenPath</span><span class="o">/</span><span class="n">hg19</span><span class="o">/</span><span class="n">bigZips</span><span class="o">/</span><span class="n">hg19</span><span class="o">.</span><span class="mi">2</span><span class="n">bit</span>
     <span class="p">{</span><span class="n">ucsc_url</span><span class="p">}</span><span class="o">/</span><span class="n">admin</span><span class="o">/</span><span class="n">exe</span><span class="o">/</span><span class="p">{</span><span class="s2">&quot;macOSX.x86_64&quot;</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;darwin&#39;</span> <span class="k">else</span> <span class="s2">&quot;linux.x86_64&quot;</span><span class="p">}</span><span class="o">/</span><span class="n">twoBitToFa</span>
 
 <span class="c1"># Use `twoBitToFa` to extract `hg19.fa` from `hg19.2bit`</span>
 <span class="p">[</span><span class="n">hg19_reference_2</span> <span class="p">(</span><span class="n">decompress</span> <span class="n">hg19</span><span class="o">.</span><span class="n">fa</span><span class="p">)]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/{ref_fa}&quot;</span>
-<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ref_fa</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
     <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
@@ -14228,16 +14232,16 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 <span class="p">[</span><span class="n">hg19_reference_3</span> <span class="p">(</span><span class="n">gene</span> <span class="n">annotations</span><span class="p">)]</span>
 <span class="c1"># https://useast.ensembl.org/info/data/ftp/index.html</span>
 <span class="n">ensembl_ftp</span> <span class="o">=</span> <span class="s1">&#39;ftp://ftp.ensembl.org/pub/release-91/gtf/homo_sapiens/&#39;</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/{ref_gtf}&quot;</span>
-<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ref_gtf</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">resource_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">{</span><span class="n">ensembl_ftp</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_gtf</span><span class="p">}</span>
     
 <span class="c1"># Prepare STAR reference data</span>
-<span class="p">[</span><span class="n">star</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span><span class="p">]</span>
+<span class="p">[</span><span class="n">star</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s2">/genomeParameters.txt&quot;</span><span class="p">]</span>
 <span class="c1"># Quite time &amp; resource consuming (3hrs, 32GB memory if sparse_star is False)</span>
 <span class="kn">depends:</span> <span class="n">sos_step</span><span class="p">(</span><span class="s1">&#39;hg19_reference&#39;</span><span class="p">),</span> <span class="n">system_resource</span><span class="p">(</span><span class="kp">mem</span><span class="o">=</span><span class="s1">&#39;40G&#39;</span><span class="p">,</span> <span class="n">disk</span><span class="o">=</span><span class="s1">&#39;200G&#39;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
-<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}:{resource_dir}&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s2">/genomeParameters.txt&quot;</span>
+<span class="kn">run:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span>
      <span class="n">STAR</span> <span class="o">--</span><span class="n">runMode</span> <span class="n">genomeGenerate</span> \
         <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">genomeFastaFiles</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ref_fa</span><span class="p">}</span> \
@@ -14265,17 +14269,17 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_cell">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># Align to SAM file</span>
 <span class="p">[</span><span class="n">align_1</span> <span class="p">(</span><span class="n">STAR</span> <span class="n">alignment</span><span class="p">)]</span>
-<span class="kn">depends:</span> <span class="n">f</span><span class="s2">&quot;{resource_dir}/genomeParameters.txt&quot;</span>
-<span class="kn">input:</span> <span class="p">[(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_1.fastq&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/{s}_2.fastq&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span>
-<span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{cwd:a}/{s}.Aligned.out.sam&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{resource_dir}:{resource_dir}&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+<span class="kn">depends:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s2">/genomeParameters.txt&quot;</span>
+<span class="kn">input:</span> <span class="p">[(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">cwd</span><span class="si">:</span><span class="s1">a</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">_1.fastq&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">cwd</span><span class="si">:</span><span class="s1">a</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">_2.fastq&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span>
+<span class="kn">output:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cwd</span><span class="si">:</span><span class="s2">a</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">.Aligned.out.sam&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">resource_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">],</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">STAR</span> <span class="o">--</span><span class="n">genomeDir</span> <span class="p">{</span><span class="n">resource_dir</span><span class="p">}</span> \
         <span class="o">--</span><span class="n">readFilesIn</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> \
         <span class="o">--</span><span class="n">runThreadN</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span> <span class="o">--</span><span class="n">outFileNamePrefix</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nnn</span><span class="p">}</span><span class="o">.</span>
@@ -14300,16 +14304,16 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_cell">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># Convert SAM to BAM file &amp; zap the input</span>
 <span class="p">[</span><span class="n">align_2</span> <span class="p">(</span><span class="n">SAM</span> <span class="n">to</span> <span class="n">BAM</span><span class="p">)]</span>
-<span class="kn">input:</span> <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.Aligned.out.sam&#39;</span>
-<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{_name}.bam&#39;</span><span class="p">)</span>
-<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+<span class="kn">input:</span> <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">.Aligned.out.sam&#39;</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{_name}</span><span class="s1">.bam&#39;</span><span class="p">)</span>
+<span class="kn">run:</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/debian-ngs:1.0&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">samtools</span> <span class="n">view</span> <span class="o">-</span><span class="n">bS</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 <span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
 </pre></div>
@@ -14398,7 +14402,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_cell">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
@@ -14431,7 +14435,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div><div class="hidden_content">
         
@@ -14439,7 +14443,7 @@ parameter: cwd = path('~/GIT/LargeFiles/RNAseqDE')</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">suppressPackageStartupMessages</span><span class="p">(</span><span class="n">library</span><span class="p">(</span><span class="s2">&quot;airway&quot;</span><span class="p">))</span>
 <span class="n">indir</span> <span class="o">&lt;-</span> <span class="n">system</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="s2">&quot;extdata&quot;</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="s2">&quot;airway&quot;</span><span class="p">,</span> <span class="n">mustWork</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;List of Files in the /extdata directory of the airway package:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;List of Files in the /extdata directory of the airway package:&quot;</span><span class="p">)</span>
 <span class="nb">list</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">indir</span><span class="p">)</span>
 </pre></div>
 
@@ -14509,13 +14513,13 @@ We load such a CSV file with read.csv:</p>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[8]:</div><div class="hidden_content">
         
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">csvfile</span> <span class="o">&lt;-</span> <span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">indir</span><span class="p">,</span> <span class="s2">&quot;sample_table.csv&quot;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">csvfile</span> <span class="o">&lt;-</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">indir</span><span class="p">,</span> <span class="s2">&quot;sample_table.csv&quot;</span><span class="p">)</span>
 <span class="n">sampleTable</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">sampleTable</span>
 </pre></div>
@@ -14580,9 +14584,9 @@ We load such a CSV file with read.csv:</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1">## Checking for the existance of files in the package directory.</span>
-<span class="n">filenames</span> <span class="o">&lt;-</span> <span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">indir</span><span class="p">,</span> <span class="n">paste0</span><span class="p">(</span><span class="n">sampleTable</span><span class="err">$</span><span class="n">Run</span><span class="p">,</span> <span class="s2">&quot;_subset.bam&quot;</span><span class="p">))</span>
+<span class="n">filenames</span> <span class="o">&lt;-</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">indir</span><span class="p">,</span> <span class="n">paste0</span><span class="p">(</span><span class="n">sampleTable</span><span class="err">$</span><span class="n">Run</span><span class="p">,</span> <span class="s2">&quot;_subset.bam&quot;</span><span class="p">))</span>
 <span class="n">unique</span><span class="p">(</span><span class="n">sampleTable</span><span class="err">$</span><span class="n">Run</span><span class="p">)</span>
-<span class="nb">file</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+<span class="n">file</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14735,7 +14739,7 @@ Make sure that the chromosome names of the genomic features in the annotation yo
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div><div class="hidden_content">
         
@@ -14807,8 +14811,8 @@ Make sure that the chromosome names of the genomic features in the annotation yo
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">suppressPackageStartupMessages</span><span class="p">(</span><span class="n">library</span><span class="p">(</span><span class="s2">&quot;GenomicFeatures&quot;</span><span class="p">))</span>
 <span class="c1">## txdb format</span>
-<span class="n">gtffile</span> <span class="o">&lt;-</span> <span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">indir</span><span class="p">,</span><span class="s2">&quot;Homo_sapiens.GRCh37.75_subset.gtf&quot;</span><span class="p">)</span>
-<span class="n">txdb</span> <span class="o">&lt;-</span> <span class="n">makeTxDbFromGFF</span><span class="p">(</span><span class="n">gtffile</span><span class="p">,</span> <span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;gtf&quot;</span><span class="p">,</span> <span class="n">circ_seqs</span> <span class="o">=</span> <span class="n">character</span><span class="p">())</span>
+<span class="n">gtffile</span> <span class="o">&lt;-</span> <span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">indir</span><span class="p">,</span><span class="s2">&quot;Homo_sapiens.GRCh37.75_subset.gtf&quot;</span><span class="p">)</span>
+<span class="n">txdb</span> <span class="o">&lt;-</span> <span class="n">makeTxDbFromGFF</span><span class="p">(</span><span class="n">gtffile</span><span class="p">,</span> <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;gtf&quot;</span><span class="p">,</span> <span class="n">circ_seqs</span> <span class="o">=</span> <span class="n">character</span><span class="p">())</span>
 <span class="n">txdb</span>
 </pre></div>
 
@@ -14888,7 +14892,7 @@ OK
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div><div class="hidden_content">
         
@@ -15059,7 +15063,7 @@ seqinfo: 1 sequence from an unspecified genome; no seqlengths</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[16]:</div><div class="hidden_content">
         
@@ -15729,7 +15733,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[28]:</div><div class="hidden_content">
         
@@ -15896,7 +15900,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[31]:</div><div class="hidden_content">
         
@@ -16145,7 +16149,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[37]:</div><div class="hidden_content">
         
@@ -16255,7 +16259,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[39]:</div><div class="hidden_content">
         
@@ -16323,7 +16327,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[40]:</div><div class="hidden_content">
         
@@ -16381,7 +16385,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[41]:</div><div class="hidden_content">
         
@@ -16510,7 +16514,7 @@ SRR1039521  SRX384358 SRS508580 SAMN02422677</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[43]:</div><div class="hidden_content">
         
@@ -16707,7 +16711,7 @@ SRR1039521   50.13430</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[47]:</div><div class="hidden_content">
         
@@ -16824,7 +16828,7 @@ SRR1039521   50.13430</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[49]:</div><div class="hidden_content">
         
@@ -16973,7 +16977,7 @@ SRR1039521   50.13430</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[51]:</div><div class="hidden_content">
         
@@ -17037,7 +17041,7 @@ SRR1039521   50.13430</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[52]:</div><div class="hidden_content">
         
@@ -17108,7 +17112,7 @@ SRR1039521   50.13430</pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s2">&quot;figures/mds_rlog.pdf&quot;</span><span class="p">)</span>
 <span class="n">mds</span> <span class="o">&lt;-</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">colData</span><span class="p">(</span><span class="n">rld</span><span class="p">))</span>  <span class="o">%&gt;%</span>
          <span class="n">cbind</span><span class="p">(</span><span class="n">cmdscale</span><span class="p">(</span><span class="n">sampleDistMatrix</span><span class="p">))</span>
-<span class="n">ggplot</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="sb">`1`</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="sb">`2`</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">dex</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">cell</span><span class="p">))</span> <span class="o">+</span>
+<span class="n">ggplot</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="err">`</span><span class="mi">1</span><span class="err">`</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">`</span><span class="mi">2</span><span class="err">`</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">dex</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">cell</span><span class="p">))</span> <span class="o">+</span>
   <span class="n">geom_point</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">coord_fixed</span><span class="p">()</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
@@ -17158,7 +17162,7 @@ SRR1039521   50.13430</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[54]:</div><div class="hidden_content">
         
@@ -17230,7 +17234,7 @@ SRR1039521   50.13430</pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s2">&quot;figures/mds_pois.pdf&quot;</span><span class="p">)</span>
 <span class="n">mdsPois</span> <span class="o">&lt;-</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">colData</span><span class="p">(</span><span class="n">dds</span><span class="p">))</span> <span class="o">%&gt;%</span>
    <span class="n">cbind</span><span class="p">(</span><span class="n">cmdscale</span><span class="p">(</span><span class="n">samplePoisDistMatrix</span><span class="p">))</span>
-<span class="n">ggplot</span><span class="p">(</span><span class="n">mdsPois</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="sb">`1`</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="sb">`2`</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">dex</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">cell</span><span class="p">))</span> <span class="o">+</span>
+<span class="n">ggplot</span><span class="p">(</span><span class="n">mdsPois</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="err">`</span><span class="mi">1</span><span class="err">`</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="err">`</span><span class="mi">2</span><span class="err">`</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">dex</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">cell</span><span class="p">))</span> <span class="o">+</span>
   <span class="n">geom_point</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">coord_fixed</span><span class="p">()</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
@@ -17280,7 +17284,7 @@ SRR1039521   50.13430</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[56]:</div><div class="hidden_content">
         
@@ -17489,7 +17493,7 @@ ENSG00000273489          NA</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[59]:</div><div class="hidden_content">
         
@@ -17621,8 +17625,8 @@ low counts [2]   : 11397, 39%
         
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="mo">05</span> <span class="o">&lt;-</span> <span class="n">results</span><span class="p">(</span><span class="n">dds</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span>
-<span class="n">table</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="mo">05</span><span class="err">$</span><span class="n">padj</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="mi">05</span> <span class="o">&lt;-</span> <span class="n">results</span><span class="p">(</span><span class="n">dds</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="n">table</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="mi">05</span><span class="err">$</span><span class="n">padj</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -17893,7 +17897,7 @@ ENSG00000273489        NA</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[65]:</div><div class="hidden_content">
         
@@ -18013,7 +18017,7 @@ ENSG00000141469 2.069606e-03</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[67]:</div><div class="hidden_content">
         
@@ -18126,7 +18130,7 @@ ENSG00000249364 1.223812e-04</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[69]:</div><div class="hidden_content">
         
@@ -18265,7 +18269,7 @@ ENSG00000249364 1.223812e-04</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[71]:</div><div class="hidden_content">
         
@@ -18376,7 +18380,7 @@ Note that the DESeq test actually takes into account the cell line effect, so th
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[73]:</div><div class="hidden_content">
         
@@ -18487,7 +18491,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[75]:</div><div class="hidden_content">
         
@@ -18599,7 +18603,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[77]:</div><div class="hidden_content">
         
@@ -18708,7 +18712,7 @@ The log2 fold change for a particular comparison is plotted on the y-axis and th
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[79]:</div><div class="hidden_content">
         
@@ -18882,7 +18886,7 @@ The following objects are masked from ‘package:matrixStats’:
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[82]:</div><div class="hidden_content">
         
@@ -18969,7 +18973,7 @@ Treatment status and cell line information are shown with colored bars at the to
 <span class="n">bins</span> <span class="o">&lt;-</span> <span class="n">cut</span><span class="p">(</span><span class="n">resLFC1</span><span class="err">$</span><span class="n">baseMean</span><span class="p">,</span> <span class="n">qs</span><span class="p">)</span>
 <span class="n">levels</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">signif</span><span class="p">((</span><span class="n">qs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">qs</span><span class="p">[</span><span class="o">-</span><span class="n">length</span><span class="p">(</span><span class="n">qs</span><span class="p">)])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
 <span class="n">fractionSig</span> <span class="o">&lt;-</span> <span class="n">tapply</span><span class="p">(</span><span class="n">resLFC1</span><span class="err">$</span><span class="n">pvalue</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-                          <span class="n">mean</span><span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="o">.</span><span class="mo">05</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">))</span>
+                          <span class="n">mean</span><span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="o">.</span><span class="mi">05</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">))</span>
 <span class="n">barplot</span><span class="p">(</span><span class="n">fractionSig</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s2">&quot;mean normalized count&quot;</span><span class="p">,</span>
                      <span class="n">ylab</span> <span class="o">=</span> <span class="s2">&quot;fraction of small p values&quot;</span><span class="p">)</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
@@ -19008,7 +19012,7 @@ Treatment status and cell line information are shown with colored bars at the to
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[84]:</div><div class="hidden_content">
         
@@ -19114,7 +19118,7 @@ Treatment status and cell line information are shown with colored bars at the to
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[86]:</div><div class="hidden_content">
         
@@ -19293,7 +19297,7 @@ ENSG00000211445        GPX3        2878</pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">resOrderedDF</span> <span class="o">&lt;-</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">resOrdered</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span> <span class="p">]</span>
-<span class="n">write</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="n">resOrderedDF</span><span class="p">,</span> <span class="nb">file</span> <span class="o">=</span> <span class="s2">&quot;results.csv&quot;</span><span class="p">)</span>
+<span class="n">write</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="n">resOrderedDF</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;results.csv&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -19342,7 +19346,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[92]:</div><div class="hidden_content">
         
@@ -19424,7 +19428,7 @@ ENSG00000211445        GPX3        2878</pre>
         
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">resGR</span> <span class="o">&lt;-</span> <span class="n">results</span><span class="p">(</span><span class="n">dds</span><span class="p">,</span> <span class="n">lfcThreshold</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;GRanges&quot;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">resGR</span> <span class="o">&lt;-</span> <span class="n">results</span><span class="p">(</span><span class="n">dds</span><span class="p">,</span> <span class="n">lfcThreshold</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;GRanges&quot;</span><span class="p">)</span>
 <span class="n">resGR</span>
 </pre></div>
 
@@ -19722,7 +19726,7 @@ ENSG00000211445        GPX3        2878</pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[99]:</div><div class="hidden_content">
         
@@ -19851,7 +19855,7 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[101]:</div><div class="hidden_content">
         
@@ -19960,7 +19964,7 @@ Iteration (out of 5 ):1  2  3  4  5  </pre>
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[103]:</div><div class="hidden_content">
         
@@ -20447,7 +20451,7 @@ SPAC1002.17c 3.466817e-04        urg2</pre>
 
 <div class="sos_lan_R">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[112]:</div><div class="hidden_content">
         
@@ -20641,7 +20645,7 @@ Also defined by &#39;ggbio&#39;
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[115]:</div><div class="hidden_content">
         
@@ -20714,7 +20718,7 @@ Also defined by &#39;ggbio&#39;
 
 <div class="sos_lan_SoS">
    
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_cell">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[116]:</div>
 <div class="inner_cell">

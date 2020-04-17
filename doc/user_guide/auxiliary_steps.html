@@ -13769,6 +13769,10 @@ textarea.sos-source {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
+
+  li {
+    list-style: none;
+  }
 }
 
 #toc > .toc-list  a {
@@ -14365,9 +14369,9 @@ function add_hoverdoc(){
     <span class="c1"># input bam file</span>
 </pre></div>
 <p>Because the step depends on an index file, SoS will look in the script for a step that provides such a target, which would be similar to</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">index_bam</span> <span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;{sample}.bam.bai&#39;</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{sample}.bam&quot;</span>
-<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">index_bam</span> <span class="p">:</span> <span class="kp">provides</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{sample}</span><span class="s1">.bam.bai&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sample</span><span class="si">}</span><span class="s2">.bam&quot;</span>
+<span class="kn">run:</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span>
      <span class="n">samtools</span> <span class="n">index</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
 </pre></div>
 <p>Such a step is characterized by a <strong><code>provides</code></strong> option (or a step with simple <code>output</code> statement and is called an auxiliary step. In this particular case, if <code>bamfile="AS123.bam"</code>, the requested dependent file would be <code>AS123.bam.bai</code>. Through the matching mechanism of option <code>provides</code>, the <code>index_bam</code> step would be executed with variables <code>sample="AS123"</code> and <code>step_output="AS123.bam.bai"</code>.</p>
