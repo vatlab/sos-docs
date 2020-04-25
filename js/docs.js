@@ -70,9 +70,9 @@ var guides= [
     },
     
     {
-        title: "Working with Bash",
+        title: "Working with Bash and Zsh",
         name: "sos_bash",
-        fulltitle: " working with bash module sos-bash sos_bash "
+        fulltitle: " working with bash and zsh module sos-bash sos_bash "
     },
     {
         title: "Working with JavaScript and TypeScript",
