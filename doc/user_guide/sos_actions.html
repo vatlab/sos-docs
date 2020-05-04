@@ -13725,7 +13725,7 @@ textarea.sos-source {
 <style>
 
 /* The Table of Contents container element */
-.toc-wrapper {
+.toc-container {
     flex-flow: column;
     display: flex;
 
@@ -13741,6 +13741,14 @@ textarea.sos-source {
 }
 
 .toc-header {
+  flex: 0 1 auto;
+}
+
+.toc-before {
+  flex: 0 1 auto;
+}
+
+.toc-after {
   flex: 0 1 auto;
 }
 
@@ -13761,10 +13769,6 @@ textarea.sos-source {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
-
-  li {
-    list-style: none;
-  }
 }
 
 #toc > .toc-list  a {
@@ -13775,14 +13779,12 @@ textarea.sos-source {
 #toc > .toc-list .toc-list a {
   margin: 0;
   padding-left: 25px;
-  font-size: 12px;
 }
 
 
 #toc > .toc-list .toc-list .toc-list a {
   margin: 0;
   padding-left: 40px;
-  font-size: 12px;
 }
 
 a.toc-link {
@@ -14296,13 +14298,19 @@ function add_hoverdoc(){
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <div class="toc-wrapper">
+      <div class="toc-container">
         <div class="toc-header">
+          </div>
+          <div class="toc-wrapper">
+            <div class="toc-before">
+            </div>
+            <div id="toc" class="toc">
+            </div><!--/.well -->
+            <div class="toc-after">
+            </div>
         </div>
-        <div id="toc" class="toc">
-        </div><!--/.well -->
       </div>
-    </div><!--/span-->
+    </div>
     <div class="col-xs-12 col-sm-8 col-md-9">
       
 
@@ -15450,7 +15458,7 @@ cli.ipynb
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Expansion-of-template">Expansion of template<a class="anchor-link" href="#Expansion-of-template"></a></h4><p>When a template is specified directly, it should be a string with variables</p>
+<h4 id="Expansion-of-template">Expansion of template<a class="anchor-link" href="#Expansion-of-template"></a></h4><p>When a template is specified directly, it should be a string with the following variables that will be expanded before execution:</p>
 <table>
 <thead><tr>
 <th style="text-align:left">variable</th>
@@ -15586,7 +15594,7 @@ sh: template=time_me
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For example, if we create templates <code>show_script</code> and <code>time_me</code> in configuration file</p>
+<p>For example, if we save templates <code>show_script</code> and <code>time_me</code> in a configuration file <code>myconfig.yml</code></p>
 
 </div>
 </div>
@@ -15641,7 +15649,7 @@ action_templates:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can use them directly with option <code>template_name</code> (the output of the following is not captured due to a bug in SoS Notebook).</p>
+<p>These templates can be used directly with option <code>template_name</code>:</p>
 
 </div>
 </div>
@@ -15677,6 +15685,17 @@ sh: template_name='time_me'
 </div>
 </div>
 
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>It took 5 seconds
+</pre>
+</div>
 </div>
 
 <div class="output_area">
@@ -16649,7 +16668,8 @@ bash:
 
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js"></script>
 
 <script>
 
@@ -16658,7 +16678,7 @@ bash:
 
     if (!headings) {
       let content = document.querySelector('.notebook-container')
-      headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+      headings = content.querySelectorAll('h1, h2, h3')
     }
     Array.prototype.forEach.call(headings, function(heading) {
       var id = heading.id ? heading.id : heading.textContent.toLowerCase();
@@ -16682,10 +16702,10 @@ bash:
         ++counts[parseInt(headings[i].tagName[1])-1]
       }
       // now, we remove the first 1 if it is the first tag, and if
-      // it has only one, and if it is not the only header
+      // it has only one, and if it is the only header
       let first = counts.findIndex(x => x > 0);
       if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
-         && parseInt(headings[0].tagName[1]) === first + 1) {
+         && parseInt(headings[0].tagName[1]) === first + 1 && false) {
           counts[first] = 0;
       }
       //
@@ -16695,7 +16715,7 @@ bash:
 
   function updateTOC ( ) {
     var content = document.querySelector('.notebook-container')
-    var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+    var headings = content.querySelectorAll('h1, h2, h3')
 
     fixIDsForToc(headings);
 
@@ -16716,6 +16736,8 @@ bash:
       //
       orderedList: false,
       //
+      hasInnerContainers: true,
+      //
       scrollSmooth: true
     });
   }
@@ -16723,6 +16745,7 @@ bash:
   updateTOC()
 
 </script>
+
 
 
 
