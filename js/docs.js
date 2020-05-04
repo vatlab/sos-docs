@@ -190,7 +190,7 @@ var guides= [
     {
         title: "Configuration files",
         name: "config_files",
-        fulltitle: " configuration files config_files "
+        fulltitle: " configuration files option -c config_files "
     },
     {
         title: "SoS targets",
@@ -284,7 +284,7 @@ var guides= [
     {
         title: "SoS actions and common options",
         name: "sos_actions",
-        fulltitle: " sos actions and common options sos_actions "
+        fulltitle: " sos actions and common options action options active allow_error args container engine default_env env input output stdout stderr template template_name tracked workdir sos_actions "
     },
     {
         title: "Command execution actions",
@@ -322,9 +322,9 @@ var guides= [
         fulltitle: " running scripts in singularity action options container and engine action singularity_build singularity "
     },
     {
-        title: "The task statement and option -q)",
+        title: "The task statement and option -q, task options queue, shared, env, prepend_path)",
         name: "task_statement",
-        fulltitle: " the task statement and option -q task_statement "
+        fulltitle: " the task statement and option -q task options queue shared env prepend_path task_statement "
     },
     {
         title: "Host configuration",
