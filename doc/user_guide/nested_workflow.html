@@ -13729,7 +13729,7 @@ textarea.sos-source {
 <style>
 
 /* The Table of Contents container element */
-.toc-wrapper {
+.toc-container {
     flex-flow: column;
     display: flex;
 
@@ -13745,6 +13745,14 @@ textarea.sos-source {
 }
 
 .toc-header {
+  flex: 0 1 auto;
+}
+
+.toc-before {
+  flex: 0 1 auto;
+}
+
+.toc-after {
   flex: 0 1 auto;
 }
 
@@ -13765,10 +13773,6 @@ textarea.sos-source {
 #toc > .toc-list {
   overflow: hidden;
   position: relative;
-
-  li {
-    list-style: none;
-  }
 }
 
 #toc > .toc-list  a {
@@ -13779,14 +13783,12 @@ textarea.sos-source {
 #toc > .toc-list .toc-list a {
   margin: 0;
   padding-left: 25px;
-  font-size: 12px;
 }
 
 
 #toc > .toc-list .toc-list .toc-list a {
   margin: 0;
   padding-left: 40px;
-  font-size: 12px;
 }
 
 a.toc-link {
@@ -14300,13 +14302,19 @@ function add_hoverdoc(){
 <body>
   <div class="row-fluid">
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <div class="toc-wrapper">
+      <div class="toc-container">
         <div class="toc-header">
+          </div>
+          <div class="toc-wrapper">
+            <div class="toc-before">
+            </div>
+            <div id="toc" class="toc">
+            </div><!--/.well -->
+            <div class="toc-after">
+            </div>
         </div>
-        <div id="toc" class="toc">
-        </div><!--/.well -->
       </div>
-    </div><!--/span-->
+    </div>
     <div class="col-xs-12 col-sm-8 col-md-9">
       
 
@@ -15841,7 +15849,8 @@ This is nested_30 of a nested workflow
 
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js"></script>
 
 <script>
 
@@ -15850,7 +15859,7 @@ This is nested_30 of a nested workflow
 
     if (!headings) {
       let content = document.querySelector('.notebook-container')
-      headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+      headings = content.querySelectorAll('h1, h2, h3')
     }
     Array.prototype.forEach.call(headings, function(heading) {
       var id = heading.id ? heading.id : heading.textContent.toLowerCase();
@@ -15874,10 +15883,10 @@ This is nested_30 of a nested workflow
         ++counts[parseInt(headings[i].tagName[1])-1]
       }
       // now, we remove the first 1 if it is the first tag, and if
-      // it has only one, and if it is not the only header
+      // it has only one, and if it is the only header
       let first = counts.findIndex(x => x > 0);
       if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
-         && parseInt(headings[0].tagName[1]) === first + 1) {
+         && parseInt(headings[0].tagName[1]) === first + 1 && false) {
           counts[first] = 0;
       }
       //
@@ -15887,7 +15896,7 @@ This is nested_30 of a nested workflow
 
   function updateTOC ( ) {
     var content = document.querySelector('.notebook-container')
-    var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+    var headings = content.querySelectorAll('h1, h2, h3')
 
     fixIDsForToc(headings);
 
@@ -15908,6 +15917,8 @@ This is nested_30 of a nested workflow
       //
       orderedList: false,
       //
+      hasInnerContainers: true,
+      //
       scrollSmooth: true
     });
   }
@@ -15915,6 +15926,7 @@ This is nested_30 of a nested workflow
   updateTOC()
 
 </script>
+
 
 
 
