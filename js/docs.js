@@ -175,7 +175,7 @@ var guides= [
     {
         title: "Syntax and file formats",
         name: "sos_syntax",
-        fulltitle: " syntax and file formats sos_syntax "
+        fulltitle: " syntax and file formats global and other sections sos_syntax "
     },
     {
         title: "Script format of function calls",
@@ -224,7 +224,7 @@ var guides= [
     {
         title: "Named input",
         name: "named_input",
-        fulltitle: " named input named_input "
+        fulltitle: " named input keyword and dictionary input named_input "
     },
     {
         title: "Input option group_by",
@@ -284,7 +284,7 @@ var guides= [
     {
         title: "SoS actions and common options",
         name: "sos_actions",
-        fulltitle: " sos actions and common options action options active allow_error args container engine default_env env input output stdout stderr template template_name tracked workdir sos_actions "
+        fulltitle: " sos actions and common options action options active allow_error args container engine default_env env input output stdout stderr template template_name tracked and workdir sos_actions "
     },
     {
         title: "Command execution actions",
