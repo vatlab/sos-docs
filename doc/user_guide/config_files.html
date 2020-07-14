@@ -14412,7 +14412,7 @@ function add_hoverdoc(){
       B: new
       C: old
       D: new</code></pre>
-<p>is used. This is how <strong>site or global configurations can be overridden by user configurations</strong>.</p>
+<p>is used. This is how <strong>site or global configurations are extended or overridden by user configurations</strong>.</p>
 
 </div>
 </div>
@@ -14529,8 +14529,62 @@ print(CONFIG['hosts']['cluster'])</textarea>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS interpolates string values if they contain <code>{ }</code>. The expressions enclosed by <code>{ }</code> would be evaluated by variables defined in in the root dictionary of <code>CONFIG</code>, or the dictionary in which the value is defined, or variables provided by users in case of task or workflow templates.</p>
-<p>For example, let us define a config file using magic <code>%save</code></p>
+<p>Internally, SoS interpolates string values as if they are Python f-strings. That is to say, expressions inside <code>{ }</code> will be interpolated before they are used.</p>
+<p>For example, let us assume that we have an incomplete host definition as follows:</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>yml
+user_name: user
+hosts:
+  desktop:
+    paths:
+        home: "{os.environ['HOME']}"
+  cluster:
+    address: "{user_name}@domain.com:{port}"
+    port: 123
+    queue: medium
+    task_template: |
+        #PBS -q {queue}</code></pre>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can see that <code>hosts</code> -&gt; <code>cluster</code> -&gt; <code>address</code> and <code>task_template</code> have expressions in <code>{ }</code> that will be expanded as f-string by SoS.</p>
+<p>The f-strings will be expanded according to the following rules:</p>
+<ol>
+<li>Variables provided from workflow or command line have the highest priority. For example, if <code>queue='long'</code> is specified as runtime options of tasks, variable <code>queue</code> will be expanded as <code>long</code>.</li>
+</ol>
+
+<pre><code>%run -q cluster
+task: queue='long'
+...</code></pre>
+<ol>
+<li><p>Variables in the parent dictionary. In this example <code>port</code> would be used for <code>address</code>, and <code>queue</code> would be used for <code>task_template</code> if it is not defined from workflow. That is to say <code>queue: medium</code> provides a default value to variable <code>queue</code>.</p>
+</li>
+<li><p>Variables in the root of the configuration dictionary. In this example <code>user_name</code> is defined and would be used for <code>address</code>.  Because key <code>user_name</code> is frequently used in <code>hosts.yml</code>, <strong>SoS automatically defines <code>user_name</code> as the local user ID (all lower case) in <code>CONFIG</code> if it is not defined in any of the configuration files</strong>.</p>
+</li>
+</ol>
+<p>Note that module <code>os</code> is made available during string interpolation to allow expansion of environment variables from <code>os.environ</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Putting these knowledge in use, let us create a configuration file with <code>%save</code> magic</p>
 
 </div>
 </div>
@@ -14541,114 +14595,6 @@ print(CONFIG['hosts']['cluster'])</textarea>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
-   <textarea rows="7"
-      class="sos-source" name="SoS">%save my_config.yml -f
-
-user_name: user
-hosts:
-  cluster:
-    address: "{user_name}@domain.com:{port}"
-    port: 123</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">Cell content saved to <b>my_config.yml</b>, use option -r to also execute the cell.</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>When the configuration file is loaded with option <code>-c</code>, the <code>address</code> in <code>hosts.cluster</code> is expanded with <code>user</code> defined in the root dictionary, and <code>port</code> defined in the local dictionary.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
-   <textarea rows="3"
-      class="sos-source" name="SoS">%run -c my_config.yml
-
-print(CONFIG['hosts']['cluster'])</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>{&#39;address&#39;: &#39;user@domain.com:123&#39;, &#39;port&#39;: 123}
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Because key <code>user_name</code> is frequently used in <code>hosts.yml</code>, <strong>SoS automatically defines <code>user_name</code> as the local user ID (all lower case) in <code>CONFIG</code> if it is not defined in any of the configuration files</strong>.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>String interpolation happens after <code>based_on</code>, so the following usage is allowed:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
    <textarea rows="11"
       class="sos-source" name="SoS">%save my_config.yml -f
@@ -14705,10 +14651,10 @@ hosts:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="SoS">%run -r host_r -c my_config.yml -v0
+      class="sos-source" name="SoS">%run -r host_r -c my_config.yml -v1
 print('Hello')</textarea>
   </div>
 </div>
@@ -14726,8 +14672,7 @@ print('Hello')</textarea>
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>module load R/3.1
-<span class="ansi-magenta-intense-fg">WARNING</span>: <span class="ansi-magenta-intense-fg">Task M4_b1c14581f8718798 inactive for more than 4830 seconds, might have been killed.</span>
-<span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 1 step processed (1 job completed)
+Hello
 </pre>
 </div>
 </div>
@@ -14753,10 +14698,10 @@ print('Hello')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="SoS">%run -r host_r33 -c my_config.yml -v0
+      class="sos-source" name="SoS">%run -r host_r33 -c my_config.yml -v1
 print('Hello')</textarea>
   </div>
 </div>
@@ -14774,7 +14719,7 @@ print('Hello')</textarea>
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>module load R/3.3
-<span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 1 step processed (1 job completed)
+Hello
 </pre>
 </div>
 </div>
@@ -14800,7 +14745,7 @@ print('Hello')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="SoS">%run -r host_r R_version=4.3 -c my_config.yml -v0
@@ -14864,7 +14809,7 @@ print('Hello')</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">%run -v0
@@ -14911,7 +14856,7 @@ print(manager)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">%run --manager Elena -v0
@@ -14958,7 +14903,7 @@ print(manager)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
       class="sos-source" name="SoS">%save myconfig.yml -f
@@ -15005,10 +14950,10 @@ manager: Martin</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
-      class="sos-source" name="SoS">%run -c myconfig.yml -v0
+      class="sos-source" name="SoS">%run -c myconfig.yml -v1
 parameter: manager = CONFIG.get('manager', 'Bob')
 print(manager)</textarea>
   </div>
@@ -15026,7 +14971,7 @@ print(manager)</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 1 step processed (1 job completed)
+<pre>Martin
 </pre>
 </div>
 </div>
@@ -15075,7 +15020,7 @@ print(manager)</textarea>
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 12.02861em">
    <textarea rows="9"
       class="sos-source" name="SoS">%save myconfig.yml -f
@@ -15129,7 +15074,7 @@ hosts:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
    <textarea rows="4"
       class="sos-source" name="SoS">%run -c myconfig.yml -v1
@@ -15151,7 +15096,7 @@ sh: workdir=path(name='project')
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Working on /Users/bpeng1/Documents
+<pre>Working on /Users/bpeng/vatlab/sos-docs/src/user_guide
 </pre>
 </div>
 </div>
@@ -15177,7 +15122,7 @@ sh: workdir=path(name='project')
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
    <textarea rows="5"
       class="sos-source" name="SoS">%run -c myconfig.yml -v1
@@ -15200,7 +15145,7 @@ sh: workdir=path(name='scratch', default='~')
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Working on /Users/bpeng1
+<pre>Working on /Users/bpeng/vatlab/sos-docs/src/user_guide
 </pre>
 </div>
 </div>
