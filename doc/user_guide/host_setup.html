@@ -14452,6 +14452,10 @@ function add_hoverdoc(){
 <td>template for the execution of tasks</td>
 </tr>
 <tr>
+<td><code>sos</code></td>
+<td>path to sos on remote host if not in <code>$PATH</code></td>
+</tr>
+<tr>
 <td><code>VARIABLE</code> (any)</td>
 <td>Variable used to interpolate other properties</td>
 </tr>
@@ -14802,7 +14806,21 @@ hosts:
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now, when we execute the workflow on remote host, the workflow would be actually executed under <code>/Users/bpeng1/scratch/sos/sos-docs/src/user_guide</code>. It is a common technique to use a dedicated directory on remote host for SoS workflows to avoid overwriting useful files under <code>/Users/bpeng1</code>.</p>
-
+<div class="bs-callout bs-callout-primary" role="info">
+    <b><code>sos</code> command on remote host</b><br>
+  <p>The command line tool <code>sos</code> needs to be installed on the remote host to execute workflows or tasks there. 
+    Since <code>sos</code> uses login shell to talk to remote hosts, it is generally good enough
+    if you have <code>sos</code> in <code>$PATH</code>. However, if you do not want to add 
+    path to <code>sos</code> executable to you <code>$PATH</code> on the remote host, you 
+    can define full path to <code>sos</code> in the host definition.</p>
+    <p>For example</p>
+    <pre>
+hosts:
+  cluster:
+    address: my_cluster   
+    sos: /share/app/python3.7/bin/sos
+    </pre>
+</div>
 </div>
 </div>
 </div>
@@ -14811,7 +14829,7 @@ hosts:
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
       class="sos-source" name="SoS">%run -r bcbm -c my_config.yml
@@ -14832,12 +14850,20 @@ sh:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>INFO: No matching tasks are identified. Use option -a to check all tasks.
-INFO: Running <span class="ansi-green-fg">default</span>: 
-Working on /Users/bpeng1/scratch/sos/sos-docs/src/user_guide of bcbm-bpeng.mdanderson.edu
-INFO: <span class="ansi-green-fg">default</span> is <span class="ansi-green-fg">completed</span>.
-INFO: Workflow default (ID=0c287556fb76fee1) is executed successfully with 1 completed step.
+<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">Failed to connect to bcbm: ssh: Could not resolve hostname bcbm: nodename nor servname provided, or not known
+</span>
 </pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-intense-fg">Workflow exited with code 1</span></pre>
 </div>
 </div>
 
@@ -15405,7 +15431,7 @@ kill_cmd: qdel {job_id}</code></pre>
  * Distributed under the terms of the Modified BSD License.
  **/
 
-(function(mod) {
+(function (mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     mod(require("codemirror/lib/codemirror"),
       require("codemirror/mode/python/python"),
@@ -15416,14 +15442,23 @@ kill_cmd: qdel {job_id}</code></pre>
       require("codemirror/mode/javascript/javascript"),
       require("codemirror/mode/shell/shell"),
       require("codemirror/mode/julia/julia"),
-      require("codemirror/mode/markdown/markdown"));
+      require("codemirror/mode/markdown/markdown"),
+      require("codemirror/mode/htmlembedded/htmlembedded"),
+      require("codemirror/mode/xml/xml"),
+      require("codemirror/mode/yaml/yaml"),
+      require("codemirror/mode/javascript/javascript"),
+      require("codemirror/mode/stex/stex"),
+      require("codemirror/addon/selection/active-line"),
+      require("codemirror/addon/fold/foldcode"),
+      require("codemirror/addon/fold/foldgutter"),
+      require("codemirror/addon/fold/indent-fold"));
   else if (typeof define == "function" && define.amd) // AMD
     define(["codemirror/lib/codemirror", "codemirror/mode/python/python",
       "codemirror/mode/markdown/markdown", "codemirror/mode/r/r"
     ], mod);
   else // Plain browser env
     mod(CodeMirror);
-})(function(CodeMirror) {
+})(function (CodeMirror) {
   "use strict";
 
   var sosKeywords = ["input", "output", "depends", "parameter"];
@@ -15481,7 +15516,35 @@ kill_cmd: qdel {job_id}</code></pre>
     },
     'octave': 'octave',
     'matlab': 'octave',
-  }
+    html: "htmlembedded",
+    xml: "xml",
+    yaml: "yaml",
+    json: {
+      name: "javascript",
+      jsonMode: true
+    },
+    stex: "stex"
+  };
+
+  var extMap = {
+    sos: 'python3',
+    py: "python3",
+    r: "r",
+    md: "markdown",
+    rb: "ruby",
+    sas: "sas",
+    sh: "shell",
+    jl: "julia",
+    js: "javascript",
+    ts: "typecript",
+    m: "matlab",
+    html: "html",
+    xml: "xml",
+    yaml: "yaml",
+    yml: "yaml",
+    json: "json",
+    tex: "stex"
+  };
 
   function findMode(mode) {
     if (mode in modeMap) {
@@ -15490,9 +15553,20 @@ kill_cmd: qdel {job_id}</code></pre>
     return null;
   }
 
+  function findModeFromFilename(filename) {
+    if (!filename) {
+      return 'markdown';
+    }
+    let ext = filename.split('.').pop().toLowerCase();
+    if (ext in extMap) {
+      return extMap[ext];
+    }
+    return 'markdown';
+  }
+
   function markExpr(python_mode) {
     return {
-      startState: function() {
+      startState: function () {
         return {
           in_python: false,
           sigil: null,
@@ -15501,7 +15575,7 @@ kill_cmd: qdel {job_id}</code></pre>
         };
       },
 
-      copyState: function(state) {
+      copyState: function (state) {
         return {
           in_python: state.in_python,
           sigil: state.sigil,
@@ -15510,7 +15584,7 @@ kill_cmd: qdel {job_id}</code></pre>
         };
       },
 
-      token: function(stream, state) {
+      token: function (stream, state) {
         if (state.in_python) {
           if (stream.match(state.sigil.right)) {
             state.in_python = false;
@@ -15555,14 +15629,14 @@ kill_cmd: qdel {job_id}</code></pre>
             }
             return "sos-sigil" + (state.matched ? "" : " sos-unmatched");
           }
-          while (stream.next() && !stream.match(state.sigil.left, false)) {}
+          while (stream.next() && !stream.match(state.sigil.left, false)) { }
           return null;
         }
       }
     }
   }
 
-  CodeMirror.defineMode("sos", function(conf, parserConf) {
+  CodeMirror.defineMode("sos", function (conf, parserConf) {
     let sosPythonConf = {};
     for (let prop in parserConf) {
       if (parserConf.hasOwnProperty(prop)) {
@@ -15597,7 +15671,7 @@ kill_cmd: qdel {job_id}</code></pre>
       });
       var overlay_mode = markExpr(python_mode);
       return {
-        startState: function() {
+        startState: function () {
           return {
             sos_mode: true,
             base_state: CodeMirror.startState(base_mode),
@@ -15611,7 +15685,7 @@ kill_cmd: qdel {job_id}</code></pre>
           };
         },
 
-        copyState: function(state) {
+        copyState: function (state) {
           return {
             sos_mode: state.sos_mode,
             base_state: CodeMirror.copyState(base_mode, state.base_state),
@@ -15624,7 +15698,7 @@ kill_cmd: qdel {job_id}</code></pre>
           };
         },
 
-        token: function(stream, state) {
+        token: function (stream, state) {
           if (state.sos_mode) {
             if (stream.sol()) {
               let sl = stream.peek();
@@ -15692,7 +15766,7 @@ kill_cmd: qdel {job_id}</code></pre>
           }
         },
 
-        indent: function(state, textAfter) {
+        indent: function (state, textAfter) {
           // inner indent
           if (!state.sos_mode) {
             if (!base_mode.indent) return CodeMirror.Pass;
@@ -15703,7 +15777,7 @@ kill_cmd: qdel {job_id}</code></pre>
           }
         },
 
-        innerMode: function(state) {
+        innerMode: function (state) {
           return state.sos_mode ? {
             state: state.base_state,
             mode: base_mode
@@ -15718,7 +15792,7 @@ kill_cmd: qdel {job_id}</code></pre>
       base_mode = CodeMirror.getMode(conf, sosPythonConf);
       overlay_mode = markExpr(base_mode);
       return {
-        startState: function() {
+        startState: function () {
           return {
             sos_state: null,
             base_state: CodeMirror.startState(base_mode),
@@ -15734,7 +15808,7 @@ kill_cmd: qdel {job_id}</code></pre>
           };
         },
 
-        copyState: function(state) {
+        copyState: function (state) {
           return {
             sos_state: state.sos_state,
             base_state: CodeMirror.copyState(base_mode, state.base_state),
@@ -15749,7 +15823,7 @@ kill_cmd: qdel {job_id}</code></pre>
           };
         },
 
-        token: function(stream, state) {
+        token: function (stream, state) {
           if (stream.sol()) {
             let sl = stream.peek();
             if (sl == '[') {
@@ -15869,6 +15943,22 @@ kill_cmd: qdel {job_id}</code></pre>
                 }
               }
             }
+            let mode_string = state.sos_state.slice(6).toLowerCase();
+            // for report, we need to find "output" option
+            if (mode_string === "report" &&
+              stream.match(/^.*output\s*=\s*/, false)) {
+              let found = stream.match(/^.*output\s*=\s*[rRbufF]*"""([^"]+)"""/, false);
+              if (!found)
+                found = stream.match(/^.*output\s*=\s*[rRbufF]*'''([^.]+)'''/, false);
+              if (!found)
+                found = stream.match(/^.*output\s*=\s*[rRbufF]*"([^"]+)"/, false);
+              if (!found)
+                found = stream.match(/^.*output\s*=\s*[rRbufF]*'([^']+)'/, false);
+
+              // found[1] is the filename
+              state.sos_state = 'start ' + findModeFromFilename(found ? found[1] : found);
+            }
+
             let token = base_mode.token(stream, state.base_state);
             // if it is end of line, ending the starting switch mode
             if (stream.eol() && stream.peek() !== ',') {
@@ -15923,7 +16013,7 @@ kill_cmd: qdel {job_id}</code></pre>
           }
         },
 
-        indent: function(state, textAfter) {
+        indent: function (state, textAfter) {
           // inner indent
           if (state.inner_mode) {
             if (!state.inner_mode.indent) return CodeMirror.Pass;
@@ -15933,7 +16023,7 @@ kill_cmd: qdel {job_id}</code></pre>
           }
         },
 
-        innerMode: function(state) {
+        innerMode: function (state) {
           return state.inner_mode ? null : {
             state: state.base_state,
             mode: base_mode
