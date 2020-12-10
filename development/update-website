@@ -26,7 +26,7 @@ sh: expand=True
 parameter: rerun = False
 
 input: '../src/user_guide/*.ipynb', group_by=1
-depends: '../src/templates/sos-doc-with-banner.tpl'
+depends: '../src/templates/sos-doc-with-banner/sos-doc-with-banner.html.j2'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 if rerun:
@@ -39,7 +39,7 @@ if rerun:
 
 
 run: expand=True
-    sos convert {_input:a} {_output:a}  --template {_depends}
+    sos convert {_input:a} {_output:a}  --template {_depends:d}
     python unlink_hint_links.py {_output:a}
 
 [convert-homepage]
