@@ -14353,7 +14353,7 @@ function add_hoverdoc(){
 <li><strong>Difficulty level</strong>: intermediate</li>
 <li><strong>Time need to lean</strong>: 20 minutes or less<ul>
 <li>Paths that are relative to the current working directory are portable across hosts.</li>
-<li>Use named paths (<code>#name</code>) to specify absolute paths that are different from local and remote hosts.</li>
+<li>Use named paths (<code>#name</code>) to specify absolute paths that are different across local and remote hosts.</li>
 <li>Options <code>to_host</code> and <code>from_host</code> specify files and directories send before task execution and retrieve after task execution, respectively.</li>
 </ul>
 </li>
@@ -14366,7 +14366,7 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Path-defintions-for-hosts">Path defintions for hosts<a class="anchor-link" href="#Path-defintions-for-hosts"></a></h2>
+<h2 id="Path-definitions-and-named-paths">Path definitions and named paths<a class="anchor-link" href="#Path-definitions-and-named-paths"></a></h2>
 </div>
 </div>
 </div>
@@ -14374,15 +14374,15 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When local and remote hosts do not share file systems (or share only some file systems), things can get a bit complicated because SoS will need to decide what paths to use on the remote host. The most important thing to rememver here is that <strong>paths across local and remote hosts are linked by named paths defined in the SoS host definition file</strong>.</p>
-<p>For example, a host definition file (usually <code>~/.sos/hosts.yml</code>) could have the following <code>paths</code> definitions</p>
+<p>When local and remote hosts do not share file systems (or share only some file systems), things can get a bit complicated because SoS will need to decide what paths to use on the remote host. The most important thing to remember here is that <strong>paths across local and remote hosts are linked by named paths defined in the SoS host definition file</strong>.</p>
+<p>For example, a host definition file (usually <code>~/.sos/hosts.yml</code>) could have the following <code>paths</code> definitions (incomplete)</p>
 <div class="highlight"><pre><span></span><span class="nt">localhost</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
 <span class="nt">hosts</span><span class="p">:</span>
     <span class="nt">office</span><span class="p">:</span>
         <span class="nt">paths</span><span class="p">:</span>
-            <span class="nt">home</span><span class="p">:</span>  <span class="l l-Scalar l-Scalar-Plain">/Usrs/{user_name}</span>
+            <span class="nt">home</span><span class="p">:</span>  <span class="l l-Scalar l-Scalar-Plain">/Users/{user_name}</span>
             <span class="nt">projects</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/Users/{user_name}/projects</span>
-            <span class="nt">scratch</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/{user_name}/scratch</span>
+            <span class="nt">scratch</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/Users/{user_name}/scratch</span>
     <span class="nt">cluster</span><span class="p">:</span>
         <span class="nt">paths</span><span class="p">:</span>
             <span class="nt">home</span><span class="p">:</span>  <span class="l l-Scalar l-Scalar-Plain">/home/{user_name}</span>
@@ -14390,6 +14390,7 @@ function add_hoverdoc(){
             <span class="nt">scratch</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/mount/scratch</span>
 </pre></div>
 <p>so that paths under <code>home</code>, <code>projects</code>, or <code>scratch</code> could be linked across <code>office</code> and <code>cluster</code>.</p>
+<p>Similar to <code>~/result.txt</code> that indicates <code>result.txt</code> under the user's home directory, which can be different across different hosts, <strong>named path, namely paths that starts with <code>#name</code>, such as <code>#projects/RNASeq</code> are paths that are context specific</strong>. If you specify <code>_output='#projects/RNASeq/genes.txt</code>, the paths will refer to different files on different hosts with different definitions for <code>#projects</code>.</p>
 
 </div>
 </div>
@@ -14398,8 +14399,16 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Working-directory-of-tasks-(Option-workdir)">Working directory of tasks (Option <code>workdir</code>)<a class="anchor-link" href="#Working-directory-of-tasks-(Option-workdir)"></a></h2><p>The <code>workdir</code> of task is default to the current working directory, or, in the case of remote execution, the remote counterpart of the current working directory. The <code>workdir</code> must be under one of the named paths.</p>
-<p>Option <code>workdir</code> controls the working directory of the task. For example, the following step downloads a file to the <code>resource</code> directory using <a href="download.html">action <code>download</code></a>. Note that SoS creates <code>workdir</code> if it does not exist.</p>
+<h2 id="Use-of-relative-path">Use of relative path<a class="anchor-link" href="#Use-of-relative-path"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let us execute an task on a remote host defined in a docker image. The task does nothing but reporting the value of <code>_output</code> and its current working directory. The output file <code>result.txt</code> is sent back to the local host after the completion of the task.</p>
+<p>As expected, the value of <code>_output</code> is a relative path <code>result.txt</code>. The working directory is <code>vatlab/sos-docs/src/user_guide</code> under <code>/root</code>, which corresponds to the locally working directory.</p>
 
 </div>
 </div>
@@ -14410,12 +14419,18 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
-   <textarea rows="4"
-      class="sos-source" name="SoS">task: queue='localhost', workdir='resource'
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">%preview result.txt
 
-download:
-  ftp://speedtest.tele2.net/512KB.zip</textarea>
+%run -c ~/docker.yml -q docker 
+
+output: 'result.txt'
+task:
+
+sh: expand=True
+    echo {_output} > {_output}
+    echo `pwd` >> {_output}</textarea>
   </div>
 </div>
 
@@ -14432,24 +14447,37 @@ download:
 
 
 <div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
 
-<table id="task_localhost_85ea891331ab4bcb_5c57eee2-334e-4ee4-964e-c5f3bbcc861f" class="task_table completed">
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="task_docker_d87b0aa3308b3ec9_6e94ecdb-e2aa-457a-bbed-eec46bd5dfcc" class="task_table completed">
 <tr>
   <td class="task_icon">
-    <i id="task_status_icon_localhost_85ea891331ab4bcb_5c57eee2-334e-4ee4-964e-c5f3bbcc861f" class="fa fa-2x fa-fw fa-check-square-o"
+    <i id="task_status_icon_docker_d87b0aa3308b3ec9_6e94ecdb-e2aa-457a-bbed-eec46bd5dfcc" class="fa fa-2x fa-fw fa-check-square-o"
     null null null></i>
   </td>
   <td class="task_id">
-    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>85ea891331ab4bcb<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'85ea891331ab4bcb', queue: 'localhost'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'85ea891331ab4bcb', queue: 'localhost'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'85ea891331ab4bcb', queue: 'localhost'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'85ea891331ab4bcb', queue: 'localhost'})"></i></div></pre></span>
+    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>d87b0aa3308b3ec9<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'d87b0aa3308b3ec9', queue: 'docker'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'d87b0aa3308b3ec9', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'d87b0aa3308b3ec9', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'d87b0aa3308b3ec9', queue: 'docker'})"></i></div></pre></span>
   </td>
   <td class="task_tags">
-    <span id="status_tags_localhost_85ea891331ab4bcb_5c57eee2-334e-4ee4-964e-c5f3bbcc861f"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_5057fa441d6e1755">5057fa441d6e1755<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'5057fa441d6e1755', queue: 'localhost'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'5057fa441d6e1755', queue: 'localhost'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'5057fa441d6e1755', queue: 'localhost'})"></i></div></pre><pre class="task_tags task_tag_cell_5c57eee2">cell_5c57eee2<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'cell_5c57eee2', queue: 'localhost'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'cell_5c57eee2', queue: 'localhost'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'cell_5c57eee2', queue: 'localhost'})"></i></div></pre><pre class="task_tags task_tag_user_guide">user_guide<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'user_guide', queue: 'localhost'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'user_guide', queue: 'localhost'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'user_guide', queue: 'localhost'})"></i></div></pre></span>
+    <span id="status_tags_docker_d87b0aa3308b3ec9_6e94ecdb-e2aa-457a-bbed-eec46bd5dfcc"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_7c0789b29bfba84e">7c0789b29bfba84e<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'7c0789b29bfba84e', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'7c0789b29bfba84e', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'7c0789b29bfba84e', queue: 'docker'})"></i></div></pre><pre class="task_tags task_tag_default">default<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'default', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'default', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'default', queue: 'docker'})"></i></div></pre><pre class="task_tags task_tag_user_guide">user_guide<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'user_guide', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'user_guide', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'user_guide', queue: 'docker'})"></i></div></pre></span>
   </td>
   <td class="task_timer">
-    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_localhost_85ea891331ab4bcb_5c57eee2-334e-4ee4-964e-c5f3bbcc861f" class="completed" datetime="1607897067546.1462">Ran for < 5 seconds</time></pre>
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_docker_d87b0aa3308b3ec9_6e94ecdb-e2aa-457a-bbed-eec46bd5dfcc" class="completed" datetime="1607972977233.3687">Ran for < 5 seconds</time></pre>
   </td>
   <td class="task_status">
-    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_localhost_85ea891331ab4bcb_5c57eee2-334e-4ee4-964e-c5f3bbcc861f">completed</span></pre>
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_docker_d87b0aa3308b3ec9_6e94ecdb-e2aa-457a-bbed-eec46bd5dfcc">completed</span></pre>
   </td>
 </tr>
 </table>
@@ -14458,22 +14486,123 @@ download:
 
 </div>
 
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: d87b0aa3308b3ec9 <span class="sos_highlight">received</span> 'result.txt' from docker
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">default</span> output:   <span class="sos_highlight">result.txt</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=7c0789b29bfba84e) is executed successfully with 1 completed step and 1 completed task.
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> result.txt (48 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">2 lines</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>result.txt
+/root/vatlab/sos-docs/src/user_guide</pre>
 </div>
 </div>
 
 </div>
 </div>
 
+</div>
+</div>
 
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Absolute-paths-and-named-paths">Absolute paths and named paths<a class="anchor-link" href="#Absolute-paths-and-named-paths"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you would like to specify an absolute path, you can use either <code>~</code> as home directory, or any of the named paths.</p>
+<p>In the following workflow, the output is specified as <code>#home/result.txt</code> (which is the same as <code>~/result.txt</code>. It is <code>/root/result.txt</code> on the remote host, and the current working directory remains the same.</p>
+
+</div>
+</div>
+</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">!ls resource</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">%preview ~/result.txt
+
+%run -c ~/docker.yml -q docker -s force
+
+output: '#home/result.txt'
+task:
+
+sh: expand=True
+    echo {_output} > {_output}
+    echo `pwd` >> {_output}</textarea>
   </div>
 </div>
 
@@ -14488,9 +14617,391 @@ download:
     <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="task_docker_652942b23342ae82_4aeff5b1-640a-4bda-b36f-5169e82e1fbe" class="task_table completed">
+<tr>
+  <td class="task_icon">
+    <i id="task_status_icon_docker_652942b23342ae82_4aeff5b1-640a-4bda-b36f-5169e82e1fbe" class="fa fa-2x fa-fw fa-check-square-o"
+    null null null></i>
+  </td>
+  <td class="task_id">
+    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>652942b23342ae82<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'652942b23342ae82', queue: 'docker'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'652942b23342ae82', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'652942b23342ae82', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'652942b23342ae82', queue: 'docker'})"></i></div></pre></span>
+  </td>
+  <td class="task_tags">
+    <span id="status_tags_docker_652942b23342ae82_4aeff5b1-640a-4bda-b36f-5169e82e1fbe"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_87a9056943dc9a91">87a9056943dc9a91<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'87a9056943dc9a91', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'87a9056943dc9a91', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'87a9056943dc9a91', queue: 'docker'})"></i></div></pre><pre class="task_tags task_tag_default">default<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'default', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'default', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'default', queue: 'docker'})"></i></div></pre><pre class="task_tags task_tag_user_guide">user_guide<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'user_guide', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'user_guide', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'user_guide', queue: 'docker'})"></i></div></pre></span>
+  </td>
+  <td class="task_timer">
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_docker_652942b23342ae82_4aeff5b1-640a-4bda-b36f-5169e82e1fbe" class="completed" datetime="1607973221929.9177">Ran for < 5 seconds</time></pre>
+  </td>
+  <td class="task_status">
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_docker_652942b23342ae82_4aeff5b1-640a-4bda-b36f-5169e82e1fbe">completed</span></pre>
+  </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: 652942b23342ae82 <span class="sos_highlight">received</span> '/Users/bpeng/result.txt' from docker
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">default</span> output:   <span class="sos_highlight">/Users/bpeng/result.txt</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=87a9056943dc9a91) is executed successfully with 1 completed step and 1 completed task.
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> /Users/bpeng/result.txt (54 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">2 lines</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>512KB.zip
+<pre>/root/result.txt
+/root/vatlab/sos-docs/src/user_guide</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Working-directory-of-tasks-(Option-workdir)">Working directory of tasks (Option <code>workdir</code>)<a class="anchor-link" href="#Working-directory-of-tasks-(Option-workdir)"></a></h2><p>The <code>workdir</code> of task is default to the current working directory, or, in the case of remote execution, the remote counterpart of the current working directory. Option <code>workdir</code> controls the working directory of the task.</p>
+<p>For example, the following example adds <code>workdir='#home</code> to the task. The current working directory of the shell script is changed to <code>/root</code>, and the <code>_output</code> remains at <code>#home/result.txt</code>.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 13.2429em">
+   <textarea rows="10"
+      class="sos-source" name="SoS">%preview ~/result.txt
+
+%run -c ~/docker.yml -q docker -s force
+
+output: '#home/result.txt'
+task:
+
+sh: expand=True, workdir='#home'
+    echo {_output} > {_output}
+    echo `pwd` >> {_output}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="task_docker_dbc63a4bf9416b58_95c9a19b-fc31-4ee3-8a89-faa010519a9d" class="task_table completed">
+<tr>
+  <td class="task_icon">
+    <i id="task_status_icon_docker_dbc63a4bf9416b58_95c9a19b-fc31-4ee3-8a89-faa010519a9d" class="fa fa-2x fa-fw fa-check-square-o"
+    null null null></i>
+  </td>
+  <td class="task_id">
+    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>dbc63a4bf9416b58<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'dbc63a4bf9416b58', queue: 'docker'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'dbc63a4bf9416b58', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'dbc63a4bf9416b58', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'dbc63a4bf9416b58', queue: 'docker'})"></i></div></pre></span>
+  </td>
+  <td class="task_tags">
+    <span id="status_tags_docker_dbc63a4bf9416b58_95c9a19b-fc31-4ee3-8a89-faa010519a9d"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_default">default<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'default', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'default', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'default', queue: 'docker'})"></i></div></pre><pre class="task_tags task_tag_f27dc1e18f432a10">f27dc1e18f432a10<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'f27dc1e18f432a10', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'f27dc1e18f432a10', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'f27dc1e18f432a10', queue: 'docker'})"></i></div></pre><pre class="task_tags task_tag_user_guide">user_guide<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'user_guide', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'user_guide', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'user_guide', queue: 'docker'})"></i></div></pre></span>
+  </td>
+  <td class="task_timer">
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_docker_dbc63a4bf9416b58_95c9a19b-fc31-4ee3-8a89-faa010519a9d" class="completed" datetime="1607973417795.473">Ran for < 5 seconds</time></pre>
+  </td>
+  <td class="task_status">
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_docker_dbc63a4bf9416b58_95c9a19b-fc31-4ee3-8a89-faa010519a9d">completed</span></pre>
+  </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: dbc63a4bf9416b58 <span class="sos_highlight">received</span> '/Users/bpeng/result.txt' from docker
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: <span class="sos_highlight">default</span> output:   <span class="sos_highlight">/Users/bpeng/result.txt</span>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Workflow default (ID=f27dc1e18f432a10) is executed successfully with 1 completed step and 1 completed task.
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> /Users/bpeng/result.txt (23 B):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">2 lines</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/root/result.txt
+/root</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, <strong>change of <code>workdir</code> might result in the misplace of the output files</strong>. For example, if we remove <code>#home</code> from <code>_output</code> and specify <code>workdir</code>, the <code>_output</code> will be written to specified <code>workdir</code> but SoS still assumes that the <code>_output</code> is under the current project directory and will fail to retrieve the file.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 10.81432em">
+   <textarea rows="8"
+      class="sos-source" name="SoS">%run -c ~/docker.yml -q docker -s force
+
+output: 'result_error.txt'
+task:
+
+sh: expand=True, workdir='#home'
+    echo {_output} > {_output}
+    echo `pwd` >> {_output}</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<table id="task_docker_260346ee4c42cce3_67894c2a-0812-4432-966d-7ffbdca361f0" class="task_table completed">
+<tr>
+  <td class="task_icon">
+    <i id="task_status_icon_docker_260346ee4c42cce3_67894c2a-0812-4432-966d-7ffbdca361f0" class="fa fa-2x fa-fw fa-check-square-o"
+    null null null></i>
+  </td>
+  <td class="task_id">
+    <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>260346ee4c42cce3<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'260346ee4c42cce3', queue: 'docker'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'260346ee4c42cce3', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'260346ee4c42cce3', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'260346ee4c42cce3', queue: 'docker'})"></i></div></pre></span>
+  </td>
+  <td class="task_tags">
+    <span id="status_tags_docker_260346ee4c42cce3_67894c2a-0812-4432-966d-7ffbdca361f0"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_672fffefa5d36516">672fffefa5d36516<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'672fffefa5d36516', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'672fffefa5d36516', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'672fffefa5d36516', queue: 'docker'})"></i></div></pre><pre class="task_tags task_tag_default">default<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'default', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'default', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'default', queue: 'docker'})"></i></div></pre><pre class="task_tags task_tag_user_guide">user_guide<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'user_guide', queue: 'docker'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'user_guide', queue: 'docker'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'user_guide', queue: 'docker'})"></i></div></pre></span>
+  </td>
+  <td class="task_timer">
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_docker_260346ee4c42cce3_67894c2a-0812-4432-966d-7ffbdca361f0" class="completed" datetime="1607973563982.4883">Ran for < 5 seconds</time></pre>
+  </td>
+  <td class="task_status">
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_docker_260346ee4c42cce3_67894c2a-0812-4432-966d-7ffbdca361f0">completed</span></pre>
+  </td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-red-intense-fg">ERROR</span>: <span class="ansi-red-intense-fg">[default]: Failed to copy /root/vatlab/sos-docs/src/user_guide/result_error.txt from docker using command &#34;rsync -a --no-g -e &#39;ssh -o &#39;ControlMaster=auto&#39; -o &#39;ControlPath=/Users/bpeng/.ssh/controlmasters/%r@%h:%p&#39; -o &#39;ControlPersist=10m&#39; -p 32798&#39; root@localhost:/root/vatlab/sos-docs/src/user_guide/result_error.txt &#34;/Users/bpeng/vatlab/sos-docs/src/user_guide&#34;&#34;: command return 23</span>
 </pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-intense-fg">Workflow exited with code 1</span></pre>
 </div>
 </div>
 
@@ -14554,23 +15065,23 @@ sh: expand=True
 
 <div class="output_html rendered_html output_subarea ">
 
-<table id="task_bcb_9e7b75df6a5d3767_6cddfc4e-d1c0-4175-8d5f-50182b737fbb" class="task_table missing">
+<table id="task_bcb_9e7b75df6a5d3767_8bc809ae-0584-412a-93fe-9c52f893134d" class="task_table missing">
 <tr>
   <td class="task_icon">
-    <i id="task_status_icon_bcb_9e7b75df6a5d3767_6cddfc4e-d1c0-4175-8d5f-50182b737fbb" class="fa fa-2x fa-fw fa-question"
+    <i id="task_status_icon_bcb_9e7b75df6a5d3767_8bc809ae-0584-412a-93fe-9c52f893134d" class="fa fa-2x fa-fw fa-question"
     null null null></i>
   </td>
   <td class="task_id">
     <span><pre><i class="fa fa-fw fa-sitemap"></i></pre><pre>9e7b75df6a5d3767<div class="task_id_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', task:'9e7b75df6a5d3767', queue: 'bcb'})"></i><i class="fa fa-fw fa-play" onclick="task_action({action:'execute', task:'9e7b75df6a5d3767', queue: 'bcb'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', task:'9e7b75df6a5d3767', queue: 'bcb'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', task:'9e7b75df6a5d3767', queue: 'bcb'})"></i></div></pre></span>
   </td>
   <td class="task_tags">
-    <span id="status_tags_bcb_9e7b75df6a5d3767_6cddfc4e-d1c0-4175-8d5f-50182b737fbb"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_5b7627b1ac52aa8f">5b7627b1ac52aa8f<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'5b7627b1ac52aa8f', queue: 'bcb'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'5b7627b1ac52aa8f', queue: 'bcb'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'5b7627b1ac52aa8f', queue: 'bcb'})"></i></div></pre><pre class="task_tags task_tag_scratch_0">scratch_0<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'scratch_0', queue: 'bcb'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'scratch_0', queue: 'bcb'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'scratch_0', queue: 'bcb'})"></i></div></pre><pre class="task_tags task_tag_user_guide">user_guide<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'user_guide', queue: 'bcb'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'user_guide', queue: 'bcb'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'user_guide', queue: 'bcb'})"></i></div></pre></span>
+    <span id="status_tags_bcb_9e7b75df6a5d3767_8bc809ae-0584-412a-93fe-9c52f893134d"><pre><i class="fa fa-fw fa-info-circle"></i></pre><pre class="task_tags task_tag_5b7627b1ac52aa8f">5b7627b1ac52aa8f<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'5b7627b1ac52aa8f', queue: 'bcb'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'5b7627b1ac52aa8f', queue: 'bcb'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'5b7627b1ac52aa8f', queue: 'bcb'})"></i></div></pre><pre class="task_tags task_tag_scratch_0">scratch_0<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'scratch_0', queue: 'bcb'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'scratch_0', queue: 'bcb'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'scratch_0', queue: 'bcb'})"></i></div></pre><pre class="task_tags task_tag_user_guide">user_guide<div class="task_tag_actions"><i class="fa fa-fw fa-refresh" onclick="task_action({action:'status', tag:'user_guide', queue: 'bcb'})"></i><i class="fa fa-fw fa-stop"" onclick="task_action({action:'kill', tag:'user_guide', queue: 'bcb'})"></i><i class="fa fa-fw fa-trash"" onclick="task_action({action:'purge', tag:'user_guide', queue: 'bcb'})"></i></div></pre></span>
   </td>
   <td class="task_timer">
-    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_bcb_9e7b75df6a5d3767_6cddfc4e-d1c0-4175-8d5f-50182b737fbb" class="missing" datetime="null">Ran for < 5 seconds</time></pre>
+    <pre><i class="fa fa-fw fa-clock-o"></i><time id="status_duration_bcb_9e7b75df6a5d3767_8bc809ae-0584-412a-93fe-9c52f893134d" class="missing" datetime="null">Ran for < 5 seconds</time></pre>
   </td>
   <td class="task_status">
-    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_bcb_9e7b75df6a5d3767_6cddfc4e-d1c0-4175-8d5f-50182b737fbb">missing</span></pre>
+    <pre><i class="fa fa-fw fa-tasks"></i><span id="status_text_bcb_9e7b75df6a5d3767_8bc809ae-0584-412a-93fe-9c52f893134d">missing</span></pre>
   </td>
 </tr>
 </table>
@@ -14663,76 +15174,13 @@ sh: expand=True
 <p>Option <code>from_host</code> specifies additional files or directories that would be synchronized from the remote host after tasks are executed. It can be specified as</p>
 <ul>
 <li>A single file or directory (with respect to local file system), or</li>
-<li>A list of files or directories, or</li>
+<li>A list of files or directories</li>
 </ul>
 <p>The files or directories will be translated using the host-specific path maps to determine what remote files to retrieve.</p>
 
 </div>
 </div>
 </div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Absolute-paths-and-named-paths">Absolute paths and named paths<a class="anchor-link" href="#Absolute-paths-and-named-paths"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The use of relative paths are highly recommended because relative paths are not system dependent. Although <code>data/sample1.csv</code> can be under different paths on local and remote hosts, SoS handles the mapping of current project directory and <code>data/sample1.csv</code> would represent the same file under local and remote hosts.</p>
-<p>If you have to specify an absolute path, you will need to specify them with named patchs as follows:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 9.60003em">
-   <textarea rows="7"
-      class="sos-source" name="SoS">%run -r htc-headnode
-
-output: '#home/sos/sos-docs/src/user_guide/random_output.txt'
-
-import random
-with open(_output, 'w') as out:
-  out.write(f'Random number is {random.randint(0, 1000)}')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>INFO: Running <span class="ansi-green-fg">default</span>: 
-INFO: <span class="ansi-green-fg">default</span> (index=0) is <span class="ansi-green-fg">ignored</span> due to saved signature
-INFO: <span class="ansi-green-fg">default</span> output:   <span class="ansi-green-fg">/home/bpeng1/sos/sos-docs/src/user_guide/random_output.txt</span>
-INFO: Workflow default (ID=95ff85f084c10b32) is ignored with 1 ignored step.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
     </div>
   </div>
 
