@@ -10,11 +10,11 @@
 
 <title>remote_execution</title>
 <style type="text/css">
-  pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+  pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: #ffffcc }
 .highlight { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
@@ -14329,6 +14329,7 @@ function add_hoverdoc(){
     <div class="col-xs-12 col-sm-8 col-md-9">
       
 
+
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="notebook-container" id="notebook-container">
 
@@ -14365,7 +14366,8 @@ function add_hoverdoc(){
 <ol>
 <li>Execute workflows locally, but in a customized environment</li>
 <li>Execute workflows on a remote server directly</li>
-<li>Execute workflows on a remote cluster system</li>
+<li>Execute entire workflows on a remote cluster system with option <code>-r</code></li>
+<li>Execute entire workflows on a remote cluster system with job submission with options <code>-r</code>, <code>-q</code></li>
 </ol>
 <p>Please refer to <a href="host_setup.html">host configuration</a> for details on host configuration.</p>
 
@@ -14376,7 +14378,7 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Customized-environment-for-workflow-execution">Customized environment for workflow execution<a class="anchor-link" href="#Customized-environment-for-workflow-execution"></a></h2>
+<h2 id="Customized-local-environment-for-workflow-execution">Customized local environment for workflow execution<a class="anchor-link" href="#Customized-local-environment-for-workflow-execution"></a></h2>
 </div>
 </div>
 </div>
@@ -14384,7 +14386,7 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>On my system there are two R versions, a system R installation under <code>/usr/local/bin</code> and a local installation in a conda environment. The latter version is the default version but if for some reasons you want to use the system R (e.g. if a library is only available there), you can change the local <code>PATH</code> of the <code>R</code> action using an <code>env</code> option (see <a href="sos_actions.html">SoS actions</a> for details.</p>
+<p>Assuming a system with two R versions, a system R installation under <code>/usr/local/bin</code> and a local installation in a conda environment. The latter version is the default version but if for some reasons the system R is preferred (e.g. if a library is only available there), you can change the local <code>PATH</code> of the <code>R</code> action using an <code>env</code> option (see <a href="sos_actions.html">SoS actions</a> for details.</p>
 
 </div>
 </div>
@@ -14470,7 +14472,7 @@ R: env={'PATH': f"/usr/local/bin:{os.environ['PATH']}"}
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This action level <code>env</code> configuration is very flexible (e.g. you can use different versions of R in the same workflow) but can be difficult to maintain if you have multiple <code>R</code> actions. If your intent to use the same version of R throughout the workflow, it is easier to execute the entire workflow in a customized environment.</p>
-<p>To achieve this, you can define a host as follows:</p>
+<p>To achieve this, you can define a host as follows, which has a default <code>address</code> of <code>localhost</code>.</p>
 
 </div>
 </div>
@@ -14568,7 +14570,7 @@ R:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>and be using the system R if we execute the workflow in the <code>system_R</code> host, despite the fact that <code>system_R</code> is just a localhost with a template</p>
+<p>and be using the system R if we execute the workflow in the <code>system_R</code> host with option <code>-r</code>, despite the fact that <code>system_R</code> is just a localhost with a template</p>
 
 </div>
 </div>
@@ -14632,29 +14634,16 @@ R:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p align="center" height="500">
-  <img src="https://vatlab.github.io/sos-docs/doc/media/remote_1_workflow.jpeg">
-</p>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>If the <code>host</code> is a real remote host, then</p>
 <div class="highlight"><pre><span></span>sos run script workflow -r host <span class="o">[</span>other options<span class="o">]</span>
 </pre></div>
-<p>would execute the entire workflow on the <code>host</code> through some command similar to the following</p>
-<div class="highlight"><pre><span></span>ssh host <span class="s2">&quot;bash --login -c sos run script workflow [other options]&quot;</span>
-</pre></div>
-<p>after the script is copied to the remote host.</p>
+<p>would execute the entire workflow on the <code>host</code>.</p>
 <p>This option is useful if you would like to <strong>write the entire workflow for a remote host and execute the workflow with all input, software, and output files on the remote host</strong>. Typical use cases for this option are when the data is too large to be processed locally, or when the software is only available on the remote host.</p>
 <p>For example, with a host definition similar to</p>
 
 <pre><code>hosts:
   bcb:
-    address:  myserver.mdanderson.edu
+    address:  myserver.utexas.edu
     paths:
       home: /Users/bpeng1/scratch</code></pre>
 <p>the following cell execute the workflow on <code>bcb</code></p>
@@ -14785,28 +14774,7 @@ INFO: Workflow default (ID=94ec1bfb48adfe06) is executed successfully with 1 com
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Executing-workflows-on-multiple-workers">Executing workflows on multiple workers<a class="anchor-link" href="#Executing-workflows-on-multiple-workers"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p align="center" height="500">
-  <img src="https://vatlab.github.io/sos-docs/doc/media/remote_4_workers.jpeg">
-</p>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>SoS uses multiple worker processes to execute steps, substeps, and subworkflows. By default, SoS creates <code>n/2</code> workers on a local computer with <code>n</code> CPU cores, although it limits the default number of workers to 8 when there are more than 16 cores because those computers are most likely shared by multiple users.</p>
-<p>The number of workers used by SoS can be controlled by option <code>-j</code>, where <code>-j 4</code> creates 4 workers so that you will see 5 sos processes (1 master and 4 worker) when you execute a workflow with command</p>
-
-<pre><code>sos run script -j 4</code></pre>
+<p>Note that local configrations, including the ones specified with option <code>-c</code> will be transferred and used on the remote host, with only the <code>localhost</code> definition switched to be the remote host. It is therefore safe to use local configurations with option <code>-r</code>.</p>
 
 </div>
 </div>
@@ -14815,11 +14783,7 @@ INFO: Workflow default (ID=94ec1bfb48adfe06) is executed successfully with 1 com
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is possible to start workers on multiple remote machines by specifying the name of the machine and number of processes on each of them with an extended version of option <code>-j</code>. For example</p>
-
-<pre><code>sos run script -j 4 node1:4 node2:4</code></pre>
-<p>will create 12 workers, 4 on localhost on which the master SoS process resides, 4 on <code>node1</code> and 4 on <code>node2</code>, where <code>node1</code> and <code>node2</code> can be name or IP address of machines, or an aliaes defined in SoS configuration files. A limitation of starting workers on remote servers is that the remote servers must share the same file systems as the local host so this approach only works for workstations with auto-mount home directories, or computing nodes of cluster systems.</p>
-
+<h2 id="Executing-entire-workflows-on-remote-cluster-systems">Executing entire workflows on remote cluster systems<a class="anchor-link" href="#Executing-entire-workflows-on-remote-cluster-systems"></a></h2>
 </div>
 </div>
 </div>
@@ -14827,76 +14791,28 @@ INFO: Workflow default (ID=94ec1bfb48adfe06) is executed successfully with 1 com
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-alert" role="alert">
-  <h4>Using workers on remote hosts</h4>
-    <p>SoS assumes that <b>all local and remote hosts share the same file systems</b> and propagates environment variables such as <code>$PATH</code> to all remote hosts. This ensures that all worker processes have identical running environments. </p>
-    <p>You should create and execute external tasks if you would like to execute code on remote computing environments that do not share file systems with the local host.</p>
-</div>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For example, the following example starts 4 local workers, and 4 on a remote host <code>macpro</code>.</p>
+<p>If the remote host specified by option <code>-r host</code> is a cluster system, the workflow will be submitted to the cluster as a regular cluster job. The <code>workflow_template</code> of <code>host</code> will be used, using options specified from command line (<code>-r host KEY=VALUE KEY=VALUE</code>.</p>
+<p>If <code>node=1</code>, sos will be executed with a single node, similar to what will happen if you execute the command locally. If <code>node=n</code> is specified, the workflow will be executed in a multi-node mode with <code>-j</code> automatically expanded to include remote workers that are assigned to the cluster job. see <a href="verbosity_and_jobs.html">option <code>-j</code></a> for details.</p>
+<p>Because no <code>-q</code> option is specified, all tasks will be executed as regular substeps (as long as no <code>queue=</code> option is specified) and be executed to the cluster nodes for execution. This method is most efficient for the execution of a large number of small tasks because there is no overhead for the creation and execution of external tasks. It is less efficient for workflows with varying "sizes" of tasks because all computing nodes may have to wait for one computing node to execute one substep. In which case the follow execution method, namely submiting additional tasks from computing nodes could be better.</p>
 
 </div>
 </div>
 </div>
 
-<div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
-      class="sos-source" name="SoS">%run -j 4 macpro:4
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+   
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1">## Executing entire workflows on remote cluster systems with job submission</span>
+</pre></div>
 
-input: for_each=dict(i=range(10))
-
-import time
-time.sleep(i*2)</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_logging sos_info">INFO: Running <span class="sos_highlight">default</span>: 
+    </div>
 </div>
 </div>
 
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<div class="sos_logging sos_info">INFO: Workflow default (ID=5f3e024badd801ca) is executed successfully with 1 completed step and 10 completed substeps.
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
 </div>
 
 
@@ -14904,19 +14820,7 @@ time.sleep(i*2)</textarea>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Executing-workflows-on-cluster-systems">Executing workflows on cluster systems<a class="anchor-link" href="#Executing-workflows-on-cluster-systems"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Having a number of servers that share the same file system is a scenario that appear most frequently on a cluster system where computing nodes share the same network file system. If you execute a workflow on a supported cluster system, SoS will be able to obtain the number of nodes and number of processes allocated on each node, and set the <code>-j</code> automatically.</p>
-<p>So to execute a workflow on the cluster, all you need to do is wrapping the command</p>
-
-<pre><code>sos execute script [options]</code></pre>
-<p>(without option <code>-j</code>) in a shell script that specifies the resources used, and submit to the cluster system. This part can, again, be achieved with proper host configuration with a <code>workflow_template</code>.</p>
+<p>We already discussed the <a href="task_statement.html">use of option <code>-q</code> to submit tasks to remote hosts or cluster systems</a>. The key idea is that <strong>the workflow is executed locally</strong>. The main sos process will monitor and wait for the completion of remote tasks, and continue after the completion of the remote tasks. Because tasks are executed separately, it can be safely killed and resumed, which is one of the main advantages of the SoS task execution model.</p>
 
 </div>
 </div>
@@ -14925,23 +14829,15 @@ time.sleep(i*2)</textarea>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p align="center">
-  <img src="https://vatlab.github.io/sos-docs/doc/media/cluster_execution.jpg">
-</p>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>So basically you need a host that</p>
+<p>It becomes a bit tricky to submit the workflow to a cluster system while allowing the master sos process, now executed on a computing node, to submit additional jobs. The command can be as simple as</p>
+
+<pre><code>sos run script -r host -q host</code></pre>
+<p>but things can go wrong if you do not understand completely what is happening:</p>
 <ol>
-<li>uses <code>pbs</code> as <code>queue_type</code>, </li>
-<li>defines commands to submit and queue jobs, and</li>
-<li>defines a <code>workflow_template</code> that will be expanded to a shell script to be executed on the cluster</li>
+<li>With option <code>-r</code>, the entire workflow is executed on <code>host</code>. Since <code>host</code> has a PBS queue, the workflow will be submitted as a regular cluster job. <strong>The resources needed for the master job needs to be specified from command line and expanded in <code>workflow_template</code></strong>.</li>
+<li>The master <code>sos</code> process will be executed with a <strong>transferred local config</strong> on a computing node, with an option <code>-q host</code>. Now, because the <code>localhost</code> is set to <code>host</code> by the <code>-r</code> option, the cluster will appear to be a localhost to the <code>sos</code>, but with a different IP address etc.</li>
+<li>The <code>sos</code> process will try to submit the tasks to the headnode through commands similar to <code>ssh host qsub job_id</code>. It is therfore mandatary that the <code>host</code> can be accessed with the specified <code>address</code> from the computing nodes. This is usually not a problem but it is possible that the headnode has different outfacing and inward addresses, in which case you will have to define a different <code>host</code> for option <code>-q</code>.</li>
 </ol>
-<p>The host can be a local host (if you are submitting jobs on the headnode of a cluster system) or a remote host (if you are submitting jobs remotely). Its definition should be similar to</p>
 
 </div>
 </div>
@@ -14972,97 +14868,786 @@ time.sleep(i*2)</textarea>
             <span class="no">#PBS -m n</span>
             <span class="no">module load R</span>
             <span class="no">{command}</span>
+        <span class="nt">task_template</span><span class="p">:</span> <span class="p p-Indicator">|</span>                
+            <span class="no">#!/bin/bash</span>
+            <span class="no">#PBS -N {job_name}</span>
+            <span class="no">#PBS -l nodes={nodes}:ppn={cores}</span>
+            <span class="no">#PBS -l walltime={walltime}</span>
+            <span class="no">#PBS -l mem={mem//10**9}GB</span>
+            <span class="no">#PBS -o ~/.sos/tasks/{task}.out</span>
+            <span class="no">#PBS -e ~/.sos/tasks/{task}.err</span>
+            <span class="no">#PBS -m n            </span>
+            <span class="no">module load R</span>
+            <span class="no">{command}</span>
 </pre></div>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>With this definition, you can submit your workflow to it with option <code>-r htc</code> as follows:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
-   <textarea rows="6"
-      class="sos-source" name="SoS">%run -r htc walltime=00:10:00 nodes=4
-[10]
-input: for_each=dict(i=range(100))
-R: expand=True
-  Sys.sleep(100+{i})
-        </textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>INFO: No matching tasks are identified. Use option -a to check all tasks.
-INFO: e0e212c1577d5990 <span class="ansi-green-fg">submitted</span> to htc with job id 1725938.dqshtc
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The workflow is submitted to the cluster with script</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
-<span class="c1">#PBS -N e0e212c1577d5990</span>
-<span class="c1">#PBS -l nodes=4:ppn=4</span>
-<span class="c1">#PBS -l walltime=00:10:00</span>
-<span class="c1">#PBS -l mem=4G</span>
-<span class="c1">#PBS -m n</span>
-module load R
-sos run /home/bpeng1/sos/sos-docs/src/user_guide/.tmp_script_mjno7xgq.sos
-</pre></div>
-<p>saved under <code>~/.sos/workflows/e0e212c1577d5990.sh</code>.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Here we note that</p>
-<ol>
-<li>The template arguments are specified from command line (<code>walltime=00:10:00 nodes=4</code>)</li>
-<li>The host definition provides default values for template variables, which will be used if they are not specified from command line.</li>
-<li>Unlike the execution of remote tasks, SoS currently does not provide any means to check the status of jobs. You will have to do that manually with the job ID returned from SoS.</li>
-</ol>
 
 </div>
 </div>
 </div>
     </div>
   </div>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/python/python.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/r/r.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/octave/octave.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/ruby/ruby.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/sas/sas.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/javascript/javascript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/shell/shell.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/julia/julia.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/markdown/markdown.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/display/autorefresh.min.js"></script>
+<script>
+    /**
+ * Copyright (c) Bo Peng and UT MD Anderson Cancer Center
+ * Distributed under the terms of the Modified BSD License.
+ **/
+
+(function (mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("codemirror/lib/codemirror"),
+      require("codemirror/mode/python/python"),
+      require("codemirror/mode/r/r"),
+      require("codemirror/mode/octave/octave"),
+      require("codemirror/mode/ruby/ruby"),
+      require("codemirror/mode/sas/sas"),
+      require("codemirror/mode/javascript/javascript"),
+      require("codemirror/mode/shell/shell"),
+      require("codemirror/mode/julia/julia"),
+      require("codemirror/mode/markdown/markdown"),
+      require("codemirror/mode/htmlembedded/htmlembedded"),
+      require("codemirror/mode/xml/xml"),
+      require("codemirror/mode/yaml/yaml"),
+      require("codemirror/mode/javascript/javascript"),
+      require("codemirror/mode/stex/stex"),
+      require("codemirror/addon/selection/active-line"),
+      require("codemirror/addon/fold/foldcode"),
+      require("codemirror/addon/fold/foldgutter"),
+      require("codemirror/addon/fold/indent-fold"),
+      require("codemirror/addon/display/autorefresh"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["codemirror/lib/codemirror", "codemirror/mode/python/python",
+      "codemirror/mode/markdown/markdown", "codemirror/mode/r/r"
+    ], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function (CodeMirror) {
+  "use strict";
+
+  var sosKeywords = ["input", "output", "depends", "parameter"];
+  var sosActionWords = ["script", "download", "run", "bash", "sh", "csh",
+    "tcsh", "zsh", "python", "python2", "python3", "R", "node", "julia",
+    "matlab", "octave", "ruby", "perl", "report", "pandoc", "docker_build",
+    "Rmarkdown"
+  ];
+  var sosMagicWords = ['cd', 'capture', 'clear', 'debug', 'dict', 'expand', 'get',
+    'matplotlib', 'paste', 'preview', 'pull', 'push', 'put', 'render',
+    'rerun', 'run', 'save', 'sandbox', 'set', 'sessioninfo', 'sosrun',
+    'sossave', 'shutdown', 'taskinfo', 'tasks', 'toc', 'use', 'with'
+  ]
+  var sosFunctionWords = ["sos_run", "logger", "get_output"];
+
+  var hintWords = sosKeywords.concat(sosActionWords).concat(sosFunctionWords)
+    .concat(sosMagicWords);
+
+  var sosDirectives = sosKeywords.map(x => x + ":");
+  var sosActions = sosActionWords.map(x => new RegExp("^\\s*" + x + ":"));
+  var sosMagics = sosMagicWords.map(x => '%' + x);
+
+  // hint word for SoS mode
+  CodeMirror.registerHelper("hintWords", "sos", hintWords);
+
+  var modeMap = {
+    'sos': null,
+    'python': {
+      name: 'python',
+      version: 3
+    },
+    'python2': {
+      name: 'python',
+      version: 2
+    },
+    'python3': {
+      name: 'python',
+      version: 3
+    },
+    'r': 'r',
+    'report': 'markdown',
+    'pandoc': 'markdown',
+    'download': 'markdown',
+    'markdown': 'markdown',
+    'ruby': 'ruby',
+    'sas': 'sas',
+    'bash': 'shell',
+    'sh': 'shell',
+    'julia': 'julia',
+    'run': 'shell',
+    'javascript': 'javascript',
+    'typescript': {
+      name: "javascript",
+      typescript: true
+    },
+    'octave': 'octave',
+    'matlab': 'octave',
+    html: "htmlembedded",
+    xml: "xml",
+    yaml: "yaml",
+    json: {
+      name: "javascript",
+      jsonMode: true
+    },
+    stex: "stex"
+  };
+
+  var extMap = {
+    sos: 'python3',
+    py: "python3",
+    r: "r",
+    md: "markdown",
+    rb: "ruby",
+    sas: "sas",
+    sh: "shell",
+    jl: "julia",
+    js: "javascript",
+    ts: "typecript",
+    m: "matlab",
+    html: "html",
+    xml: "xml",
+    yaml: "yaml",
+    yml: "yaml",
+    json: "json",
+    tex: "stex"
+  };
+
+  function findMode(mode) {
+    if (mode in modeMap) {
+      return modeMap[mode];
+    }
+    return null;
+  }
+
+  function findModeFromFilename(filename) {
+    if (!filename) {
+      return 'markdown';
+    }
+    let ext = filename.split('.').pop().toLowerCase();
+    if (ext in extMap) {
+      return extMap[ext];
+    }
+    return 'markdown';
+  }
+
+  function markExpr(python_mode) {
+    return {
+      startState: function () {
+        return {
+          in_python: false,
+          sigil: null,
+          matched: true,
+          python_state: CodeMirror.startState(python_mode),
+        };
+      },
+
+      copyState: function (state) {
+        return {
+          in_python: state.in_python,
+          sigil: state.sigil,
+          matched: state.matched,
+          python_state: CodeMirror.copyState(python_mode, state.python_state)
+        };
+      },
+
+      token: function (stream, state) {
+        if (state.in_python) {
+          if (stream.match(state.sigil.right)) {
+            state.in_python = false;
+            state.python_state = CodeMirror.startState(python_mode);
+            return "sos-sigil";
+          }
+          let it = null;
+          try {
+            it = python_mode.token(stream, state.python_state);
+          } catch (error) {
+            return "sos-interpolated error" + (state.matched ? "" : " sos-unmatched");
+          }
+          if (it == 'variable' || it == 'builtin') {
+            let ct = stream.current();
+            // warn users in the use of input and output in {}
+            if (ct === 'input' || ct === 'output')
+              it += ' error';
+          }
+          return (it ? ("sos-interpolated " + it) : "sos-interpolated") + (state.matched ? "" : " sos-unmatched");
+        } else {
+          // remove the double brace case, the syntax highlighter
+          // does not have to worry (highlight) }}, although it would
+          // probably mark an error for single }
+          if (state.sigil.left === '{' && stream.match(/\{\{/))
+            return null;
+          if (stream.match(state.sigil.left)) {
+            state.in_python = true;
+            // let us see if there is any right sigil till the end of the editor.
+            try {
+              let rest = stream.string.slice(stream.pos);
+              if (!rest.includes(state.sigil.right)) {
+                state.matched = false;
+                for (let idx = 1; idx < 5; ++idx) {
+                  if (stream.lookAhead(idx).includes(state.sigil.right)) {
+                    state.matched = true;
+                    break;
+                  }
+                }
+              }
+            } catch (error) {
+              // only codemirror 5.27.0 supports this function
+            }
+            return "sos-sigil" + (state.matched ? "" : " sos-unmatched");
+          }
+          while (stream.next() && !stream.match(state.sigil.left, false)) { }
+          return null;
+        }
+      }
+    }
+  }
+
+  CodeMirror.defineMode("sos", function (conf, parserConf) {
+    let sosPythonConf = {};
+    for (let prop in parserConf) {
+      if (parserConf.hasOwnProperty(prop)) {
+        sosPythonConf[prop] = parserConf[prop];
+      }
+    }
+    sosPythonConf.name = 'python';
+    sosPythonConf.version = 3;
+    sosPythonConf.extra_keywords = sosActionWords.concat(sosFunctionWords);
+    // this is the SoS flavored python mode with more identifiers
+    var base_mode = null;
+    if ('base_mode' in parserConf && parserConf.base_mode && parserConf.base_mode !== 'sos' && parserConf.base_mode !== 'SoS') {
+      let mode = findMode(parserConf.base_mode.toLowerCase());
+      if (mode) {
+        base_mode = CodeMirror.getMode(conf, mode);
+      } else {
+        console.log(`No base mode is found for ${parserConf.base_mode}. Python mode used.`);
+      }
+    } else if ('base_mode' in conf && conf.base_mode && conf.base_mode !== 'sos' && conf.base_mode !== 'SoS') {
+      let mode = findMode(conf.base_mode.toLowerCase());
+      if (mode) {
+        base_mode = CodeMirror.getMode(conf, mode);
+      } else {
+        console.log(`No base mode is found for ${conf.base_mode}. Python mode used.`);
+      }
+    }
+    // if there is a user specified base mode, this is the single cell mode
+    if (base_mode) {
+      var python_mode = CodeMirror.getMode({}, {
+        name: 'python',
+        version: 3
+      });
+      var overlay_mode = markExpr(python_mode);
+      return {
+        startState: function () {
+          return {
+            sos_mode: true,
+            base_state: CodeMirror.startState(base_mode),
+            overlay_state: CodeMirror.startState(overlay_mode),
+            // for overlay
+            basePos: 0,
+            baseCur: null,
+            overlayPos: 0,
+            overlayCur: null,
+            streamSeen: null
+          };
+        },
+
+        copyState: function (state) {
+          return {
+            sos_mode: state.sos_mode,
+            base_state: CodeMirror.copyState(base_mode, state.base_state),
+            overlay_state: CodeMirror.copyState(overlay_mode, state.overlay_state),
+            // for overlay
+            basePos: state.basePos,
+            baseCur: null,
+            overlayPos: state.overlayPos,
+            overlayCur: null
+          };
+        },
+
+        token: function (stream, state) {
+          if (state.sos_mode) {
+            if (stream.sol()) {
+              let sl = stream.peek();
+              if (sl == '!') {
+                stream.skipToEnd();
+                return "meta";
+              } else if (sl == '#') {
+                stream.skipToEnd();
+                return 'comment'
+              }
+              for (var i = 0; i < sosMagics.length; i++) {
+                if (stream.match(sosMagics[i])) {
+                  if (sosMagics[i] === "%expand") {
+                    if (stream.eol() || stream.match(/\s*$/, false)) {
+                      state.overlay_state.sigil = {
+                        'left': '{',
+                        'right': '}'
+                      }
+                    } else {
+                      let found = stream.match(/\s+(\S+)\s+(\S+)$/, false);
+                      if (found) {
+                        state.overlay_state.sigil = {
+                          'left': found[1],
+                          'right': found[2]
+                        }
+                      } else {
+                        state.overlay_state.sigil = null;
+                      }
+                    }
+                  }
+                  // the rest of the lines will be processed as Python code
+                  return "meta";
+                }
+              }
+              state.sos_mode = false;
+            } else {
+              stream.skipToEnd();
+              return null;
+            }
+          }
+
+          if (state.overlay_state.sigil) {
+            if (stream != state.streamSeen ||
+              Math.min(state.basePos, state.overlayPos) < stream.start) {
+              state.streamSeen = stream;
+              state.basePos = state.overlayPos = stream.start;
+            }
+
+            if (stream.start == state.basePos) {
+              state.baseCur = base_mode.token(stream, state.base_state);
+              state.basePos = stream.pos;
+            }
+            if (stream.start == state.overlayPos) {
+              stream.pos = stream.start;
+              state.overlayCur = overlay_mode.token(stream, state.overlay_state);
+              state.overlayPos = stream.pos;
+            }
+            stream.pos = Math.min(state.basePos, state.overlayPos);
+
+            // state.overlay.combineTokens always takes precedence over combine,
+            // unless set to null
+            return state.overlayCur ? state.overlayCur : state.baseCur;
+          } else {
+            return base_mode.token(stream, state.base_state);
+          }
+        },
+
+        indent: function (state, textAfter) {
+          // inner indent
+          if (!state.sos_mode) {
+            if (!base_mode.indent) return CodeMirror.Pass;
+            return base_mode.indent(state.base_state, textAfter);
+          } else {
+            // sos mode has no indent
+            return 0;
+          }
+        },
+
+        innerMode: function (state) {
+          return state.sos_mode ? {
+            state: state.base_state,
+            mode: base_mode
+          } : null;
+        },
+
+        lineComment: "#",
+        fold: "indent"
+      };
+    } else {
+      // this is SoS mode
+      base_mode = CodeMirror.getMode(conf, sosPythonConf);
+      overlay_mode = markExpr(base_mode);
+      return {
+        startState: function () {
+          return {
+            sos_state: null,
+            base_state: CodeMirror.startState(base_mode),
+            overlay_state: CodeMirror.startState(overlay_mode),
+            inner_mode: null,
+            inner_state: null,
+            // for overlay
+            basePos: 0,
+            baseCur: null,
+            overlayPos: 0,
+            overlayCur: null,
+            streamSeen: null
+          };
+        },
+
+        copyState: function (state) {
+          return {
+            sos_state: state.sos_state,
+            base_state: CodeMirror.copyState(base_mode, state.base_state),
+            overlay_state: CodeMirror.copyState(overlay_mode, state.overlay_state),
+            inner_mode: state.inner_mode,
+            inner_state: state.inner_mode && CodeMirror.copyState(state.inner_mode, state.inner_state),
+            // for overlay
+            basePos: state.basePos,
+            baseCur: null,
+            overlayPos: state.overlayPos,
+            overlayCur: null
+          };
+        },
+
+        token: function (stream, state) {
+          if (stream.sol()) {
+            let sl = stream.peek();
+            if (sl == '[') {
+              if (stream.match(/^\[.*\]$/, false)) {
+                // if there is :
+                if (stream.match(/^\[[\s\w_,-]+:/)) {
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                } else if (stream.match(/^\[[\s\w,-]+\]$/)) {
+                  // reset state
+                  state.sos_state = null;
+                  state.inner_mode = null;
+                  return "header line-section-header";
+                }
+              }
+            } else if (sl == '!') {
+              stream.eatWhile(/\S/);
+              return "meta";
+            } else if (sl == '#') {
+              stream.skipToEnd();
+              return "comment";
+            } else if (sl == '%') {
+              stream.eatWhile(/\S/);
+              return "meta";
+            } else if (state.sos_state && state.sos_state.startsWith('entering')) {
+              // the second parameter is starting column
+              let mode = findMode(state.sos_state.slice(9).toLowerCase());
+              state.inner_mode = CodeMirror.getMode(conf, mode);
+              state.inner_state = CodeMirror.startState(state.inner_mode, stream.indentation());
+              state.sos_state = null;
+            }
+            for (var i = 0; i < sosDirectives.length; i++) {
+              if (stream.match(sosDirectives[i])) {
+                // the rest of the lines will be processed as Python code
+                state.sos_state = 'directive_option'
+                return "keyword strong";
+              }
+            }
+            for (var i = 0; i < sosActions.length; i++) {
+              if (stream.match(sosActions[i])) {
+                // switch to submode?
+                if (stream.eol()) {
+                  // really
+                  let mode = findMode(stream.current().slice(0, -1).toLowerCase());
+                  if (mode) {
+                    state.sos_state = "entering " + stream.current().slice(0, -1);
+                  } else {
+                    state.sos_state = 'unknown_language';
+                  }
+                } else {
+                  state.sos_state = 'start ' + stream.current().slice(0, -1);
+                }
+                state.overlay_state.sigil = null;
+                return "builtin strong";
+              }
+            }
+            // if unknown action
+            if (stream.match(/\w+:/)) {
+              state.overlay_state.sigil = null;
+              state.sos_state = 'start ' + stream.current().slice(0, -1);
+              return "builtin strong";
+            }
+          } else if (state.sos_state == 'header_option') {
+            // stuff after :
+            if (stream.peek() == ']') {
+              // move next
+              stream.next();
+              // ] is the last char
+              if (stream.eol()) {
+                state.sos_state = null;
+                state.inner_mode = null;
+                return "header line-section-header";
+              } else {
+                stream.backUp(1);
+                let it = base_mode.token(stream, state.base_state);
+                return it ? it + ' sos-option' : null;
+              }
+            } else {
+              let it = base_mode.token(stream, state.base_state);
+              return it ? it + ' sos-option' : null;
+            }
+          } else if (state.sos_state == 'directive_option') {
+            // stuff after input:, R: etc
+            if (stream.peek() == ',') {
+              // move next
+              stream.next();
+              // , is the last char, continue option line
+              if (stream.eol()) {
+                stream.backUp(1);
+                let it = base_mode.token(stream, state.base_state);
+                return it ? it + ' sos-option' : null;
+              }
+              stream.backUp(1);
+            } else if (stream.eol()) {
+              // end of line stops option mode
+              state.sos_state = null;
+              state.inner_mode = null;
+            }
+            let it = base_mode.token(stream, state.base_state);
+            return it ? it + ' sos-option' : null;
+          } else if (state.sos_state && state.sos_state.startsWith("start ")) {
+            // try to understand option expand=
+            if (stream.match(/expand\s*=\s*True/, false)) {
+              // highlight {}
+              state.overlay_state.sigil = {
+                'left': '{',
+                'right': '}'
+              }
+            } else {
+              let found = stream.match(/expand\s*=\s*"(\S+) (\S+)"/, false);
+              if (!found)
+                found = stream.match(/expand\s*=\s*'(\S+) (\S+)'/, false);
+              if (found) {
+                state.overlay_state.sigil = {
+                  'left': found[1],
+                  'right': found[2]
+                }
+              }
+            }
+            let mode_string = state.sos_state.slice(6).toLowerCase();
+            // for report, we need to find "output" option
+            if (mode_string === "report" &&
+              stream.match(/^.*output\s*=\s*/, false)) {
+              let found = stream.match(/^.*output\s*=\s*[rRbufF]*"""([^"]+)"""/, false);
+              if (!found)
+                found = stream.match(/^.*output\s*=\s*[rRbufF]*'''([^.]+)'''/, false);
+              if (!found)
+                found = stream.match(/^.*output\s*=\s*[rRbufF]*"([^"]+)"/, false);
+              if (!found)
+                found = stream.match(/^.*output\s*=\s*[rRbufF]*'([^']+)'/, false);
+
+              // found[1] is the filename
+              state.sos_state = 'start ' + findModeFromFilename(found ? found[1] : found);
+            }
+
+            let token = base_mode.token(stream, state.base_state);
+            // if it is end of line, ending the starting switch mode
+            if (stream.eol() && stream.peek() !== ',') {
+              // really
+              let mode = findMode(state.sos_state.slice(6).toLowerCase());
+              if (mode) {
+                state.sos_state = "entering " + state.sos_state.slice(6);
+              } else {
+                state.sos_state = 'unknown_language';
+              }
+            }
+            return token + ' sos-option';
+          }
+          // can be start of line but not special
+          if (state.sos_state == 'unknown_language') {
+            // we still handle {} in no man unknown_language
+            if (state.overlay_state.sigil) {
+              return overlay_mode.token(stream, state.overlay_state);
+            } else {
+              stream.skipToEnd();
+              return null;
+            }
+          } else if (state.inner_mode) {
+            let it = 'sos_script ';
+            if (!state.overlay_state.sigil) {
+              let st = state.inner_mode.token(stream, state.inner_state);
+              return st ? it + st : null;
+            } else {
+              // overlay mode, more complicated
+              if (stream != state.streamSeen ||
+                Math.min(state.basePos, state.overlayPos) < stream.start) {
+                state.streamSeen = stream;
+                state.basePos = state.overlayPos = stream.start;
+              }
+
+              if (stream.start == state.basePos) {
+                state.baseCur = state.inner_mode.token(stream, state.inner_state);
+                state.basePos = stream.pos;
+              }
+              if (stream.start == state.overlayPos) {
+                stream.pos = stream.start;
+                state.overlayCur = overlay_mode.token(stream, state.overlay_state);
+                state.overlayPos = stream.pos;
+              }
+              stream.pos = Math.min(state.basePos, state.overlayPos);
+              // state.overlay.combineTokens always takes precedence over combine,
+              // unless set to null
+              return (state.overlayCur ? state.overlayCur : state.baseCur) + " sos-script";
+            }
+          } else {
+            return base_mode.token(stream, state.base_state);
+          }
+        },
+
+        indent: function (state, textAfter) {
+          // inner indent
+          if (state.inner_mode) {
+            if (!state.inner_mode.indent) return CodeMirror.Pass;
+            return state.inner_mode.indent(state.inner_mode, textAfter) + 2;
+          } else {
+            return base_mode.indent(state.base_state, textAfter);
+          }
+        },
+
+        innerMode: function (state) {
+          return state.inner_mode ? null : {
+            state: state.base_state,
+            mode: base_mode
+          };
+        },
+
+        lineComment: "#",
+        fold: "indent",
+        electricInput: /^\s*[\}\]\)]$/,
+      };
+    };
+  }, "python");
+
+  CodeMirror.defineMIME("text/x-sos", "sos");
+});
+</script>
+<script>
+
+
+  function highlight_cell(cell){
+    return new Promise((resolve,reject)=>{
+        if (! cell)
+          resolve("empty");
+        var editor = CodeMirror.fromTextArea(cell, {
+            lineNumbers: false,
+            styleActiveLine: true,
+            matchBrackets: true,
+            readOnly: true,
+            autoRefresh: true,
+            mode: 'sos',
+            base_mode: cell.name,
+        });
+
+        let select = document.createElement('select');
+        let option = document.createElement('option');
+        option.value = cell.name;
+        option.textContent = cell.name;
+        select.appendChild(option);
+        select.className = "cell-kernel-selector";
+        select.value = cell.name;
+
+        cell.parentElement.insertBefore(select, cell);
+        resolve("tooltip")
+        })
+  }
+
+  async function highlight_cells(cells){
+      for(cell of cells){
+        result=await highlight_cell(cell)
+      }
+      if (typeof add_hoverdoc !== "undefined") {
+        add_hoverdoc()
+      }
+  }
+
+  function applySoSMode( ) {
+    highlight_cells(document.getElementsByClassName("sos-source"))
+  }
+
+  applySoSMode()
+
+</script>
+
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js"></script>
+
+<script>
+
+  function fixIDsForToc(headings = null) {
+    let headingMap = {}
+
+    if (!headings) {
+      let content = document.querySelector('.notebook-container')
+      headings = content.querySelectorAll('h1, h2, h3')
+    }
+    Array.prototype.forEach.call(headings, function(heading) {
+      var id = heading.id ? heading.id : heading.textContent.toLowerCase();
+      id = id.split(' ').join('-').replace(/["'\!\@\#\$\%\^\&\*\(\)\:]/ig, '');
+      headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
+      if (headingMap[id]) {
+        heading.id = id + '-' + headingMap[id]
+      } else {
+        heading.id = id
+      }
+    })
+  }
+
+
+  function indexedHeaders(headings) {
+      if (!headings) {
+          return '';
+      }
+      let counts = [0, 0, 0, 0, 0, 0, 0]
+      for (let i = 0; i < headings.length; ++i) {
+        ++counts[parseInt(headings[i].tagName[1])-1]
+      }
+      // now, we remove the first 1 if it is the first tag, and if
+      // it has only one, and if it is the only header
+      let first = counts.findIndex(x => x > 0);
+      if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
+         && parseInt(headings[0].tagName[1]) === first + 1 && false) {
+          counts[first] = 0;
+      }
+      //
+      return counts.map((x, idx) => x > 0 ? 'H' + (idx+1) : '').filter(x => x).join(',');
+  }
+
+
+  function updateTOC ( ) {
+    var content = document.querySelector('.notebook-container')
+    var headings = content.querySelectorAll('h1, h2, h3')
+
+    fixIDsForToc(headings);
+
+    tocbot.init({
+      // Where to render the table of contents.
+      tocSelector: '#toc',
+      // Where to grab the headings to build the table of contents.
+      contentSelector: '.notebook-container',
+      // Which headings to grab inside of the contentSelector element.
+      headingSelector: indexedHeaders(headings),
+      //
+      listClass: 'toc-list',
+      extraListClasses: 'nav nav-list',
+      //
+      listItemClass: 'toc-item',
+      //
+      activeListItemClass: 'active',
+      //
+      orderedList: false,
+      //
+      hasInnerContainers: true,
+      //
+      scrollSmooth: true
+    });
+  }
+
+  updateTOC()
+
+</script>
+
+
 
 
     </div>
