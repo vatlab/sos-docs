@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DEG_Annotation_remote</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<title>singularity</title>
 <style type="text/css">
-  pre { line-height: 125%; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+  pre { line-height: 125%; margin: 0; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
 .highlight .hll { background-color: #ffffcc }
 .highlight { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
@@ -13049,8 +13052,10 @@ div#notebook {
   }
 }
 </style>
+
+
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
     init_mathjax = function() {
@@ -13071,6 +13076,11 @@ div#notebook {
                 },
                 displayAlign: 'center',
                 CommonHTML: {
+                    linebreaks: { 
+                    automatic: true 
+                    }
+                },
+                "HTML-CSS": {
                     linebreaks: { 
                     automatic: true 
                     }
@@ -13117,7 +13127,6 @@ div#notebook {
 	border: none;
 	margin: 0;
 	padding: 6px 13px;
-	white-space: break-spaces;
 }
 
 .rendered_html table tr td {
@@ -13615,11 +13624,7 @@ font-style: italic;
 
 
 <style>
-   .sos_lan_Bash .input_prompt {
-      background-color: #E6EEFF !important;
-    }.sos_lan_R .input_prompt {
-      background-color: #DCDCDA !important;
-    }
+   
 </style>
 
 
@@ -13733,11 +13738,660 @@ textarea.sos-source {
 
 </style>
 
-</head>
-<body>
-  <div tabindex="-1" id="notebook" class="border-box-sizing">
-    <div class="container" id="notebook-container">
 
+
+
+<style>
+
+/* The Table of Contents container element */
+.toc-container {
+    flex-flow: column;
+    display: flex;
+
+    width: 20%;
+    max-height: calc(100% - 120px);
+    margin-left: 2%;
+    margin-top: 60px;
+    position: fixed;
+    border: 1px solid #ccc;
+    webkit-border-radius: 6px;
+    moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.toc-header {
+  flex: 0 1 auto;
+}
+
+.toc-before {
+  flex: 0 1 auto;
+}
+
+.toc-after {
+  flex: 0 1 auto;
+}
+
+/* The Table of Contents is composed of multiple nested unordered lists.  These styles remove the default styling of an unordered list because it is ugly. */
+#toc {
+      overflow-y: auto;
+      flex: 1 1 auto;
+}
+
+#toc ul, #toc li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 1.5em;
+}
+
+#toc > .toc-list {
+  overflow: hidden;
+  position: relative;
+}
+
+#toc > .toc-list  a {
+  margin: 0;
+  padding-left: 10px;
+}
+
+#toc > .toc-list .toc-list a {
+  margin: 0;
+  padding-left: 25px;
+}
+
+
+#toc > .toc-list .toc-list .toc-list a {
+  margin: 0;
+  padding-left: 40px;
+}
+
+a.toc-link {
+  height: 100%;
+}
+
+.is-collapsible {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: all 300ms ease-in-out;
+}
+
+.is-collapsed {
+  max-height: 0;
+}
+
+.is-position-fixed {
+  position: fixed !important;
+  top: 0;
+}
+
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a, .nav-list .nav-header {
+    margin: 0px;
+}
+
+/* Twitter Bootstrap Override Style */
+.nav-list > li > a {
+    padding: 5px;
+}
+
+.notebook-container {
+  box-shadow: none;
+}
+
+li.toc-item .is-active-link {
+  background-color: #6197d5;
+  color: white;
+}
+
+.nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+    color: #337ab7;
+}
+
+#notebook-container {
+  box-shadow: none;
+}
+
+/* https://github.com/tscanlin/tocbot/issues/121 */
+h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, h7:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+</style>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+
+
+
+<style type="text/css">
+
+.sos_hover_doc:hover {
+  cursor: pointer;
+  background: lightgray;
+  opacity: 50%;
+}
+</style>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+
+h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+    display: block;
+    content: " ";
+    height: 80px;
+    margin-top: -80px;
+    visibility: hidden;
+}
+
+.nav-tabs {
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 12pt;
+    font-weight: normal;
+    font-style: normal;
+    background: #ffffff;
+    text-shadow: none !important;
+    border-color: transparent;
+    border-bottom-color: rgba(180,180,180,.30);
+}
+
+.nav-tabs > li > a:hover {
+ color: #2f2f2f;
+ background-color: rgba(180,180,180,.14);
+}
+.nav-tabs > li > a:active,
+.nav-tabs > li > a:focus,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+ color: #1c1c1c;
+ background-color: #eeeeee;
+ border: 1px solid transparent;
+ border-bottom-color: transparent;
+ cursor: default;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+ text-decoration: none;
+ background-color: rgba(180,180,180,.14);
+}
+
+.nav-tabs > li {
+    float:none;
+    display:inline-block;
+}
+
+.nav-tabs {
+    text-align:center;
+}
+
+.nav-tabs li a {font-size:14px; text-transform: uppercase; }
+
+.sticky .nav {
+  background-color: black;
+}
+.sticky .nav-tabs li a {
+    color: white;
+}
+.sticky .nav-tabs li.active a {
+    color: black;
+}
+
+.sticky .nav-tabs li.active .toc a {
+    text-transform: none;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  left:0;
+  width: 100%;
+  z-index:100;
+}
+
+</style>
+
+
+
+
+<style>
+
+.toc-container {
+    margin-top: 80px;
+    max-height: calc(100% - 140px);
+    box: 0px;
+    margin-left: 0px;
+}
+
+.toc-wrapper {
+    overflow-y: scroll;
+}
+
+#toc ul.toc-list.nav.nav-list {
+    padding-left: 5px;
+}
+
+.toc-header {
+    background-color: #c3dbf7;
+    height: 60px;
+}
+
+.toc-header .nav-home {
+    float: left;
+    padding-left: 20px;
+}
+
+.toc-header .nav-buttons {
+    float: right;
+    padding-right: 30px;
+    outline: none;
+}
+
+.toc-header .nav-buttons button {
+    background: transparent;
+    border: none;
+}
+
+.toc-header .nav-buttons button:focus {
+    outline: 0;
+}
+.toc-header .fa {
+    font-size: 38px;
+    color: white;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 10px;
+}
+
+.toc-header .fa:hover {
+    color: #6197d5 ;
+}
+
+
+
+/*
+.nav > li > a:hover {
+    background-color: #7b7b7b  !important;
+    color: white !important;
+}
+*/
+
+.toc-container .nav > li > a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+
+.toc-header-2 {
+   padding-top: 20px;
+   padding-bottom: 10px;
+   font-size: 200%;
+   margin-left: -5px;
+   font-weight: 700;
+   background: #337ab7;
+}
+
+.toc-header-2 > a {
+    color: white;
+    padding-left: 5px;
+}
+
+.nav > li.toc-header-2 > a:hover, .nav > li.toc-header-2 > a:focus {
+    text-decoration: none;
+    background-color: #337ab7;
+    color: white;
+}
+
+.toc-header-3 {
+   padding-top: 6px;
+   padding-bottom: 6px;
+   font-size: 150%;
+   padding-left: 5px;
+   font-weight: 400;
+}
+
+.toc-item > a, .toc-header-2, .toc-header-3 {
+  font-family: "Source Sans Pro", sans-serif;
+}
+
+.toc-header-3 {
+  color: #126dce;
+}
+
+.nav-links {
+    margin: 20px;
+    margin-top: 40px;
+    background-color: #f1f1f1;
+}
+
+.nav-next, .nav-prev {
+    font-size: 1.4em;
+    padding: 20px;
+    color: #000!important;
+}
+
+.nav-next {
+    text-align: right;
+    border-left: solid 10px white;
+}
+
+.nav-prev {
+    text-align: left;
+    border-right: solid 10px white;
+}
+
+.nav-next a, .nav-prev a {
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+div.nav-next a:hover, div.nav-prev a:hover {
+    color: #337ab7;
+}
+
+</style>
+
+
+
+
+<style>
+
+#toc_panel {
+  display: none;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: black;
+  color: white;
+  padding-top: 20px;
+}
+
+#toc_panel a {
+  color: white;
+}
+
+#toc_panel code {
+  color: white;
+  background: none;
+}
+
+#toc_panel li:hover {
+  background: gray;
+}
+
+#toc_panel li a:hover {
+  text-decoration: none;
+}
+
+#toc_panel ul {
+  padding-left: 0px;
+  list-style: none;
+}
+
+</style>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+
+
+.edit-me {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    z-index: 200;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.edit-me-hint {
+    display: none;
+    position: fixed;
+    right: 0px;
+    top: 40px;
+    z-index: 10;
+    width: 11em;
+    background: black;
+    color: white;
+    padding: 1em;
+}
+
+.edit-me .btn-primary {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.edit-me .btn-primary:hover {
+    border-color: white;
+}
+
+.edit-me:hover ~ .edit-me-hint {
+    display: block;
+}
+
+</style>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+
+.search-box {
+    left: 10px;
+    z-index: 200;
+    position: absolute;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.search-box input {
+    background-color: white;
+    border-color: transparent;
+    font-size: 14px;
+}
+
+
+</style>
+
+
+
+<link href="../../css/testtab.css" rel="stylesheet">
+
+</head>
+
+
+
+
+
+<div id="exTab2" class="container">
+    <a name="content"></a>
+    <nav id="navigation" class="sticky">
+        <ul class="nav nav-tabs">
+            <li><a href="https://vatlab.github.io/sos-docs/index.html#content">Introduction</a> </li>
+            <li><a href="https://vatlab.github.io/sos-docs/running.html#content">Running SoS</a> </li>
+            <li><a href="https://vatlab.github.io/sos-docs/notebook.html#content">SoS Notebook</a> </li>
+            <li><a href="https://vatlab.github.io/sos-docs/workflow.html#content">SoS Workflow</a> </li>
+        </ul>
+    </nav>
+</div>
+
+
+
+
+<div class="edit-me" id="edit-me">
+    <button type="button" onclick="editme()" class="btn btn-primary">
+   <i class="fa fa-edit fa-2x"></i></button>
+</div>
+
+<div class="edit-me-hint">
+<p>Edit this page on our live server and create a PR by running command <code>!create-pr</code> in the console panel</p>
+</div>
+
+
+
+
+<div class="search-box" id="search_toc">
+   <input type="text" class="form-conrol" id="search_toc_input" placeholder="Search"
+   oninput="handleSearchToc()">
+</div>
+
+
+
+
+<script>
+
+let sos_keywords = new Set([
+  // keywords
+  'input:', 'output:', 'depends:', 'task:',
+  // options
+  'expand',
+  // input options
+  'for_each', 'paired_with', 'group_with', 'pattern',
+  'named_output', 'output_from',
+  // functions
+  'sos_run', 'fail_if', 'done_if', 'warn_if', 'skip_if',
+  'get_output',
+  // task options
+  'walltime', 'cores', 'mem', 'queue', 'to_host',
+  'from_host', 'map_vars', 'trunk_size', 'trunk_workers', 'workdir',
+  'concurrent', 'shared', 'env', 'prepend_path', 'tags',
+  // targets
+  'file_target', 'executable', 'sos_variable', 'env_variable',
+  'sos_step', 'dynamic', 'remote', 'system_resource',
+  'Py_Module', 'R_Library',
+  // actions
+  'run:', 'script:', 'report:', 'bash:', 'sh:',
+  'csh:', 'tcsh', 'zsh:', 'perl:', 'ruby:', 'node:',
+  'pandoc:', 'docker_build:', 'download:', 'julia:',
+  'R:', 'matlab:', 'python:', 'python2:', 'python3:',
+  // magics
+  '%capture', '%cd', '%clear', '%debug', '%dict',
+  '%expand', '%get', '%matplotlib', '%preview', '%pull',
+  '%push', '%put', '%render', '%run', '%runfile', '%revisions',
+  '%save', '%set', '%sessioninfo', '%shutdown', '%sosrun',
+  '%sossave', '%task', '%toc', '%sandbox', '%use', '%with'
+  ]
+)
+
+function visit_sos_doc(evt) {
+  window.open(`https://vatlab.github.io/sos-docs/redirect_doc.html?${evt.target.innerText}`, '_blank');
+}
+
+function add_hoverdoc(){
+  let elems = ['cm-keyword cm-strong', 'cm-variable cm-sos-option', 'cm-builtin cm-strong', 'cm-meta'].map(
+    cls => Array.from(document.getElementsByClassName(cls))).reduce((r, a) => r.concat(a), [])
+  Array.from(elems).filter(elem => sos_keywords.has(elem.innerText)).forEach(x => {
+    x.classList.add('sos_hover_doc');
+    x.addEventListener('click', visit_sos_doc);
+  })
+
+}
+
+</script>
+
+
+<body>
+  <div class="row-fluid">
+    <div class="col-xs-12 col-sm-4 col-md-3">
+      <div class="toc-container">
+        <div class="toc-header">
+          </div>
+          <div class="toc-wrapper">
+            <div class="toc-before">
+            </div>
+            <div id="toc" class="toc">
+            </div><!--/.well -->
+            <div class="toc-after">
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-8 col-md-9">
+      
+
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="notebook-container" id="notebook-container">
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Running-scripts-in-singularity">Running scripts in singularity<a class="anchor-link" href="#Running-scripts-in-singularity"></a></h1>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><strong>Difficulty level</strong>: intermediate</li>
+<li><strong>Time need to lean</strong>: 30 minutes or less</li>
+<li><strong>Key points</strong>:<ul>
+<li>Using <code>container='library:xxx'</code> etc will enable <code>engine='singularity'</code></li>
+<li><code>engine='singularity'</code> is explicitly needed for docker images.  </li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Before you run any script using singularity, please check if <code>singularity</code> is installed by checking the availability of command <code>singularity</code>. Also, it would be helpful for you to read the <a href="https://sylabs.io/guides/3.3/user-guide/index.html">sigularity user's guide</a> or some online tutorial to understand how singularity works before you try to use singularity in SoS.</p>
+<p>Although running singularity images does not need root privilege, building singularity images often requires <code>sudo</code> access. SoS provides an option <code>sudo=True</code> to the <code>singularity_build</code> action (an equivalence to command <code>singularity build</code>) to execute the command in sudo mode, but it does not accept interactive input of password. So before running any <code>singularity_build</code> action with option <code>sudo=True</code>, please run <code>sudo -i</code> to enter sudo mode, or add your username as a sudo user without password (google "sudo without password" for instructions). The latter is not safe but can be very convenient for you to prepare singularity images on a personal linux workstation.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Running-a-script-using-singularity">Running a script using singularity<a class="anchor-link" href="#Running-a-script-using-singularity"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Options-container-and-engine">Options <code>container</code> and <code>engine</code><a class="anchor-link" href="#Options-container-and-engine"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SoS executes scripts with a singularity container by calling command <code>singularity exec</code> with appropriate parameters. For example, if you specify a container with a <code>library:</code> schema, sos will first pull the image, save it as a local image, and use <code>singularity exec</code> to run it:</p>
+
+</div>
+</div>
+</div>
 
 <div class="sos_lan_SoS">
    
@@ -13746,74 +14400,1374 @@ textarea.sos-source {
 <div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
    <textarea rows="3"
-      class="sos-source" name="SoS">import pandas as pd
-data = pd.read_excel('DEG_list.xlsx')
-data.to_csv('DEG_list.csv')</textarea>
+      class="sos-source" name="SoS">%run -v1
+sh: container='library://alpine:latest'
+  cat /etc/os-release</textarea>
   </div>
 </div>
 
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>HINT: Pulling image library://alpine:latest to ~/.sos/singularity/library/alpine-latest.sif
+NAME=&#34;Alpine Linux&#34;
+ID=alpine
+VERSION_ID=3.9.2
+PRETTY_NAME=&#34;Alpine Linux v3.9&#34;
+HOME_URL=&#34;https://alpinelinux.org/&#34;
+BUG_REPORT_URL=&#34;https://bugs.alpinelinux.org/&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The actual <code>singularity exec</code> command executed by SoS can be shown when you execute the script in dryrun mode (with <code>-n</code> option). In this mode, SoS would print the interpolated script (if option <code>expand=True</code> is set) and the docker command to execute it:</p>
+
+</div>
+</div>
+</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 19.314350000000005em">
-   <textarea rows="15"
-      class="sos-source" name="SoS">%run -q shark
-input: 'DEG_list.csv'
-output: 'annotated_DEG_list.csv'
-task:
-R: expand=True
-    data <- read.csv('{input}')
-    library(biomaRt)
-    ensembl <- useEnsembl(biomart='ensembl')
-    ensembl <- useEnsembl(biomart="ensembl", dataset="mmusculus_gene_ensembl")
-                     
-    hgnc <- getBM(attributes=c('ensembl_gene_id', 'external_gene_name'),
-        filters = 'ensembl_gene_id', values = data['ensembl_gene_id'], mart = ensembl)
-
-    annotated <- merge(data, hgnc, by='ensembl_gene_id', all.x=TRUE)
-    write.csv(annotated, '{output}', row.names=FALSE)</textarea>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run -v1 -n
+sh: container='library://alpine:latest'
+  cat /etc/os-release</textarea>
   </div>
 </div>
 
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>HINT: singularity exec  /home/bpeng1/.sos/singularity/library/alpine-latest.sif /bin/sh /home/bpeng1/sos/sos-docs/src/user_guide/tmpurin91a5/singularity_run_32484.sh
+cat /etc/os-release
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 </div>
 
 
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see, the docker command looks similar to</p>
+
+<pre><code>singularity exec alpine-latest.sif /bin/sh /path/to/a/temp/script</code></pre>
+<p>Basically, SoS pulls the image and runs command <code>singularity exec</code> to execte the script with <code>/bin/sh</code> with the singularity image.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also use a docker image with singularity. However, because <code>docker://</code> images are by default executed by docker, you will need to specify the use of singularity using parameter <code>engine='singularity'</code>:</p>
+
+</div>
+</div>
+</div>
 
 <div class="sos_lan_SoS">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
-   <textarea rows="4"
-      class="sos-source" name="SoS">annotated = pd.read_csv('annotated_DEG_list.csv')
-annotated = annotated.set_index('external_gene_name')
-annotated.sort_values(by='padj', inplace=True)
-annotated.to_excel('annotated_DEG_list.xlsx')</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run -v1
+sh: container='docker://ubuntu', engine='singularity'
+  cat /etc/os-release</textarea>
   </div>
 </div>
 
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>HINT: Pulling image docker://ubuntu to ~/.sos/singularity/library/ubuntu.sif
+NAME=&#34;Ubuntu&#34;
+VERSION=&#34;18.04.3 LTS (Bionic Beaver)&#34;
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME=&#34;Ubuntu 18.04.3 LTS&#34;
+VERSION_ID=&#34;18.04&#34;
+HOME_URL=&#34;https://www.ubuntu.com/&#34;
+SUPPORT_URL=&#34;https://help.ubuntu.com/&#34;
+BUG_REPORT_URL=&#34;https://bugs.launchpad.net/ubuntu/&#34;
+PRIVACY_POLICY_URL=&#34;https://www.ubuntu.com/legal/terms-and-policies/privacy-policy&#34;
+VERSION_CODENAME=bionic
+UBUNTU_CODENAME=bionic
+</pre>
 </div>
 </div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In summary, as listed <a href="https://vatlab.github.io/sos-docs/doc/user_guide/sos_actions.html">here</a>, you can invoke <code>singularity</code> with the following combinations of parameters <code>container</code> and <code>engine</code>:</p>
+<table>
+<thead><tr>
+<th><code>container</code></th>
+<th><code>engine</code></th>
+<th>execute by</th>
+<th>example</th>
+<th>comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filename.simg</code></td>
+<td><code></code></td>
+<td>singularity</td>
+<td><code>container='ubuntu.simg'</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>shub://tag</code></td>
+<td><code></code></td>
+<td>singularity</td>
+<td><code>container='shub://GodloveD/lolcow'</code></td>
+<td>Image will be pulled to a local image</td>
+</tr>
+<tr>
+<td><code>library://tag</code></td>
+<td><code></code></td>
+<td>singularity</td>
+<td><code>container='library://GodloveD/lolcow'</code></td>
+<td>Image will be pulled to a local image</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>singularity</code></td>
+<td>singularity</td>
+<td><code>container='a_dir', engine='singularity'</code></td>
+<td>treat <code>name</code> as singularity image file or directory</td>
+</tr>
+<tr>
+<td><code>docker://tag</code></td>
+<td><code>singularity</code></td>
+<td>singularity</td>
+<td><code>container='docker://godlovdc/lolcow', engine='singularity'</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>file://filename</code></td>
+<td><code></code></td>
+<td>singularity</td>
+<td><code>container='file://ubuntu.simg'</code></td>
+</tr>
+</tbody>
+</table>
+<p>Simply put, singularity will be used by default with container <code>shub://</code>, <code>file://</code>, and <code>filename.simg</code>, but you will have to specify <code>engine='singularity'</code> if you would like to use a docker image or a directory.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running-script-with-singularity-image">Running script with singularity image<a class="anchor-link" href="#Running-script-with-singularity-image"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although singularity accepts <code>docker://</code>, <code>shub://</code>, and 'library://' container types, SoS always pull the image and build a local <code>.sif</code> file before executing it. If the container is used again, the local <code>.sif</code> file will be used directly.</p>
+<p>For example, because an image has already been downloaded from the above example, SoS will not pull <code>docker://ubuntu</code> when using the container again</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='docker://ubuntu', engine='singularity'
+  ls /</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /
+bin   dev	   etc	 lib	media  opt   root  sbin		srv  tmp  var
+boot  environment  home  lib64	mnt    proc  run   singularity	sys  usr
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can use the name of the image directly (e.g. <code>container='ubuntu.sif'</code>) if you know the image has been downloaded:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif'
+  ls /</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /
+bin   dev	   etc	 lib	media  opt   root  sbin		srv  tmp  var
+boot  environment  home  lib64	mnt    proc  run   singularity	sys  usr
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Customize-singularity-image-path">Customize singularity image path<a class="anchor-link" href="#Customize-singularity-image-path"></a></h3><p>By default, downloaded singularity images are saved to the SoS Singularity Library located at <code>~/.sos/singularity/library</code>. Environment variable <code>SOS_SINGULARITY_LIBRARY</code> can be used to set customized directory, e.g.,</p>
+<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">SOS_SINGULARITY_LIBRARY</span><span class="o">=</span>/path/to/sif_folder
+</pre></div>
+<p>SoS will use <code>*.sif</code> files in <code>$SOS_SINGULARITY_LIBRARY</code> if they exist. As a result you can manually place existing image files to <code>$SOS_SINGULARITY_LIBRARY</code> to avoid pull images online attempts. This is useful when for example a workflow runs on a compute node without internet access.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Binding-directories-(option-bind)">Binding directories (option <code>bind</code>)<a class="anchor-link" href="#Binding-directories-(option-bind)"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A very useful feature about singularity is that you can use the container almost as a local command with access to local file system,</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif'
+  wc -l ~/.bashrc</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>wc -l ~/.bashrc
+136 /home/bpeng1/.bashrc
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, singularity only binds current working directory, <code>/tmp</code>, and your home directory. Other directories would be from within the image, or appear to be missing even if they exist on the host file system. For example, the following command lists <code>/usr/local</code> inside the image:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif'
+  ls /usr/local</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /usr/local
+bin  etc  games  include  lib  man  sbin  share  src
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and <code>/usr/local/var</code> would appear to be missing</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%env --expect-error
+run: container='ubuntu.sif'
+  ls /usr/local/var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /usr/local/var
+ls: cannot access &#39;/usr/local/var&#39;: No such file or directory
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>ExecuteError: [0]: Executing script in Singularity returns an error (exitcode=2).
+The script has been saved to /home/bpeng1/sos/sos-docs/src/user_guide/.sos/singularity_run_32376.sh. To reproduce the error please run:
+``singularity exec  /home/bpeng1/.sos/singularity/library/ubuntu.sif /bin/bash -ev /home/bpeng1/sos/sos-docs/src/user_guide/.sos/singularity_run_32376.sh``</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To allow singularity to see more directories, you can add one or more parameters to the <code>bind</code> parameter. For example, with <code>bind='/usr/local'</code>, the <code>singularity exec</code> command lists directory <code>/usr/local</code> from the host filesystem:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif', bind='/usr/local'
+  ls /usr/local</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /usr/local
+bin  etc  games  go  include  lib  libexec  man  sbin  share  src  var
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and we can see <code>/usr/local/var</code> actually exists</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">run: container='ubuntu.sif', bind='/usr/local'
+  ls /usr/local/var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /usr/local/var
+singularity
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Parameter <code>bind</code> accepts <code>host_dir:img_dir</code> pairs to mount <code>host_dir</code> from host as <code>img_dir</code> seen by the image</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%run -v1
+run: container='ubuntu.sif', bind='/usr/local/var:/myvar'
+  ls /myvar</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ls /myvar
+singularity
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-singularity-images">Building singularity images<a class="anchor-link" href="#Building-singularity-images"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Action-singularity_build-">Action <code>singularity_build</code> <a id="singularity_build" /><a class="anchor-link" href="#Action-singularity_build-"></a></h3>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Action <code>singularity_build</code> calls command <code>singularity build</code> with appropriate command line options. The SoS equivalence of the example in the singularity user's guide</p>
+
+<pre><code>singularity build lolcow.sif library://sylabsed/examples/lolcow</code></pre>
+<p>is the <code>singularity_build</code> action with options <code>src</code> and <code>dest</code>:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">singularity_build(src='library://sylabsed/examples/lolcow', dest='lolcow.sif', force=True)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-blue-fg">INFO:   </span> Starting build...
+<span class="ansi-blue-fg">INFO:   </span> Creating SIF file...
+<span class="ansi-blue-fg">INFO:   </span> Build complete: lolcow.sif
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also use action <code>singularity_build</code> to build an image from a singularity definition file. Using an example from the user's guide:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 14.45719em">
+   <textarea rows="11"
+      class="sos-source" name="SoS">singularity_build: dest='lolcow.sif', sudo=True, force=True
+    Bootstrap: docker
+    From: ubuntu:16.04
+    %post
+        apt-get -y update
+        apt-get -y install fortune cowsay lolcat
+    %environment
+        export LC_ALL=C
+        export PATH=/usr/games:$PATH
+    %runscript
+        fortune | cowsay | lolcat </textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-blue-fg">INFO:   </span> Starting build...
+Getting image source signatures
+Copying blob 3386e6af03b0 [--------------------------------------] 0b / 0b
+Copying blob 49ac0bbe6c8e [--------------------------------------] 0b / 0b
+Copying blob d1983a67e104 [--------------------------------------] 0b / 0b
+Copying blob 1a0f3a523f04 [--------------------------------------] 0b / 0b
+Copying blob 3386e6af03b0 skipped: already exists
+Copying blob 49ac0bbe6c8e skipped: already exists
+Copying blob d1983a67e104 skipped: already exists
+Copying blob 1a0f3a523f04 skipped: already exists
+Copying config ea9ba824b3 [====================================] 2.4KiB / 2.4KiB
+Copying config ea9ba824b3 done
+Writing manifest to image destination
+Storing signatures
+2019/12/30 11:38:13  info unpack layer: sha256:3386e6af03b043219225367632569465e5ecd47391d1f99a6d265e51bd463a83
+2019/12/30 11:38:14  info unpack layer: sha256:49ac0bbe6c8eeb959337b336ceaa5c3bbbae81e316025f9b94ede453540f2377
+2019/12/30 11:38:14  info unpack layer: sha256:d1983a67e104e801fceb1850a375a71fe6b62636ba7a8403d9644f308a6a43f9
+2019/12/30 11:38:14  info unpack layer: sha256:1a0f3a523f04f61db942018321ae122f90d8e3303e243b005e8de9817daf7028
+<span class="ansi-blue-fg">INFO:   </span> Running post scriptlet
++ apt-get -y update
+Get:1 http://security.ubuntu.com/ubuntu xenial-security InRelease [109 kB]
+Get:2 http://archive.ubuntu.com/ubuntu xenial InRelease [247 kB]
+Get:3 http://security.ubuntu.com/ubuntu xenial-security/main amd64 Packages [1019 kB]
+Get:4 http://archive.ubuntu.com/ubuntu xenial-updates InRelease [109 kB]       
+Get:5 http://archive.ubuntu.com/ubuntu xenial-backports InRelease [107 kB]     
+Get:6 http://archive.ubuntu.com/ubuntu xenial/main amd64 Packages [1558 kB]    
+Get:7 http://security.ubuntu.com/ubuntu xenial-security/restricted amd64 Packages [12.7 kB]
+Get:8 http://security.ubuntu.com/ubuntu xenial-security/universe amd64 Packages [593 kB]
+Get:9 http://security.ubuntu.com/ubuntu xenial-security/multiverse amd64 Packages [6280 B]
+Get:10 http://archive.ubuntu.com/ubuntu xenial/restricted amd64 Packages [14.1 kB]
+Get:11 http://archive.ubuntu.com/ubuntu xenial/universe amd64 Packages [9827 kB]
+Get:12 http://archive.ubuntu.com/ubuntu xenial/multiverse amd64 Packages [176 kB]
+Get:13 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 Packages [1396 kB]
+Get:14 http://archive.ubuntu.com/ubuntu xenial-updates/restricted amd64 Packages [13.1 kB]
+Get:15 http://archive.ubuntu.com/ubuntu xenial-updates/universe amd64 Packages [996 kB]
+Get:16 http://archive.ubuntu.com/ubuntu xenial-updates/multiverse amd64 Packages [19.3 kB]
+Get:17 http://archive.ubuntu.com/ubuntu xenial-backports/main amd64 Packages [7942 B]
+Get:18 http://archive.ubuntu.com/ubuntu xenial-backports/universe amd64 Packages [8807 B]
+Fetched 16.2 MB in 3s (4260 kB/s)                          
+Reading package lists... Done
++ apt-get -y install fortune cowsay lolcat
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Note, selecting &#39;fortune-mod&#39; instead of &#39;fortune&#39;
+The following additional packages will be installed:
+  ca-certificates cowsay-off fonts-lato fortunes-min ifupdown iproute2
+  isc-dhcp-client isc-dhcp-common javascript-common libatm1 libdns-export162
+  libffi6 libgdbm3 libgmp10 libisc-export160 libjs-jquery libmnl0 libperl5.22
+  librecode0 libruby2.3 libssl1.0.0 libtext-charwidth-perl libxtables11
+  libyaml-0-2 netbase openssl perl perl-modules-5.22 rake rename ruby
+  ruby-did-you-mean ruby-minitest ruby-net-telnet ruby-paint ruby-power-assert
+  ruby-test-unit ruby-trollop ruby2.3 rubygems-integration unzip zip
+Suggested packages:
+  filters fortunes x11-utils bsdmainutils ppp rdnssd iproute2-doc resolvconf
+  avahi-autoipd isc-dhcp-client-ddns apparmor apache2 | lighttpd | httpd
+  perl-doc libterm-readline-gnu-perl | libterm-readline-perl-perl make ri
+  ruby-dev bundler
+The following NEW packages will be installed:
+  ca-certificates cowsay cowsay-off fonts-lato fortune-mod fortunes-min
+  ifupdown iproute2 isc-dhcp-client isc-dhcp-common javascript-common libatm1
+  libdns-export162 libffi6 libgdbm3 libgmp10 libisc-export160 libjs-jquery
+  libmnl0 libperl5.22 librecode0 libruby2.3 libssl1.0.0 libtext-charwidth-perl
+  libxtables11 libyaml-0-2 lolcat netbase openssl perl perl-modules-5.22 rake
+  rename ruby ruby-did-you-mean ruby-minitest ruby-net-telnet ruby-paint
+  ruby-power-assert ruby-test-unit ruby-trollop ruby2.3 rubygems-integration
+  unzip zip
+0 upgraded, 45 newly installed, 0 to remove and 0 not upgraded.
+Need to get 17.2 MB of archives.
+After this operation, 81.5 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu xenial/main amd64 libatm1 amd64 1:2.5.1-1.5 [24.2 kB]
+Get:2 http://archive.ubuntu.com/ubuntu xenial/main amd64 libmnl0 amd64 1.0.3-5 [12.0 kB]
+Get:3 http://archive.ubuntu.com/ubuntu xenial/main amd64 libgdbm3 amd64 1.8.3-13.1 [16.9 kB]
+Get:4 http://archive.ubuntu.com/ubuntu xenial/main amd64 fonts-lato all 2.0-1 [2693 kB]
+Get:5 http://archive.ubuntu.com/ubuntu xenial/main amd64 libyaml-0-2 amd64 0.1.6-3 [47.6 kB]
+Get:6 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 perl-modules-5.22 all 5.22.1-9ubuntu0.6 [2629 kB]
+Get:7 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libperl5.22 amd64 5.22.1-9ubuntu0.6 [3405 kB]
+Get:8 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 perl amd64 5.22.1-9ubuntu0.6 [237 kB]
+Get:9 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 iproute2 amd64 4.3.0-1ubuntu3.16.04.5 [523 kB]
+Get:10 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 ifupdown amd64 0.8.10ubuntu1.4 [54.9 kB]
+Get:11 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libisc-export160 amd64 1:9.10.3.dfsg.P4-8ubuntu1.15 [153 kB]
+Get:12 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libdns-export162 amd64 1:9.10.3.dfsg.P4-8ubuntu1.15 [665 kB]
+Get:13 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 isc-dhcp-client amd64 4.3.3-5ubuntu12.10 [224 kB]
+Get:14 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 isc-dhcp-common amd64 4.3.3-5ubuntu12.10 [105 kB]
+Get:15 http://archive.ubuntu.com/ubuntu xenial/main amd64 libffi6 amd64 3.2.1-4 [17.8 kB]
+Get:16 http://archive.ubuntu.com/ubuntu xenial/main amd64 libgmp10 amd64 2:6.1.0+dfsg-2 [240 kB]
+Get:17 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libssl1.0.0 amd64 1.0.2g-1ubuntu4.15 [1084 kB]
+Get:18 http://archive.ubuntu.com/ubuntu xenial/main amd64 libtext-charwidth-perl amd64 0.04-7build5 [9248 B]
+Get:19 http://archive.ubuntu.com/ubuntu xenial/main amd64 libxtables11 amd64 1.6.0-2ubuntu3 [27.2 kB]
+Get:20 http://archive.ubuntu.com/ubuntu xenial/main amd64 netbase all 5.3 [12.9 kB]
+Get:21 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 openssl amd64 1.0.2g-1ubuntu4.15 [492 kB]
+Get:22 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 ca-certificates all 20170717~16.04.2 [167 kB]
+Get:23 http://archive.ubuntu.com/ubuntu xenial/universe amd64 cowsay all 3.03+dfsg1-15 [18.0 kB]
+Get:24 http://archive.ubuntu.com/ubuntu xenial/universe amd64 cowsay-off all 3.03+dfsg1-15 [3640 B]
+Get:25 http://archive.ubuntu.com/ubuntu xenial/main amd64 librecode0 amd64 3.6-22 [523 kB]
+Get:26 http://archive.ubuntu.com/ubuntu xenial/universe amd64 fortune-mod amd64 1:1.99.1-7 [39.5 kB]
+Get:27 http://archive.ubuntu.com/ubuntu xenial/universe amd64 fortunes-min all 1:1.99.1-7 [61.8 kB]
+Get:28 http://archive.ubuntu.com/ubuntu xenial/main amd64 javascript-common all 11 [6066 B]
+Get:29 http://archive.ubuntu.com/ubuntu xenial/main amd64 libjs-jquery all 1.11.3+dfsg-4 [161 kB]
+Get:30 http://archive.ubuntu.com/ubuntu xenial/main amd64 rubygems-integration all 1.10 [4966 B]
+Get:31 http://archive.ubuntu.com/ubuntu xenial/main amd64 ruby-did-you-mean all 1.0.0-2 [8390 B]
+Get:32 http://archive.ubuntu.com/ubuntu xenial/main amd64 ruby-minitest all 5.8.4-2 [36.6 kB]
+Get:33 http://archive.ubuntu.com/ubuntu xenial/main amd64 ruby-net-telnet all 0.1.1-2 [12.6 kB]
+Get:34 http://archive.ubuntu.com/ubuntu xenial/main amd64 ruby-power-assert all 0.2.7-1 [7668 B]
+Get:35 http://archive.ubuntu.com/ubuntu xenial/main amd64 ruby-test-unit all 3.1.7-2 [60.3 kB]
+Get:36 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libruby2.3 amd64 2.3.1-2~ubuntu16.04.14 [2958 kB]
+Get:37 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 ruby2.3 amd64 2.3.1-2~ubuntu16.04.14 [40.8 kB]
+Get:38 http://archive.ubuntu.com/ubuntu xenial/main amd64 ruby all 1:2.3.0+1 [5530 B]
+Get:39 http://archive.ubuntu.com/ubuntu xenial/main amd64 rake all 10.5.0-2 [48.2 kB]
+Get:40 http://archive.ubuntu.com/ubuntu xenial/main amd64 rename all 0.20-4 [12.0 kB]
+Get:41 http://archive.ubuntu.com/ubuntu xenial/main amd64 unzip amd64 6.0-20ubuntu1 [158 kB]
+Get:42 http://archive.ubuntu.com/ubuntu xenial/main amd64 zip amd64 3.0-11 [158 kB]
+Get:43 http://archive.ubuntu.com/ubuntu xenial/universe amd64 ruby-trollop all 2.0-2 [14.8 kB]
+Get:44 http://archive.ubuntu.com/ubuntu xenial/universe amd64 ruby-paint all 0.8.6-1build1 [15.3 kB]
+Get:45 http://archive.ubuntu.com/ubuntu xenial/universe amd64 lolcat all 42.0.99-1 [5514 B]
+Fetched 17.2 MB in 4s (3617 kB/s) 
+debconf: delaying package configuration, since apt-utils is not installed
+Selecting previously unselected package libatm1:amd64.
+(Reading database ... 4781 files and directories currently installed.)
+Preparing to unpack .../libatm1_1%3a2.5.1-1.5_amd64.deb ...
+Unpacking libatm1:amd64 (1:2.5.1-1.5) ...
+Selecting previously unselected package libmnl0:amd64.
+Preparing to unpack .../libmnl0_1.0.3-5_amd64.deb ...
+Unpacking libmnl0:amd64 (1.0.3-5) ...
+Selecting previously unselected package libgdbm3:amd64.
+Preparing to unpack .../libgdbm3_1.8.3-13.1_amd64.deb ...
+Unpacking libgdbm3:amd64 (1.8.3-13.1) ...
+Selecting previously unselected package fonts-lato.
+Preparing to unpack .../fonts-lato_2.0-1_all.deb ...
+Unpacking fonts-lato (2.0-1) ...
+Selecting previously unselected package libyaml-0-2:amd64.
+Preparing to unpack .../libyaml-0-2_0.1.6-3_amd64.deb ...
+Unpacking libyaml-0-2:amd64 (0.1.6-3) ...
+Selecting previously unselected package perl-modules-5.22.
+Preparing to unpack .../perl-modules-5.22_5.22.1-9ubuntu0.6_all.deb ...
+Unpacking perl-modules-5.22 (5.22.1-9ubuntu0.6) ...
+Selecting previously unselected package libperl5.22:amd64.
+Preparing to unpack .../libperl5.22_5.22.1-9ubuntu0.6_amd64.deb ...
+Unpacking libperl5.22:amd64 (5.22.1-9ubuntu0.6) ...
+Selecting previously unselected package perl.
+Preparing to unpack .../perl_5.22.1-9ubuntu0.6_amd64.deb ...
+Unpacking perl (5.22.1-9ubuntu0.6) ...
+Selecting previously unselected package iproute2.
+Preparing to unpack .../iproute2_4.3.0-1ubuntu3.16.04.5_amd64.deb ...
+Unpacking iproute2 (4.3.0-1ubuntu3.16.04.5) ...
+Selecting previously unselected package ifupdown.
+Preparing to unpack .../ifupdown_0.8.10ubuntu1.4_amd64.deb ...
+Unpacking ifupdown (0.8.10ubuntu1.4) ...
+Selecting previously unselected package libisc-export160.
+Preparing to unpack .../libisc-export160_1%3a9.10.3.dfsg.P4-8ubuntu1.15_amd64.deb ...
+Unpacking libisc-export160 (1:9.10.3.dfsg.P4-8ubuntu1.15) ...
+Selecting previously unselected package libdns-export162.
+Preparing to unpack .../libdns-export162_1%3a9.10.3.dfsg.P4-8ubuntu1.15_amd64.deb ...
+Unpacking libdns-export162 (1:9.10.3.dfsg.P4-8ubuntu1.15) ...
+Selecting previously unselected package isc-dhcp-client.
+Preparing to unpack .../isc-dhcp-client_4.3.3-5ubuntu12.10_amd64.deb ...
+Unpacking isc-dhcp-client (4.3.3-5ubuntu12.10) ...
+Selecting previously unselected package isc-dhcp-common.
+Preparing to unpack .../isc-dhcp-common_4.3.3-5ubuntu12.10_amd64.deb ...
+Unpacking isc-dhcp-common (4.3.3-5ubuntu12.10) ...
+Selecting previously unselected package libffi6:amd64.
+Preparing to unpack .../libffi6_3.2.1-4_amd64.deb ...
+Unpacking libffi6:amd64 (3.2.1-4) ...
+Selecting previously unselected package libgmp10:amd64.
+Preparing to unpack .../libgmp10_2%3a6.1.0+dfsg-2_amd64.deb ...
+Unpacking libgmp10:amd64 (2:6.1.0+dfsg-2) ...
+Selecting previously unselected package libssl1.0.0:amd64.
+Preparing to unpack .../libssl1.0.0_1.0.2g-1ubuntu4.15_amd64.deb ...
+Unpacking libssl1.0.0:amd64 (1.0.2g-1ubuntu4.15) ...
+Selecting previously unselected package libtext-charwidth-perl.
+Preparing to unpack .../libtext-charwidth-perl_0.04-7build5_amd64.deb ...
+Unpacking libtext-charwidth-perl (0.04-7build5) ...
+Selecting previously unselected package libxtables11:amd64.
+Preparing to unpack .../libxtables11_1.6.0-2ubuntu3_amd64.deb ...
+Unpacking libxtables11:amd64 (1.6.0-2ubuntu3) ...
+Selecting previously unselected package netbase.
+Preparing to unpack .../archives/netbase_5.3_all.deb ...
+Unpacking netbase (5.3) ...
+Selecting previously unselected package openssl.
+Preparing to unpack .../openssl_1.0.2g-1ubuntu4.15_amd64.deb ...
+Unpacking openssl (1.0.2g-1ubuntu4.15) ...
+Selecting previously unselected package ca-certificates.
+Preparing to unpack .../ca-certificates_20170717~16.04.2_all.deb ...
+Unpacking ca-certificates (20170717~16.04.2) ...
+Selecting previously unselected package cowsay.
+Preparing to unpack .../cowsay_3.03+dfsg1-15_all.deb ...
+Unpacking cowsay (3.03+dfsg1-15) ...
+Selecting previously unselected package cowsay-off.
+Preparing to unpack .../cowsay-off_3.03+dfsg1-15_all.deb ...
+Unpacking cowsay-off (3.03+dfsg1-15) ...
+Selecting previously unselected package librecode0:amd64.
+Preparing to unpack .../librecode0_3.6-22_amd64.deb ...
+Unpacking librecode0:amd64 (3.6-22) ...
+Selecting previously unselected package fortune-mod.
+Preparing to unpack .../fortune-mod_1%3a1.99.1-7_amd64.deb ...
+Unpacking fortune-mod (1:1.99.1-7) ...
+Selecting previously unselected package fortunes-min.
+Preparing to unpack .../fortunes-min_1%3a1.99.1-7_all.deb ...
+Unpacking fortunes-min (1:1.99.1-7) ...
+Selecting previously unselected package javascript-common.
+Preparing to unpack .../javascript-common_11_all.deb ...
+Unpacking javascript-common (11) ...
+Selecting previously unselected package libjs-jquery.
+Preparing to unpack .../libjs-jquery_1.11.3+dfsg-4_all.deb ...
+Unpacking libjs-jquery (1.11.3+dfsg-4) ...
+Selecting previously unselected package rubygems-integration.
+Preparing to unpack .../rubygems-integration_1.10_all.deb ...
+Unpacking rubygems-integration (1.10) ...
+Selecting previously unselected package ruby-did-you-mean.
+Preparing to unpack .../ruby-did-you-mean_1.0.0-2_all.deb ...
+Unpacking ruby-did-you-mean (1.0.0-2) ...
+Selecting previously unselected package ruby-minitest.
+Preparing to unpack .../ruby-minitest_5.8.4-2_all.deb ...
+Unpacking ruby-minitest (5.8.4-2) ...
+Selecting previously unselected package ruby-net-telnet.
+Preparing to unpack .../ruby-net-telnet_0.1.1-2_all.deb ...
+Unpacking ruby-net-telnet (0.1.1-2) ...
+Selecting previously unselected package ruby-power-assert.
+Preparing to unpack .../ruby-power-assert_0.2.7-1_all.deb ...
+Unpacking ruby-power-assert (0.2.7-1) ...
+Selecting previously unselected package ruby-test-unit.
+Preparing to unpack .../ruby-test-unit_3.1.7-2_all.deb ...
+Unpacking ruby-test-unit (3.1.7-2) ...
+Selecting previously unselected package libruby2.3:amd64.
+Preparing to unpack .../libruby2.3_2.3.1-2~ubuntu16.04.14_amd64.deb ...
+Unpacking libruby2.3:amd64 (2.3.1-2~ubuntu16.04.14) ...
+Selecting previously unselected package ruby2.3.
+Preparing to unpack .../ruby2.3_2.3.1-2~ubuntu16.04.14_amd64.deb ...
+Unpacking ruby2.3 (2.3.1-2~ubuntu16.04.14) ...
+Selecting previously unselected package ruby.
+Preparing to unpack .../ruby_1%3a2.3.0+1_all.deb ...
+Unpacking ruby (1:2.3.0+1) ...
+Selecting previously unselected package rake.
+Preparing to unpack .../archives/rake_10.5.0-2_all.deb ...
+Unpacking rake (10.5.0-2) ...
+Selecting previously unselected package rename.
+Preparing to unpack .../archives/rename_0.20-4_all.deb ...
+Unpacking rename (0.20-4) ...
+Selecting previously unselected package unzip.
+Preparing to unpack .../unzip_6.0-20ubuntu1_amd64.deb ...
+Unpacking unzip (6.0-20ubuntu1) ...
+Selecting previously unselected package zip.
+Preparing to unpack .../archives/zip_3.0-11_amd64.deb ...
+Unpacking zip (3.0-11) ...
+Selecting previously unselected package ruby-trollop.
+Preparing to unpack .../ruby-trollop_2.0-2_all.deb ...
+Unpacking ruby-trollop (2.0-2) ...
+Selecting previously unselected package ruby-paint.
+Preparing to unpack .../ruby-paint_0.8.6-1build1_all.deb ...
+Unpacking ruby-paint (0.8.6-1build1) ...
+Selecting previously unselected package lolcat.
+Preparing to unpack .../lolcat_42.0.99-1_all.deb ...
+Unpacking lolcat (42.0.99-1) ...
+Processing triggers for systemd (229-4ubuntu21.23) ...
+Processing triggers for libc-bin (2.23-0ubuntu11) ...
+Setting up libatm1:amd64 (1:2.5.1-1.5) ...
+Setting up libmnl0:amd64 (1.0.3-5) ...
+Setting up libgdbm3:amd64 (1.8.3-13.1) ...
+Setting up fonts-lato (2.0-1) ...
+Setting up libyaml-0-2:amd64 (0.1.6-3) ...
+Setting up perl-modules-5.22 (5.22.1-9ubuntu0.6) ...
+Setting up libperl5.22:amd64 (5.22.1-9ubuntu0.6) ...
+Setting up perl (5.22.1-9ubuntu0.6) ...
+update-alternatives: using /usr/bin/prename to provide /usr/bin/rename (rename) in auto mode
+Setting up iproute2 (4.3.0-1ubuntu3.16.04.5) ...
+Setting up ifupdown (0.8.10ubuntu1.4) ...
+Creating /etc/network/interfaces.
+Setting up libisc-export160 (1:9.10.3.dfsg.P4-8ubuntu1.15) ...
+Setting up libdns-export162 (1:9.10.3.dfsg.P4-8ubuntu1.15) ...
+Setting up isc-dhcp-client (4.3.3-5ubuntu12.10) ...
+Setting up isc-dhcp-common (4.3.3-5ubuntu12.10) ...
+Setting up libffi6:amd64 (3.2.1-4) ...
+Setting up libgmp10:amd64 (2:6.1.0+dfsg-2) ...
+Setting up libssl1.0.0:amd64 (1.0.2g-1ubuntu4.15) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 76.)
+debconf: falling back to frontend: Readline
+Setting up libtext-charwidth-perl (0.04-7build5) ...
+Setting up libxtables11:amd64 (1.6.0-2ubuntu3) ...
+Setting up netbase (5.3) ...
+Setting up openssl (1.0.2g-1ubuntu4.15) ...
+Setting up ca-certificates (20170717~16.04.2) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 76.)
+debconf: falling back to frontend: Readline
+Setting up cowsay (3.03+dfsg1-15) ...
+Setting up cowsay-off (3.03+dfsg1-15) ...
+Setting up librecode0:amd64 (3.6-22) ...
+Setting up fortune-mod (1:1.99.1-7) ...
+Setting up fortunes-min (1:1.99.1-7) ...
+Setting up javascript-common (11) ...
+Setting up libjs-jquery (1.11.3+dfsg-4) ...
+Setting up rubygems-integration (1.10) ...
+Setting up ruby-did-you-mean (1.0.0-2) ...
+Setting up ruby-minitest (5.8.4-2) ...
+Setting up ruby-net-telnet (0.1.1-2) ...
+Setting up ruby-power-assert (0.2.7-1) ...
+Setting up ruby-test-unit (3.1.7-2) ...
+Setting up rename (0.20-4) ...
+update-alternatives: using /usr/bin/file-rename to provide /usr/bin/rename (rename) in auto mode
+Setting up unzip (6.0-20ubuntu1) ...
+Setting up zip (3.0-11) ...
+Setting up rake (10.5.0-2) ...
+Setting up libruby2.3:amd64 (2.3.1-2~ubuntu16.04.14) ...
+Setting up ruby2.3 (2.3.1-2~ubuntu16.04.14) ...
+Setting up ruby (1:2.3.0+1) ...
+Setting up ruby-trollop (2.0-2) ...
+Setting up ruby-paint (0.8.6-1build1) ...
+Setting up lolcat (42.0.99-1) ...
+Processing triggers for libc-bin (2.23-0ubuntu11) ...
+Processing triggers for systemd (229-4ubuntu21.23) ...
+Processing triggers for ca-certificates (20170717~16.04.2) ...
+Updating certificates in /etc/ssl/certs...
+148 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+<span class="ansi-blue-fg">INFO:   </span> Adding environment to container
+<span class="ansi-blue-fg">INFO:   </span> Adding runscript
+<span class="ansi-blue-fg">INFO:   </span> Creating SIF file...
+<span class="ansi-blue-fg">INFO:   </span> Build complete: lolcow.sif
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Options such as <code>notest=True</code> could be add to the action. Note that the content of the definition file is indented for  clarify, but you can include the file as it is (no indentation).</p>
+
+</div>
+</div>
+</div>
+    </div>
+  </div>
 
 
     </div>
   </div>
 </body>
+
+
+
+
+<script>
+function editme() {
+    let filepath = window.location.pathname.slice(0, -5).replace('doc/', 'src/');
+    let new_url = `http://sosworkflows.com/hub/user-redirect/notebooks/${filepath}.ipynb`;
+    window.open(new_url, target='_blank');
+}
+
+function addEditButton() {
+    let nav = document.getElementById('navigation');
+    let editButton = document.getElementById('edit-me');
+    nav.appendChild(editButton);
+}
+
+addEditButton()
+
+</script>
+
+
+
+
+<script>
+
+function addSearchBox() {
+    let nav = document.getElementById('navigation');
+    let searchBox = document.getElementById('search_toc');
+    nav.insertBefore(searchBox, nav.firstChild);
+}
+
+function handleSearchToc() {
+    let sb = document.getElementById('search_toc_input');
+    if (sb.value !== '') {
+        let toc_container = document.getElementsByClassName('toc-container');
+        /* display all toc */
+        let toc_items = toc_container[0].getElementsByClassName('toc-item');
+        for (let i = 0; i < toc_items.length; ++i) {
+            let fulltitle = toc_items[i].getAttribute('data-title');
+            if (!fulltitle) {
+                /* TOC for the current page does not have full-title */
+                fulltitle = toc_items[i].firstChild.textContent.toLowerCase();
+            }
+            toc_items[i].style.display = fulltitle.includes(sb.value.toLowerCase()) ? 'block' : 'none';
+        }
+    } else {
+        /* display all toc */
+        let toc_items = document.getElementsByClassName('toc-item');
+        for (let i = 0; i < toc_items.length; ++i) {
+            toc_items[i].style.display = 'block';
+        }
+        let toc = document.getElementById('toc');
+        toc.scrollIntoView();
+    }
+}
+
+addSearchBox()
+
+</script>
+
+
+
+
+
+<script src="../../js/docs.js"></script>
+<script>
+let url = window.location.pathname;
+let dir = url.substring(url.lastIndexOf('/', url.lastIndexOf('/')-1)+1, url.lastIndexOf('/'));
+
+</script>
+
+
+
+
+
+<script>
+
+function add_nav_header() {
+    let url = window.location.pathname;
+    let filename = url.substring(url.lastIndexOf('/')+1);
+
+    let header = document.getElementsByClassName('toc-header');
+    if (!header) {
+        return;
+    }
+    let beforetoc = document.getElementsByClassName('toc-before');
+    let aftertoc = document.getElementsByClassName('toc-after');
+    let toc = document.getElementById('toc');
+
+    let idx = guides.findIndex(item => item.name == filename.replace(/\.[^/.]+$/, ""));
+
+    let prev_link = ''
+    let next_link = ''
+    let prev_nav = ''
+    let next_nav = ''
+
+    for (let i = idx - 1; i > 0; --i) {
+        if (!guides[i].header) {
+            prev_link = `<button title="${guides[i].title}" onclick="loadPage('${guides[i].name}')" ><i class="fa fa-arrow-circle-left nav-left"></i></button>`;
+            prev_nav = `<a href="javascript:loadPage('${guides[i].name}')" ><i class="fa fa-arrow-left"></i>  &nbsp;   ${guides[i].title}</a>`;
+            break;
+        }
+    }
+    for (let i = idx + 1; i < guides.length; ++i) {
+        if (!guides[i].header) {
+            next_link = `<button title="${guides[i].title}" onclick="loadPage('${guides[i].name}')" ><i class="fa fa-arrow-circle-right nav-right"></i></button>`;
+            next_nav = `<a href="javascript:loadPage('${guides[i].name}')" >${guides[i].title}  &nbsp; <i class="fa fa-arrow-right"></i></a>`;
+            break;
+        }
+    }
+
+    header[0].outerHTML = `
+        <div class="toc-header">
+            <div class="row">
+                <div class="nav-home">
+                    <a href="https://vatlab.github.io/sos-docs/"><i class="fa fa-home"></i></a>
+                </div>
+                <div class="nav-buttons">
+                        ${prev_link}
+                        ${next_link}
+                </div>
+            </div>
+        </div>
+    `
+    pre_elements = '<div class="toc-before"><ul class="toc-list nav nav-list">';
+    for (let i = 0; i < idx; ++i) {
+        if ( guides[i].header === 2) {
+            let link = guides[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
+            pre_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
+        } else if ( guides[i].header == 3) {
+            pre_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
+        } else {
+            pre_elements += `<li data-title="${ guides[i].fulltitle }" class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
+        }
+    }
+
+    pre_elements += '</ul></div>';
+    beforetoc[0].outerHTML = pre_elements;
+
+    post_elements = '<div class="toc-after"><ul class="toc-list nav nav-list">';
+    for (let i = idx + 1; i < guides.length; ++i) {
+        if ( guides[i].header === 2) {
+            let link = guides[i].title === "SoS Notebook" ? "https://github.com/vatlab/sos-notebook" : "https://github.com/vatlab/sos";
+            post_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }"><a href="${link}">${ guides[i].title }</a></li>`
+        } else if ( guides[i].header == 3) {
+            post_elements += `<li data-title="${ guides[i].title }" class="toc-item toc-header-${ guides[i].header }">${ guides[i].title }</li>`
+        } else {
+            post_elements += `<li data-title="${ guides[i].fulltitle }" class="toc-item"><a href="javascript:loadPage('${guides[i].name}');">${ guides[i].title}</a></li>`;
+        }
+    }
+    post_elements += '</ul></div>';
+    aftertoc[0].outerHTML = post_elements;
+
+    toc.scrollIntoView();
+
+    if (next_nav) {
+        /* find notebook */
+        let notebook = document.getElementById('notebook-container');
+
+        let nav_next = document.createElement('div');
+        nav_next.innerHTML = `
+        <div class='row nav-links'>
+            <div class="col-xs-6 col-sm-6 col-md-6 nav-prev">
+             ${prev_nav}
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 nav-next">
+                ${next_nav}
+            </div>
+        </div>
+        `;
+        notebook.appendChild(nav_next);
+    }
+}
+
+function replacePage(title, url, newdoc, pushState) {
+    window.aa = newdoc;
+    // step 1, find existing cells
+    let nc = document.getElementById('notebook-container');
+    nc.innerHTML = '';
+    var root = document.createElement("div");
+    root.innerHTML = newdoc;
+    // let us find notebook-container in the root
+    let new_nc = root.querySelector('.notebook-container');
+
+    while (new_nc.childNodes.length > 0) {
+        nc.appendChild(new_nc.childNodes[0]);
+    }
+    // scroll to top
+    nc.parentElement.scrollIntoView()
+
+    if (pushState) {
+        history.pushState({'title': title, 'url': url}, title, url);
+    }
+    // update URL
+    add_nav_header()
+    // nav_header
+    fixIDsForToc();
+    tocbot.refresh();
+    // CM
+    if (typeof applySoSMode === "function") {
+        applySoSMode();
+    }
+}
+
+function loadPage(name, pushState=true) {
+    let xhr = new XMLHttpRequest();
+    let href = window.location.href;
+    let base = href.substring(0, href.lastIndexOf('/'));
+    let url = `${base}/${name}.html`;
+    xhr.open('GET', url);
+    xhr.onload = function(e) {
+        if (xhr.status === 200) {
+            replacePage(name, url, xhr.responseText, pushState);
+        }
+        else {
+            console.log(`failed to load ${url}`);
+        }
+    };
+    xhr.onerror = function (e) {
+        console.log('failed')
+    }
+    xhr.send();
+}
+
+add_nav_header();
+
+function navBack(event) {
+    if (event.state && event.state.title) {
+        console.log(`load ${event.state.title}`)
+        loadPage(event.state.title, false);
+    }
+    // else {
+    //    window.open(document.location);
+    // }
+    //console.log(event)
+    //console.log(`Location ${document.location}`)
+}
+
+window.addEventListener('popstate', navBack);
+
+</script>
+
+
+
+
 
 
 
@@ -14491,6 +16445,87 @@ annotated.to_excel('annotated_DEG_list.xlsx')</textarea>
 
 </script>
 
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.8.1/tocbot.min.js"></script>
+
+<script>
+
+  function fixIDsForToc(headings = null) {
+    let headingMap = {}
+
+    if (!headings) {
+      let content = document.querySelector('.notebook-container')
+      headings = content.querySelectorAll('h1, h2, h3')
+    }
+    Array.prototype.forEach.call(headings, function(heading) {
+      var id = heading.id ? heading.id : heading.textContent.toLowerCase();
+      id = id.split(' ').join('-').replace(/["'\!\@\#\$\%\^\&\*\(\)\:]/ig, '');
+      headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
+      if (headingMap[id]) {
+        heading.id = id + '-' + headingMap[id]
+      } else {
+        heading.id = id
+      }
+    })
+  }
+
+
+  function indexedHeaders(headings) {
+      if (!headings) {
+          return '';
+      }
+      let counts = [0, 0, 0, 0, 0, 0, 0]
+      for (let i = 0; i < headings.length; ++i) {
+        ++counts[parseInt(headings[i].tagName[1])-1]
+      }
+      // now, we remove the first 1 if it is the first tag, and if
+      // it has only one, and if it is the only header
+      let first = counts.findIndex(x => x > 0);
+      if (counts[first] == 1 && counts.reduce((a, b) => a + b, 0) != counts[first]
+         && parseInt(headings[0].tagName[1]) === first + 1 && false) {
+          counts[first] = 0;
+      }
+      //
+      return counts.map((x, idx) => x > 0 ? 'H' + (idx+1) : '').filter(x => x).join(',');
+  }
+
+
+  function updateTOC ( ) {
+    var content = document.querySelector('.notebook-container')
+    var headings = content.querySelectorAll('h1, h2, h3')
+
+    fixIDsForToc(headings);
+
+    tocbot.init({
+      // Where to render the table of contents.
+      tocSelector: '#toc',
+      // Where to grab the headings to build the table of contents.
+      contentSelector: '.notebook-container',
+      // Which headings to grab inside of the contentSelector element.
+      headingSelector: indexedHeaders(headings),
+      //
+      listClass: 'toc-list',
+      extraListClasses: 'nav nav-list',
+      //
+      listItemClass: 'toc-item',
+      //
+      activeListItemClass: 'active',
+      //
+      orderedList: false,
+      //
+      hasInnerContainers: true,
+      //
+      scrollSmooth: true
+    });
+  }
+
+  updateTOC()
+
+</script>
 
 
 
