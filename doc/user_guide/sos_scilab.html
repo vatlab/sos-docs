@@ -8,7 +8,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>named_input</title>
+<title>sos_scilab</title>
 <style type="text/css">
   pre { line-height: 125%; }
 td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
@@ -13618,10 +13618,8 @@ font-style: italic;
 
 
 <style>
-   .sos_lan_Bash .input_prompt {
-      background-color: #E6EEFF !important;
-    }.sos_lan_R .input_prompt {
-      background-color: #DCDCDA !important;
+   .sos_lan_Scilab .input_prompt {
+      background-color:  !important;
     }
 </style>
 
@@ -14334,7 +14332,7 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Named-input">Named input<a class="anchor-link" href="#Named-input"></a></h1>
+<h1 id="Working-with-Scilab">Working with Scilab<a class="anchor-link" href="#Working-with-Scilab"></a></h1>
 </div>
 </div>
 </div>
@@ -14344,10 +14342,9 @@ function add_hoverdoc(){
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><strong>Difficulty level</strong>: easy</li>
-<li><strong>Time need to learn</strong>: 10 minutes or less</li>
+<li><strong>Time need to lean</strong>: 15 minutes or less</li>
 <li><strong>Key points</strong>:<ul>
-<li>Use dictionary or keyword arguments to specify labels of input</li>
-<li><code>_input[name]</code> return subset of <code>_input</code>label <code>name</code></li>
+<li>There are intuitive corresponding data types between most Python (SoS) and Scilab datatypes</li>
 </ul>
 </li>
 </ul>
@@ -14359,7 +14356,7 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Named-inputs">Named inputs<a class="anchor-link" href="#Named-inputs"></a></h2>
+<h2 id="Overview">Overview<a class="anchor-link" href="#Overview"></a></h2>
 </div>
 </div>
 </div>
@@ -14367,7 +14364,573 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let us first create a few temporary files as inputs of the examples</p>
+<p>The convertion of datatype from SoS to Scilab is as followings:</p>
+<table>
+<thead><tr>
+<th>Python</th>
+<th>condition</th>
+<th>Scilab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>None</code></td>
+<td></td>
+<td><code>Nan</code></td>
+</tr>
+<tr>
+<td><code>boolean</code></td>
+<td></td>
+<td><code>boolean</code></td>
+</tr>
+<tr>
+<td><code>integer</code></td>
+<td></td>
+<td><code>constant</code></td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td></td>
+<td><code>constant</code></td>
+</tr>
+<tr>
+<td><code>complex</code></td>
+<td></td>
+<td><code>complex</code></td>
+</tr>
+<tr>
+<td><code>str</code></td>
+<td></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>char</code></td>
+<td></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
+<td>homogenous type, all numeric</td>
+<td><code>constant</code></td>
+</tr>
+<tr>
+<td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
+<td>homogenous type, all char</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td>Sequence (<code>list</code>, <code>tuple</code>, ...)</td>
+<td>multiple types</td>
+<td><code>list</code></td>
+</tr>
+<tr>
+<td><code>numpy.ndarray</code></td>
+<td></td>
+<td><code>constant</code></td>
+</tr>
+<tr>
+<td><code>numpy.matrix</code></td>
+<td></td>
+<td><code>constant</code></td>
+</tr>
+</tbody>
+</table>
+<p>Python objects in other datatypes are transferred as string <code>"Unsupported datatype"</code>.</p>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The convertion of datatype from Scilab to SoS is as followings:</p>
+<table>
+<thead><tr>
+<th>Scilab</th>
+<th>length (n)</th>
+<th>Python</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Nan</code></td>
+<td></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>boolean</code></td>
+<td><code>1</code></td>
+<td><code>boolean</code></td>
+</tr>
+<tr>
+<td><code>integer</code></td>
+<td><code>1</code></td>
+<td><code>integer</code></td>
+</tr>
+<tr>
+<td><code>constant</code></td>
+<td><code>1</code></td>
+<td><code>double</code></td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td><code>1</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>complex</code></td>
+<td><code>1</code></td>
+<td><code>complex</code></td>
+</tr>
+<tr>
+<td><code>boolean</code></td>
+<td><code>n &gt; 1</code></td>
+<td><code>list</code></td>
+</tr>
+<tr>
+<td><code>integer</code></td>
+<td><code>n &gt; 1</code></td>
+<td><code>list</code></td>
+</tr>
+<tr>
+<td><code>complex</code></td>
+<td><code>n &gt; 1</code></td>
+<td><code>list</code></td>
+</tr>
+<tr>
+<td><code>constant</code></td>
+<td><code>n &gt; 1</code></td>
+<td><code>list</code></td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td><code>n &gt; 1</code></td>
+<td><code>list</code></td>
+</tr>
+<tr>
+<td><code>struct</code></td>
+<td><code>n &gt; 0</code></td>
+<td><code>numpy.ndarray</code></td>
+</tr>
+<tr>
+<td><code>matrix</code></td>
+<td><code>n &gt; 0</code></td>
+<td><code>numpy.array</code></td>
+</tr>
+<tr>
+<td><code>cell</code></td>
+<td><code>n &gt; 0</code></td>
+<td><code>numpy.ndarray</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simple-data-types">Simple data types<a class="anchor-link" href="#Simple-data-types"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Most simple Python data types can be converted to Scilab types easily.</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 8.38574em">
+   <textarea rows="6"
+      class="sos-source" name="SoS">null_var = None
+int_var = 123
+float_var = 3.1415925
+logic_var = True
+char_var = '1"23'
+comp_var = 1+2j</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_Scilab">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Scilab">%get null_var int_var float_var logic_var char_var comp_var
+%preview -n null_var int_var float_var logic_var char_var comp_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> null_var:</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  null_var  = 
+
+   Nan
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> int_var:</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  int_var  = 
+
+   123.
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> float_var:</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  float_var  = 
+
+   3.1415925
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> logic_var:</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  logic_var  = 
+
+  T
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> char_var:</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  char_var  = 
+
+  &#34;1&#34;23&#34;
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> comp_var:</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  comp_var  = 
+
+   1. + 2.i
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%get null_var int_var float_var logic_var char_var comp_var --from scilab
+%preview -n null_var int_var float_var logic_var char_var comp_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> null_var: NoneType</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>None</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> int_var: int</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>123</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> float_var: float</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>3.1415925</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> logic_var: bool</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>True</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> char_var: str of length 4</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>&#39;1&#34;23&#39;</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> comp_var: complex</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>(1+2j)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>However, because Python allows integers of arbitrary precision which is not supported by Scilab, large integers would be presented in Scilab as float point numbers, which might not be able to keep the precision of the original number.</p>
+<p>For example, if we put a large integer with 18 significant digits to Scilab</p>
 
 </div>
 </div>
@@ -14378,48 +14941,10 @@ function add_hoverdoc(){
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
-   <textarea rows="1"
-      class="sos-source" name="SoS">!touch a.txt b.txt ref.txt</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-primary" role="alert">
-    <h4>Named inputs</h4>
-    <p>Keyword arguments in input to the input files and allow access to subsets of inputs with these labels</p>
- </div>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>in SoS, we usually specify one or more files as input of a SoS steps, and refer to them as variable <code>_input</code>:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
   <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
    <textarea rows="2"
-      class="sos-source" name="SoS">input: 'a.txt', 'b.txt'
-print(_input)</textarea>
+      class="sos-source" name="SoS">%put large_int --to scilab
+large_int = 123456789123456789</textarea>
   </div>
 </div>
 
@@ -14434,8 +14959,9 @@ print(_input)</textarea>
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>a.txt b.txt
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/bin/chcon: failed to change context of &#39;/share/apps/scilab-6.1.1/bin/scilab-bin&#39; to ‘unconfined_u:object_r:execmem_exec_t:s0’: Operation not permitted
+/usr/bin/chcon: failed to change context of &#39;/share/apps/scilab-6.1.1/bin/scilab-cli-bin&#39; to ‘unconfined_u:object_r:execmem_exec_t:s0’: Operation not permitted
 </pre>
 </div>
 </div>
@@ -14451,240 +14977,21 @@ print(_input)</textarea>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Using keyword parameters, you can assign labels to these files and access them separately:</p>
+<p>The integer would be considered a double-precision float number and be presented with a <code>D</code></p>
 
 </div>
 </div>
 </div>
 
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 5.95716em">
-   <textarea rows="4"
-      class="sos-source" name="SoS">input: A='a.txt', B='b.txt'
-print(f'input of the substep is {_input}')
-print(f'input of the substep with label A is {_input["A"]}')
-print(f'input of the substep with label B is {_input["B"]}')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>input of the substep is a.txt b.txt
-input of the substep with label A is a.txt
-input of the substep with label B is b.txt
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that although <code>_input['A']</code> and <code>_input['B']</code> are used to refer to subsets of <code>_input</code>, the variable <code>_input</code> can still be used and refers to all input files.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Named input can be used to pick a subset of input for the specification of step output. For example, in the following <code>print</code> statement,  <code>_input["data"]</code>, <code>_input["reference"]</code> etc are used to obtain subsets of <code>_input</code>. These subsets of inputs  are called <strong>named inputs</strong>. Here we use <code>group_by='pairlabel'</code> to group <code>step_input["data"]</code>. Please refer to <a href="group_by.html">option <code>group_by</code></a> for details.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 15.67148em">
-   <textarea rows="12"
-      class="sos-source" name="SoS">input: data = ['a.txt', 'b.txt'], reference='ref.txt', group_by='pairlabel'
-output: _input["data"].with_suffix('.res')
-_output.touch()                              
-
-print(f'''\
-Input of step is {_input} with labels {step_input.labels}
-
-Input data is {_input["data"]}
-Reference is {_input["reference"]}
-
-Output is {_output}
-''')</textarea>
-  </div>
-</div>
-
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Input of step is a.txt ref.txt with labels [&#39;data&#39;, &#39;data&#39;, &#39;reference&#39;]
-
-Input data is a.txt
-Reference is ref.txt
-
-Output is a.res
-
-Input of step is b.txt ref.txt with labels [&#39;data&#39;, &#39;data&#39;, &#39;reference&#39;]
-
-Input data is b.txt
-Reference is ref.txt
-
-Output is b.res
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In addition to the use of keyword arguments, you can use a dictionary directly to specify inputs with names:</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
+<div class="sos_lan_Scilab">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 26.60009em">
-   <textarea rows="21"
-      class="sos-source" name="SoS">%run
-
-[global]
-data = {
-    'data': ['a.txt', 'b.txt'], 
-    'reference': 'ref.txt'
-}
-
-[10]
-input: data, group_by='pairlabel'
-output: _input["data"].with_suffix('.res')
-_output.touch()                              
-
-print(f'''\
-Input of step is {_input} with labels {step_input.labels}
-
-Input data is {_input["data"]}
-Reference is {_input["reference"]}
-
-Output is {_output}
-''')</textarea>
-  </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Named-input-inherited-from-named-output">Named input inherited from named output<a class="anchor-link" href="#Named-input-inherited-from-named-output"></a></h2>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Input created from <a href="named_output.html">named output</a> will inherit their labels, unless the labels are overriden by keyword argument in the input statement.</p>
-
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<div class="bs-callout bs-callout-info" role="alert">
-    <h4>Inherit and override target labels</h4>
-    <p>Target lables are created and passed in SoS as follows</p>
-    <ul>
-        <li>Unnamed targets (targets specified with positional arguments) are labeled with step names</li>
-        <li>Labels are stored in variables <code>_input</code>, <code>_output</code>, <code>step_input</code> and <code>step_output</code>, and are passed by default to next step, or through functions <code>named_output</code> and <code>output_from</code></li>
-        <li>Keyword argument overrides default labels</li>
-    </ul>
- </div>
-</div>
-</div>
-</div>
-  
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For example, in the following workflow, step <code>default</code> gets the outputs from step <code>A</code> and <code>B</code> using function <code>output_from(['A', 'B'])</code>. Because the default labels for output from steps <code>A</code> and <code>B</code> are <code>A</code> and <code>B</code> respectively, you can differentiate the inputs using <code>_input['A']</code> and <code>_input['B']</code>.</p>
-
-</div>
-</div>
-</div>
-
-<div class="sos_lan_SoS">
-   
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
-   <textarea rows="13"
-      class="sos-source" name="SoS">%run -v0
-[A]
-output: 'a.txt'
-_output.touch()
-
-[B]
-output: 'b.txt'
-_output.touch()
-
-[default]
-input: output_from(['A', 'B'])
-print(f'Input from step A is {_input["A"]}')
-print(f'Input from step B is {_input["B"]}')</textarea>
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Scilab">%put large_int
+large_int</textarea>
   </div>
 </div>
 
@@ -14700,7 +15007,10 @@ print(f'Input from step B is {_input["B"]}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-fg">[</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 3 steps processed (3 jobs completed)
+<pre>  large_int  = 
+
+   1.235D+17
+
 </pre>
 </div>
 </div>
@@ -14716,32 +15026,20 @@ print(f'Input from step B is {_input["B"]}')</textarea>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>However, if you use keyword arguments in the input statement, the default or inherited labels will be overridden:</p>
+<p>This is not a problem with SoS because you would get the same result if you enter this number in Scilab</p>
 
 </div>
 </div>
 </div>
 
-<div class="sos_lan_SoS">
+<div class="sos_lan_Scilab">
    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="inner_cell" >
-  <div class="input_area cm-s-ipython" style="min-height: 16.88577em">
-   <textarea rows="13"
-      class="sos-source" name="SoS">%run -v0
-[A]
-output: 'a.txt'
-_output.touch()
-
-[B]
-output: 'b.txt'
-_output.touch()
-
-[default]
-input: a_out=output_from('A'), b_out=output_from('B')
-print(f'Input from step A is {_input["a_out"]}')
-print(f'Input from step B is {_input["b_out"]}')</textarea>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="Scilab">123456789123456789</textarea>
   </div>
 </div>
 
@@ -14757,8 +15055,832 @@ print(f'Input from step B is {_input["b_out"]}')</textarea>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><span class="ansi-green-fg">[</span><span class="ansi-black-intense-fg">#</span><span class="ansi-black-intense-fg">#</span><span class="ansi-green-fg">#</span><span class="ansi-green-fg">]</span> 3 steps processed (1 job completed, 2 jobs ignored)
+<pre>  ans  =
+
+   1.235D+17
+
 </pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Consequently, if you send <code>large_int</code> back to <code>SoS</code>, the number would be different</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%get large_int --from R
+large_int</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>123456789123456784</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Array-and-matrix">Array and matrix<a class="anchor-link" href="#Array-and-matrix"></a></h2>
+</div>
+</div>
+</div>
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The one-dimension (vector) data is converted from SoS to Scilab as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[34]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="SoS">import numpy
+char_arr_var = ['1', '2']
+list_var = [1, 2, '3']
+recursive_var = {'a': {'b': 123}, 'c': True}
+logic_arr_var = [True, False, True]</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_Scilab">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="Scilab">%get char_arr_var list_var recursive_var logic_arr_var
+char_arr_var 
+list_var
+recursive_var
+logic_arr_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Undefined variable: char_arr_var
+
+
+Undefined variable: list_var
+
+
+Undefined variable: recursive_var
+
+ logic_arr_var  = 
+
+  T F T
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The multi-dimension data is converted from SoS to Scilab as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">num_arr_var = numpy.array([1, 2, 3, 4]).reshape(2,2)
+mat_var = numpy.matrix([[1,2],[3,4]])</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_Scilab">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Scilab">%get num_arr_var mat_var
+%preview -n num_arr_var mat_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> num_arr_var:</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  num_arr_var  = 
+
+  1  2
+  3  4
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> mat_var:</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  mat_var  = 
+
+  1  2
+  3  4
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The scalar data is converted from Scilab to SoS as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_Scilab">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="Scilab">null_var = %nan
+num_var = 123
+logic_var = %t
+char_var = '1 23'
+comp_var = 1+2*%i</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> null_var  = 
+
+   Nan
+
+ num_var  = 
+
+   123.
+
+ logic_var  = 
+
+  T
+
+ char_var  = 
+
+  &#34;1 23&#34;
+
+ comp_var  = 
+
+   1. + 2.i
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%get null_var num_var logic_var char_var comp_var --from scilab
+%preview -n null_var num_var logic_var char_var comp_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> null_var: NoneType</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>None</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> num_var: None</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Unknown variable num_var</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> logic_var: bool</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>True</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> char_var: str of length 4</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>&#39;1&#34;23&#39;</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> comp_var: complex</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>(1+2j)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The one-dimension (vector) data is converted from R to SoS as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_Scilab">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 7.17145em">
+   <textarea rows="5"
+      class="sos-source" name="Scilab">num_vector_var = [1 2 3]
+logic_vector_var = [%t, %f, %t]
+char_vector_var = ['1', '2', '3']
+list_var = list(1, 2, '3')
+recursive_var = list(1, list(3, 'whatever'))</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> num_vector_var  = 
+
+   1.   2.   3.
+
+ logic_vector_var  = 
+
+  T F T
+
+ char_vector_var  = 
+
+  &#34;1&#34;  &#34;2&#34;  &#34;3&#34;
+
+ list_var  = 
+
+  (1) = 1
+  (2) = 2
+  (3) = &#34;3&#34;
+
+
+ recursive_var  = 
+
+  (1) = 1
+  (2) : list:
+      (1) = 3
+      (2) = &#34;whatever&#34;
+
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="SoS">%get num_vector_var logic_vector_var char_vector_var list_var recursive_var --from scilab
+%preview -n num_vector_var logic_vector_var char_vector_var list_var recursive_var </textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> num_vector_var: None</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Unknown variable num_vector_var</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> logic_vector_var: None</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Unknown variable logic_vector_var</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> char_vector_var: None</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Unknown variable char_vector_var</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> list_var: list of length 3</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>[1, 2, &#39;3&#39;]</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "><div class="sos_hint">> recursive_var: dict of length 2</div></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>{&#39;a&#39;: {&#39;b&#39;: 123}, &#39;c&#39;: True}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The multi-dimension data is converted from Scilab to SoS as follows:</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_Scilab">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[47]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 3.5285800000000003em">
+   <textarea rows="2"
+      class="sos-source" name="Scilab">mat_var = [1 2; 3 4]
+arr_var = zeros(2, 2, 3)</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> mat_var  = 
+
+   1.   2.
+   3.   4.
+
+ arr_var  = 
+
+(:,:,1)
+
+   0.   0.
+   0.   0.
+(:,:,2)
+
+   0.   0.
+   0.   0.
+(:,:,3)
+
+   0.   0.
+   0.   0.
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[48]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 4.74287em">
+   <textarea rows="3"
+      class="sos-source" name="SoS">%get mat_var arr_var --from Scilab
+mat_var 
+arr_var</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+Failed to evaluate &#39;Undefined variable: sos_py_repr&#39;:
+ Invalid return expresion &#34;Undefined variable: sos_py_repr&#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-intense-fg">[0]: 
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+script_6617773757429726406 in &lt;module&gt;
+----&gt; mat_var
+      arr_var
+      
+
+NameError: name &#39;mat_var&#39; is not defined</span></pre>
 </div>
 </div>
 
