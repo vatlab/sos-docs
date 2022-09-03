@@ -110,6 +110,11 @@ var guides= [
         fulltitle: " working with sas module sos-sas sos_sas "
     },
     {
+        title: "Working with Scilab",
+        name: "sos_scilab",
+        fulltitle: " working with scilab module sos-scilab sos_scilab "
+    },
+    {
         title: "Working with Stata",
         name: "sos_stata",
         fulltitle: " working with stata module sos-stata sos_stata "
