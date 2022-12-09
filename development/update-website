@@ -30,7 +30,7 @@ depends: '../src/templates/sos-doc-with-banner/sos-doc-with-banner.html.j2'
 output: str(_input[0]).replace('/src/', '/doc/').replace('.ipynb', '.html')
 
 
-sh: expand=True,    active=rerun
+sh: expand=True, active=rerun
     [ -f {_input:bn}_rerun.ipynb ] && rm -f  {_input:bn}_rerun.ipynb
     papermill --engine sos {_input} {_input:bn}_rerun.ipynb --cwd {_input:d}
     if [ $? -eq 0 ]; then
