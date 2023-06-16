@@ -15046,6 +15046,102 @@ singularity
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>You can use parameter entrypoint to change the environment in which the interpreter will be executed. An entrypoint is usually the name of a shell script that defines a number of environment variables and run the command given by the command line parameters in such a way that the current process is replaced by it,</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="nb">set</span> <span class="o">-</span><span class="n">o</span> <span class="n">errexit</span>
+<span class="nb">set</span> <span class="o">-</span><span class="n">o</span> <span class="n">pipefail</span>
+<span class="nb">set</span> <span class="o">-</span><span class="n">o</span> <span class="n">nounset</span>
+
+<span class="n">export</span> <span class="n">MY_ENV</span><span class="o">=</span><span class="n">MY_VALUE</span>
+
+<span class="n">exec</span> <span class="s2">&quot;$@&quot;</span>
+</pre></div>
+<p>but it can also be other commands such as <code>micromamba run -n ENVIRONMENT</code>.</p>
+<p>For example, the following statement will execute <code>interpreter</code> Rscript</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">R: entrypoint = 'micromamba run -n ENVIRONMENT'</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-blue-fg">INFO:   </span> Running default:
+<span class="ansi-blue-fg">INFO:   </span> default is completed.
+<span class="ansi-blue-fg">INFO:   </span> Workflow default is executed successfully with 1 completed step.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[&nbsp;]:</div>
+
+
+
+
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It's equivalent to the following statement</p>
+
+</div>
+</div>
+</div>
+
+<div class="sos_lan_SoS">
+   
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="inner_cell" >
+  <div class="input_area cm-s-ipython" style="min-height: 2.31429em">
+   <textarea rows="1"
+      class="sos-source" name="SoS">script: interpreter = Rscript, entrypoint = 'micromamba run -n ENVIRONMENT'</textarea>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+  
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Building-singularity-images">Building singularity images<a class="anchor-link" href="#Building-singularity-images"></a></h2>
 </div>
 </div>
